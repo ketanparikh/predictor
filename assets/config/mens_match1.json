@@ -1,0 +1,30 @@
+{
+  "questions": [
+    {
+      "id": "mm1_q1",
+      "question": "Who will win the toss?",
+      "options": ["Team A", "Team B"],
+      "correctAnswer": "Team A",
+      "points": 5,
+      "category": "Pre-match"
+    },
+    {
+      "id": "mm1_q2",
+      "question": "Top run scorer of the match?",
+      "options": ["Player X", "Player Y", "Player Z", "Player W"],
+      "correctAnswer": "Player X",
+      "points": 15,
+      "category": "Batting"
+    },
+    {
+      "id": "mm1_q3",
+      "question": "Will there be a fifty?",
+      "options": ["Yes", "No"],
+      "correctAnswer": "Yes",
+      "points": 10,
+      "category": "Milestones"
+    }
+  ]
+}
+
+

@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Leaderboard collection
+    match /leaderboard/{document} {
+      // Anyone can read the leaderboard
+      allow read: if true;
+      
+      // Only authenticated users can write scores
+      allow write: if request.auth != null;
+    }
+    
+    // Users collection (optional, for future features)
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
+
+      // Allow user to manage any nested documents like completedMatches
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
+

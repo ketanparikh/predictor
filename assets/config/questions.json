@@ -1,0 +1,161 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Which team won the first ICC Cricket World Cup in 1975?",
+      "options": [
+        "Australia",
+        "West Indies",
+        "England",
+        "India"
+      ],
+      "correctAnswer": "West Indies",
+      "points": 10,
+      "category": "World Cup History"
+    },
+    {
+      "id": "q2",
+      "question": "What is the highest individual score in Test cricket?",
+      "options": [
+        "375",
+        "400",
+        "380",
+        "376"
+      ],
+      "correctAnswer": "400",
+      "points": 15,
+      "category": "Records"
+    },
+    {
+      "id": "q3",
+      "question": "Which batsman has scored the most runs in international cricket?",
+      "options": [
+        "Sachin Tendulkar",
+        "Ricky Ponting",
+        "Virat Kohli",
+        "Kumar Sangakkara"
+      ],
+      "correctAnswer": "Sachin Tendulkar",
+      "points": 20,
+      "category": "Legends"
+    },
+    {
+      "id": "q4",
+      "question": "What is the maximum number of runs possible in a single ball in cricket?",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "10"
+      ],
+      "correctAnswer": "6",
+      "points": 5,
+      "category": "Rules"
+    },
+    {
+      "id": "q5",
+      "question": "Which bowler has taken the most wickets in Test cricket?",
+      "options": [
+        "Shane Warne",
+        "Muttiah Muralitharan",
+        "Glenn McGrath",
+        "Anil Kumble"
+      ],
+      "correctAnswer": "Muttiah Muralitharan",
+      "points": 15,
+      "category": "Records"
+    },
+    {
+      "id": "q6",
+      "question": "What is the longest format of cricket?",
+      "options": [
+        "T20",
+        "ODI",
+        "Test",
+        "T10"
+      ],
+      "correctAnswer": "Test",
+      "points": 5,
+      "category": "Rules"
+    },
+    {
+      "id": "q7",
+      "question": "Which country has won the most ICC World Cups?",
+      "options": [
+        "Australia",
+        "West Indies",
+        "India",
+        "England"
+      ],
+      "correctAnswer": "Australia",
+      "points": 10,
+      "category": "World Cup History"
+    },
+    {
+      "id": "q8",
+      "question": "What does DRS stand for in cricket?",
+      "options": [
+        "Decision Review System",
+        "Data Review System",
+        "Dynamic Review System",
+        "Digital Review System"
+      ],
+      "correctAnswer": "Decision Review System",
+      "points": 10,
+      "category": "Rules"
+    },
+    {
+      "id": "q9",
+      "question": "Who is known as the 'God of Cricket'?",
+      "options": [
+        "Virat Kohli",
+        "Sachin Tendulkar",
+        "MS Dhoni",
+        "Ricky Ponting"
+      ],
+      "correctAnswer": "Sachin Tendulkar",
+      "points": 10,
+      "category": "Legends"
+    },
+    {
+      "id": "q10",
+      "question": "What is a 'duck' in cricket?",
+      "options": [
+        "When a batsman scores 0 runs",
+        "When a bowler takes 5 wickets",
+        "When a team wins by 1 wicket",
+        "When the match is tied"
+      ],
+      "correctAnswer": "When a batsman scores 0 runs",
+      "points": 5,
+      "category": "Terminology"
+    },
+    {
+      "id": "q11",
+      "question": "In which year did the Indian Premier League (IPL) start?",
+      "options": [
+        "2007",
+        "2008",
+        "2009",
+        "2010"
+      ],
+      "correctAnswer": "2008",
+      "points": 10,
+      "category": "T20 Leagues"
+    },
+    {
+      "id": "q12",
+      "question": "What is the minimum number of overs required for a legal ODI match?",
+      "options": [
+        "15",
+        "20",
+        "25",
+        "30"
+      ],
+      "correctAnswer": "20",
+      "points": 10,
+      "category": "Rules"
+    }
+  ]
+}
+

@@ -1,0 +1,30 @@
+{
+  "questions": [
+    {
+      "id": "mm2_q1",
+      "question": "First dismissal type?",
+      "options": ["Bowled", "LBW", "Caught", "Run-out"],
+      "correctAnswer": "Caught",
+      "points": 10,
+      "category": "Dismissals"
+    },
+    {
+      "id": "mm2_q2",
+      "question": "Total powerplay runs (0-6 overs)?",
+      "options": ["0-25", "26-50", "51-75", "76+"],
+      "correctAnswer": "51-75",
+      "points": 15,
+      "category": "Scoring"
+    },
+    {
+      "id": "mm2_q3",
+      "question": "Most wickets by a bowler?",
+      "options": ["1", "2", "3", "4+"],
+      "correctAnswer": "3",
+      "points": 10,
+      "category": "Bowling"
+    }
+  ]
+}
+
+

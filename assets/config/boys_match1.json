@@ -1,0 +1,30 @@
+{
+  "questions": [
+    {
+      "id": "bm1_q1",
+      "question": "Will there be a hat-trick?",
+      "options": ["Yes", "No"],
+      "correctAnswer": "No",
+      "points": 20,
+      "category": "Rare Events"
+    },
+    {
+      "id": "bm1_q2",
+      "question": "First boundary type?",
+      "options": ["Four", "Six"],
+      "correctAnswer": "Four",
+      "points": 5,
+      "category": "Scoring"
+    },
+    {
+      "id": "bm1_q3",
+      "question": "Will a batsman be retired hurt?",
+      "options": ["Yes", "No"],
+      "correctAnswer": "No",
+      "points": 10,
+      "category": "Events"
+    }
+  ]
+}
+
+

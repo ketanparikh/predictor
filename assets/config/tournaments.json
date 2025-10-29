@@ -1,0 +1,48 @@
+{
+  "tournaments": [
+    {
+      "id": "t1",
+      "name": "Mens Tournament",
+      "matches": [
+        {
+          "id": "m1",
+          "name": "Match 1: Team A vs Team B",
+          "date": "2025-11-01",
+          "questionFile": "assets/config/mens_match1.json"
+        },
+        {
+          "id": "m2",
+          "name": "Match 2: Team C vs Team D",
+          "date": "2025-11-03",
+          "questionFile": "assets/config/mens_match2.json"
+        }
+      ]
+    },
+    {
+      "id": "t2",
+      "name": "Womens Tournament",
+      "matches": [
+        {
+          "id": "m3",
+          "name": "Match 1: Team E vs Team F",
+          "date": "2025-11-05",
+          "questionFile": "assets/config/womens_match1.json"
+        }
+      ]
+    },
+    {
+      "id": "t3",
+      "name": "Boys Tournament",
+      "matches": [
+        {
+          "id": "m4",
+          "name": "Match 1: Team G vs Team H",
+          "date": "2025-11-07",
+          "questionFile": "assets/config/boys_match1.json"
+        }
+      ]
+    }
+  ]
+}
+
+

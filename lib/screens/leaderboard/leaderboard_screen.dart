@@ -21,124 +21,88 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
     final tournaments = gameProvider.tournaments;
     final loaded = gameProvider.tournamentsLoaded;
-    if (loaded && tournaments.isNotEmpty && _selectedTournamentId == null) {
-      _selectedTournamentId = tournaments.first.id;
-    }
-
-    if (!loaded) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (tournaments.isEmpty) {
-      return const Center(child: Text('No tournaments configured'));
-    }
-
-    return StreamBuilder<List<LeaderboardEntry>>(
-      stream: leaderboardService.getLeaderboardByTournament(_selectedTournamentId ?? tournaments.first.id),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        }
-
-        final entries = snapshot.data ?? [];
-
-        if (entries.isEmpty) {
-          return Center(
+    // Debug status panel
+    print('LeaderboardScreen loaded=$loaded tournaments=${tournaments.length}');
+    // Always show the selector if loaded
+    return !loaded
+        ? const Center(child: CircularProgressIndicator())
+        : Padding(
+            padding: const EdgeInsets.all(16),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.leaderboard_outlined,
-                  size: 100,
-                  color: Colors.grey[400],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'No scores yet',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Be the first to play and set a record!',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.emoji_events),
+                      const SizedBox(width: 8),
+                      DropdownButton<String>(
+                        value: _selectedTournamentId ?? (tournaments.isNotEmpty ? tournaments.first.id : null),
+                        hint: const Text('Select tournament'),
+                        items: [
+                          for (final t in tournaments)
+                            DropdownMenuItem(
+                              value: t.id,
+                              child: Text(t.name),
+                            )
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedTournamentId = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        'Loaded: $loaded, Count: ${tournaments.length}',
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
                   ),
+                ),
+                Expanded(
+                  child: _selectedTournamentId == null
+                      ? const Center(child: Text('No tournaments configured'))
+                      : StreamBuilder<List<LeaderboardEntry>>(
+                          stream: leaderboardService.getLeaderboardByTournament(_selectedTournamentId!),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+                            if (snapshot.hasError) {
+                              return Center(child: Text('Error: ${snapshot.error}'));
+                            }
+                            final entries = snapshot.data ?? [];
+                            return entries.isEmpty
+                                ? Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.leaderboard_outlined, size: 80, color: Colors.grey[400]),
+                                        const SizedBox(height: 16),
+                                        const Text('No scores yet for this tournament'),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Be the first to play and set a record!',
+                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    itemCount: entries.length,
+                                    itemBuilder: (context, index) {
+                                      final entry = entries[index];
+                                      return _buildLeaderboardItem(context, entry, index);
+                                    },
+                                  );
+                          },
+                        ),
                 ),
               ],
             ),
           );
-        }
-
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Tournament selector
-              Row(
-                children: [
-                  const Icon(Icons.emoji_events),
-                  const SizedBox(width: 8),
-                  DropdownButton<String>(
-                    value: _selectedTournamentId ?? tournaments.first.id,
-                    items: [
-                      for (final t in tournaments)
-                        DropdownMenuItem(
-                          value: t.id,
-                          child: Text(t.name),
-                        )
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedTournamentId = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.emoji_events,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 32,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Top Players',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    final entry = entries[index];
-                    return _buildLeaderboardItem(context, entry, index);
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   Widget _buildLeaderboardItem(

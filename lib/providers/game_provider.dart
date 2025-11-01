@@ -19,6 +19,7 @@ class GameProvider with ChangeNotifier {
   MatchInfo? _selectedMatch;
   final MatchStatusService _matchStatusService = MatchStatusService();
   Set<String> _completedMatchIds = {};
+  bool _testUnblock = false;
 
   List<Question> get questions => _questions;
   Map<String, String> get userAnswers => _userAnswers;
@@ -35,6 +36,7 @@ class GameProvider with ChangeNotifier {
   Tournament? get selectedTournament => _selectedTournament;
   MatchInfo? get selectedMatch => _selectedMatch;
   Set<String> get completedMatchIds => _completedMatchIds;
+  bool get testUnblock => _testUnblock;
 
   Future<void> loadTournaments() async {
     try {
@@ -88,6 +90,10 @@ class GameProvider with ChangeNotifier {
   Future<void> loadCompletedMatchesForUser(String userId) async {
     try {
       _completedMatchIds = await _matchStatusService.fetchCompletedMatches(userId);
+      // If test override is enabled, keep UI unblocked regardless of backend state
+      if (_testUnblock) {
+        _completedMatchIds = {};
+      }
       notifyListeners();
     } catch (e) {
       print('Error loading completed matches: $e');
@@ -114,6 +120,19 @@ class GameProvider with ChangeNotifier {
     _gameCompleted = false;
     notifyListeners();
     await loadQuestionsFromFile(match.questionFile);
+  }
+
+  void setTestUnblock(bool enabled) {
+    _testUnblock = enabled;
+    if (_testUnblock) {
+      _completedMatchIds = {};
+    }
+    notifyListeners();
+  }
+
+  bool isMatchCompleted(String matchId) {
+    if (_testUnblock) return false;
+    return _completedMatchIds.contains(matchId);
   }
 
   void startGame() {
@@ -160,6 +179,11 @@ class GameProvider with ChangeNotifier {
 
   bool isAnswerSelected(String questionId) {
     return _userAnswers.containsKey(questionId);
+  }
+
+  void clearCompletedMatches() {
+    _completedMatchIds = {};
+    notifyListeners();
   }
 }
 

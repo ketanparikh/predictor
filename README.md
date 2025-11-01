@@ -120,6 +120,41 @@ Questions are stored in `assets/config/questions.json`. You can customize:
 - **Categories** - Organize questions by category
 - **Options** - Set up multiple choice answers
 
+## 🔥 Backend Scoring & Functions
+
+We use Cloud Functions to reconcile match outcomes against user predictions and maintain a tournament-scoped leaderboard.
+
+### Data Model
+- `tournaments/{tournamentId}/matches/{matchId}/predictions/{userId}`
+  - `{ answers: { [questionId]: userAnswer }, submittedAt }`
+- `tournaments/{tournamentId}/matches/{matchId}/outcome`
+  - `{ correctAnswers: { [qId]: value }, points: { [qId]: number }, lockedAt }`
+- `tournaments/{tournamentId}/matches/{matchId}/scores/{userId}`
+  - `{ matchScore, computedAt }`
+- `leaderboard/{tournamentId}_{userId}`
+  - `{ tournamentId, userId, userName, score, timestamp }`
+
+### Deploy Functions
+```
+cd functions
+npm install
+npm run build
+firebase deploy --only functions --project <your-project-id>
+```
+
+### Deploy Indexes and Rules
+```
+firebase deploy --only firestore:indexes --project <your-project-id>
+firebase deploy --only firestore:rules --project <your-project-id>
+```
+
+### How it Works
+On write to `.../outcome`, the function:
+1. Reads `correctAnswers` and `points`
+2. Iterates predictions for that match
+3. Computes `matchScore` per user and writes to `scores/{userId}`
+4. Transactionally updates `leaderboard/{tournamentId}_{userId}`: `total = prevTotal - prevMatchScore + newMatchScore`
+
 ## 🔥 Deploy to Firebase Hosting
 
 1. **Build the web app**

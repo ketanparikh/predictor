@@ -4,6 +4,7 @@ import '../../providers/game_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/leaderboard_entry.dart';
 import '../../services/leaderboard_service.dart';
+import '../../services/prediction_service.dart';
 import '../../models/tournament.dart';
 
 class PredictorGameScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class PredictorGameScreen extends StatelessWidget {
     gameProvider.startGame();
   }
 
-  Future<void> _submitScore(BuildContext context, int score) async {
+  Future<bool> _submitScore(BuildContext context, int score) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final userId = authProvider.user?.uid;
     final userName = authProvider.user?.displayName ?? 
@@ -24,18 +25,36 @@ class PredictorGameScreen extends StatelessWidget {
             .selectedTournament
             ?.id ??
         'unknown';
+    final matchId = Provider.of<GameProvider>(context, listen: false)
+            .selectedMatch
+            ?.id ??
+        'unknown';
 
-    if (userId != null) {
-      final leaderboardService = LeaderboardService();
-      await leaderboardService.saveScore(
-        LeaderboardEntry(
-          userId: userId,
-          userName: userName,
-          score: score,
-          timestamp: DateTime.now(),
-          tournamentId: tournamentId,
-        ),
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Not signed in. Cannot submit.')),
       );
+      return false;
+    }
+
+    try {
+      // Save predictions for backend scoring
+      final gp = Provider.of<GameProvider>(context, listen: false);
+      final predictionService = PredictionService();
+      await predictionService.saveUserPrediction(
+        userId: userId,
+        userName: userName,
+        tournamentId: tournamentId,
+        matchId: matchId,
+        answers: Map<String, String>.from(gp.userAnswers),
+        submittedAt: DateTime.now(),
+      );
+      return true;
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save predictions: $e')),
+      );
+      return false;
     }
   }
 
@@ -127,7 +146,7 @@ class PredictorGameScreen extends StatelessWidget {
             itemCount: tournament.matches.length,
             itemBuilder: (context, index) {
               final m = tournament.matches[index];
-              final completed = gameProvider.completedMatchIds.contains(m.id);
+              final completed = gameProvider.isMatchCompleted(m.id);
               return Card(
                 child: ListTile(
                   leading: Icon(Icons.sports_cricket, color: theme.colorScheme.secondary),
@@ -548,20 +567,35 @@ class PredictorGameScreen extends StatelessWidget {
           const SizedBox(),
         ElevatedButton(
           onPressed: selectedAnswer == null ? null : () async {
+            final auth = Provider.of<AuthProvider>(context, listen: false);
             if (gameProvider.currentQuestionIndex < gameProvider.questions.length - 1) {
               gameProvider.nextQuestion();
             } else {
-              // Final question answered: mark match complete and return to options
-              final auth = Provider.of<AuthProvider>(context, listen: false);
-              if (auth.user != null) {
-                await Provider.of<GameProvider>(context, listen: false)
-                    .markCurrentMatchCompletedForUser(auth.user!.uid);
+              // Final question answered: attempt to save predictions and mark match complete, fallback on failure
+              final saved = await _submitScore(context, 0);
+              if (saved && auth.user != null) {
+                try {
+                  await Provider.of<GameProvider>(context, listen: false)
+                      .markCurrentMatchCompletedForUser(auth.user!.uid);
+                } catch (e) {
+                  // fallback
+                  Provider.of<GameProvider>(context, listen: false).clearCompletedMatches();
+                }
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Responses submitted.')),
-              );
-              gameProvider.resetGame();
-              Provider.of<GameProvider>(context, listen: false).clearTournamentSelection();
+              if (saved) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Responses submitted.')),
+                );
+                gameProvider.resetGame();
+                Provider.of<GameProvider>(context, listen: false).clearTournamentSelection();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Submission failed! Cleared local state for retry.')),
+                );
+                gameProvider.resetGame();
+                Provider.of<GameProvider>(context, listen: false).clearTournamentSelection();
+                Provider.of<GameProvider>(context, listen: false).clearCompletedMatches();
+              }
             }
           },
           child: Text(

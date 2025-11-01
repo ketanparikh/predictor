@@ -15,10 +15,42 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow write: if request.auth != null && request.auth.uid == userId;
 
-      // Allow user to manage any nested documents like completedMatches
+      // Allow admins to manage any user's completedMatches
+      match /completedMatches/{matchId} {
+        allow read, write: if request.auth != null && (
+          request.auth.uid == userId ||
+          exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        );
+      }
+
+      // Allow user to manage any other nested documents
       match /{document=**} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
+    }
+
+    // Public tournaments -> matches -> predictions (user can write only own prediction doc)
+    match /tournaments/{tournamentId} {
+      allow read: if true;
+      match /matches/{matchId} {
+        allow read: if true;
+        // Only admins can write the outcome doc (stored under meta/outcome)
+        match /meta/outcome {
+          allow read: if true;
+          allow write: if request.auth != null &&
+            exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+        }
+        match /predictions/{predictionUserId} {
+          allow read: if request.auth != null && request.auth.uid == predictionUserId;
+          allow write: if request.auth != null && request.auth.uid == predictionUserId;
+        }
+      }
+    }
+
+    // Admins collection: users can read their own admin flag; no client writes
+    match /admins/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
     }
   }
 }

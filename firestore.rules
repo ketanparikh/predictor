@@ -8,11 +8,19 @@ service cloud.firestore {
       
       // Only authenticated users can write scores
       allow write: if request.auth != null;
+      
+      // Allow admins to delete leaderboard entries
+      allow delete: if request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
     
     // Users collection (optional, for future features)
     match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
+      // Allow users to read/write their own doc, or admins to read any user doc
+      allow read: if request.auth != null && (
+        request.auth.uid == userId ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
       allow write: if request.auth != null && request.auth.uid == userId;
 
       // Allow admins to manage any user's completedMatches
@@ -32,17 +40,39 @@ service cloud.firestore {
     // Public tournaments -> matches -> predictions (user can write only own prediction doc)
     match /tournaments/{tournamentId} {
       allow read: if true;
+      // Allow admins to delete tournament documents
+      allow delete: if request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
       match /matches/{matchId} {
         allow read: if true;
+        // Allow admins to delete matches and all nested collections
+        allow delete: if request.auth != null &&
+          exists(/databases/$(database)/documents/admins/$(request.auth.uid));
         // Only admins can write the outcome doc (stored under meta/outcome)
         match /meta/outcome {
           allow read: if true;
           allow write: if request.auth != null &&
             exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+          // Allow admins to delete outcome docs
+          allow delete: if request.auth != null &&
+            exists(/databases/$(database)/documents/admins/$(request.auth.uid));
         }
         match /predictions/{predictionUserId} {
-          allow read: if request.auth != null && request.auth.uid == predictionUserId;
+          // Allow owner to read/write, or admin to read (for listing/deletion)
+          allow read: if request.auth != null && (
+            request.auth.uid == predictionUserId ||
+            exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+          );
           allow write: if request.auth != null && request.auth.uid == predictionUserId;
+          // Allow admins to delete any prediction
+          allow delete: if request.auth != null &&
+            exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+        }
+        match /scores/{scoreUserId} {
+          allow read: if true;
+          // Allow admins to delete scores
+          allow delete: if request.auth != null &&
+            exists(/databases/$(database)/documents/admins/$(request.auth.uid));
         }
       }
     }

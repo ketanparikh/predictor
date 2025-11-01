@@ -13,6 +13,16 @@ class AdminProvider with ChangeNotifier {
   bool get loading => _loading;
 
   AdminProvider() {
+    // Check current user immediately on initialization
+    final currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      _checkAdmin(currentUser.uid);
+    } else {
+      _loading = false;
+      notifyListeners();
+    }
+    
+    // Also listen for auth state changes
     _auth.authStateChanges().listen((user) {
       if (user == null) {
         _isAdmin = false;

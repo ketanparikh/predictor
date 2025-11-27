@@ -1,10 +1,9 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   User? _user;
 
   User? get user => _user;
@@ -26,34 +25,27 @@ class AuthProvider with ChangeNotifier {
 
   String? get errorMessage => _errorMessage;
 
-  /// Sign in with Google
+  /// Sign in with Google using Firebase Auth directly (works on web & mobile)
   Future<bool> signInWithGoogle() async {
     try {
       _errorMessage = null;
 
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      UserCredential userCredential;
 
-      if (googleUser == null) {
-        // User cancelled the sign-in
-        _errorMessage = 'Sign in cancelled';
-        return false;
+      if (kIsWeb) {
+        // For web: use signInWithPopup or signInWithRedirect
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+
+        userCredential = await _auth.signInWithPopup(googleProvider);
+      } else {
+        // For mobile: would use google_sign_in package
+        // But since we're web-only, this won't be reached
+        throw UnimplementedError('Mobile sign-in not implemented');
       }
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in to Firebase with the Google credential
-      final userCredential = await _auth.signInWithCredential(credential);
       _user = userCredential.user;
-
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
@@ -69,15 +61,21 @@ class AuthProvider with ChangeNotifier {
         case 'user-disabled':
           errorMsg = 'This account has been disabled.';
           break;
+        case 'popup-closed-by-user':
+          errorMsg = 'Sign in cancelled';
+          break;
+        case 'popup-blocked':
+          errorMsg = 'Popup was blocked. Please allow popups for this site.';
+          break;
       }
 
       _errorMessage = errorMsg;
-      print('Google sign in error: ${e.message}');
+      debugPrint('Google sign in error: ${e.code} - ${e.message}');
       notifyListeners();
       return false;
     } catch (e) {
       _errorMessage = 'An unexpected error occurred. Please try again.';
-      print('Google sign in error: $e');
+      debugPrint('Google sign in error: $e');
       notifyListeners();
       return false;
     }
@@ -179,11 +177,6 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> signOut() async {
-    try {
-      await _googleSignIn.signOut();
-    } catch (e) {
-      // Ignore Google sign out errors
-    }
     await _auth.signOut();
     _user = null;
     notifyListeners();

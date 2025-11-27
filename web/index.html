@@ -5,6 +5,11 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="JCPL - Jade Cricket Premier League Predictor">
 
+  <!-- Prevent caching -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <!-- Google Sign-In Client ID -->
   <meta name="google-signin-client_id" content="318152754285-sjail15869rot66dgan9qbpogke709is.apps.googleusercontent.com">
 
@@ -20,8 +25,15 @@
   <link rel="manifest" href="manifest.json">
 
   <script>
-    var serviceWorkerVersion = null;
-    var contentLoaded = false;
+    // Force service worker update on every page load
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (let registration of registrations) {
+          registration.update();
+        }
+      });
+    }
+    var serviceWorkerVersion = '{{flutter_service_worker_version}}';
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
@@ -35,7 +47,6 @@
         },
         onEntrypointLoaded: function(engineInitializer) {
           engineInitializer.initializeEngine().then(function(appRunner) {
-            contentLoaded = true;
             appRunner.runApp();
           });
         }

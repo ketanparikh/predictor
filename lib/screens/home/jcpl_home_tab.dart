@@ -41,10 +41,11 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
 
   void _startAdAutoScroll() {
     _adTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (_scheduleData != null && mounted) {
-        final ads = _scheduleData!['advertisements'] as List? ?? [];
-        if (ads.isNotEmpty) {
-          final nextIndex = (_currentAdIndex + 1) % ads.length;
+      if (mounted) {
+        final ads = _scheduleData?['advertisements'] as List? ?? [];
+        final totalItems = ads.length + _adImages.length;
+        if (totalItems > 0) {
+          final nextIndex = (_currentAdIndex + 1) % totalItems;
           _adPageController.animateToPage(
             nextIndex,
             duration: const Duration(milliseconds: 500),
@@ -181,28 +182,52 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     );
   }
 
+  // List of advertisement images
+  final List<String> _adImages = const [
+    'assets/images/DSC_0063.jpg',
+    'assets/images/DSC_9814.jpg',
+    'assets/images/DSC_9835.jpg',
+    'assets/images/DSC_9847.jpg',
+    'assets/images/DSC_9950.jpg',
+    'assets/images/DSC_9984.jpg',
+  ];
+
   Widget _buildAdvertisementsCarousel(BuildContext context) {
     final ads = _scheduleData?['advertisements'] as List? ?? [];
-    if (ads.isEmpty) return const SizedBox.shrink();
+    // +1 for the "Glimpses of JCPL 2" card before images
+    final totalItems = ads.length + 1 + _adImages.length;
+
+    if (totalItems == 0) return const SizedBox.shrink();
 
     return Column(
       children: [
         SizedBox(
-          height: 160,
+          height: 200,
           child: PageView.builder(
             controller: _adPageController,
             onPageChanged: (index) => setState(() => _currentAdIndex = index),
-            itemCount: ads.length,
+            itemCount: totalItems,
             itemBuilder: (context, index) {
-              final ad = ads[index];
-              return _buildAdCard(context, ad);
+              // First show text ads
+              if (index < ads.length) {
+                return _buildAdCard(context, ads[index]);
+              }
+              // Then show "Glimpses of JCPL 2" card
+              else if (index == ads.length) {
+                return _buildGlimpsesCard(context);
+              }
+              // Then show images
+              else {
+                return _buildAdImageCard(
+                    context, _adImages[index - ads.length - 1]);
+              }
             },
           ),
         ),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(ads.length, (index) {
+          children: List.generate(totalItems, (index) {
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -279,6 +304,108 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildGlimpsesCard(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.secondary,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.primary.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -30,
+            bottom: -30,
+            child: Icon(
+              Icons.photo_library,
+              size: 140,
+              color: Colors.white.withOpacity(0.1),
+            ),
+          ),
+          Positioned(
+            left: -20,
+            top: -20,
+            child: Icon(
+              Icons.camera_alt,
+              size: 80,
+              color: Colors.white.withOpacity(0.08),
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Glimpses of JCPL 2',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Swipe to see the memories →',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdImageCard(BuildContext context, String imagePath) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.asset(
+          imagePath,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

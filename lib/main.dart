@@ -30,11 +30,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AdminProvider()),
       ],
       child: MaterialApp(
-        title: 'JCPL-3',
+        title: 'JCPL',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
+        themeMode: ThemeMode.light,
         home: const SplashScreen(),
       ),
     );

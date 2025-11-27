@@ -26,7 +26,59 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin: Set Match Outcome'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.primary,
+                Colors.orange,
+                theme.colorScheme.primary.withOpacity(0.8),
+              ],
+              stops: const [0.0, 0.5, 1.0],
+            ),
+          ),
+        ),
+        title: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.25),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.admin_panel_settings,
+                  size: 22,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Admin: Set Match Outcome',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        elevation: 0,
       ),
       body: !loaded
           ? const Center(child: CircularProgressIndicator())
@@ -35,11 +87,18 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Text('Tournament:'),
-                      const SizedBox(width: 8),
-                      DropdownButton<String>(
+                  Card(
+                    elevation: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Icon(Icons.emoji_events, color: theme.colorScheme.primary),
+                          const SizedBox(width: 12),
+                          const Text('Tournament:', style: TextStyle(fontWeight: FontWeight.w600)),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: DropdownButton<String>(
                         value: _selectedTournamentId,
                         hint: const Text('Select tournament'),
                         items: [
@@ -53,12 +112,26 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
                             _correctAnswers.clear();
                             _points.clear();
                           });
-                        },
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 24),
-                      const Text('Match:'),
-                      const SizedBox(width: 8),
-                      DropdownButton<String>(
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Card(
+                    elevation: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Icon(Icons.sports_cricket, color: theme.colorScheme.secondary),
+                          const SizedBox(width: 12),
+                          const Text('Match:', style: TextStyle(fontWeight: FontWeight.w600)),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: DropdownButton<String>(
                         value: _selectedMatchId,
                         hint: const Text('Select match'),
                         items: [
@@ -82,9 +155,12 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
                           for (final q in gameProvider.questions) {
                             _points[q.id] = q.points;
                           }
-                        },
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 16),
                   if (_selectedTournamentId != null && _selectedMatchId != null)
@@ -94,16 +170,31 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
                         itemBuilder: (context, index) {
                           final q = gameProvider.questions[index];
                           return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
+                            margin: const EdgeInsets.only(bottom: 16),
+                            elevation: 3,
                             child: Padding(
-                              padding: const EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(16),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(q.question, style: theme.textTheme.titleMedium),
-                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.quiz, color: theme.colorScheme.primary),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          q.question,
+                                          style: theme.textTheme.titleMedium?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
                                   Wrap(
                                     spacing: 8,
+                                    runSpacing: 8,
                                     children: [
                                       for (final opt in q.options)
                                         ChoiceChip(
@@ -114,27 +205,58 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
                                               _correctAnswers[q.id] = opt;
                                             });
                                           },
+                                          selectedColor: theme.colorScheme.primary,
+                                          labelStyle: TextStyle(
+                                            color: _correctAnswers[q.id] == opt
+                                                ? Colors.white
+                                                : null,
+                                            fontWeight: _correctAnswers[q.id] == opt
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
                                         ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      const Text('Points:'),
-                                      const SizedBox(width: 8),
-                                      SizedBox(
-                                        width: 80,
-                                        child: TextFormField(
-                                          initialValue: _points[q.id]?.toString() ?? q.points.toString(),
-                                          keyboardType: TextInputType.number,
-                                          onChanged: (v) {
-                                            final p = int.tryParse(v) ?? q.points;
-                                            _points[q.id] = p;
-                                          },
+                                  const SizedBox(height: 12),
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.tertiary.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.stars,
+                                          color: theme.colorScheme.tertiary,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ],
-                                  )
+                                        const SizedBox(width: 8),
+                                        const Text('Points:', style: TextStyle(fontWeight: FontWeight.w600)),
+                                        const SizedBox(width: 12),
+                                        SizedBox(
+                                          width: 100,
+                                          child: TextFormField(
+                                            initialValue: _points[q.id]?.toString() ?? q.points.toString(),
+                                            keyboardType: TextInputType.number,
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              contentPadding: const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 8,
+                                              ),
+                                            ),
+                                            onChanged: (v) {
+                                              final p = int.tryParse(v) ?? q.points;
+                                              _points[q.id] = p;
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -144,18 +266,27 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
                     ),
                   const SizedBox(height: 8),
                   if (_selectedTournamentId != null && _selectedMatchId != null)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton.icon(
-                        onPressed: _submitting ? null : _submitOutcome,
-                        icon: _submitting
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : const Icon(Icons.save),
-                        label: const Text('Save Outcome'),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _submitting ? null : _submitOutcome,
+                          icon: _submitting
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.save, size: 24),
+                          label: const Text(
+                            'Save Match Outcome',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                        ),
                       ),
                     ),
                 ],

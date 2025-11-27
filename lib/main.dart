@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AdminProvider()),
       ],
       child: MaterialApp(
-        title: 'Cricket Predictor',
+        title: 'JCPL-3',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
@@ -40,4 +40,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

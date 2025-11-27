@@ -34,14 +34,14 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _navigateToNext() async {
     await Future.delayed(const Duration(seconds: 3));
-    
+
     if (!mounted) return;
-    
+
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await authProvider.checkAuthState();
-    
+
     if (!mounted) return;
-    
+
     if (authProvider.user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -62,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -72,7 +72,9 @@ class _SplashScreenState extends State<SplashScreen>
             colors: [
               theme.colorScheme.primary,
               theme.colorScheme.secondary,
+              theme.colorScheme.tertiary,
             ],
+            stops: const [0.0, 0.5, 1.0],
           ),
         ),
         child: Center(
@@ -81,39 +83,98 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.sports_cricket,
-                  size: 120,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 20,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Cricket Predictor',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
+                // Animated cricket icon container
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 30,
+                        spreadRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.sports_cricket,
+                    size: 120,
                     color: Colors.white,
-                    letterSpacing: 2,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.5),
+                        blurRadius: 20,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+                // App name with gradient - JCPL-3
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [Colors.white, Colors.amber, Colors.white],
+                  ).createShader(bounds),
+                  child: const Text(
+                    'JCPL-3',
+                    style: TextStyle(
+                      fontSize: 56,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 6,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  'Predict. Play. Win.',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white.withOpacity(0.9),
-                    letterSpacing: 1,
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(color: Colors.white.withOpacity(0.3)),
                   ),
+                  child: Text(
+                    'Jade Cricket Premier League',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withOpacity(0.95),
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.emoji_events,
+                      color: Colors.amber.shade200,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Season 3',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.amber.shade200,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.emoji_events,
+                      color: Colors.amber.shade200,
+                      size: 24,
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 48),
                 CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 3,
                 ),
               ],
             ),
@@ -123,4 +184,3 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 }
-

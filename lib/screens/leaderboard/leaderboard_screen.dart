@@ -44,11 +44,21 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Tournament selection list
-                    Text(
-                      'Select Tournament',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.emoji_events,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Select Tournament',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                   SizedBox(
@@ -79,13 +89,30 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
-                                      Icons.emoji_events,
-                                      color: isSelected
-                                          ? Theme.of(context).colorScheme.onPrimaryContainer
-                                          : Theme.of(context).colorScheme.primary,
-                                      size: 28,
-                                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: isSelected
+                            ? LinearGradient(
+                                colors: [
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.secondary,
+                                ],
+                              )
+                            : null,
+                        color: !isSelected
+                            ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                            : null,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.emoji_events,
+                        color: isSelected
+                            ? Colors.white
+                            : Theme.of(context).colorScheme.primary,
+                        size: 32,
+                      ),
+                    ),
                                     const SizedBox(height: 6),
                                     Flexible(
                                       child: Text(
@@ -117,12 +144,34 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   // Leaderboard for selected tournament
                   if (_selectedTournamentId != null) ...[
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Text(
-                        'Leaderboard',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.secondary,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            child: const Icon(
+                              Icons.leaderboard,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Leaderboard',
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
                       ),
                     ),
                     Expanded(
@@ -141,13 +190,43 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.leaderboard_outlined, size: 80, color: Colors.grey[400]),
-                                      const SizedBox(height: 16),
-                                      const Text('No scores yet for this tournament'),
-                                      const SizedBox(height: 8),
+                                      Container(
+                                        padding: const EdgeInsets.all(24),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.leaderboard_outlined,
+                                          size: 64,
+                                          color: Colors.grey[400],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 24),
                                       Text(
-                                        'Be the first to play and set a record!',
-                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                                        'No scores yet for this tournament',
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          color: Colors.grey[700],
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.emoji_events,
+                                            size: 20,
+                                            color: Colors.grey[500],
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            'Be the first to play and set a record!',
+                                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -176,61 +255,144 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     
     Color medalColor;
     IconData medalIcon;
+    String rankText;
     
     if (index == 0) {
-      medalColor = Colors.amber;
-      medalIcon = Icons.looks_one;
+      medalColor = const Color(0xFFFFD700); // Gold
+      medalIcon = Icons.emoji_events;
+      rankText = '🥇';
     } else if (index == 1) {
-      medalColor = Colors.grey[400]!;
-      medalIcon = Icons.looks_two;
+      medalColor = const Color(0xFFC0C0C0); // Silver
+      medalIcon = Icons.emoji_events;
+      rankText = '🥈';
     } else if (index == 2) {
-      medalColor = Colors.brown;
-      medalIcon = Icons.looks_3;
+      medalColor = const Color(0xFFCD7F32); // Bronze
+      medalIcon = Icons.emoji_events;
+      rankText = '🥉';
     } else {
       medalColor = theme.colorScheme.primary;
       medalIcon = Icons.person;
+      rankText = '${index + 1}';
     }
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      elevation: isTopThree ? 4 : 1,
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: isTopThree ? medalColor.withOpacity(0.2) : theme.colorScheme.primary.withOpacity(0.1),
-          child: Icon(
-            medalIcon,
-            color: isTopThree ? medalColor : theme.colorScheme.primary,
-          ),
-        ),
-        title: Text(
-          entry.userName,
-          style: TextStyle(
-            fontWeight: isTopThree ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        subtitle: Text(
-          _formatDate(entry.timestamp),
-          style: theme.textTheme.bodySmall,
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              '${entry.score} pts',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-              ),
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: isTopThree ? 6 : 3,
+      child: Container(
+        decoration: isTopThree
+            ? BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    medalColor.withOpacity(0.15),
+                    medalColor.withOpacity(0.05),
+                  ],
+                ),
+                border: Border.all(
+                  color: medalColor.withOpacity(0.3),
+                  width: 1.5,
+                ),
+              )
+            : null,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              gradient: isTopThree
+                  ? LinearGradient(
+                      colors: [
+                        medalColor.withOpacity(0.3),
+                        medalColor.withOpacity(0.1),
+                      ],
+                    )
+                  : null,
+              color: !isTopThree ? theme.colorScheme.primary.withOpacity(0.1) : null,
+              shape: BoxShape.circle,
             ),
-            Text(
-              '#${index + 1}',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
-              ),
+            child: Center(
+              child: isTopThree
+                  ? Text(
+                      rankText,
+                      style: const TextStyle(fontSize: 28),
+                    )
+                  : Icon(
+                      medalIcon,
+                      color: theme.colorScheme.primary,
+                      size: 28,
+                    ),
             ),
-          ],
+          ),
+          title: Text(
+            entry.userName,
+            style: TextStyle(
+              fontWeight: isTopThree ? FontWeight.bold : FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+          subtitle: Row(
+            children: [
+              Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
+              const SizedBox(width: 4),
+              Text(
+                _formatDate(entry.timestamp),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.secondary,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.primary.withOpacity(0.3),
+                  blurRadius: 8,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.stars, size: 14, color: Colors.white),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${entry.score}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'pts',
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.white.withOpacity(0.9),
+                    height: 1.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       // For signup, get the name
       final name = _nameController.text.trim();
-      
+
       success = await authProvider.signUpWithEmailPassword(
         _emailController.text.trim(),
         _passwordController.text,
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _isLogin 
+            _isLogin
                 ? 'Login successful!'
                 : 'Registration successful! Welcome!',
           ),
@@ -68,21 +68,21 @@ class _LoginScreenState extends State<LoginScreen> {
           duration: const Duration(seconds: 2),
         ),
       );
-      
+
       // Navigate after a brief delay
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const LetsPlaySplashScreen()),
       );
     } else {
       // Show specific error message from auth provider
-      final errorMessage = authProvider.errorMessage ?? 
-          (_isLogin 
+      final errorMessage = authProvider.errorMessage ??
+          (_isLogin
               ? 'Login failed. Please try again.'
               : 'Registration failed. Please try again.');
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
@@ -96,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -122,41 +122,113 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.sports_cricket,
-                          size: 80,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Cricket Predictor',
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary,
+                        // Enhanced cricket icon with container
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary,
+                                theme.colorScheme.secondary,
+                              ],
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    theme.colorScheme.primary.withOpacity(0.3),
+                                blurRadius: 20,
+                                spreadRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.sports_cricket,
+                            size: 60,
+                            color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        // Mode indicator
+                        const SizedBox(height: 20),
+                        ShaderMask(
+                          shaderCallback: (bounds) => LinearGradient(
+                            colors: [
+                              theme.colorScheme.primary,
+                              theme.colorScheme.secondary,
+                            ],
+                          ).createShader(bounds),
+                          child: const Text(
+                            'JCPL-3',
+                            style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              letterSpacing: 3,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Jade Cricket Premier League',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: theme.colorScheme.primary.withOpacity(0.8),
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Enhanced mode indicator
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                            horizontal: 20,
+                            vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: _isLogin
-                                ? theme.colorScheme.primary.withOpacity(0.1)
-                                : theme.colorScheme.secondary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            _isLogin ? 'Login Mode' : 'Sign Up Mode',
-                            style: TextStyle(
-                              color: _isLogin
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.secondary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                            gradient: LinearGradient(
+                              colors: _isLogin
+                                  ? [
+                                      theme.colorScheme.primary
+                                          .withOpacity(0.15),
+                                      theme.colorScheme.primary
+                                          .withOpacity(0.05),
+                                    ]
+                                  : [
+                                      theme.colorScheme.secondary
+                                          .withOpacity(0.15),
+                                      theme.colorScheme.secondary
+                                          .withOpacity(0.05),
+                                    ],
                             ),
+                            borderRadius: BorderRadius.circular(25),
+                            border: Border.all(
+                              color: _isLogin
+                                  ? theme.colorScheme.primary.withOpacity(0.3)
+                                  : theme.colorScheme.secondary
+                                      .withOpacity(0.3),
+                              width: 2,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                _isLogin ? Icons.login : Icons.person_add,
+                                size: 18,
+                                color: _isLogin
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.secondary,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _isLogin ? 'Login Mode' : 'Sign Up Mode',
+                                style: TextStyle(
+                                  color: _isLogin
+                                      ? theme.colorScheme.primary
+                                      : theme.colorScheme.secondary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -164,9 +236,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (!_isLogin) ...[
                           TextFormField(
                             controller: _nameController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Full Name',
-                              prefixIcon: Icon(Icons.person),
+                              prefixIcon: Icon(
+                                Icons.person,
+                                color: theme.colorScheme.primary,
+                              ),
                               hintText: 'Enter your full name',
                             ),
                             textCapitalization: TextCapitalization.words,
@@ -184,9 +259,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                         TextFormField(
                           controller: _emailController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Email',
-                            prefixIcon: Icon(Icons.email),
+                            prefixIcon: Icon(
+                              Icons.email_outlined,
+                              color: theme.colorScheme.primary,
+                            ),
                           ),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
@@ -202,9 +280,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _passwordController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Password',
-                            prefixIcon: Icon(Icons.lock),
+                            prefixIcon: Icon(
+                              Icons.lock_outline,
+                              color: theme.colorScheme.primary,
+                            ),
                           ),
                           obscureText: true,
                           validator: (value) {
@@ -220,11 +301,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 24),
                         SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton(
+                          child: ElevatedButton.icon(
                             onPressed: _isLoading ? null : _handleAuth,
-                            child: _isLoading
-                                ? const CircularProgressIndicator()
-                                : Text(_isLogin ? 'Login' : 'Sign Up'),
+                            icon: _isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  )
+                                : Icon(
+                                    _isLogin ? Icons.login : Icons.person_add),
+                            label: Text(_isLogin ? 'Login' : 'Sign Up'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -255,4 +346,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-

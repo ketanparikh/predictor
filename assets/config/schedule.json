@@ -1,0 +1,262 @@
+{
+  "tournament": {
+    "name": "JCPL-3",
+    "fullName": "Jade Cricket Premier League - Season 3",
+    "season": 3,
+    "venue": "Trooferz",
+    "startDate": "10-01-2026",
+    "endDate": "18-01-2026"
+  },
+  "categories": [
+    {
+      "id": "mens",
+      "name": "Men's Category",
+      "icon": "sports_cricket",
+      "color": "#1565C0"
+    },
+    {
+      "id": "womens", 
+      "name": "Women's Category",
+      "icon": "sports_cricket",
+      "color": "#AD1457"
+    },
+    {
+      "id": "boys",
+      "name": "Boys Category",
+      "icon": "sports_cricket",
+      "color": "#2E7D32"
+    }
+  ],
+  "matches": [
+    {
+      "id": "match_1",
+      "category": "mens",
+      "matchNumber": 1,
+      "team1": "Thunder Kings",
+      "team2": "Royal Strikers",
+      "date": "2025-12-01",
+      "time": "09:00 AM",
+      "venue": "Main Ground",
+      "status": "upcoming"
+    },
+    {
+      "id": "match_2",
+      "category": "womens",
+      "matchNumber": 1,
+      "team1": "Diamond Queens",
+      "team2": "Phoenix Stars",
+      "date": "2025-12-01",
+      "time": "02:00 PM",
+      "venue": "Main Ground",
+      "status": "upcoming"
+    },
+    {
+      "id": "match_3",
+      "category": "boys",
+      "matchNumber": 1,
+      "team1": "Young Warriors",
+      "team2": "Rising Tigers",
+      "date": "2025-12-02",
+      "time": "09:00 AM",
+      "venue": "Main Ground",
+      "status": "upcoming"
+    },
+    {
+      "id": "match_4",
+      "category": "mens",
+      "matchNumber": 2,
+      "team1": "Storm Riders",
+      "team2": "Eagle Warriors",
+      "date": "2025-12-03",
+      "time": "09:00 AM",
+      "venue": "Main Ground",
+      "status": "upcoming"
+    },
+    {
+      "id": "match_5",
+      "category": "womens",
+      "matchNumber": 2,
+      "team1": "Silver Arrows",
+      "team2": "Golden Eagles",
+      "date": "2025-12-04",
+      "time": "09:00 AM",
+      "venue": "Main Ground",
+      "status": "upcoming"
+    },
+    {
+      "id": "match_6",
+      "category": "boys",
+      "matchNumber": 2,
+      "team1": "Junior Lions",
+      "team2": "Super Cubs",
+      "date": "2025-12-05",
+      "time": "09:00 AM",
+      "venue": "Main Ground",
+      "status": "upcoming"
+    },
+    {
+      "id": "match_sf1",
+      "category": "mens",
+      "matchNumber": 3,
+      "team1": "TBD",
+      "team2": "TBD",
+      "date": "2025-12-10",
+      "time": "09:00 AM",
+      "venue": "Main Ground",
+      "status": "upcoming",
+      "stage": "Semi Final 1"
+    },
+    {
+      "id": "match_sf2",
+      "category": "womens",
+      "matchNumber": 3,
+      "team1": "TBD",
+      "team2": "TBD",
+      "date": "2025-12-11",
+      "time": "09:00 AM",
+      "venue": "Main Ground",
+      "status": "upcoming",
+      "stage": "Semi Final"
+    },
+    {
+      "id": "match_final_mens",
+      "category": "mens",
+      "matchNumber": 4,
+      "team1": "TBD",
+      "team2": "TBD",
+      "date": "2025-12-15",
+      "time": "09:00 AM",
+      "venue": "Main Ground",
+      "status": "upcoming",
+      "stage": "Final"
+    },
+    {
+      "id": "match_final_womens",
+      "category": "womens",
+      "matchNumber": 4,
+      "team1": "TBD",
+      "team2": "TBD",
+      "date": "2025-12-15",
+      "time": "02:00 PM",
+      "venue": "Main Ground",
+      "status": "upcoming",
+      "stage": "Final"
+    }
+  ],
+  "sponsors": [
+    {
+      "id": "sponsor_title",
+      "name": "Jade Enterprises",
+      "type": "title",
+      "logoPlaceholder": "JE",
+      "description": "Proud Title Sponsor of JCPL-3. Building dreams, empowering communities.",
+      "tagline": "Title Sponsor",
+      "contact": "info@jadeenterprises.com"
+    },
+    {
+      "id": "sponsor_g1",
+      "name": "Royal Motors",
+      "type": "gold",
+      "logoPlaceholder": "RM",
+      "description": "Premium automobile dealership serving the community since 1995."
+    },
+    {
+      "id": "sponsor_g2",
+      "name": "Green Valley Foods",
+      "type": "gold",
+      "logoPlaceholder": "GVF",
+      "description": "Fresh, organic produce delivered to your doorstep."
+    },
+    {
+      "id": "sponsor_g3",
+      "name": "Tech Solutions",
+      "type": "gold",
+      "logoPlaceholder": "TS",
+      "description": "Your trusted IT partner for digital transformation."
+    },
+    {
+      "id": "sponsor_g4",
+      "name": "City Hospital",
+      "type": "gold",
+      "logoPlaceholder": "CH",
+      "description": "World-class healthcare services for all."
+    },
+    {
+      "id": "sponsor_g5",
+      "name": "Prime Realty",
+      "type": "gold",
+      "logoPlaceholder": "PR",
+      "description": "Find your dream home with us."
+    },
+    {
+      "id": "sponsor_g6",
+      "name": "Fashion Hub",
+      "type": "gold",
+      "logoPlaceholder": "FH",
+      "description": "Trending styles for the modern you."
+    },
+    {
+      "id": "sponsor_g7",
+      "name": "Elite Fitness",
+      "type": "gold",
+      "logoPlaceholder": "EF",
+      "description": "Transform your life through fitness."
+    },
+    {
+      "id": "sponsor_g8",
+      "name": "Sunrise Jewellers",
+      "type": "gold",
+      "logoPlaceholder": "SJ",
+      "description": "Exquisite jewelry for every occasion."
+    },
+    {
+      "id": "sponsor_g9",
+      "name": "Metro Builders",
+      "type": "gold",
+      "logoPlaceholder": "MB",
+      "description": "Quality construction you can trust."
+    },
+    {
+      "id": "sponsor_g10",
+      "name": "Cafe Delight",
+      "type": "gold",
+      "logoPlaceholder": "CD",
+      "description": "Where every cup tells a story."
+    },
+    {
+      "id": "sponsor_g11",
+      "name": "Smart Electronics",
+      "type": "gold",
+      "logoPlaceholder": "SE",
+      "description": "Latest gadgets at best prices."
+    },
+    {
+      "id": "sponsor_g12",
+      "name": "Wellness Pharmacy",
+      "type": "gold",
+      "logoPlaceholder": "WP",
+      "description": "Your health is our priority."
+    }
+  ],
+  "advertisements": [
+    {
+      "id": "ad_1",
+      "title": "Welcome to JCPL-3!",
+      "subtitle": "The biggest cricket tournament of Jade",
+      "color": "#1565C0"
+    },
+    {
+      "id": "ad_2",
+      "title": "Predict & Win!",
+      "subtitle": "Play the Predictor Game and top the leaderboard",
+      "color": "#AD1457"
+    },
+    {
+      "id": "ad_3",
+      "title": "Season 3 is Here!",
+      "subtitle": "More teams, more matches, more excitement",
+      "color": "#2E7D32"
+    }
+  ]
+}
+

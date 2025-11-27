@@ -180,9 +180,35 @@ On write to `.../outcome`, the function:
    - Set public directory as `build/web`
 
 5. **Deploy**
+
+   **Quick Deployment (Recommended):**
+   
+   **Windows Users:**
+   
+   PowerShell (Recommended):
+   ```powershell
+   .\deploy.ps1
+   ```
+   
+   Or Command Prompt:
+   ```cmd
+   deploy.bat
+   ```
+   
+   ⚠️ Note: `deploy.sh` is for Linux/Mac only. On Windows, use `deploy.ps1` or `deploy.bat`.
+   
+   **Linux/Mac Users:**
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+   
+   **Manual Deployment:**
    ```bash
    firebase deploy
    ```
+   
+   For detailed deployment instructions, see [README_DEPLOYMENT.md](README_DEPLOYMENT.md)
 
 ## 🛠️ Technologies Used
 

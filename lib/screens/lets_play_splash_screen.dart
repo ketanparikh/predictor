@@ -64,39 +64,119 @@ class _LetsPlaySplashScreenState extends State<LetsPlaySplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Enhanced cricket icon with animation effect
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withOpacity(0.25),
                     shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 40,
+                        spreadRadius: 5,
+                      ),
+                    ],
                   ),
-                  child: const Icon(
-                    Icons.sports_cricket,
-                    size: 100,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  "Let's Play!",
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Loading your game... ',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white.withOpacity(0.95),
-                    fontWeight: FontWeight.w500,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                        Icons.sports_cricket,
+                        size: 120,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.5),
+                            blurRadius: 25,
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                        right: 10,
+                        top: 15,
+                        child: Icon(
+                          Icons.emoji_events,
+                          size: 40,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 32),
-                const CircularProgressIndicator(
+                // JCPL-3 branding
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [Colors.white, Colors.amber, Colors.white],
+                  ).createShader(bounds),
+                  child: const Text(
+                    'JCPL-3',
+                    style: TextStyle(
+                      fontSize: 42,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 4,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Jade Cricket Premier League',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white.withOpacity(0.9),
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Enhanced "Let's Play!" text
+                const Text(
+                  "Let's Play!",
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 2,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black45,
+                        blurRadius: 15,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.sports_cricket,
+                      color: Colors.amber.shade200,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Loading your game...',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white.withOpacity(0.95),
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.sports_cricket,
+                      color: Colors.amber.shade200,
+                      size: 24,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
+                CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 4,
                 ),
               ],
             ),
@@ -106,5 +186,3 @@ class _LetsPlaySplashScreenState extends State<LetsPlaySplashScreen>
     );
   }
 }
-
-

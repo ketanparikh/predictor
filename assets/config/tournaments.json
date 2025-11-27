@@ -2,7 +2,7 @@
   "tournaments": [
     {
       "id": "t1",
-      "name": "Mens Tournament",
+      "name": "Mens",
       "matches": [
         {
           "id": "m1",
@@ -20,7 +20,7 @@
     },
     {
       "id": "t2",
-      "name": "Womens Tournament",
+      "name": "Womens",
       "matches": [
         {
           "id": "m3",
@@ -32,7 +32,7 @@
     },
     {
       "id": "t3",
-      "name": "Boys Tournament",
+      "name": "Boys",
       "matches": [
         {
           "id": "m4",

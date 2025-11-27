@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:html' as html;
 
 class JcplHomeTab extends StatefulWidget {
   final Function(int) onNavigateToTab;
@@ -21,6 +22,11 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
   int _currentSponsorIndex = 0;
   Timer? _adTimer;
   Timer? _sponsorTimer;
+  Timer? _countdownTimer;
+
+  // Tournament start date - 10th Jan 2026
+  final DateTime _tournamentDate = DateTime(2026, 1, 10, 9, 0, 0);
+  Duration _timeRemaining = Duration.zero;
 
   @override
   void initState() {
@@ -28,6 +34,26 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     _loadScheduleData();
     _startAdAutoScroll();
     _startSponsorAutoScroll();
+    _startCountdown();
+  }
+
+  void _startCountdown() {
+    _updateTimeRemaining();
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _updateTimeRemaining();
+    });
+  }
+
+  void _updateTimeRemaining() {
+    final now = DateTime.now();
+    if (mounted) {
+      setState(() {
+        _timeRemaining = _tournamentDate.difference(now);
+        if (_timeRemaining.isNegative) {
+          _timeRemaining = Duration.zero;
+        }
+      });
+    }
   }
 
   @override
@@ -36,6 +62,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     _sponsorPageController.dispose();
     _adTimer?.cancel();
     _sponsorTimer?.cancel();
+    _countdownTimer?.cancel();
     super.dispose();
   }
 
@@ -100,6 +127,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeroSection(context),
+            _buildCountdownAndRegistration(context),
             _buildAdvertisementsCarousel(context),
             _buildSponsorsSection(context),
             _buildUpcomingMatchesPreview(context),
@@ -178,6 +206,203 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCountdownAndRegistration(BuildContext context) {
+    final theme = Theme.of(context);
+    final days = _timeRemaining.inDays;
+    final hours = _timeRemaining.inHours.remainder(24);
+    final minutes = _timeRemaining.inMinutes.remainder(60);
+    final seconds = _timeRemaining.inSeconds.remainder(60);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.deepPurple.shade600,
+            Colors.purple.shade400,
+            Colors.pink.shade400,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.purple.withOpacity(0.4),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Registrations Open Badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.greenAccent.shade400,
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.greenAccent.withOpacity(0.5),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white.withOpacity(0.8),
+                        blurRadius: 8,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Text(
+                  '🎉 REGISTRATIONS OPEN!',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          // Tournament Starts In
+          Text(
+            'JCPL Season 3 Starts In',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Countdown Timer
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildCountdownItem(
+                  days.toString().padLeft(2, '0'), 'DAYS', Colors.amber),
+              _buildCountdownSeparator(),
+              _buildCountdownItem(
+                  hours.toString().padLeft(2, '0'), 'HRS', Colors.cyan),
+              _buildCountdownSeparator(),
+              _buildCountdownItem(minutes.toString().padLeft(2, '0'), 'MIN',
+                  Colors.lightGreenAccent),
+              _buildCountdownSeparator(),
+              _buildCountdownItem(
+                  seconds.toString().padLeft(2, '0'), 'SEC', Colors.pinkAccent),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // Register Now Button
+          ElevatedButton(
+            onPressed: () {
+              html.window.open(
+                  'https://docs.google.com/forms/d/e/1FAIpQLSeBlMHdbsJVnpRTG3m48LT2IAyyRrJ9z0GriJSNbZFqfr6M2w/viewform',
+                  '_blank');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.deepPurple,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 8,
+              shadowColor: Colors.black38,
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.sports_cricket, size: 20),
+                SizedBox(width: 8),
+                Text(
+                  'JOIN NOW',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+                SizedBox(width: 4),
+                Icon(Icons.arrow_forward, size: 18),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCountdownItem(String value, String label, Color color) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: color.withOpacity(0.5),
+              width: 2,
+            ),
+          ),
+          child: Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'monospace',
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCountdownSeparator() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Text(
+        ':',
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.7),
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

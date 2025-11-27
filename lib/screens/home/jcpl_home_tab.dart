@@ -132,7 +132,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
               colors: [Colors.white, Colors.amber, Colors.white],
             ).createShader(bounds),
             child: const Text(
-              'JCPL-3',
+              'JCPL',
               style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.w900,
@@ -653,7 +653,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
             const SizedBox(height: 24),
             // Thank you message
             Text(
-              'Thank you for supporting JCPL-3! 🏏',
+              'Thank you for supporting JCPL! 🏏',
               style: TextStyle(
                 color: Colors.grey.shade500,
                 fontSize: 13,

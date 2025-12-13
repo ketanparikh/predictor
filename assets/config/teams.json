@@ -1,0 +1,77 @@
+{
+  "teams": [
+    {
+      "id": "team_1",
+      "sponsor": "Sujal Mudliar",
+      "captain": "Akshay Pore",
+      "viceCaptain": "Ayush Asawa"
+    },
+    {
+      "id": "team_2",
+      "sponsor": "Mahesh Kulkarni",
+      "captain": "Mahesh Kulkarni",
+      "viceCaptain": "Vinay Korlepara"
+    },
+    {
+      "id": "team_3",
+      "sponsor": "Ganesh Raghuram",
+      "captain": "Ganesh Raghuram",
+      "viceCaptain": "Aditya Joshi"
+    },
+    {
+      "id": "team_4",
+      "sponsor": "Priyank Agarwal",
+      "captain": "Amol Pawar",
+      "viceCaptain": "Pankaj Guglani"
+    },
+    {
+      "id": "team_5",
+      "sponsor": "Saket Newaskar",
+      "captain": "Saket Newaskar",
+      "viceCaptain": "Tanmay Shahane"
+    },
+    {
+      "id": "team_6",
+      "sponsor": "Ranjan",
+      "captain": "Vedant Rathi",
+      "viceCaptain": "Kabir Vaidya"
+    },
+    {
+      "id": "team_7",
+      "sponsor": "Ayush Jain",
+      "captain": "Kiran Jagtap",
+      "viceCaptain": "Paras Bheda"
+    },
+    {
+      "id": "team_8",
+      "sponsor": "Juhi Mittal",
+      "captain": "Avinash Gupta",
+      "viceCaptain": "Mandar Dehadrai"
+    },
+    {
+      "id": "team_9",
+      "sponsor": "Amit Gupta",
+      "captain": "Amit Gupta",
+      "viceCaptain": "Ashish Singh"
+    },
+    {
+      "id": "team_10",
+      "sponsor": "Shyamsunder Mandava",
+      "captain": "Dinesh Mandava",
+      "viceCaptain": "Akshay Wardhane"
+    },
+    {
+      "id": "team_11",
+      "sponsor": "Siddharth Pednekar",
+      "captain": "Siddharth Pednekar",
+      "viceCaptain": "Dipal Panchal"
+    },
+    {
+      "id": "team_12",
+      "sponsor": "Dhruv Jhalani",
+      "captain": "Dhruv Jhalani",
+      "viceCaptain": "Ketan Parikh"
+    }
+  ]
+}
+

@@ -7,6 +7,7 @@ import 'screens/splash_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/game_provider.dart';
 import 'providers/admin_provider.dart';
+import 'providers/auction_provider.dart';
 import 'theme/app_theme.dart';
 import 'firebase_options.dart';
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => GameProvider()),
         ChangeNotifierProvider(create: (_) => AdminProvider()),
+        ChangeNotifierProvider(create: (_) => AuctionProvider()),
       ],
       child: MaterialApp(
         title: 'JCPL',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/game_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/admin_provider.dart';
 import '../../services/prediction_service.dart';
 import '../../models/tournament.dart';
 import '../leaderboard/leaderboard_screen.dart';
@@ -65,6 +66,14 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final adminProvider = Provider.of<AdminProvider>(context);
+
+    // Show Coming Soon for non-admin users
+    if (!adminProvider.isAdmin) {
+      return _buildComingSoon(context);
+    }
+
+    // Admin users get access to the full game
     return Consumer<GameProvider>(
       builder: (context, gameProvider, child) {
         // Ensure completed matches are loaded for this user
@@ -104,6 +113,203 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
     );
   }
 
+  Widget _buildComingSoon(BuildContext context) {
+    final theme = Theme.of(context);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          // Cricket ball icon with glow - same as Schedule page
+          Container(
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  theme.colorScheme.primary.withOpacity(0.15),
+                  theme.colorScheme.secondary.withOpacity(0.15),
+                ],
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.primary.withOpacity(0.2),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.sports_cricket,
+              size: 70,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: 28),
+          // Coming Soon Text - same as Schedule page
+          ShaderMask(
+            shaderCallback: (bounds) => LinearGradient(
+              colors: [
+                theme.colorScheme.primary,
+                theme.colorScheme.secondary,
+              ],
+            ).createShader(bounds),
+            child: const Text(
+              'Coming Soon!',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.sports_cricket,
+                  size: 20, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                'Predictor Game',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey.shade700,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.sports_cricket,
+                  size: 20, color: theme.colorScheme.primary),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Get ready to predict match outcomes\nand win exciting prizes!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade500,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 28),
+          // Vibrant Tournament Date Badge - same orange as Schedule page
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFFF6B35), // Vibrant orange
+                  Color(0xFFFF8E53), // Light orange
+                  Color(0xFFFFC371), // Golden orange
+                ],
+              ),
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFF6B35).withOpacity(0.4),
+                  blurRadius: 15,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.25),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.sports_cricket,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'GAME STARTS',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      '10th January 2026',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.emoji_events,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          // Info cards
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildInfoBadge(Icons.quiz, 'Predict'),
+              const SizedBox(width: 10),
+              _buildInfoBadge(Icons.emoji_events, 'Win'),
+              const SizedBox(width: 10),
+              _buildInfoBadge(Icons.leaderboard, 'Compete'),
+            ],
+          ),
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoBadge(IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.orange.shade50,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.orange.shade200),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18, color: Colors.deepOrange),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: TextStyle(
+              color: Colors.deepOrange.shade700,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMainMenu(BuildContext context, bool loaded) {
     final theme = Theme.of(context);
 
@@ -138,7 +344,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Test your cricket knowledge and compete!',
+            'Predict match outcomes and win exciting prizes!',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: Colors.grey[600],
             ),
@@ -1152,17 +1358,14 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                       gameProvider.questions.length - 1) {
                     gameProvider.nextQuestion();
                   } else {
-                    // Final question answered: attempt to save predictions and mark match complete, fallback on failure
+                    // Final question answered: attempt to save predictions and mark match complete
                     final saved = await _submitScore(context, 0);
                     if (saved && auth.user != null) {
-                      try {
-                        await Provider.of<GameProvider>(context, listen: false)
-                            .markCurrentMatchCompletedForUser(auth.user!.uid);
-                      } catch (e) {
-                        // fallback
-                        Provider.of<GameProvider>(context, listen: false)
-                            .clearCompletedMatches();
-                      }
+                      final gp =
+                          Provider.of<GameProvider>(context, listen: false);
+                      // Turn off any test-unblock override so completion is respected
+                      gp.setTestUnblock(false);
+                      await gp.markCurrentMatchCompletedForUser(auth.user!.uid);
                     }
                     if (saved) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -1180,8 +1383,6 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                       gameProvider.resetGame();
                       Provider.of<GameProvider>(context, listen: false)
                           .clearTournamentSelection();
-                      Provider.of<GameProvider>(context, listen: false)
-                          .clearCompletedMatches();
                     }
                   }
                 },

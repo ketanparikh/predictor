@@ -190,34 +190,44 @@ class _LoginScreenState extends State<LoginScreen>
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Sign in to predict and win',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
                         const SizedBox(height: 32),
-                        // Google Sign-In Button
-                        SizedBox(
+                        // Google Sign-In Button - Highlighted
+                        Container(
                           width: double.infinity,
-                          child: OutlinedButton(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary,
+                                theme.colorScheme.secondary,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    theme.colorScheme.primary.withOpacity(0.4),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleGoogleSignIn,
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              side: BorderSide(color: Colors.grey.shade300),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(16),
                               ),
                             ),
                             child: _isLoading
-                                ? SizedBox(
+                                ? const SizedBox(
                                     width: 24,
                                     height: 24,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: theme.colorScheme.primary,
+                                      color: Colors.white,
                                     ),
                                   )
                                 : Row(
@@ -225,12 +235,12 @@ class _LoginScreenState extends State<LoginScreen>
                                     children: [
                                       // Google logo
                                       Container(
-                                        width: 24,
-                                        height: 24,
+                                        width: 28,
+                                        height: 28,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           borderRadius:
-                                              BorderRadius.circular(4),
+                                              BorderRadius.circular(6),
                                         ),
                                         child: Center(
                                           child: Text(
@@ -245,25 +255,16 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                       const SizedBox(width: 12),
                                       const Text(
-                                        'Continue with Google',
+                                        'Sign in with Google',
                                         style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ],
                                   ),
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        // Terms text
-                        Text(
-                          'By signing in, you agree to our Terms of Service',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[500],
-                          ),
-                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),

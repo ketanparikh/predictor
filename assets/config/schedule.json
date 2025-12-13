@@ -146,96 +146,111 @@
   "sponsors": [
     {
       "id": "sponsor_title",
-      "name": "Jade Enterprises",
+      "name": "Ace Prime Infra",
       "type": "title",
-      "logoPlaceholder": "JE",
-      "description": "Proud Title Sponsor of JCPL-3. Building dreams, empowering communities.",
+      "logoPlaceholder": "API",
+      "description": "Proud Title Sponsor of JCPL Season 3. Building dreams, shaping futures.",
       "tagline": "Title Sponsor",
-      "contact": "info@jadeenterprises.com"
+      "owner": "Vicky Sharma & Chetan Sharma",
+      "contact": "info@aceprimeinfra.com"
     },
     {
-      "id": "sponsor_g1",
-      "name": "Royal Motors",
-      "type": "gold",
-      "logoPlaceholder": "RM",
-      "description": "Premium automobile dealership serving the community since 1995."
+      "id": "sponsor_pictonion",
+      "name": "Pictonion",
+      "type": "team",
+      "logoPlaceholder": "P",
+      "description": "Welcome to Pictonion — your simple, secure way to transform customer feedback. Collect swift, genuine, and confidential feedback with ease and unlock insights to boost customer satisfaction.",
+      "tagline": "Team Sponsor",
+      "site": "pictonion.pitlabs.in",
+      "teamName": "Team 1",
+      "captain": "Captain: To be announced",
+      "owner": "Mahesh Kulkarni"
     },
     {
-      "id": "sponsor_g2",
-      "name": "Green Valley Foods",
-      "type": "gold",
-      "logoPlaceholder": "GVF",
-      "description": "Fresh, organic produce delivered to your doorstep."
+      "id": "sponsor_triphobo",
+      "name": "Triphobo",
+      "type": "team",
+      "logoPlaceholder": "TH",
+      "description": "“An one-stop platform that provides all travel and tourism related services like trip planning, booking flights/hotels/cars, and creating experiences (tours, cruises, adventure, luxury) for individuals or groups, to offer convenience and expertise.”",
+      "tagline": "Trips, tales and trust",
+      "site": "www.triphobo.com",
+      "owner": "Saket Newaskar"
     },
     {
-      "id": "sponsor_g3",
-      "name": "Tech Solutions",
-      "type": "gold",
-      "logoPlaceholder": "TS",
-      "description": "Your trusted IT partner for digital transformation."
+      "id": "sponsor_mentomap",
+      "name": "MentoMap",
+      "type": "team",
+      "logoPlaceholder": "MM",
+      "description": "MentoMap is an AI-driven learning platform that helps students build essential real-life skills through immersive, interactive simulations. It combines AI-powered behavioural insights and interactive real-life scenarios to uncover how children approach challenges, make decisions, and develop essential skills.",
+      "tagline": "AI-driven learning platform",
+      "owner": "Ganesh Raghuram"
     },
     {
-      "id": "sponsor_g4",
-      "name": "City Hospital",
-      "type": "gold",
-      "logoPlaceholder": "CH",
-      "description": "World-class healthcare services for all."
+      "id": "sponsor_housewise",
+      "name": "Housewise",
+      "type": "team",
+      "logoPlaceholder": "HW",
+      "description": "Housewise is an end-to-end property management startup managing properties for NRIs from 45 countries across 22 major Indian cities including Pune, Bengaluru, Hyderabad, Chennai, Delhi NCR, Mumbai, Ahmedabad, Goa, Kochi, Kolkata, and Chandigarh tri-city.",
+      "tagline": "Trusted property management for NRIs",
+      "site": "housewise.in",
+      "owner": "Priyank Agarwal"
     },
     {
-      "id": "sponsor_g5",
-      "name": "Prime Realty",
-      "type": "gold",
-      "logoPlaceholder": "PR",
-      "description": "Find your dream home with us."
+      "id": "sponsor_yogicbelief",
+      "name": "The Yogic Belief",
+      "type": "team",
+      "logoPlaceholder": "YB",
+      "description": "The Yogic Belief, awarded Pune’s Best Healthy Food Restaurant, serves clean, mindful food: healthy vegetarian meals, no-refined-sugar desserts, nutritious salads, balanced thalis/combos, healthy Asian, wholesome North Indian & Tandoori delights—backed by a hygiene-first, freshness-guaranteed policy.",
+      "tagline": "Healthy, mindful food for all",
+      "site": "theyogicbelief.com",
+      "owner": "Ayush Jain"
     },
     {
-      "id": "sponsor_g6",
-      "name": "Fashion Hub",
-      "type": "gold",
-      "logoPlaceholder": "FH",
-      "description": "Trending styles for the modern you."
+      "id": "sponsor_shreenarayan",
+      "name": "Shree Narayan Pvt Ltd",
+      "type": "team",
+      "logoPlaceholder": "SN",
+      "description": "Estd 1982. Buying & selling lands pan India across all zones. Avg direct land bank ~2500 acres; indirect ~4500 acres. Showcasing picturesque, virgin backwater farm lands near Temghar Dam, Mulshi (Lavasa) — 220 acres for sale. Ideal for investment, farm houses, resorts, Airbnbs.",
+      "tagline": "Pan-India land banking & Temghar backwater farms",
+      "site": "",
+      "owner": "Sujal Narayan Mudliar"
     },
     {
-      "id": "sponsor_g7",
-      "name": "Elite Fitness",
-      "type": "gold",
-      "logoPlaceholder": "EF",
-      "description": "Transform your life through fitness."
+      "id": "sponsor_4lions",
+      "name": "Baner 4Lions Football Academy",
+      "type": "team",
+      "logoPlaceholder": "4L",
+      "description": "4 Lions is a renowned name in football coaching for young boys and girls in Maharashtra. With an AIFF accreditation and certified coaches it has a streamlined approach to training football talent. Some feathers in its cap are having its players selected by professional clubs like the Reliance Foundation, the Madras Football Club, Bangalore Football Club etc., the Pune District team, state level matches conducted by the Western India Football Association and the iLeague. 4 Lions now has a new branch in Baner (at Ascend Arena, opposite Manvaar sweets, Pancard Club Road). With state-of-the-art field, accredited by FIFA, and convenient parking, it is a location that increases the catchment area to tap talent at an eary stage.",
+      "tagline": "AIFF Accredited Football Academy",
+      "site": "#4lionsacademy"
     },
     {
-      "id": "sponsor_g8",
-      "name": "Sunrise Jewellers",
-      "type": "gold",
-      "logoPlaceholder": "SJ",
-      "description": "Exquisite jewelry for every occasion."
+      "id": "sponsor_dalnex",
+      "name": "Dalnex",
+      "type": "team",
+      "logoPlaceholder": "DN",
+      "description": "Through IoT, AI, and automation, Dalnex helps factories digitize their shopfloors for real-time visibility and smarter decisions. Our Industry 4.0 platform, FactOS, connects machines and processes, while our interoperable IoT Edge Gateways ensure seamless integration across systems. Dalnex is driven by automation and IoT experts shaping the next generation of efficient, data-driven factories.",
+      "tagline": "Powering the future of smart manufacturing",
+      "owner": "Dhruv Jhalani & Lakshya Jhalani"
     },
     {
-      "id": "sponsor_g9",
-      "name": "Metro Builders",
-      "type": "gold",
-      "logoPlaceholder": "MB",
-      "description": "Quality construction you can trust."
+      "id": "sponsor_growwth",
+      "name": "GROWWTH",
+      "type": "team",
+      "logoPlaceholder": "GW",
+      "description": "At GROWWTH, we specialize in professionally managed, diversified investment solutions designed to help investors build long-term wealth. We understand that navigating today's complex financial markets can be challenging, and, at Growwth, our goal is to simplify this process for you. Because when done right, Investing is not intimidating; it's Liberating! We encourage Women to Actively Participate towards their Financial Freedom. We deeply believe Investing goes beyond Figures as it Empowers Women with Independence, nurtures their Confidence and helps secure Long-term Financial Stability. Her Financial strength becomes everyone's Strength!",
+      "tagline": "Professionally managed investment solutions",
+      "site": "growwth.co.in",
+      "owner": "Yoshita"
     },
     {
-      "id": "sponsor_g10",
-      "name": "Cafe Delight",
-      "type": "gold",
-      "logoPlaceholder": "CD",
-      "description": "Where every cup tells a story."
-    },
-    {
-      "id": "sponsor_g11",
-      "name": "Smart Electronics",
-      "type": "gold",
-      "logoPlaceholder": "SE",
-      "description": "Latest gadgets at best prices."
-    },
-    {
-      "id": "sponsor_g12",
-      "name": "Wellness Pharmacy",
-      "type": "gold",
-      "logoPlaceholder": "WP",
-      "description": "Your health is our priority."
+      "id": "sponsor_playforfun",
+      "name": "Play for Fun !!",
+      "type": "team",
+      "logoPlaceholder": "PF",
+      "description": "Play with all your heart,live the game, have fun !",
+      "tagline": "Play with all your heart, live the game, have fun!",
+      "owner": "Shubhada and Sameer"
     }
   ],
   "advertisements": [
@@ -246,13 +261,25 @@
       "color": "#1565C0"
     },
     {
+      "id": "ad_registrations",
+      "title": "170+ Registrations",
+      "subtitle": "Thank you for overwheling response!",
+      "color": "#E91E63"
+    },
+    {
       "id": "ad_2",
+      "title": "🎯 Player Auctions ",
+      "subtitle": "Date: 14th December'2025 . Catch Updates Live",
+      "color": "#FF6B35"
+    },
+    {
+      "id": "ad_3",
       "title": "Predict & Win!",
       "subtitle": "Play the Predictor Game and top the leaderboard",
       "color": "#AD1457"
     },
     {
-      "id": "ad_3",
+      "id": "ad_4",
       "title": "Season 3 is Here!",
       "subtitle": "More teams, more matches, more excitement",
       "color": "#2E7D32"

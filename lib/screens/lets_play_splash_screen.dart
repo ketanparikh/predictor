@@ -146,38 +146,6 @@ class _LetsPlaySplashScreenState extends State<LetsPlaySplashScreen>
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.sports_cricket,
-                      color: Colors.amber.shade200,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Loading your game...',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white.withOpacity(0.95),
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Icon(
-                      Icons.sports_cricket,
-                      color: Colors.amber.shade200,
-                      size: 24,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: 4,
-                ),
               ],
             ),
           ),

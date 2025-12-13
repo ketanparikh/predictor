@@ -5,7 +5,7 @@ import '../../providers/game_provider.dart';
 import '../auth/login_screen.dart';
 import 'predictor_game_screen.dart';
 import 'jcpl_home_tab.dart';
-import 'teams_tab.dart';
+import 'auctions_tab.dart';
 import 'schedule_tab.dart';
 import '../admin/outcome_admin_screen.dart';
 import '../../providers/admin_provider.dart';
@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return 'JCPL-3';
       case 1:
-        return 'Teams';
+        return 'Auctions';
       case 2:
         return 'Schedule';
       case 3:
@@ -517,7 +517,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return JcplHomeTab(onNavigateToTab: _onItemTapped);
       case 1:
-        return const TeamsTab();
+        return const AuctionsTab();
       case 2:
         return const ScheduleTab();
       case 3:
@@ -1109,9 +1109,9 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Icons.groups_outlined),
-            selectedIcon: Icon(Icons.groups),
-            label: 'Teams',
+            icon: Icon(Icons.gavel_outlined),
+            selectedIcon: Icon(Icons.gavel),
+            label: 'Auctions',
           ),
           NavigationDestination(
             icon: Icon(Icons.calendar_month_outlined),

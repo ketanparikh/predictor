@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:html' as html;
+import 'dart:ui_web' as ui;
 
 class JcplHomeTab extends StatefulWidget {
   final Function(int) onNavigateToTab;
@@ -68,10 +69,10 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
 
   void _startAdAutoScroll() {
     _adTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (mounted) {
+      if (mounted && _adPageController.hasClients) {
         final ads = _scheduleData?['advertisements'] as List? ?? [];
-        final totalItems = ads.length + _adImages.length;
-        if (totalItems > 0) {
+        final totalItems = ads.isEmpty ? 1 : ads.length;
+        if (totalItems > 1) {
           final nextIndex = (_currentAdIndex + 1) % totalItems;
           _adPageController.animateToPage(
             nextIndex,
@@ -126,11 +127,10 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeroSection(context),
-            _buildCountdownAndRegistration(context),
-            _buildAdvertisementsCarousel(context),
+            _buildCountdownSection(context),
+            _buildHeroCarousel(context),
+            _buildGlimpsesSection(context),
             _buildSponsorsSection(context),
-            _buildUpcomingMatchesPreview(context),
             const SizedBox(height: 24),
           ],
         ),
@@ -138,79 +138,8 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     );
   }
 
-  Widget _buildHeroSection(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            theme.colorScheme.primary,
-            theme.colorScheme.secondary,
-            theme.colorScheme.primary.withOpacity(0.8),
-          ],
-        ),
-      ),
-      child: Column(
-        children: [
-          ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [Colors.white, Colors.amber, Colors.white],
-            ).createShader(bounds),
-            child: const Text(
-              'JCPL',
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: 4,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              'Jade Cricket Premier League',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1,
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.emoji_events, color: Colors.amber.shade200, size: 20),
-              const SizedBox(width: 6),
-              Text(
-                'Season 3',
-                style: TextStyle(
-                  color: Colors.amber.shade200,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Icon(Icons.emoji_events, color: Colors.amber.shade200, size: 20),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCountdownAndRegistration(BuildContext context) {
+  // Countdown Section - Above hero
+  Widget _buildCountdownSection(BuildContext context) {
     final theme = Theme.of(context);
     final days = _timeRemaining.inDays;
     final hours = _timeRemaining.inHours.remainder(24);
@@ -218,190 +147,586 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     final seconds = _timeRemaining.inSeconds.remainder(60);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      padding: const EdgeInsets.all(20),
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.deepPurple.shade600,
-            Colors.purple.shade400,
-            Colors.pink.shade400,
+            Colors.deepPurple.shade700,
+            Colors.purple.shade500,
           ],
         ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.purple.withOpacity(0.4),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: Column(
         children: [
-          // Registrations Open Badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.greenAccent.shade400,
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.greenAccent.withOpacity(0.5),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [Colors.white, Colors.amber, Colors.white],
+                ).createShader(bounds),
+                child: const Text(
+                  'JCPL',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
                     color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.8),
-                        blurRadius: 8,
-                        spreadRadius: 2,
-                      ),
-                    ],
+                    letterSpacing: 2,
                   ),
                 ),
-                const SizedBox(width: 10),
-                const Text(
-                  '🎉 REGISTRATIONS OPEN!',
+              ),
+              const SizedBox(width: 10),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.amber,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text(
+                  'Season 3',
                   style: TextStyle(
                     color: Colors.black87,
-                    fontSize: 16,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
                   ),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Tournament Starts In
-          Text(
-            'JCPL Season 3 Starts In',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1,
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Countdown Timer
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildCountdownItem(
-                  days.toString().padLeft(2, '0'), 'DAYS', Colors.amber),
-              _buildCountdownSeparator(),
-              _buildCountdownItem(
-                  hours.toString().padLeft(2, '0'), 'HRS', Colors.cyan),
-              _buildCountdownSeparator(),
-              _buildCountdownItem(minutes.toString().padLeft(2, '0'), 'MIN',
-                  Colors.lightGreenAccent),
-              _buildCountdownSeparator(),
-              _buildCountdownItem(
-                  seconds.toString().padLeft(2, '0'), 'SEC', Colors.pinkAccent),
+              ),
             ],
           ),
-          const SizedBox(height: 20),
-          // Register Now Button
-          ElevatedButton(
-            onPressed: () {
-              html.window.open(
-                  'https://docs.google.com/forms/d/e/1FAIpQLSeBlMHdbsJVnpRTG3m48LT2IAyyRrJ9z0GriJSNbZFqfr6M2w/viewform',
-                  '_blank');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.deepPurple,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              elevation: 8,
-              shadowColor: Colors.black38,
+          const SizedBox(height: 10),
+          Text(
+            'Tournament Starts In',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
             ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.sports_cricket, size: 20),
-                SizedBox(width: 8),
-                Text(
-                  'JOIN NOW',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
-                  ),
-                ),
-                SizedBox(width: 4),
-                Icon(Icons.arrow_forward, size: 18),
-              ],
-            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildCompactCountdownItem(days.toString().padLeft(2, '0'), 'D'),
+              _buildCompactSeparator(),
+              _buildCompactCountdownItem(hours.toString().padLeft(2, '0'), 'H'),
+              _buildCompactSeparator(),
+              _buildCompactCountdownItem(
+                  minutes.toString().padLeft(2, '0'), 'M'),
+              _buildCompactSeparator(),
+              _buildCompactCountdownItem(
+                  seconds.toString().padLeft(2, '0'), 'S'),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCountdownItem(String value, String label, Color color) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: color.withOpacity(0.5),
-              width: 2,
-            ),
-          ),
-          child: Text(
+  Widget _buildCompactCountdownItem(String value, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Text(
             value,
-            style: TextStyle(
-              color: color,
-              fontSize: 28,
+            style: const TextStyle(
+              color: Colors.amber,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               fontFamily: 'monospace',
             ),
           ),
+          const SizedBox(width: 2),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.7),
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompactSeparator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Text(
+        ':',
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.6),
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
-        const SizedBox(height: 6),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1,
+      ),
+    );
+  }
+
+  // Hero Carousel with Advertisements
+  Widget _buildHeroCarousel(BuildContext context) {
+    final ads = _scheduleData?['advertisements'] as List? ?? [];
+    final totalItems = ads.isEmpty ? 1 : ads.length;
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 160,
+          child: PageView.builder(
+            controller: _adPageController,
+            onPageChanged: (index) => setState(() => _currentAdIndex = index),
+            itemCount: totalItems,
+            itemBuilder: (context, index) {
+              if (ads.isEmpty) {
+                return _buildDefaultAdCard(context);
+              }
+              return _buildHeroAdCard(context, ads[index]);
+            },
           ),
         ),
+        if (totalItems > 1)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(totalItems, (index) {
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  width: _currentAdIndex == index ? 20 : 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: _currentAdIndex == index
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                );
+              }),
+            ),
+          ),
       ],
     );
   }
 
-  Widget _buildCountdownSeparator() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Text(
-        ':',
-        style: TextStyle(
-          color: Colors.white.withOpacity(0.7),
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
+  Widget _buildHeroAdCard(BuildContext context, Map<String, dynamic> ad) {
+    final colorHex = ad['color'] as String? ?? '#1565C0';
+    final color = Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [color, color.withOpacity(0.7)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -15,
+            bottom: -15,
+            child: Icon(
+              Icons.sports_cricket,
+              size: 100,
+              color: Colors.white.withOpacity(0.1),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  ad['title'] ?? '',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  ad['subtitle'] ?? '',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDefaultAdCard(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.sports_cricket, color: Colors.white, size: 40),
+            const SizedBox(height: 8),
+            const Text(
+              'Welcome to JCPL Season 3!',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Registration Bar - Dynamic with animation
+  Widget _buildRegistrationBar(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.primary.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Decorative elements
+          Positioned(
+            left: -10,
+            top: -10,
+            child: Icon(
+              Icons.sports_cricket,
+              size: 50,
+              color: Colors.white.withOpacity(0.15),
+            ),
+          ),
+          Positioned(
+            right: 80,
+            bottom: -5,
+            child: Icon(
+              Icons.celebration,
+              size: 35,
+              color: Colors.white.withOpacity(0.15),
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                // Animated pulse dot
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.8, end: 1.2),
+                  duration: const Duration(milliseconds: 800),
+                  builder: (context, scale, child) {
+                    return Transform.scale(
+                      scale: scale,
+                      child: Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.8),
+                              blurRadius: 8,
+                              spreadRadius: 3,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  onEnd: () {},
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        '🎉 REGISTRATIONS OPEN!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Join the cricket action now!',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    html.window.open(
+                      'https://docs.google.com/forms/d/e/1FAIpQLSeBlMHdbsJVnpRTG3m48LT2IAyyRrJ9z0GriJSNbZFqfr6M2w/viewform',
+                      '_blank',
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF00C853),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    elevation: 4,
+                    shadowColor: Colors.black26,
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.sports_cricket, size: 16),
+                      SizedBox(width: 6),
+                      Text(
+                        'JOIN',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Glimpses Section - Card that opens grid
+  Widget _buildGlimpsesSection(BuildContext context) {
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: () => _showGlimpsesDialog(context),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.primary.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.photo_library,
+                  color: Colors.white, size: 28),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Glimpses of Previous JCPL',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Tap to view',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios,
+                color: Colors.white.withOpacity(0.7), size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showGlimpsesDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(16),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary,
+                    ],
+                  ),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.photo_library, color: Colors.white),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        'Glimpses of Previous JCPL',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              // Grid
+              Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.all(12),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 1.3,
+                  ),
+                  itemCount: _adImages.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () => _showFullImage(context, index),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          _adImages[index],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showFullImage(BuildContext context, int initialIndex) {
+    Navigator.pop(context); // Close grid dialog
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.black,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: PageController(initialPage: initialIndex),
+              itemCount: _adImages.length,
+              itemBuilder: (context, index) {
+                return InteractiveViewer(
+                  child: Center(
+                    child: Image.asset(
+                      _adImages[index],
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Positioned(
+              top: 40,
+              right: 16,
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close, color: Colors.white, size: 30),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -417,224 +742,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     'assets/images/DSC_9984.jpg',
   ];
 
-  Widget _buildAdvertisementsCarousel(BuildContext context) {
-    final ads = _scheduleData?['advertisements'] as List? ?? [];
-    // +1 for the "Glimpses of JCPL 2" card before images
-    final totalItems = ads.length + 1 + _adImages.length;
-
-    if (totalItems == 0) return const SizedBox.shrink();
-
-    return Column(
-      children: [
-        SizedBox(
-          height: 200,
-          child: PageView.builder(
-            controller: _adPageController,
-            onPageChanged: (index) => setState(() => _currentAdIndex = index),
-            itemCount: totalItems,
-            itemBuilder: (context, index) {
-              // First show text ads
-              if (index < ads.length) {
-                return _buildAdCard(context, ads[index]);
-              }
-              // Then show "Glimpses of JCPL 2" card
-              else if (index == ads.length) {
-                return _buildGlimpsesCard(context);
-              }
-              // Then show images
-              else {
-                return _buildAdImageCard(
-                    context, _adImages[index - ads.length - 1]);
-              }
-            },
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(totalItems, (index) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: _currentAdIndex == index ? 24 : 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: _currentAdIndex == index
-                    ? Theme.of(context).colorScheme.primary
-                    : Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            );
-          }),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAdCard(BuildContext context, Map<String, dynamic> ad) {
-    final colorHex = ad['color'] as String? ?? '#1565C0';
-    final color = Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [color, color.withOpacity(0.7)],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -20,
-            bottom: -20,
-            child: Icon(
-              Icons.sports_cricket,
-              size: 120,
-              color: Colors.white.withOpacity(0.1),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  ad['title'] ?? '',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  ad['subtitle'] ?? '',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGlimpsesCard(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            theme.colorScheme.primary,
-            theme.colorScheme.secondary,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: theme.colorScheme.primary.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -30,
-            bottom: -30,
-            child: Icon(
-              Icons.photo_library,
-              size: 140,
-              color: Colors.white.withOpacity(0.1),
-            ),
-          ),
-          Positioned(
-            left: -20,
-            top: -20,
-            child: Icon(
-              Icons.camera_alt,
-              size: 80,
-              color: Colors.white.withOpacity(0.08),
-            ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                  size: 28,
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Glimpses of JCPL 2',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Swipe to see the memories →',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAdImageCard(BuildContext context, String imagePath) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Image.asset(
-          imagePath,
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
+  // Keep for future use - commented out
   Widget _buildUpcomingMatchesPreview(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
@@ -764,7 +872,33 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
   Widget _buildSponsorCard(BuildContext context, Map<String, dynamic> sponsor) {
     final type = sponsor['type'] as String? ?? 'gold';
     final isTitle = type == 'title';
-    final color = isTitle ? Colors.blue.shade700 : Colors.amber.shade700;
+    final site = sponsor['site'] as String?;
+    final owner = sponsor['owner'] as String?;
+
+    // Premium gradients: Gold for Title, Vibrant Teal/Purple for Team Sponsor
+    final List<Color> gradientColors = isTitle
+        ? [
+            const Color(0xFFB8860B), // Dark goldenrod
+            const Color(0xFFDAA520), // Goldenrod
+            const Color(0xFFFFD700), // Gold
+            const Color(0xFFDAA520), // Goldenrod
+          ]
+        : [
+            const Color(0xFF6366F1), // Indigo
+            const Color(0xFF8B5CF6), // Purple
+            const Color(0xFFA78BFA), // Light purple
+          ];
+
+    final Color borderColor = isTitle
+        ? const Color(0xFFFFD700) // Gold border
+        : const Color(0xFFA78BFA); // Purple border
+
+    final Color shadowColor =
+        isTitle ? const Color(0xFFDAA520) : const Color(0xFF6366F1);
+
+    final Color textColor = isTitle
+        ? const Color(0xFFB8860B) // Gold text
+        : const Color(0xFF4F46E5); // Indigo text
 
     return GestureDetector(
       onTap: () => _showSponsorDetails(context, sponsor, isTitle: isTitle),
@@ -774,33 +908,54 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [color, color.withOpacity(0.7)],
+            colors: gradientColors,
           ),
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: borderColor, width: 2),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.4),
-              blurRadius: 12,
+              color: shadowColor.withOpacity(0.5),
+              blurRadius: 15,
               offset: const Offset(0, 6),
+              spreadRadius: 2,
             ),
           ],
         ),
         child: Stack(
           children: [
+            // Decorative icons
+            Positioned(
+              left: 10,
+              top: 10,
+              child: Icon(
+                isTitle ? Icons.star : Icons.sports_cricket,
+                size: 20,
+                color: Colors.white.withOpacity(0.3),
+              ),
+            ),
+            Positioned(
+              right: 50,
+              top: 15,
+              child: Icon(
+                isTitle ? Icons.star : Icons.groups,
+                size: 14,
+                color: Colors.white.withOpacity(0.25),
+              ),
+            ),
             Positioned(
               right: -20,
               bottom: -20,
               child: Icon(
-                isTitle ? Icons.star : Icons.workspace_premium,
+                isTitle ? Icons.star : Icons.groups,
                 size: 120,
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withOpacity(0.15),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
-                  // Logo placeholder
+                  // Logo placeholder with premium styling
                   Container(
                     width: 70,
                     height: 70,
@@ -809,16 +964,18 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
+                          color: shadowColor.withOpacity(0.4),
+                          blurRadius: 12,
+                          spreadRadius: 2,
                         ),
                       ],
+                      border: Border.all(color: borderColor, width: 2),
                     ),
                     child: Center(
                       child: Text(
                         sponsor['logoPlaceholder'] ?? 'SP',
                         style: TextStyle(
-                          color: color,
+                          color: textColor,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
@@ -835,11 +992,11 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withOpacity(0.25),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            isTitle ? 'TITLE SPONSOR' : 'GOLD SPONSOR',
+                            isTitle ? '⭐ TITLE SPONSOR' : '🏏 TEAM SPONSOR',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 9,
@@ -859,6 +1016,19 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        if (owner != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            owner,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                         const SizedBox(height: 4),
                         Text(
                           sponsor['description'] ?? 'Tap to view details',
@@ -869,6 +1039,17 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        if (site != null)
+                          Text(
+                            site,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                       ],
                     ),
                   ),
@@ -886,8 +1067,15 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     Map<String, dynamic> sponsor, {
     required bool isTitle,
   }) {
-    final theme = Theme.of(context);
-    final color = isTitle ? theme.colorScheme.primary : Colors.amber.shade700;
+    // For title sponsor, show video dialog
+    if (isTitle) {
+      _showTitleSponsorVideo(context, sponsor);
+      return;
+    }
+
+    final color = Colors.amber.shade700;
+    final site = sponsor['site'] as String?;
+    final owner = sponsor['owner'] as String?;
 
     showModalBottomSheet(
       context: context,
@@ -944,7 +1132,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                isTitle ? 'TITLE SPONSOR' : 'GOLD SPONSOR',
+                'TEAM SPONSOR',
                 style: TextStyle(
                   color: color,
                   fontSize: 11,
@@ -963,6 +1151,16 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
               ),
             ),
             const SizedBox(height: 12),
+            if (owner != null)
+              Text(
+                owner,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            if (owner != null) const SizedBox(height: 8),
             // Description
             if (sponsor['description'] != null)
               Padding(
@@ -977,29 +1175,22 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                   textAlign: TextAlign.center,
                 ),
               ),
-            // Contact for title sponsor
-            if (isTitle && sponsor['contact'] != null) ...[
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.email_outlined, size: 18, color: color),
-                    const SizedBox(width: 8),
-                    Text(
-                      sponsor['contact'],
-                      style: TextStyle(
-                        color: color,
-                        fontWeight: FontWeight.w500,
-                      ),
+            if (site != null) ...[
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.link, size: 16, color: color),
+                  const SizedBox(width: 6),
+                  Text(
+                    site,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: color,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
             const SizedBox(height: 24),
@@ -1012,6 +1203,168 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
               ),
             ),
             const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTitleSponsorVideo(
+      BuildContext context, Map<String, dynamic> sponsor) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => _TitleSponsorVideoDialog(sponsor: sponsor),
+    );
+  }
+}
+
+class _TitleSponsorVideoDialog extends StatefulWidget {
+  final Map<String, dynamic> sponsor;
+
+  const _TitleSponsorVideoDialog({required this.sponsor});
+
+  @override
+  State<_TitleSponsorVideoDialog> createState() =>
+      _TitleSponsorVideoDialogState();
+}
+
+class _TitleSponsorVideoDialogState extends State<_TitleSponsorVideoDialog> {
+  late html.VideoElement _videoElement;
+  final String _viewType =
+      'ace-prime-video-${DateTime.now().millisecondsSinceEpoch}';
+  bool _isRegistered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupVideo();
+  }
+
+  void _setupVideo() {
+    _videoElement = html.VideoElement()
+      ..src = 'assets/ACE_Prime.mp4.mp4'
+      ..autoplay = true
+      ..controls = true
+      ..muted = false
+      ..style.width = '100%'
+      ..style.height = '100%'
+      ..style.objectFit = 'contain'
+      ..style.backgroundColor = 'black';
+
+    // Register view factory only once
+    if (!_isRegistered) {
+      ui.platformViewRegistry.registerViewFactory(
+        _viewType,
+        (int viewId) => _videoElement,
+      );
+      _isRegistered = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    _videoElement.pause();
+    _videoElement.src = '';
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(16),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500, maxHeight: 500),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary,
+                    theme.colorScheme.secondary
+                  ],
+                ),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.amber,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      '⭐ TITLE SPONSOR',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      widget.sponsor['name'] ?? 'Ace Prime Infra',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+            // Video Player
+            Expanded(
+              child: Container(
+                color: Colors.black,
+                child: HtmlElementView(viewType: _viewType),
+              ),
+            ),
+            // Footer
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Text(
+                    widget.sponsor['description'] ?? '',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Thank you for supporting JCPL Season 3! 🏏',
+                    style: TextStyle(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

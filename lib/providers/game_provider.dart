@@ -24,9 +24,10 @@ class GameProvider with ChangeNotifier {
   List<Question> get questions => _questions;
   Map<String, String> get userAnswers => _userAnswers;
   int get currentQuestionIndex => _currentQuestionIndex;
-  Question? get currentQuestion => _questions.isNotEmpty && _currentQuestionIndex < _questions.length
-      ? _questions[_currentQuestionIndex]
-      : null;
+  Question? get currentQuestion =>
+      _questions.isNotEmpty && _currentQuestionIndex < _questions.length
+          ? _questions[_currentQuestionIndex]
+          : null;
   bool get gameStarted => _gameStarted;
   bool get gameCompleted => _gameCompleted;
   int get totalScore => _calculateScore();
@@ -40,7 +41,8 @@ class GameProvider with ChangeNotifier {
 
   Future<void> loadTournaments() async {
     try {
-      final String response = await rootBundle.loadString('assets/config/tournaments.json');
+      final String response =
+          await rootBundle.loadString('assets/config/tournaments.json');
       final data = json.decode(response);
       _tournaments = (data['tournaments'] as List)
           .map((t) => Tournament.fromJson(t))
@@ -56,9 +58,8 @@ class GameProvider with ChangeNotifier {
     try {
       final String response = await rootBundle.loadString(questionsFilePath);
       final data = json.decode(response);
-      _questions = (data['questions'] as List)
-          .map((q) => Question.fromJson(q))
-          .toList();
+      _questions =
+          (data['questions'] as List).map((q) => Question.fromJson(q)).toList();
       notifyListeners();
     } catch (e) {
       print('Error loading questions from $questionsFilePath: $e');
@@ -89,7 +90,8 @@ class GameProvider with ChangeNotifier {
 
   Future<void> loadCompletedMatchesForUser(String userId) async {
     try {
-      _completedMatchIds = await _matchStatusService.fetchCompletedMatches(userId);
+      _completedMatchIds =
+          await _matchStatusService.fetchCompletedMatches(userId);
       // If test override is enabled, keep UI unblocked regardless of backend state
       if (_testUnblock) {
         _completedMatchIds = {};
@@ -102,13 +104,22 @@ class GameProvider with ChangeNotifier {
 
   Future<void> markCurrentMatchCompletedForUser(String userId) async {
     final matchId = _selectedMatch?.id;
-    if (matchId == null) return;
+    print(
+        'markCurrentMatchCompletedForUser called - userId: $userId, matchId: $matchId');
+    if (matchId == null) {
+      print('ERROR: matchId is null, cannot mark as completed');
+      return;
+    }
     try {
       await _matchStatusService.markCompleted(userId, matchId);
-      _completedMatchIds.add(matchId);
-      notifyListeners();
+      print('Successfully marked match $matchId as completed for user $userId');
     } catch (e) {
       print('Error marking match completed: $e');
+      // Even if backend update fails, mark as completed locally so the game
+      // cannot be played again in this session.
+    } finally {
+      _completedMatchIds.add(matchId);
+      notifyListeners();
     }
   }
 
@@ -186,4 +197,3 @@ class GameProvider with ChangeNotifier {
     notifyListeners();
   }
 }
-

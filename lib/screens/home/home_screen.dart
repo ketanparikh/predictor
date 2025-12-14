@@ -7,6 +7,7 @@ import 'predictor_game_screen.dart';
 import 'jcpl_home_tab.dart';
 import 'auctions_tab.dart';
 import 'schedule_tab.dart';
+import 'teams_tab.dart';
 import '../admin/outcome_admin_screen.dart';
 import '../../providers/admin_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -46,8 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    // Predictor tab is now index 3
-    if (index == 3) {
+    // Predictor tab is now index 4
+    if (index == 4) {
       // Always show Game options (tournament list) when entering Predictor tab
       final gameProvider = Provider.of<GameProvider>(context, listen: false);
       gameProvider.clearTournamentSelection();
@@ -68,6 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         return 'Schedule';
       case 3:
+        return 'Teams';
+      case 4:
         return 'Predictor Game';
       default:
         return 'JCPL-3';
@@ -83,6 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         return Icons.calendar_month;
       case 3:
+        return Icons.groups_rounded;
+      case 4:
         return Icons.sports_cricket;
       default:
         return Icons.home;
@@ -521,6 +526,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         return const ScheduleTab();
       case 3:
+        return const TeamsTab();
+      case 4:
         return const PredictorGameScreen();
       default:
         return JcplHomeTab(onNavigateToTab: _onItemTapped);
@@ -1117,6 +1124,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.calendar_month_outlined),
             selectedIcon: Icon(Icons.calendar_month),
             label: 'Schedule',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.groups_outlined),
+            selectedIcon: Icon(Icons.groups),
+            label: 'Teams',
           ),
           NavigationDestination(
             icon: Icon(Icons.sports_cricket_outlined),

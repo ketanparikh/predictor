@@ -25,6 +25,12 @@
       "name": "Boys Category",
       "icon": "sports_cricket",
       "color": "#2E7D32"
+    },
+    {
+      "id": "girls",
+      "name": "Girls Category",
+      "icon": "sports_cricket",
+      "color": "#E91E63"
     }
   ],
   "matches": [

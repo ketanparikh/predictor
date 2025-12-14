@@ -16,6 +16,9 @@ class AuctionsTab extends StatefulWidget {
 
 class _AuctionsTabState extends State<AuctionsTab> {
   List<Map<String, dynamic>> _teamsData = [];
+  List<Team> _previousTeams = [];
+  String? _lastUpdate;
+  bool _showUpdate = false;
 
   @override
   void initState() {
@@ -25,6 +28,51 @@ class _AuctionsTabState extends State<AuctionsTab> {
       Provider.of<AuctionProvider>(context, listen: false).loadTeams();
       _loadTeamsData();
     });
+  }
+
+  void _checkForUpdates(List<Team> currentTeams) {
+    if (_previousTeams.isEmpty) {
+      _previousTeams = List.from(currentTeams);
+      return;
+    }
+
+    // Check for new player additions
+    for (final currentTeam in currentTeams) {
+      final previousTeam = _previousTeams.firstWhere(
+        (t) => t.id == currentTeam.id,
+        orElse: () => Team(id: currentTeam.id, name: currentTeam.name, players: []),
+      );
+
+      final previousPlayerCount = previousTeam.players.length;
+      final currentPlayerCount = currentTeam.players.length;
+
+      if (currentPlayerCount > previousPlayerCount) {
+        // A player was added
+        final newPlayers = currentTeam.players
+            .where((p) => !previousTeam.players.contains(p))
+            .toList();
+        if (newPlayers.isNotEmpty) {
+          final playerName = newPlayers.first;
+          // Get captain name from team data
+          final teamData = _getTeamData(currentTeam.id);
+          final captainName = teamData?['captain'] as String? ?? 'Captain TBA';
+          setState(() {
+            _lastUpdate = '$playerName → $captainName';
+            _showUpdate = true;
+          });
+          // Auto-hide after 10 seconds
+          Future.delayed(const Duration(seconds: 10), () {
+            if (mounted) {
+              setState(() {
+                _showUpdate = false;
+              });
+            }
+          });
+        }
+      }
+    }
+
+    _previousTeams = List.from(currentTeams);
   }
 
   Future<void> _loadTeamsData() async {
@@ -95,11 +143,102 @@ class _AuctionsTabState extends State<AuctionsTab> {
             );
           }
 
+          // Check for updates
+          _checkForUpdates(teams);
+
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Update Notification Banner
+                if (_showUpdate && _lastUpdate != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFFFF6B35), // Bright Orange
+                          const Color(0xFFFFD700), // Gold
+                          const Color(0xFFFF8C00), // Dark Orange
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFFF6B35).withOpacity(0.5),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                          spreadRadius: 2,
+                        ),
+                      ],
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.notifications_active,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Player Added!',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                _lastUpdate!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _showUpdate = false;
+                            });
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                      ],
+                    ),
+                  ),
                 // Modern Header
                 Container(
                   padding: const EdgeInsets.all(20),

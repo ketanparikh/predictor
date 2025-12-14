@@ -25,6 +25,8 @@ class AuctionProvider with ChangeNotifier {
           await rootBundle.loadString('assets/config/participants.json');
       final data = json.decode(response);
       _mensParticipants = List<String>.from(data['mens'] ?? []);
+      // Sort participants alphabetically
+      _mensParticipants.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
       notifyListeners();
     } catch (e) {
       print('Error loading participants: $e');

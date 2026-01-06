@@ -33,6 +33,7 @@ dependencies:
   google_sign_in: 6.2.1
   url_launcher: ^6.3.2
   video_player: ^2.10.1
+  excel: ^4.0.4
 
 dev_dependencies:
   flutter_test:
@@ -47,4 +48,5 @@ flutter:
     - assets/lottie/
     - assets/config/
     - assets/ACE_Prime.mp4.mp4
+    - assets/JCPL 3 Schedule V3 (1).xlsx
 

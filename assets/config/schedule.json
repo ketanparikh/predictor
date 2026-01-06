@@ -10,25 +10,25 @@
   "categories": [
     {
       "id": "mens",
-      "name": "Men's Category",
+      "name": "Mens",
       "icon": "sports_cricket",
       "color": "#1565C0"
     },
     {
       "id": "womens", 
-      "name": "Women's Category",
+      "name": "Womens",
       "icon": "sports_cricket",
       "color": "#AD1457"
     },
     {
       "id": "boys",
-      "name": "Boys Category",
+      "name": "Boys",
       "icon": "sports_cricket",
       "color": "#2E7D32"
     },
     {
       "id": "girls",
-      "name": "Girls Category",
+      "name": "Girls",
       "icon": "sports_cricket",
       "color": "#E91E63"
     }
@@ -257,6 +257,26 @@
       "description": "Play with all your heart,live the game, have fun !",
       "tagline": "Play with all your heart, live the game, have fun!",
       "owner": "Shubhada and Sameer"
+    },
+    {
+      "id": "sponsor_powerpoint",
+      "name": "The PowerPoint CoWorking & Managed Spaces",
+      "type": "team",
+      "logoPlaceholder": "PP",
+      "description": "At The PowerPoint Co-Working & Managed Spaces, we're transforming the way businesses experience Real Estate. Through our Real Estate as a Service (REaaS) model, we deliver comprehensive, End-to-End solutions from identifying the right property to architectural design, engineering, and complete facility management. Whether you're looking for a ready-to-move-in office or a Built-to-Suit Workspace customized to your brand, The PowerPoint Co-Working & Managed Spaces provides spaces that are as functional as they are inspiring. We proudly serve startups, multinational corporations, and GCCs, helping every client find a workspace that fits their vision and workflow. With our streamlined execution process, we guarantee fully furnished & Built-to-Suit Managed Office possession within 60 days.",
+      "tagline": "Everything you need from space to structure, from blueprint to business all under one roof.",
+      "site": "www.thepowerpointcoworking.com",
+      "owner": "Siddharth Pednekar"
+    },
+    {
+      "id": "sponsor_sbcc",
+      "name": "SBCC Interiors Private Limited",
+      "type": "team",
+      "logoPlaceholder": "SB",
+      "description": "With over 20 years of experience in civil and interior works, SBCC Interiors has delivered quality-driven projects for 100+ B2B clients across industries. From structural execution to detailed interiors, we’re known for our commitment to timelines, workmanship, and lasting relationships. Also a Wholesale Authorised dealer for Godrej Interio. 1000+ Projects Completed, 150+ skilled professionals and 100M yearly turnover.",
+      "tagline": "20+ years of civil & interior excellence",
+      "site": "sbccpune.in",
+      "owner": "Shyam Sunder Mandava"
     }
   ],
   "advertisements": [
@@ -274,8 +294,8 @@
     },
     {
       "id": "ad_2",
-      "title": "🎯 Player Auctions ",
-      "subtitle": "Date: 14th December'2025 . Catch Updates Live",
+      "title": "🎯 Happy New Year!",
+      "subtitle": "Hope you all have a great year ahead!",
       "color": "#FF6B35"
     },
     {

@@ -47,8 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    // Predictor tab is now index 4
-    if (index == 4) {
+    // Predictor tab is now index 3
+    if (index == 3) {
       // Always show Game options (tournament list) when entering Predictor tab
       final gameProvider = Provider.of<GameProvider>(context, listen: false);
       gameProvider.clearTournamentSelection();
@@ -65,12 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return 'JCPL-3';
       case 1:
-        return 'Auctions';
+        return 'Teams';
       case 2:
         return 'Schedule';
       case 3:
-        return 'Teams';
-      case 4:
         return 'Predictor Game';
       default:
         return 'JCPL-3';
@@ -82,12 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return Icons.home;
       case 1:
-        return Icons.groups;
+        return Icons.groups_rounded;
       case 2:
         return Icons.calendar_month;
       case 3:
-        return Icons.groups_rounded;
-      case 4:
         return Icons.sports_cricket;
       default:
         return Icons.home;
@@ -522,12 +518,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return JcplHomeTab(onNavigateToTab: _onItemTapped);
       case 1:
-        return const AuctionsTab();
-      case 2:
-        return const ScheduleTab();
-      case 3:
         return const TeamsTab();
-      case 4:
+      case 2:
+        return ScheduleTab(onNavigateToTab: _onItemTapped);
+      case 3:
         return const PredictorGameScreen();
       default:
         return JcplHomeTab(onNavigateToTab: _onItemTapped);
@@ -1116,19 +1110,14 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Icons.gavel_outlined),
-            selectedIcon: Icon(Icons.gavel),
-            label: 'Auctions',
+            icon: Icon(Icons.groups_outlined),
+            selectedIcon: Icon(Icons.groups),
+            label: 'Teams',
           ),
           NavigationDestination(
             icon: Icon(Icons.calendar_month_outlined),
             selectedIcon: Icon(Icons.calendar_month),
             label: 'Schedule',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.groups_outlined),
-            selectedIcon: Icon(Icons.groups),
-            label: 'Teams',
           ),
           NavigationDestination(
             icon: Icon(Icons.sports_cricket_outlined),

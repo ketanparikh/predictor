@@ -17,6 +17,9 @@ class TeamsTab extends StatefulWidget {
 class _TeamsTabState extends State<TeamsTab> {
   String _selectedCategory = 'mens';
   List<Map<String, dynamic>> _teamsData = [];
+  List<Map<String, dynamic>> _womensTeamsData = [];
+  List<Map<String, dynamic>> _boysTeamsData = [];
+  List<Map<String, dynamic>> _girlsTeamsData = [];
 
   final Map<String, Map<String, dynamic>> _categories = {
     'mens': {
@@ -61,13 +64,28 @@ class _TeamsTabState extends State<TeamsTab> {
       final teams = (data['teams'] as List? ?? [])
           .map((t) => t as Map<String, dynamic>)
           .toList();
+      final womensTeams = (data['womensTeams'] as List? ?? [])
+          .map((t) => t as Map<String, dynamic>)
+          .toList();
+      final boysTeams = (data['boysTeams'] as List? ?? [])
+          .map((t) => t as Map<String, dynamic>)
+          .toList();
+      final girlsTeams = (data['girlsTeams'] as List? ?? [])
+          .map((t) => t as Map<String, dynamic>)
+          .toList();
       setState(() {
         _teamsData = teams;
+        _womensTeamsData = womensTeams;
+        _boysTeamsData = boysTeams;
+        _girlsTeamsData = girlsTeams;
       });
     } catch (e) {
       print('Error loading teams data: $e');
       setState(() {
         _teamsData = [];
+        _womensTeamsData = [];
+        _boysTeamsData = [];
+        _girlsTeamsData = [];
       });
     }
   }
@@ -107,11 +125,11 @@ class _TeamsTabState extends State<TeamsTab> {
           ],
         ),
       ),
-      child: Column(
+        child: Column(
         children: [
           // Category Selection
           Container(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -125,8 +143,10 @@ class _TeamsTabState extends State<TeamsTab> {
                   ),
                 ],
               ),
-              child: Row(
-                children: _categories.entries.map((entry) {
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _categories.entries.map((entry) {
                   final categoryId = entry.key;
                   final categoryData = entry.value;
                   final isSelected = _selectedCategory == categoryId;
@@ -160,8 +180,8 @@ class _TeamsTabState extends State<TeamsTab> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
                             Icon(
                               categoryData['icon'] as IconData,
                               size: 20,
@@ -188,6 +208,7 @@ class _TeamsTabState extends State<TeamsTab> {
                     ),
                   );
                 }).toList(),
+                ),
               ),
             ),
           ),
@@ -195,7 +216,13 @@ class _TeamsTabState extends State<TeamsTab> {
           Expanded(
             child: _selectedCategory == 'mens'
                 ? _buildMensTeamsList(context, theme)
-                : _buildComingSoonView(context, theme),
+                : _selectedCategory == 'womens'
+                    ? _buildWomensTeamsList(context, theme)
+                    : _selectedCategory == 'boys'
+                        ? _buildBoysTeamsList(context, theme)
+                        : _selectedCategory == 'girls'
+                            ? _buildGirlsTeamsList(context, theme)
+                            : _buildComingSoonView(context, theme),
           ),
         ],
       ),
@@ -229,19 +256,19 @@ class _TeamsTabState extends State<TeamsTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Container(
+            Container(
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
                       theme.colorScheme.primary.withOpacity(0.1),
                       theme.colorScheme.secondary.withOpacity(0.1),
-                    ],
-                  ),
+                  ],
+                ),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
+                border: Border.all(
                     color: theme.colorScheme.primary.withOpacity(0.2),
                     width: 1.5,
                   ),
@@ -259,10 +286,10 @@ class _TeamsTabState extends State<TeamsTab> {
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            theme.colorScheme.primary,
-                            theme.colorScheme.secondary,
-                          ],
+                colors: [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.secondary,
+                ],
                         ),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
@@ -313,9 +340,9 @@ class _TeamsTabState extends State<TeamsTab> {
                       ),
                       child: Text(
                         '12 Teams',
-                        style: TextStyle(
+                style: TextStyle(
                           color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
                       ),
@@ -436,7 +463,7 @@ class _TeamsTabState extends State<TeamsTab> {
                     ),
                     child: const Icon(
                       Icons.shield,
-                      color: Colors.white,
+                  color: Colors.white,
                       size: 28,
                     ),
                   ),
@@ -479,9 +506,9 @@ class _TeamsTabState extends State<TeamsTab> {
                               ),
                               const SizedBox(width: 4),
                               Flexible(
-                                child: Text(
+              child: Text(
                                   'C: $captain',
-                                  style: TextStyle(
+                style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.grey.shade700,
@@ -542,9 +569,9 @@ class _TeamsTabState extends State<TeamsTab> {
                   ),
                   // Right side: Arrow and Player Count Badge
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
+              children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -654,7 +681,7 @@ class _TeamsTabState extends State<TeamsTab> {
                       size: 28,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -849,68 +876,1338 @@ class _TeamsTabState extends State<TeamsTab> {
     );
   }
 
-  Widget _buildComingSoonView(BuildContext context, ThemeData theme) {
-    return Center(
+  Widget _buildWomensTeamsList(BuildContext context, ThemeData theme) {
+    if (_womensTeamsData.isEmpty) {
+      return const Center(
+        child: Text('Loading women\'s teams...'),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Container(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
+                  _categories['womens']!['color'].withOpacity(0.1) as Color,
+                  (_categories['womens']!['color'] as Color)
+                      .withOpacity(0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: (_categories['womens']!['color'] as Color)
+                    .withOpacity(0.2),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: (_categories['womens']!['color'] as Color)
+                      .withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        _categories['womens']!['color'] as Color,
+                        (_categories['womens']!['color'] as Color)
+                            .withOpacity(0.7),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (_categories['womens']!['color'] as Color)
+                            .withOpacity(0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.groups,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Women's Teams",
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: _categories['womens']!['color'] as Color,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Team Rosters & Details',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (_womensTeamsData.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          'Sponsor: ${_womensTeamsData[0]['companyName'] ?? 'Growwth'} - ${_womensTeamsData[0]['sponsor'] ?? 'Yoshita'}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
+                          softWrap: true,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: (_categories['womens']!['color'] as Color)
+                        .withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '4 Teams',
+                    style: TextStyle(
+                      color: _categories['womens']!['color'] as Color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+            ),
+          ],
+        ),
+          ),
+          const SizedBox(height: 20),
+          // Teams List
+          Expanded(
+            child: ListView.builder(
+              itemCount: _womensTeamsData.length,
+              itemBuilder: (context, index) {
+                final teamData = _womensTeamsData[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _buildWomensTeamCard(context, teamData, theme, index),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWomensTeamCard(BuildContext context,
+      Map<String, dynamic> teamData, ThemeData theme, int index) {
+    // Use same color scheme as Men's teams - 4 distinct color pairs
+    final teamColors = [
+      [const Color(0xFF6366F1), const Color(0xFF8B5CF6)], // 1. Indigo-Purple
+      [const Color(0xFFEC4899), const Color(0xFFF43F5E)], // 2. Pink-Red
+      [const Color(0xFF10B981), const Color(0xFF059669)], // 3. Green
+      [const Color(0xFF3B82F6), const Color(0xFF2563EB)], // 4. Blue
+    ];
+    final colors = teamColors[index % teamColors.length];
+    final teamName = teamData['name'] as String? ?? 'Team ${index + 1}';
+    final companyName = teamData['companyName'] as String? ?? 'Growwth';
+    final sponsor = teamData['sponsor'] as String? ?? 'Yoshita';
+    final players = (teamData['players'] as List<dynamic>?)
+            ?.map((p) => p.toString())
+            .toList() ??
+        [];
+
+    return InkWell(
+      onTap: () => _showWomensTeamDetails(
+          context, teamName, teamData, colors, theme),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colors[0].withOpacity(0.15),
+              colors[1].withOpacity(0.1),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: colors[0].withOpacity(0.2),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: Card(
+          elevation: 0,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: colors[0].withOpacity(0.2),
+              width: 1.5,
+            ),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white.withOpacity(0.7),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  // Left side: Team Icon
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: colors,
+                      ),
+        borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colors[0].withOpacity(0.4),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.shield,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Middle: Team Info
+                  Expanded(
+      child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          teamName,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colors[0],
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+        children: [
+          Icon(
+                              Icons.people,
+                              size: 16,
+                              color: colors[0],
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${players.length} Player${players.length != 1 ? 's' : ''}',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Right side: Arrow and Player Count Badge
+                  Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(colors: colors),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colors[0].withOpacity(0.3),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.people,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${players.length}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Colors.grey.shade600,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showWomensTeamDetails(BuildContext context, String teamName,
+      Map<String, dynamic> teamData, List<Color> teamColors, ThemeData theme) {
+    final companyName = teamData['companyName'] as String? ?? 'Growwth';
+    final sponsor = teamData['sponsor'] as String? ?? 'Yoshita';
+    final players = (teamData['players'] as List<dynamic>?)
+            ?.map((p) => p.toString())
+            .toList() ??
+        [];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.75,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: teamColors,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.shield,
+                      color: Colors.white,
+            size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          teamName,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: teamColors[0].withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${players.length} Player${players.length != 1 ? 's' : ''}',
+                            style: TextStyle(
+                              color: teamColors[0],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            // Players List
+            Expanded(
+              child: players.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.people_outline,
+                            size: 64,
+                            color: Colors.grey.shade400,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No players assigned yet',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: players.length,
+                      itemBuilder: (context, index) {
+                        final player = players[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          elevation: 1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            leading: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: teamColors[0],
+                              child: Text(
+                                '${index + 1}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                              player,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBoysTeamsList(BuildContext context, ThemeData theme) {
+    if (_boysTeamsData.isEmpty) {
+      return const Center(child: Text('No boys teams available'));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  _categories['boys']!['color'].withOpacity(0.1) as Color,
+                  (_categories['boys']!['color'] as Color).withOpacity(0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: (_categories['boys']!['color'] as Color).withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        _categories['boys']!['color'] as Color,
+                        (_categories['boys']!['color'] as Color).withOpacity(0.7),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(Icons.groups, color: Colors.white, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Boys Teams",
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: _categories['boys']!['color'] as Color,
+                        ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+                        'Team Rosters & Details',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: (_categories['boys']!['color'] as Color).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${_boysTeamsData.length} Teams',
+            style: TextStyle(
+                      color: _categories['boys']!['color'] as Color,
+              fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _boysTeamsData.length,
+              itemBuilder: (context, index) {
+                final teamData = _boysTeamsData[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _buildBoysTeamCard(context, teamData, theme, index),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBoysTeamCard(BuildContext context, Map<String, dynamic> teamData,
+      ThemeData theme, int index) {
+    final teamColors = [
+      [const Color(0xFF6366F1), const Color(0xFF8B5CF6)],
+      [const Color(0xFF10B981), const Color(0xFF059669)],
+      [const Color(0xFF3B82F6), const Color(0xFF2563EB)],
+      [const Color(0xFFF59E0B), const Color(0xFFD97706)],
+    ];
+    final colors = teamColors[index % teamColors.length];
+    final teamName = teamData['name'] as String? ?? 'Team ${index + 1}';
+    final captain = teamData['captain'] as String? ?? 'Captain';
+    final players =
+        (teamData['players'] as List<dynamic>?)?.map((p) => p.toString()).toList() ??
+            [];
+
+    return InkWell(
+      onTap: () => _showBoysTeamDetails(context, teamName, teamData, colors, theme),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colors[0].withOpacity(0.15),
+              colors[1].withOpacity(0.1),
+            ],
+          ),
+        ),
+        child: Card(
+          elevation: 0,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: colors[0].withOpacity(0.2),
+              width: 1.5,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: colors),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(Icons.shield, color: Colors.white, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        teamName,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colors[0],
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Captain: $captain',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.people, size: 16, color: colors[0]),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${players.length} Player${players.length != 1 ? 's' : ''}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: colors),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.people, color: Colors.white, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${players.length}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade600),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showBoysTeamDetails(BuildContext context, String teamName,
+      Map<String, dynamic> teamData, List<Color> teamColors, ThemeData theme) {
+    final players =
+        (teamData['players'] as List<dynamic>?)?.map((p) => p.toString()).toList() ??
+            [];
+    final captain = teamData['captain'] as String? ?? 'Captain';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.75,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: teamColors),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.shield, color: Colors.white, size: 28),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          teamName,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: teamColors[0].withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.military_tech, size: 14, color: teamColors[0]),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Captain: $captain',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: teamColors[0],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: teamColors[0].withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${players.length} Player${players.length != 1 ? 's' : ''}',
+                            style: TextStyle(
+                              color: teamColors[0],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: players.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.people_outline, size: 64, color: Colors.grey.shade400),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No players assigned yet',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: players.length,
+                      itemBuilder: (context, index) {
+                        final player = players[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          elevation: 1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            leading: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: teamColors[0],
+                              child: Text(
+                                '${index + 1}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                              player,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGirlsTeamsList(BuildContext context, ThemeData theme) {
+    if (_girlsTeamsData.isEmpty) {
+      return const Center(child: Text('No girls teams available'));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  _categories['girls']!['color'].withOpacity(0.1) as Color,
+                  (_categories['girls']!['color'] as Color).withOpacity(0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: (_categories['girls']!['color'] as Color).withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        _categories['girls']!['color'] as Color,
+                        (_categories['girls']!['color'] as Color).withOpacity(0.7),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(Icons.groups, color: Colors.white, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Girls Teams",
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: _categories['girls']!['color'] as Color,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Team Rosters & Details',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: (_categories['girls']!['color'] as Color).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${_girlsTeamsData.length} Teams',
+                    style: TextStyle(
+                      color: _categories['girls']!['color'] as Color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _girlsTeamsData.length,
+              itemBuilder: (context, index) {
+                final teamData = _girlsTeamsData[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _buildGirlsTeamCard(context, teamData, theme, index),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGirlsTeamCard(BuildContext context, Map<String, dynamic> teamData,
+      ThemeData theme, int index) {
+    final teamColors = [
+      [const Color(0xFFE91E63), const Color(0xFFAD1457)],
+      [const Color(0xFFEC407A), const Color(0xFFC2185B)],
+    ];
+    final colors = teamColors[index % teamColors.length];
+    final teamName = teamData['name'] as String? ?? 'Team ${index + 1}';
+    final players =
+        (teamData['players'] as List<dynamic>?)?.map((p) => p.toString()).toList() ??
+            [];
+
+    return InkWell(
+      onTap: () => _showGirlsTeamDetails(context, teamName, teamData, colors, theme),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colors[0].withOpacity(0.15),
+              colors[1].withOpacity(0.1),
+            ],
+          ),
+        ),
+        child: Card(
+          elevation: 0,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: colors[0].withOpacity(0.2),
+              width: 1.5,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: colors),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(Icons.shield, color: Colors.white, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        teamName,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colors[0],
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(Icons.people, size: 16, color: colors[0]),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${players.length} Player${players.length != 1 ? 's' : ''}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: colors),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.people, color: Colors.white, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${players.length}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade600),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showGirlsTeamDetails(BuildContext context, String teamName,
+      Map<String, dynamic> teamData, List<Color> teamColors, ThemeData theme) {
+    final players =
+        (teamData['players'] as List<dynamic>?)?.map((p) => p.toString()).toList() ??
+            [];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.75,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: teamColors),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.shield, color: Colors.white, size: 28),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          teamName,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: teamColors[0].withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${players.length} Player${players.length != 1 ? 's' : ''}',
+                            style: TextStyle(
+                              color: teamColors[0],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: players.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.people_outline, size: 64, color: Colors.grey.shade400),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No players assigned yet',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: players.length,
+                      itemBuilder: (context, index) {
+                        final player = players[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          elevation: 1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            leading: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: teamColors[0],
+                              child: Text(
+                                '${index + 1}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                              player,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildComingSoonView(BuildContext context, ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
                   _categories[_selectedCategory]!['color']
                       .withOpacity(0.15) as Color,
                   (_categories[_selectedCategory]!['color'] as Color)
                       .withOpacity(0.1),
-                ],
-              ),
-              shape: BoxShape.circle,
-              border: Border.all(
+                  ],
+                ),
+                shape: BoxShape.circle,
+                border: Border.all(
                 color: (_categories[_selectedCategory]!['color'] as Color)
                     .withOpacity(0.3),
-                width: 2,
+                  width: 2,
+                ),
               ),
-            ),
-            child: Icon(
+              child: Icon(
               _categories[_selectedCategory]!['icon'] as IconData,
-              size: 80,
+                size: 80,
               color: (_categories[_selectedCategory]!['color'] as Color)
                   .withOpacity(0.6),
+              ),
             ),
-          ),
-          const SizedBox(height: 32),
-          ShaderMask(
-            shaderCallback: (bounds) => LinearGradient(
-              colors: [
+            const SizedBox(height: 32),
+            ShaderMask(
+              shaderCallback: (bounds) => LinearGradient(
+                colors: [
                 _categories[_selectedCategory]!['color'] as Color,
                 (_categories[_selectedCategory]!['color'] as Color)
                     .withOpacity(0.7),
-              ],
-            ).createShader(bounds),
+                ],
+              ).createShader(bounds),
             child: Text(
-              'Coming Soon!',
+                'Coming Soon!',
               style: const TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 1,
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 1,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48),
-            child: Text(
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48),
+              child: Text(
               '${_categories[_selectedCategory]!['name']} team profiles and player stats\nwill be available here soon.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey.shade600,
-                height: 1.5,
-              ),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade600,
+                  height: 1.5,
+                ),
             ),
           ),
         ],

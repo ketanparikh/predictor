@@ -72,6 +72,153 @@
       "captain": "Dhruv Jhalani",
       "viceCaptain": "Ketan Parikh"
     }
+  ],
+  "womensTeams": [
+    {
+      "id": "womens_team_1",
+      "name": "Sapphire Titans",
+      "companyName": "Growwth",
+      "sponsor": "Yoshita",
+      "players": [
+        "Pallavi Vichare",
+        "Kanika Mutreja",
+        "Suvarna Dubey",
+        "Tulsi Parikh",
+        "Shubhangi Patkar",
+        "Priyanka Murkute",
+        "Manika Goel"        
+      ]
+    },
+    {
+      "id": "womens_team_2",
+      "name": "Jade Unicorns",
+      "companyName": "Growwth",
+      "sponsor": "Yoshita",
+      "players": [
+        "Khushboo Behede",
+        "Pradnya Kulkarni",
+        "Avani Pawar",
+        "Prarthana Wagh",
+        "Soundarya Kad",
+        "Rashmi Amritkar",
+        "Rupal Chiplunkar"
+        ]
+    },
+    {
+      "id": "womens_team_3",
+      "name": "Strike Queens",
+      "companyName": "Growwth",
+      "sponsor": "Yoshita",
+      "players": [
+        "Yoshita",
+        "Reena Singh",
+        "Priya Hora",
+        "Amruta Charpe",
+        "Himali Kharkar",
+        "Vaishali Patil",
+        "Shubhada Katdare"
+        ]
+    },
+    {
+      "id": "womens_team_4",
+      "name": "Jade Cardinals",
+      "companyName": "Growwth",
+      "sponsor": "Yoshita",
+      "players": [
+        "Priya Narayanan",
+        "Renu ",
+        "Manisha Thube",
+        "Nisha Kad",
+        "Medha Pawar",
+        "Trupti Khanna",
+        "Jagjot Kaur Saroa"
+      ]
+    }
+  ],
+  "boysTeams": [
+    {
+      "id": "boys_team_1",
+      "name": "Jade Infernos",
+      "captain": "Swarnim Chavan",
+      "players": [
+        "Swarnim Chavan",
+        "Reyansh Parikh",
+        "Vihaan Poduval",
+        "Riaan Mathur",
+        "Darsh Bhagat",
+        "Vihaan Vichare"
+      ]
+    },
+    {
+      "id": "boys_team_2",
+      "name": "Jade Dominators",
+      "captain": "Shreeyansh Nalbilwar",
+      "players": [
+        "Shreeyansh Nalbilwar",
+        "Vedant Chaudhari",
+        "Sharvin Batwal",
+        "Manit Bathiya",
+        "Reyansh Agarwal",
+        "Aaryan Joshi",
+        "Arnav Shinde"
+      ]
+    },
+    {
+      "id": "boys_team_3",
+      "name": "Jade Red Dragons",
+      "captain": "Tejwardhan Rathod",
+      "players": [
+        "Tejwardhan Rathod",
+        "Suhaan Chandwani",
+        "Malhar Dehadrai",
+        "Arjun Ganesh",
+        "Reyansh Jaisinghani",
+        "Shaunak Vichare",
+        "Sharan Panchal"
+      ]
+    },
+    {
+      "id": "boys_team_4",
+      "name": "Fantom Legions",
+      "captain": "Hridhaan Parikh",
+      "players": [
+        "Hridhaan Parikh",
+        "Shaurya Mehta",
+        "Krushna Deokar",
+        "Luv Bahirwani",
+        "Vihaan Soni",
+        "Aarav Kumar",
+        "Naksh Verma"
+      ]
+    }
+  ],
+  "girlsTeams": [
+    {
+      "id": "girls_team_1",
+      "name": "Scarlet Sirens",
+      "players": [
+        "Srisha Vengurlekar",
+        "Aarna Dubey",
+        "Avisha Singhal",
+        "Siddhie khanna",
+        "Gauri kulkarni",
+        "Sanvi Gaikwad",
+        "Tanisha Kaur Arora"
+      ]
+    },
+    {
+      "id": "girls_team_2",
+      "name": "Sapphire Strikers",
+      "players": [
+        "Khushi Dulhani",
+        "Vivanya Mohite Pawar",
+        "Tanvi korlepara",
+        "Swara Wagh",
+        "Riana Sahoo",
+        "Trisha Savalwade",
+        "Aarvi Behade"
+      ]
+    }
   ]
 }
 

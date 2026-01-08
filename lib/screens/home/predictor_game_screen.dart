@@ -470,6 +470,9 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
   Widget _buildTournamentList(
       BuildContext context, List<Tournament> tournaments, bool loaded) {
     final theme = Theme.of(context);
+    // Use Consumer to rebuild when provider changes, ensuring time checks are current
+    return Consumer<GameProvider>(
+      builder: (context, gameProvider, child) {
     if (!loaded) {
       return Center(
         child: Column(
@@ -531,82 +534,145 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
             itemCount: tournaments.length,
             itemBuilder: (context, index) {
               final t = tournaments[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                elevation: 3,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
-                  onTap: () {
-                    final gameProvider =
-                        Provider.of<GameProvider>(context, listen: false);
-                    gameProvider.selectTournament(t);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                theme.colorScheme.primary,
-                                theme.colorScheme.secondary,
+              final isPast = gameProvider.isTournamentFirstMatchPast(t);
+              // Debug: Print to console for all tournaments
+              print('[UI] Tournament "${t.name}" (${t.id}): isPast=$isPast, matches=${t.matches.length}');
+              if (t.matches.isNotEmpty) {
+                print('[UI]   First match: date="${t.matches[0].date}", time="${t.matches[0].time}"');
+              }
+              return Opacity(
+                opacity: isPast ? 0.4 : 1.0, // More visible grey-out
+                child: Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  elevation: isPast ? 1 : 3,
+                  color: isPast ? Colors.grey[300] : null, // More visible grey background
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: isPast 
+                        ? BorderSide(color: Colors.grey[400]!, width: 1)
+                        : BorderSide.none,
+                  ),
+                  child: AbsorbPointer(
+                    absorbing: isPast, // Completely disable interaction when past
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: isPast
+                          ? null
+                          : () {
+                              final gameProvider =
+                                  Provider.of<GameProvider>(context, listen: false);
+                              gameProvider.selectTournament(t);
+                            },
+                      child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              gradient: isPast
+                                  ? null
+                                  : LinearGradient(
+                                      colors: [
+                                        theme.colorScheme.primary,
+                                        theme.colorScheme.secondary,
+                                      ],
+                                    ),
+                              color: isPast ? Colors.grey[400] : null,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              isPast ? Icons.lock_clock : Icons.emoji_events,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  t.name,
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: isPast ? Colors.grey[600] : null,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.sports_cricket,
+                                      size: 16,
+                                      color: isPast
+                                          ? Colors.grey[500]
+                                          : theme.colorScheme.secondary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${t.matches.length} ${t.matches.length == 1 ? 'Match' : 'Matches'}',
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        color: isPast
+                                            ? Colors.grey[500]
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
+                                    if (isPast) ...[
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange.shade100,
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.schedule,
+                                              size: 12,
+                                              color: Colors.orange.shade800,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              'Started',
+                                              style: TextStyle(
+                                                color: Colors.orange.shade800,
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
-                            Icons.emoji_events,
-                            color: Colors.white,
-                            size: 32,
+                          Icon(
+                            isPast ? Icons.lock : Icons.arrow_forward_ios,
+                            color: isPast
+                                ? Colors.grey[500]
+                                : theme.colorScheme.primary,
+                            size: 20,
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                t.name,
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.sports_cricket,
-                                    size: 16,
-                                    color: theme.colorScheme.secondary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${t.matches.length} ${t.matches.length == 1 ? 'Match' : 'Matches'}',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: theme.colorScheme.primary,
-                          size: 20,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
+                ),
                 ),
               );
             },
           ),
         ),
       ],
+    );
+      },
     );
   }
 

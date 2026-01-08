@@ -393,25 +393,94 @@ class GameProvider with ChangeNotifier {
     return now.isBefore(firstMatchDateTime);
   }
 
-  /// Parses a time string (e.g., "09:00 AM", "14:30", "07AM - 08AM") and combines with date.
+  /// Checks if a tournament's first match time has passed.
+  /// Returns true if the first match of the day has already started.
+  /// Uses the same logic as isGameFrozen() but for any tournament (not just selected one).
+  bool isTournamentFirstMatchPast(Tournament tournament) {
+    if (tournament.matches.isEmpty) {
+      return false; // No matches, so can't be past
+    }
+
+    final now = DateTime.now();
+    DateTime? firstMatchDateTime;
+
+    // Find the earliest match time for this tournament/day
+    // Use the same logic as isGameFrozen() for consistency
+    for (final match in tournament.matches) {
+      try {
+        // Parse match date - same as isGameFrozen()
+        final matchDate = DateTime.parse(match.date);
+        
+        // Parse match time if available
+        DateTime matchDateTime;
+        if (match.time != null && match.time!.isNotEmpty && match.time != 'TBD') {
+          matchDateTime = _parseMatchDateTime(matchDate, match.time!);
+        } else {
+          // If no time specified, assume 9:00 AM as default first match time
+          matchDateTime = DateTime(matchDate.year, matchDate.month, matchDate.day, 9, 0);
+        }
+
+        if (firstMatchDateTime == null || matchDateTime.isBefore(firstMatchDateTime)) {
+          firstMatchDateTime = matchDateTime;
+        }
+      } catch (e) {
+        // Skip matches with invalid dates/times
+        print('[GameProvider] Error processing match ${match.id} (date: "${match.date}", time: "${match.time}"): $e');
+        continue;
+      }
+    }
+
+    if (firstMatchDateTime == null) {
+      print('[GameProvider] No valid match time found for tournament ${tournament.id} (${tournament.name})');
+      return false; // Can't determine if past if no valid match time found
+    }
+
+    // Tournament is past if current time is at or after the first match start time
+    // Note: isGameFrozen() checks if now.isBefore() (frozen before start)
+    // This checks if now >= firstMatchDateTime (past if at or after start)
+    final isPast = now.compareTo(firstMatchDateTime) >= 0;
+    
+    // Always log for debugging
+    print('[GameProvider] Tournament "${tournament.name}" (${tournament.id}):');
+    print('  First match: $firstMatchDateTime');
+    print('  Current time: $now');
+    print('  Comparison: now.compareTo(firstMatch) = ${now.compareTo(firstMatchDateTime)}');
+    print('  isPast: $isPast');
+    
+    return isPast;
+  }
+
+  /// Parses a time string (e.g., "09:00 AM", "14:30", "07AM - 08AM", "03:30PM – 04PM") and combines with date.
   DateTime _parseMatchDateTime(DateTime date, String timeStr) {
     try {
-      // Handle time range format like "07AM - 08AM" - extract start time
+      // Handle time range format like "07AM - 08AM" or "03:30PM – 04PM" - extract start time
+      // Support both regular hyphen "-" and en-dash "–"
       String timeToParse = timeStr;
-      if (timeStr.contains(' - ')) {
-        final parts = timeStr.split(' - ');
+      if (timeStr.contains(' - ') || timeStr.contains(' – ')) {
+        final parts = timeStr.split(RegExp(r'\s*[-–]\s*'));
         if (parts.isNotEmpty) {
           timeToParse = parts[0].trim();
         }
       }
       
-      // Convert formats like "07AM" to "07:00 AM" for parsing
-      final simpleTimeMatch = RegExp(r'^(\d{1,2})(AM|PM)$', caseSensitive: false).firstMatch(timeToParse);
-      if (simpleTimeMatch != null) {
-        final hour = int.tryParse(simpleTimeMatch.group(1) ?? '');
-        final amPm = simpleTimeMatch.group(2)?.toUpperCase() ?? '';
-        if (hour != null) {
-          timeToParse = '${hour.toString().padLeft(2, '0')}:00 $amPm';
+      // Handle formats like "03:30PM" or "3:30PM" (with colon and AM/PM)
+      final colonTimeMatch = RegExp(r'^(\d{1,2}):(\d{2})(AM|PM)$', caseSensitive: false).firstMatch(timeToParse);
+      if (colonTimeMatch != null) {
+        final hour = int.tryParse(colonTimeMatch.group(1) ?? '');
+        final minute = int.tryParse(colonTimeMatch.group(2) ?? '');
+        final amPm = colonTimeMatch.group(3)?.toUpperCase() ?? '';
+        if (hour != null && minute != null) {
+          timeToParse = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $amPm';
+        }
+      } else {
+        // Convert formats like "07AM" to "07:00 AM" for parsing
+        final simpleTimeMatch = RegExp(r'^(\d{1,2})(AM|PM)$', caseSensitive: false).firstMatch(timeToParse);
+        if (simpleTimeMatch != null) {
+          final hour = int.tryParse(simpleTimeMatch.group(1) ?? '');
+          final amPm = simpleTimeMatch.group(2)?.toUpperCase() ?? '';
+          if (hour != null) {
+            timeToParse = '${hour.toString().padLeft(2, '0')}:00 $amPm';
+          }
         }
       }
 

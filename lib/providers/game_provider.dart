@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import '../models/question.dart';
 import '../models/tournament.dart';
 import '../services/match_status_service.dart';
+import '../services/fixture_tournament_service.dart';
+import '../services/game_config_service.dart';
 
 class GameProvider with ChangeNotifier {
   List<Question> _questions = [];
@@ -20,6 +24,7 @@ class GameProvider with ChangeNotifier {
   final MatchStatusService _matchStatusService = MatchStatusService();
   Set<String> _completedMatchIds = {};
   bool _testUnblock = false;
+  Set<String> _playableTournamentIds = {}; // controlled by admin
 
   List<Question> get questions => _questions;
   Map<String, String> get userAnswers => _userAnswers;
@@ -38,19 +43,49 @@ class GameProvider with ChangeNotifier {
   MatchInfo? get selectedMatch => _selectedMatch;
   Set<String> get completedMatchIds => _completedMatchIds;
   bool get testUnblock => _testUnblock;
+  Set<String> get playableTournamentIds => _playableTournamentIds;
 
   Future<void> loadTournaments() async {
     try {
-      final String response =
-          await rootBundle.loadString('assets/config/tournaments.json');
-      final data = json.decode(response);
-      _tournaments = (data['tournaments'] as List)
-          .map((t) => Tournament.fromJson(t))
-          .toList();
+      // Prefer building tournaments dynamically from the Excel schedule
+      final fixtureService = FixtureTournamentService();
+      _tournaments = await fixtureService.loadTournamentsFromExcel();
+      if (_tournaments.isEmpty) {
+        throw Exception('No tournaments built from Excel');
+      }
       _tournamentsLoaded = true;
       notifyListeners();
     } catch (e) {
-      print('Error loading tournaments: $e');
+      // ignore: avoid_print
+      print('Error loading tournaments from Excel: $e');
+      // Fallback to static JSON config if Excel loading fails
+      try {
+        final String response =
+            await rootBundle.loadString('assets/config/tournaments.json');
+        final data = json.decode(response);
+        _tournaments = (data['tournaments'] as List)
+            .map((t) => Tournament.fromJson(t))
+            .toList();
+        _tournamentsLoaded = true;
+        notifyListeners();
+      } catch (e2) {
+        // ignore: avoid_print
+        print('Error loading tournaments from JSON fallback: $e2');
+      }
+    }
+  }
+
+  /// Loads admin-configured playable tournament ids from Firestore.
+  /// If none are configured, all days are treated as playable.
+  Future<void> loadPlayableTournaments() async {
+    try {
+      final configService = GameConfigService();
+      _playableTournamentIds =
+          await configService.fetchPlayableTournamentIds();
+      notifyListeners();
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error loading playable tournaments: $e');
     }
   }
 
@@ -58,12 +93,33 @@ class GameProvider with ChangeNotifier {
     try {
       final String response = await rootBundle.loadString(questionsFilePath);
       final data = json.decode(response);
-      _questions =
-          (data['questions'] as List).map((q) => Question.fromJson(q)).toList();
+      _questions = (data['questions'] as List)
+          .map((q) => Question.fromJson(q as Map<String, dynamic>))
+          .toList();
       notifyListeners();
     } catch (e) {
       print('Error loading questions from $questionsFilePath: $e');
     }
+  }
+
+  /// Used by the admin panel to load exactly the same questions that players
+  /// see for a given match (same random seed, same team-name replacements).
+  Future<void> loadQuestionsForAdmin(MatchInfo match) async {
+    // Derive team names similarly to selectMatch
+    String? team1Name;
+    String? team2Name;
+    try {
+      final parts = match.name.split(
+        RegExp(r'\s+vs\s+|\s+VS\s+|\s+v\s+|\s+V\s+', caseSensitive: false),
+      );
+      if (parts.length >= 2) {
+        team1Name = parts[0].trim();
+        team2Name = parts[1].trim();
+      }
+    } catch (_) {}
+
+    await _loadQuestionsForMatch(match,
+        team1Name: team1Name, team2Name: team2Name);
   }
 
   void selectTournament(Tournament tournament) {
@@ -130,7 +186,89 @@ class GameProvider with ChangeNotifier {
     _gameStarted = false;
     _gameCompleted = false;
     notifyListeners();
-    await loadQuestionsFromFile(match.questionFile);
+
+    // Derive team names from match name for placeholder replacement in questions.
+    String? team1Name;
+    String? team2Name;
+    try {
+      final parts = match.name.split(
+        RegExp(r'\s+vs\s+|\s+VS\s+|\s+v\s+|\s+V\s+', caseSensitive: false),
+      );
+      if (parts.length >= 2) {
+        team1Name = parts[0].trim();
+        team2Name = parts[1].trim();
+      }
+    } catch (_) {}
+
+    await _loadQuestionsForMatch(match,
+        team1Name: team1Name, team2Name: team2Name);
+  }
+
+  Future<void> _loadQuestionsForMatch(
+    MatchInfo match, {
+    String? team1Name,
+    String? team2Name,
+  }) async {
+    try {
+      final String response =
+          await rootBundle.loadString(match.questionFile);
+      final data = json.decode(response);
+      var rawQuestions = (data['questions'] as List)
+          .map((q) => Question.fromJson(q as Map<String, dynamic>))
+          .toList();
+
+      // Randomly pick up to 10 questions from the bank for this match
+      rawQuestions.shuffle(Random(match.id.hashCode));
+      rawQuestions = rawQuestions.take(10).toList();
+
+      if (team1Name == null && team2Name == null) {
+        _questions = rawQuestions;
+      } else {
+        _questions = rawQuestions
+            .map((q) => _withTeamPlaceholdersReplaced(q, team1Name, team2Name))
+            .toList();
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error loading questions for match from ${match.questionFile}: $e');
+    }
+  }
+
+  Question _withTeamPlaceholdersReplaced(
+      Question q, String? team1Name, String? team2Name) {
+    String replaceTeams(String input) {
+      var out = input;
+      if (team1Name != null && team1Name.isNotEmpty) {
+        out = out
+            .replaceAll('Team 1', team1Name)
+            .replaceAll('team 1', team1Name)
+            .replaceAll('TEAM 1', team1Name.toUpperCase())
+            .replaceAll('Team1', team1Name)
+            .replaceAll('team1', team1Name);
+      }
+      if (team2Name != null && team2Name.isNotEmpty) {
+        out = out
+            .replaceAll('Team 2', team2Name)
+            .replaceAll('team 2', team2Name)
+            .replaceAll('TEAM 2', team2Name.toUpperCase())
+            .replaceAll('Team2', team2Name)
+            .replaceAll('team2', team2Name);
+      }
+      return out;
+    }
+
+    final newQuestion = replaceTeams(q.question);
+    final newOptions = q.options.map(replaceTeams).toList();
+    final newCorrect = replaceTeams(q.correctAnswer);
+
+    return Question(
+      id: q.id,
+      question: newQuestion,
+      options: newOptions,
+      correctAnswer: newCorrect,
+      points: q.points,
+      category: q.category,
+    );
   }
 
   void setTestUnblock(bool enabled) {
@@ -181,8 +319,13 @@ class GameProvider with ChangeNotifier {
     int score = 0;
     for (var question in _questions) {
       final userAnswer = _userAnswers[question.id];
+      if (userAnswer == null) continue;
+
       if (userAnswer == question.correctAnswer) {
-        score += question.points;
+        // Correct prediction: +10
+        score += 10;
+      } else {
+        // Incorrect prediction: 0 (no negative scoring)
       }
     }
     return score;
@@ -195,5 +338,111 @@ class GameProvider with ChangeNotifier {
   void clearCompletedMatches() {
     _completedMatchIds = {};
     notifyListeners();
+  }
+
+  /// Returns tournaments filtered by admin-configured playable ids.
+  /// For admins or when no config exists, returns all tournaments.
+  List<Tournament> getPlayableTournaments({required bool includeAll}) {
+    if (includeAll || _playableTournamentIds.isEmpty) {
+      return _tournaments;
+    }
+    return _tournaments
+        .where((t) => _playableTournamentIds.contains(t.id))
+        .toList();
+  }
+
+  /// Checks if the game should be frozen (before first match of the day).
+  /// Returns true if current time is before the first match start time for the selected tournament.
+  bool isGameFrozen() {
+    if (_selectedTournament == null || _selectedTournament!.matches.isEmpty) {
+      return false; // Can't freeze if no tournament/match selected
+    }
+
+    final now = DateTime.now();
+    DateTime? firstMatchDateTime;
+
+    // Find the earliest match time for this tournament/day
+    for (final match in _selectedTournament!.matches) {
+      try {
+        // Parse match date
+        final matchDate = DateTime.parse(match.date);
+        
+        // Parse match time if available
+        DateTime matchDateTime;
+        if (match.time != null && match.time!.isNotEmpty && match.time != 'TBD') {
+          matchDateTime = _parseMatchDateTime(matchDate, match.time!);
+        } else {
+          // If no time specified, assume 9:00 AM as default first match time
+          matchDateTime = DateTime(matchDate.year, matchDate.month, matchDate.day, 9, 0);
+        }
+
+        if (firstMatchDateTime == null || matchDateTime.isBefore(firstMatchDateTime)) {
+          firstMatchDateTime = matchDateTime;
+        }
+      } catch (e) {
+        // Skip matches with invalid dates/times
+        continue;
+      }
+    }
+
+    if (firstMatchDateTime == null) {
+      return false; // Can't freeze if no valid match time found
+    }
+
+    // Game is frozen if current time is before the first match
+    return now.isBefore(firstMatchDateTime);
+  }
+
+  /// Parses a time string (e.g., "09:00 AM", "14:30", "07AM - 08AM") and combines with date.
+  DateTime _parseMatchDateTime(DateTime date, String timeStr) {
+    try {
+      // Handle time range format like "07AM - 08AM" - extract start time
+      String timeToParse = timeStr;
+      if (timeStr.contains(' - ')) {
+        final parts = timeStr.split(' - ');
+        if (parts.isNotEmpty) {
+          timeToParse = parts[0].trim();
+        }
+      }
+      
+      // Convert formats like "07AM" to "07:00 AM" for parsing
+      final simpleTimeMatch = RegExp(r'^(\d{1,2})(AM|PM)$', caseSensitive: false).firstMatch(timeToParse);
+      if (simpleTimeMatch != null) {
+        final hour = int.tryParse(simpleTimeMatch.group(1) ?? '');
+        final amPm = simpleTimeMatch.group(2)?.toUpperCase() ?? '';
+        if (hour != null) {
+          timeToParse = '${hour.toString().padLeft(2, '0')}:00 $amPm';
+        }
+      }
+
+      // Try common time formats
+      final timePatterns = [
+        'hh:mm a', // 09:00 AM
+        'h:mm a',  // 9:00 AM
+        'HH:mm',   // 09:00
+        'H:mm',    // 9:00
+      ];
+
+      for (final pattern in timePatterns) {
+        try {
+          final time = DateFormat(pattern).parse(timeToParse);
+          return DateTime(
+            date.year,
+            date.month,
+            date.day,
+            time.hour,
+            time.minute,
+          );
+        } catch (_) {
+          continue;
+        }
+      }
+
+      // If parsing fails, default to 9:00 AM
+      return DateTime(date.year, date.month, date.day, 9, 0);
+    } catch (_) {
+      // Default to 9:00 AM if all parsing fails
+      return DateTime(date.year, date.month, date.day, 9, 0);
+    }
   }
 }

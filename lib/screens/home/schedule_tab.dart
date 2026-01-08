@@ -20,6 +20,7 @@ class _ScheduleTabState extends State<ScheduleTab>
   late TabController _tabController;
   late TabController _fixturesTabController;
   Map<String, List<Map<String, dynamic>>> _fixturesByCategory = {};
+  Map<String, List<Map<String, dynamic>>> _pointsTableByCategory = {};
 
   // Groups data from the image
   final List<Map<String, dynamic>> _groupA = [
@@ -64,10 +65,13 @@ class _ScheduleTabState extends State<ScheduleTab>
       setState(() {
         _scheduleData = data;
       });
-      
+
       // Load fixtures from Excel
       await _loadFixturesFromExcel();
-      
+
+      // Load points table from config file
+      await _loadPointsTable();
+
       setState(() {
         _isLoading = false;
       });
@@ -75,6 +79,31 @@ class _ScheduleTabState extends State<ScheduleTab>
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _loadPointsTable() async {
+    try {
+      final String response =
+          await rootBundle.loadString('assets/config/points_table.json');
+      final data = json.decode(response);
+      final categories = data['categories'] as List<dynamic>? ?? [];
+
+      _pointsTableByCategory = {};
+      for (final cat in categories) {
+        final c = cat as Map<String, dynamic>;
+        final id = c['id'] as String? ?? '';
+        final teams = (c['teams'] as List<dynamic>? ?? [])
+            .map((t) => t as Map<String, dynamic>)
+            .toList();
+        if (id.isNotEmpty) {
+          _pointsTableByCategory[id] = teams;
+        }
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error loading points_table.json: $e');
+      _pointsTableByCategory = {};
     }
   }
 
@@ -120,7 +149,7 @@ class _ScheduleTabState extends State<ScheduleTab>
           _parseStructuredSheet(sheet, sheetStructure);
         } else {
           // Legacy format
-          _parseSheetByStructure(sheet, defaultCategory, sheetStructure);
+        _parseSheetByStructure(sheet, defaultCategory, sheetStructure);
         }
       }
       
@@ -216,8 +245,8 @@ class _ScheduleTabState extends State<ScheduleTab>
                   team2ColumnIndex = j;
                   isStructuredFormat = true;
                 } else if (teamColumnStartIndex == -1) {
-                  teamColumnStartIndex = j;
-                }
+                teamColumnStartIndex = j;
+              }
               }
             }
           }
@@ -1181,12 +1210,157 @@ class _ScheduleTabState extends State<ScheduleTab>
             controller: _tabController,
             children: [
               _buildGroupsTab(context),
-              _buildComingSoon(context, 'Points Table', Icons.leaderboard),
+              _buildPointsTableTab(context),
               _buildFixturesTab(context),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPointsTableTab(BuildContext context) {
+    final theme = Theme.of(context);
+    final categories = (_scheduleData?['categories'] as List<dynamic>? ?? [])
+        .cast<Map<String, dynamic>>();
+
+    if (categories.isEmpty || _pointsTableByCategory.isEmpty) {
+      return _buildComingSoon(context, 'Points Table', Icons.leaderboard);
+    }
+
+    return DefaultTabController(
+      length: categories.length,
+      child: Column(
+        children: [
+          Container(
+            color: theme.colorScheme.primary.withOpacity(0.05),
+            child: TabBar(
+              isScrollable: true,
+              labelColor: theme.colorScheme.primary,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: theme.colorScheme.primary,
+              tabs: [
+                for (final cat in categories)
+                  Tab(text: (cat['name'] ?? cat['id']) as String),
+              ],
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                for (final cat in categories)
+                  _buildPointsTableForCategory(
+                    context,
+                    (cat['id'] as String?) ?? '',
+                    cat,
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPointsTableForCategory(
+      BuildContext context, String categoryId, Map<String, dynamic> category) {
+    final teams = _pointsTableByCategory[categoryId] ?? [];
+    if (teams.isEmpty) {
+      return Center(
+        child: Text(
+          'No points table available',
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: Colors.grey[600]),
+        ),
+      );
+    }
+
+    // Special handling for Men's category: split by group A/B
+    if (categoryId == 'mens') {
+      final groupA =
+          teams.where((t) => (t['group'] ?? '').toString().toUpperCase() == 'A').toList();
+      final groupB =
+          teams.where((t) => (t['group'] ?? '').toString().toUpperCase() == 'B').toList();
+
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (groupA.isNotEmpty) ...[
+              Text(
+                'Group A',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              _buildPointsTableDataTable(context, groupA),
+              const SizedBox(height: 24),
+            ],
+            if (groupB.isNotEmpty) ...[
+              Text(
+                'Group B',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              _buildPointsTableDataTable(context, groupB),
+            ],
+          ],
+        ),
+      );
+    }
+
+    // Default single-table rendering for other categories
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      scrollDirection: Axis.vertical,
+      child: _buildPointsTableDataTable(context, teams),
+    );
+  }
+
+  Widget _buildPointsTableDataTable(
+      BuildContext context, List<Map<String, dynamic>> teams) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          columns: const [
+            DataColumn(label: Text('Team')),
+            DataColumn(label: Text('P')),
+            DataColumn(label: Text('W')),
+            DataColumn(label: Text('L')),
+            DataColumn(label: Text('T')),
+            DataColumn(label: Text('NRR')),
+            DataColumn(label: Text('Pts')),
+          ],
+          rows: teams.map((team) {
+            final name = (team['name'] ?? '') as String;
+            final played = (team['played'] ?? 0) as int;
+            final won = (team['won'] ?? 0) as int;
+            final lost = (team['lost'] ?? 0) as int;
+            final tie = (team['tie'] ?? 0) as int;
+            final nrr = (team['nrr'] ?? 0.0) as num;
+            final points = won * 2 + tie; // simple points formula
+
+            return DataRow(cells: [
+              DataCell(Text(name)),
+              DataCell(Text('$played')),
+              DataCell(Text('$won')),
+              DataCell(Text('$lost')),
+              DataCell(Text('$tie')),
+              DataCell(Text(nrr.toStringAsFixed(2))),
+              DataCell(Text('$points')),
+            ]);
+          }).toList(),
+        ),
+      ),
     );
   }
 
@@ -1509,8 +1683,8 @@ class _ScheduleTabState extends State<ScheduleTab>
       if (date.isNotEmpty && date != 'TBD') {
         // Try parsing as yyyy-MM-dd format first
         if (date.contains('-') && date.length >= 10) {
-          final dateTime = DateTime.parse(date);
-          formattedDate = DateFormat('MMM dd, yyyy').format(dateTime);
+        final dateTime = DateTime.parse(date);
+        formattedDate = DateFormat('MMM dd, yyyy').format(dateTime);
         } else if (_isDate(date)) {
           // Try parsing other date formats
           final parsedDate = _parseDate(date);

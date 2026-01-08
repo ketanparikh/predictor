@@ -94,8 +94,11 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
 
         // Step 1: Choose Tournament (when game mode is active)
         if (gameProvider.selectedTournament == null) {
-          return _buildTournamentList(context, gameProvider.tournaments,
-              gameProvider.tournamentsLoaded);
+          final isAdmin = adminProvider.isAdmin;
+          final tournamentsForUser =
+              gameProvider.getPlayableTournaments(includeAll: isAdmin);
+          return _buildTournamentList(
+              context, tournamentsForUser, gameProvider.tournamentsLoaded);
         }
 
         // Step 2: Choose Match within Tournament
@@ -512,7 +515,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                 onPressed: () => setState(() => _showGameMode = false),
               ),
               Text(
-                'Select Category',
+                'Select Day',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -1225,13 +1228,10 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: InkWell(
-              onTap: selectedAnswer != null
-                  ? null
-                  : () {
-                      if (!gameProvider.isAnswerSelected(question.id)) {
-                        gameProvider.answerQuestion(question.id, option);
-                      }
-                    },
+              onTap: () {
+                // Allow changing the selected option until the user submits
+                gameProvider.answerQuestion(question.id, option);
+              },
               child: Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
@@ -1256,9 +1256,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                           ],
                         )
                       : null,
-                  color: selectedAnswer != null && selectedAnswer != option
-                      ? Theme.of(context).disabledColor.withOpacity(0.04)
-                      : null,
+                  color: null,
                   boxShadow: selectedAnswer == option
                       ? [
                           BoxShadow(
@@ -1279,22 +1277,16 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                       decoration: BoxDecoration(
                         color: selectedAnswer == option
                             ? Theme.of(context).colorScheme.primary
-                            : (selectedAnswer != null
-                                ? Colors.grey[300]
-                                : Colors.grey.shade200),
+                            : Colors.grey.shade200,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         selectedAnswer == option
                             ? Icons.check_circle
-                            : (selectedAnswer != null
-                                ? Icons.lock
-                                : Icons.radio_button_unchecked),
+                            : Icons.radio_button_unchecked,
                         color: selectedAnswer == option
                             ? Colors.white
-                            : (selectedAnswer != null
-                                ? Colors.grey[600]
-                                : Colors.grey),
+                            : Colors.grey,
                         size: 20,
                       ),
                     ),
@@ -1335,63 +1327,95 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
     final question = gameProvider.currentQuestion;
     final selectedAnswer =
         question != null ? gameProvider.userAnswers[question.id] : null;
+    final isFrozen = gameProvider.isGameFrozen();
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: [
-        if (gameProvider.currentQuestionIndex > 0)
-          OutlinedButton(
-            onPressed: () {
-              gameProvider.resetGame();
-            },
-            child: const Text('Restart'),
-          )
-        else
-          const SizedBox(),
-        ElevatedButton(
-          onPressed: selectedAnswer == null
-              ? null
-              : () async {
-                  final auth =
-                      Provider.of<AuthProvider>(context, listen: false);
-                  if (gameProvider.currentQuestionIndex <
-                      gameProvider.questions.length - 1) {
-                    gameProvider.nextQuestion();
-                  } else {
-                    // Final question answered: attempt to save predictions and mark match complete
-                    final saved = await _submitScore(context, 0);
-                    if (saved && auth.user != null) {
-                      final gp =
-                          Provider.of<GameProvider>(context, listen: false);
-                      // Turn off any test-unblock override so completion is respected
-                      gp.setTestUnblock(false);
-                      await gp.markCurrentMatchCompletedForUser(auth.user!.uid);
-                    }
-                    if (saved) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Responses submitted.')),
-                      );
-                      gameProvider.resetGame();
-                      Provider.of<GameProvider>(context, listen: false)
-                          .clearTournamentSelection();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Submission failed! Cleared local state for retry.')),
-                      );
-                      gameProvider.resetGame();
-                      Provider.of<GameProvider>(context, listen: false)
-                          .clearTournamentSelection();
-                    }
-                  }
-                },
-          child: Text(
-            gameProvider.currentQuestionIndex <
-                    gameProvider.questions.length - 1
-                ? 'Next Question'
-                : 'Submit',
+        if (isFrozen)
+          Container(
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.orange.shade50,
+              border: Border.all(color: Colors.orange.shade300),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.lock_clock, color: Colors.orange.shade700, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Game is frozen until the first match of the day starts',
+                    style: TextStyle(
+                      color: Colors.orange.shade900,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (gameProvider.currentQuestionIndex > 0)
+              OutlinedButton(
+                onPressed: () {
+                  gameProvider.resetGame();
+                },
+                child: const Text('Restart'),
+              )
+            else
+              const SizedBox(),
+            ElevatedButton(
+              onPressed: (selectedAnswer == null || isFrozen)
+                  ? null
+                  : () async {
+                      final auth =
+                          Provider.of<AuthProvider>(context, listen: false);
+                      if (gameProvider.currentQuestionIndex <
+                          gameProvider.questions.length - 1) {
+                        gameProvider.nextQuestion();
+                      } else {
+                        // Final question answered: attempt to save predictions and mark match complete
+                        final saved =
+                            await _submitScore(context, gameProvider.totalScore);
+                        if (saved && auth.user != null) {
+                          final gp =
+                              Provider.of<GameProvider>(context, listen: false);
+                          // Turn off any test-unblock override so completion is respected
+                          gp.setTestUnblock(false);
+                          await gp.markCurrentMatchCompletedForUser(auth.user!.uid);
+                        }
+                        if (saved) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Responses submitted.')),
+                          );
+                          gameProvider.resetGame();
+                          Provider.of<GameProvider>(context, listen: false)
+                              .clearTournamentSelection();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Submission failed! Cleared local state for retry.')),
+                          );
+                          gameProvider.resetGame();
+                          Provider.of<GameProvider>(context, listen: false)
+                              .clearTournamentSelection();
+                        }
+                      }
+                    },
+              child: Text(
+                gameProvider.currentQuestionIndex <
+                        gameProvider.questions.length - 1
+                    ? 'Next Question'
+                    : 'Submit',
+              ),
+            ),
+          ],
         ),
       ],
     );

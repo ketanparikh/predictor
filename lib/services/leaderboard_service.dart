@@ -56,5 +56,44 @@ class LeaderboardService {
       return [];
     }
   }
+
+  /// Returns a cumulative leaderboard across all tournaments,
+  /// aggregating scores per userId.
+  Future<List<LeaderboardEntry>> getCumulativeLeaderboard() async {
+    try {
+      final snapshot = await _firestore.collection(_collection).get();
+
+      final Map<String, LeaderboardEntry> aggregated = {};
+
+      for (final doc in snapshot.docs) {
+        final entry = LeaderboardEntry.fromMap(doc.data());
+        final existing = aggregated[entry.userId];
+        if (existing == null) {
+          aggregated[entry.userId] = entry;
+        } else {
+          aggregated[entry.userId] = LeaderboardEntry(
+            userId: entry.userId,
+            userName: entry.userName.isNotEmpty
+                ? entry.userName
+                : existing.userName,
+            score: existing.score + entry.score,
+            // use latest timestamp
+            timestamp: entry.timestamp.isAfter(existing.timestamp)
+                ? entry.timestamp
+                : existing.timestamp,
+            tournamentId: 'overall',
+          );
+        }
+      }
+
+      final result = aggregated.values.toList()
+        ..sort((a, b) => b.score.compareTo(a.score));
+
+      return result;
+    } catch (e) {
+      print('Error computing cumulative leaderboard: $e');
+      return [];
+    }
+  }
 }
 

@@ -53,9 +53,16 @@ export const reconcileMatchOutcome = onDocumentWritten(
       let newMatchScore = 0;
       for (const [qId, correct] of Object.entries(correctAnswers)) {
         const userAnswer = answers[qId];
-        const qPoints = points[qId] ?? 0;
-        if (userAnswer !== undefined && userAnswer === correct) {
-          newMatchScore += qPoints;
+
+        if (userAnswer === undefined) {
+          continue;
+        }
+
+        if (userAnswer === correct) {
+          // Correct prediction: +10 points
+          newMatchScore += 10;
+        } else {
+          // Incorrect prediction: 0 (no negative scoring on backend)
         }
       }
 

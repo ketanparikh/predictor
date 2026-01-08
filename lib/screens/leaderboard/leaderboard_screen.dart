@@ -16,11 +16,19 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   bool _initialized = false;
   final LeaderboardService _leaderboardService = LeaderboardService();
   Stream<List<LeaderboardEntry>>? _leaderboardStream;
+  Future<List<LeaderboardEntry>>? _overallFuture;
 
   void _updateStream() {
-    if (_selectedTournamentId != null) {
-      _leaderboardStream = _leaderboardService
-          .getLeaderboardByTournament(_selectedTournamentId!);
+    if (_selectedTournamentId == null) return;
+
+    if (_selectedTournamentId == 'overall') {
+      // Overall cumulative leaderboard across all tournaments
+      _leaderboardStream = null;
+      _overallFuture = _leaderboardService.getCumulativeLeaderboard();
+    } else {
+      _overallFuture = null;
+      _leaderboardStream =
+          _leaderboardService.getLeaderboardByTournament(_selectedTournamentId!);
     }
   }
 
@@ -32,10 +40,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     final tournaments = gameProvider.tournaments;
     final loaded = gameProvider.tournamentsLoaded;
 
-    // Initialize selection to first tournament only once
-    if (loaded && tournaments.isNotEmpty && !_initialized) {
+    // Initialize selection to Overall only once
+    if (loaded && !_initialized) {
       _initialized = true;
-      _selectedTournamentId = tournaments.first.id;
+      _selectedTournamentId = 'overall';
       _updateStream();
     }
 
@@ -66,7 +74,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Tournament selection list
+                      // Day-wise + Overall selection list
                       Row(
                         children: [
                           Icon(
@@ -76,7 +84,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Select Tournament',
+                            'Select Day / Overall',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
@@ -91,9 +99,91 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                         height: 110,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: tournaments.length,
+                          itemCount: tournaments.length + 1, // + Overall
                           itemBuilder: (context, index) {
-                            final tournament = tournaments[index];
+                            // Index 0: Overall cumulative tournament
+                            if (index == 0) {
+                              final isSelected =
+                                  _selectedTournamentId == 'overall';
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedTournamentId = 'overall';
+                                    _updateStream();
+                                  });
+                                },
+                                child: Container(
+                                  width: 160,
+                                  margin: const EdgeInsets.only(right: 12),
+                                  child: Card(
+                                    color: isSelected
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer
+                                        : null,
+                                    elevation: isSelected ? 4 : 1,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              gradient: isSelected
+                                                  ? LinearGradient(
+                                                      colors: [
+                                                        Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                        Theme.of(context)
+                                                            .colorScheme
+                                                            .secondary,
+                                                      ],
+                                                    )
+                                                  : null,
+                                              color: !isSelected
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                      .withOpacity(0.1)
+                                                  : null,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Icon(
+                                              Icons.leaderboard,
+                                              color: isSelected
+                                                  ? Colors.white
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                              size: 32,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          const Flexible(
+                                            child: Text(
+                                              'Overall',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            final tournament = tournaments[index - 1];
                             final isSelected =
                                 _selectedTournamentId == tournament.id;
                             return GestureDetector(
@@ -183,7 +273,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Leaderboard for selected tournament
+                      // Leaderboard for selected day / overall
                       if (_selectedTournamentId != null) ...[
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
@@ -220,87 +310,41 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           ),
                         ),
                         Expanded(
-                          child: StreamBuilder<List<LeaderboardEntry>>(
-                            stream: _leaderboardStream,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                              if (snapshot.hasError) {
-                                return Center(
-                                    child: Text('Error: ${snapshot.error}'));
-                              }
-                              final entries = snapshot.data ?? [];
-                              return entries.isEmpty
-                                  ? Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(24),
-                                            decoration: BoxDecoration(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                                  .withOpacity(0.1),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(
-                                              Icons.leaderboard_outlined,
-                                              size: 64,
-                                              color: Colors.grey[400],
-                                            ),
-                                          ),
-                                          const SizedBox(height: 24),
-                                          Text(
-                                            'No scores yet for this tournament',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
-                                                  color: Colors.grey[700],
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons.emoji_events,
-                                                size: 20,
-                                                color: Colors.grey[500],
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Text(
-                                                'Be the first to play and set a record!',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.copyWith(
-                                                      color: Colors.grey[600],
-                                                    ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : ListView.builder(
-                                      padding: const EdgeInsets.all(16),
-                                      itemCount: entries.length,
-                                      itemBuilder: (context, index) {
-                                        final entry = entries[index];
-                                        return _buildLeaderboardItem(
-                                            context, entry, index);
-                                      },
-                                    );
-                            },
-                          ),
+                          child: _leaderboardStream != null
+                              ? StreamBuilder<List<LeaderboardEntry>>(
+                                  stream: _leaderboardStream,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                          child: Text(
+                                              'Error: ${snapshot.error}'));
+                                    }
+                                    final entries = snapshot.data ?? [];
+                                    return _buildLeaderboardList(context, entries);
+                                  },
+                                )
+                              : FutureBuilder<List<LeaderboardEntry>>(
+                                  future: _overallFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                          child: Text(
+                                              'Error: ${snapshot.error}'));
+                                    }
+                                    final entries = snapshot.data ?? [];
+                                    return _buildLeaderboardList(context, entries);
+                                  },
+                                ),
                         ),
                       ],
                     ],
@@ -464,5 +508,65 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  Widget _buildLeaderboardList(
+      BuildContext context, List<LeaderboardEntry> entries) {
+    if (entries.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.leaderboard_outlined,
+                size: 64,
+                color: Colors.grey[400],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'No scores yet for this leaderboard',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.emoji_events,
+                  size: 20,
+                  color: Colors.grey[500],
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'Be the first to play and set a record!',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: entries.length,
+      itemBuilder: (context, index) {
+        final entry = entries[index];
+        return _buildLeaderboardItem(context, entry, index);
+      },
+    );
   }
 }

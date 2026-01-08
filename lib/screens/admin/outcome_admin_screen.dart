@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/game_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../services/game_config_service.dart';
 
 class OutcomeAdminScreen extends StatefulWidget {
   const OutcomeAdminScreen({super.key});
@@ -16,6 +17,25 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
   final Map<String, String> _correctAnswers = {};
   final Map<String, int> _points = {};
   bool _submitting = false;
+
+  final GameConfigService _configService = GameConfigService();
+  Set<String> _playableTournamentIds = {};
+  bool _loadingPlayable = true;
+  bool _savingPlayable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPlayableConfig();
+  }
+
+  Future<void> _loadPlayableConfig() async {
+    final ids = await _configService.fetchPlayableTournamentIds();
+    setState(() {
+      _playableTournamentIds = ids;
+      _loadingPlayable = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +107,109 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Admin control: which days (tournaments) are playable
+                  Card(
+                    elevation: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.lock_clock,
+                                  color: theme.colorScheme.primary),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Playable Days',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const Spacer(),
+                              if (_savingPlayable)
+                                const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              else
+                                TextButton.icon(
+                                  onPressed: _loadingPlayable
+                                      ? null
+                                      : () async {
+                                          setState(() {
+                                            _savingPlayable = true;
+                                          });
+                                          await _configService
+                                              .savePlayableTournamentIds(
+                                                  _playableTournamentIds);
+                                          if (!mounted) return;
+                                          setState(() {
+                                            _savingPlayable = false;
+                                          });
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                                  content: Text(
+                                                      'Playable days updated')));
+                                        },
+                                  icon: const Icon(Icons.save, size: 18),
+                                  label: const Text('Save'),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          if (_loadingPlayable)
+                            const Center(
+                                child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ))
+                          else if (tournaments.isEmpty)
+                            const Text('No tournaments (days) available')
+                          else
+                            SizedBox(
+                              height: 80,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: tournaments.length,
+                                itemBuilder: (context, index) {
+                                  final t = tournaments[index];
+                                  // If no config saved yet, treat all as enabled by default
+                                  final enabled = _playableTournamentIds.isEmpty ||
+                                      _playableTournamentIds.contains(t.id);
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: FilterChip(
+                                      label: Text(t.name),
+                                      selected: enabled,
+                                      onSelected: (val) {
+                                        setState(() {
+                                          // If first time editing (set empty), start from "all enabled"
+                                          if (_playableTournamentIds.isEmpty) {
+                                            _playableTournamentIds = tournaments
+                                                .map((tt) => tt.id)
+                                                .toSet();
+                                          }
+
+                                          if (val) {
+                                            _playableTournamentIds.add(t.id);
+                                          } else {
+                                            _playableTournamentIds.remove(t.id);
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   Card(
                     elevation: 2,
                     child: Padding(
@@ -147,10 +270,11 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
                             _correctAnswers.clear();
                             _points.clear();
                           });
-                          // Load match questions so admin can select outcomes
+                          // Load match questions so admin can select outcomes.
+                          // Uses same randomised + team-specific questions as players.
                           final t = tournaments.firstWhere((t) => t.id == _selectedTournamentId);
                           final m = t.matches.firstWhere((m) => m.id == value);
-                          await gameProvider.loadQuestionsFromFile(m.questionFile);
+                          await gameProvider.loadQuestionsForAdmin(m);
                           // Initialize points with default from questions
                           for (final q in gameProvider.questions) {
                             _points[q.id] = q.points;

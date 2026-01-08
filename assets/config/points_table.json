@@ -1,0 +1,53 @@
+{
+  "categories": [
+    {
+      "id": "mens",
+      "name": "Men's",
+      "teams": [
+        { "name": "Powerpoint", "group": "A", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Inergy Strickers", "group": "A", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Mango Yorkers", "group": "A", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Team Housewise", "group": "A", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Pictonions", "group": "A", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Jade 4 Lions", "group": "A", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+
+        { "name": "Team Yogic Dhuranders", "group": "B", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "MentoMap", "group": "B", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Fiery Sun Warriors", "group": "B", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "SBCC Titans", "group": "B", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Dalnex Automators", "group": "B", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Team Triphobo", "group": "B", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 }
+      ]
+    },
+    {
+      "id": "womens",
+      "name": "Women's",
+      "teams": [
+        { "name": "Sapphire Titans", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Jade Unicorns", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Strike Queens", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Jade Cardinals", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 }
+      ]
+    },
+    {
+      "id": "boys",
+      "name": "Boys",
+      "teams": [
+        { "name": "D1", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "D2", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "D3", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "D4", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 }
+      ]
+    },
+    {
+      "id": "girls",
+      "name": "Girls",
+      "teams": [
+        { "name": "Scarlet Sirens", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 },
+        { "name": "Sapphire Strikers", "played": 0, "won": 0, "lost": 0, "tie": 0, "nrr": 0.0 }
+      ]
+    }
+  ]
+}
+
+

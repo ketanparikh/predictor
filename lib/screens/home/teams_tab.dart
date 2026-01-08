@@ -222,7 +222,7 @@ class _TeamsTabState extends State<TeamsTab> {
                         ? _buildBoysTeamsList(context, theme)
                         : _selectedCategory == 'girls'
                             ? _buildGirlsTeamsList(context, theme)
-                            : _buildComingSoonView(context, theme),
+                        : _buildComingSoonView(context, theme),
           ),
         ],
       ),

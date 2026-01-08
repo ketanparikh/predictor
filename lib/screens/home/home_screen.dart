@@ -35,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadData() async {
     final gameProvider = Provider.of<GameProvider>(context, listen: false);
     await gameProvider.loadTournaments();
+    await gameProvider.loadPlayableTournaments();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final user = authProvider.user;
     if (user != null) {

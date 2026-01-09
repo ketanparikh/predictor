@@ -20,9 +20,16 @@ class LeaderboardService {
         .limit(100)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
+      final entries = snapshot.docs
           .map((doc) => LeaderboardEntry.fromMap(doc.data()))
           .toList();
+      // Client-side sort: by score (desc), then by timestamp (asc - earlier = better)
+      entries.sort((a, b) {
+        final scoreCompare = b.score.compareTo(a.score);
+        if (scoreCompare != 0) return scoreCompare;
+        return a.timestamp.compareTo(b.timestamp);
+      });
+      return entries;
     });
   }
 
@@ -34,9 +41,16 @@ class LeaderboardService {
         .limit(100)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
+      final entries = snapshot.docs
           .map((doc) => LeaderboardEntry.fromMap(doc.data()))
           .toList();
+      // Client-side sort: by score (desc), then by timestamp (asc - earlier = better)
+      entries.sort((a, b) {
+        final scoreCompare = b.score.compareTo(a.score);
+        if (scoreCompare != 0) return scoreCompare;
+        return a.timestamp.compareTo(b.timestamp);
+      });
+      return entries;
     });
   }
 
@@ -48,9 +62,16 @@ class LeaderboardService {
           .limit(100)
           .get();
       
-      return snapshot.docs
+      final entries = snapshot.docs
           .map((doc) => LeaderboardEntry.fromMap(doc.data()))
           .toList();
+      // Client-side sort: by score (desc), then by timestamp (asc - earlier = better)
+      entries.sort((a, b) {
+        final scoreCompare = b.score.compareTo(a.score);
+        if (scoreCompare != 0) return scoreCompare;
+        return a.timestamp.compareTo(b.timestamp);
+      });
+      return entries;
     } catch (e) {
       print('Error getting leaderboard: $e');
       return [];
@@ -86,8 +107,14 @@ class LeaderboardService {
         }
       }
 
+      // Sort by score (descending), then by timestamp (ascending - earlier = better)
       final result = aggregated.values.toList()
-        ..sort((a, b) => b.score.compareTo(a.score));
+        ..sort((a, b) {
+          final scoreCompare = b.score.compareTo(a.score);
+          if (scoreCompare != 0) return scoreCompare;
+          // Tiebreaker: earlier submission = better rank
+          return a.timestamp.compareTo(b.timestamp);
+        });
 
       return result;
     } catch (e) {

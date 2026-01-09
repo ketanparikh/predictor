@@ -35,7 +35,7 @@
     {
       "id": "pb_q5",
       "question": "Highest individual score in the match?",
-      "options": ["0-9", "10-20", "21-40", "41+"],
+      "options": ["0-9", "10-20", "21-30", "31+"],
       "correctAnswer": "10-20",
       "points": 10,
       "category": "Batting"
@@ -58,7 +58,7 @@
     },
     {
       "id": "pb_q8",
-      "question": "Most wickets taken by a single bowler?",
+      "question": "Most wickets taken by a single bowler in the match?",
       "options": ["0", "1", "2", "3+"],
       "correctAnswer": "2",
       "points": 10,
@@ -66,7 +66,7 @@
     },
     {
       "id": "pb_q9",
-      "question": "Will any batsman score a fifty?",
+      "question": "Will any batsman score more than 30 runs in the match?",
       "options": ["Yes", "No"],
       "correctAnswer": "Yes",
       "points": 10,
@@ -74,7 +74,7 @@
     },
     {
       "id": "pb_q10",
-      "question": "Will any bowler take a 3-wicket haul?",
+      "question": "Will any bowler take a 3-wicket haul in the match?",
       "options": ["Yes", "No"],
       "correctAnswer": "No",
       "points": 10,
@@ -82,7 +82,7 @@
     },
     {
       "id": "pb_q11",
-      "question": "Runs scored in the first 4 overs?",
+      "question": "Runs scored in the first 4 overs of the match?",
       "options": ["0-15", "16-25", "26-35", "36+"],
       "correctAnswer": "16-25",
       "points": 10,
@@ -90,7 +90,7 @@
     },
     {
       "id": "pb_q12",
-      "question": "Wickets lost in the first 4 overs?",
+      "question": "Wickets lost in the first 4 overs of the match?",
       "options": ["0", "1", "2", "3+"],
       "correctAnswer": "1",
       "points": 10,
@@ -98,7 +98,7 @@
     },
     {
       "id": "pb_q13",
-      "question": "Runs scored in the last 4 overs?",
+      "question": "Runs scored in the last 4 overs of the match?",
       "options": ["0-15", "16-25", "26-35", "36+"],
       "correctAnswer": "16-25",
       "points": 10,
@@ -106,7 +106,7 @@
     },
     {
       "id": "pb_q14",
-      "question": "Wickets lost in the last 4 overs?",
+      "question": "Wickets lost in the last 4 overs of the match?",
       "options": ["0", "1", "2", "3+"],
       "correctAnswer": "1",
       "points": 10,
@@ -122,7 +122,7 @@
     },
     {
       "id": "pb_q16",
-      "question": "Total extras (wides, no balls, byes)?",
+      "question": "Total extras (wides, no balls, byes) in the match?",
       "options": ["0-2", "3-5", "6-8","9+"],
       "correctAnswer": "3-5",
       "points": 10,
@@ -138,7 +138,7 @@
     },
     {
       "id": "pb_q18",
-      "question": "Will any team score 20+ runs in an over?",
+      "question": "Will any team score 20+ runs in an over of the match?",
       "options": ["Yes", "No"],
       "correctAnswer": "No",
       "points": 10,
@@ -154,7 +154,7 @@
     },
     {
       "id": "pb_q20",
-      "question": "Will the match be decided in the final over?",
+      "question": "Will the match be decided in the final over of the match?",
       "options": ["Yes", "No"],
       "correctAnswer": "No",
       "points": 10,
@@ -178,7 +178,7 @@
     },
     {
       "id": "pb_q23",
-      "question": "Economy rate of the most economical bowler (min 2 overs)?",
+      "question": "Economy rate of the most economical bowler (min 2 overs) in the match?",
       "options": ["< 4.0", "4.0-5.9", "6.0-7.9", "8.0+"],
       "correctAnswer": "4.0-5.9",
       "points": 10,
@@ -186,7 +186,7 @@
     },
     {
       "id": "pb_q24",
-      "question": "Strike rate of the top scorer?",
+      "question": "Strike rate of the top scorer in the match?",
       "options": ["< 100", "100-129", "130-159", "160+"],
       "correctAnswer": "130-159",
       "points": 10,
@@ -202,7 +202,7 @@
     },
     {
       "id": "pb_q26",
-      "question": "Total partnership runs for the highest partnership?",
+      "question": "Total partnership runs for the highest partnership in the match?",
       "options": ["0-10", "11-20", "21-40", "41+"],
       "correctAnswer": "11-20",
       "points": 10,
@@ -210,7 +210,7 @@
     },
     {
       "id": "pb_q27",
-      "question": "Which team will hit more sixes?",
+      "question": "Which team will hit more sixes in the match?",
       "options": ["Team 1", "Team 2", "Equal"],
       "correctAnswer": "Team 1",
       "points": 10,
@@ -218,7 +218,7 @@
     },
     {
       "id": "pb_q28",
-      "question": "Which team will lose more wickets?",
+      "question": "Which team will lose more wickets in the match?",
       "options": ["Team 1", "Team 2", "Equal"],
       "correctAnswer": "Team 2",
       "points": 10,
@@ -226,7 +226,7 @@
     },
     {
       "id": "pb_q29",
-      "question": "Will any player score 30 runs or more in the match?",
+      "question": "Will any player score 0 runs in the match?",
       "options": ["Yes", "No"],
       "correctAnswer": "No",
       "points": 10,

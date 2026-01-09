@@ -68,22 +68,19 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
   Widget build(BuildContext context) {
     final adminProvider = Provider.of<AdminProvider>(context);
 
-    // Show Coming Soon for non-admin users
-    if (!adminProvider.isAdmin) {
-      return _buildComingSoon(context);
-    }
-
-    // Admin users get access to the full game
+    // Game is now available for all users
     return Consumer<GameProvider>(
       builder: (context, gameProvider, child) {
-        // Ensure completed matches are loaded for this user
+        // Ensure completed matches and playable tournaments are loaded for this user
         final auth = Provider.of<AuthProvider>(context);
-        if (auth.user != null &&
-            gameProvider.completedMatchIds.isEmpty &&
-            gameProvider.tournamentsLoaded) {
+        if (auth.user != null && gameProvider.tournamentsLoaded) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            await Provider.of<GameProvider>(context, listen: false)
-                .loadCompletedMatchesForUser(auth.user!.uid);
+            final gp = Provider.of<GameProvider>(context, listen: false);
+            // Reload playable tournaments to get latest admin settings
+            await gp.loadPlayableTournaments();
+            if (gp.completedMatchIds.isEmpty) {
+              await gp.loadCompletedMatchesForUser(auth.user!.uid);
+            }
           });
         }
 
@@ -94,11 +91,9 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
 
         // Step 1: Choose Tournament (when game mode is active)
         if (gameProvider.selectedTournament == null) {
-          final isAdmin = adminProvider.isAdmin;
-          final tournamentsForUser =
-              gameProvider.getPlayableTournaments(includeAll: isAdmin);
+          // Show all tournaments, but grey out non-playable ones for non-admin users
           return _buildTournamentList(
-              context, tournamentsForUser, gameProvider.tournamentsLoaded);
+              context, gameProvider.tournaments, gameProvider.tournamentsLoaded, adminProvider.isAdmin);
         }
 
         // Step 2: Choose Match within Tournament
@@ -315,6 +310,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
 
   Widget _buildMainMenu(BuildContext context, bool loaded) {
     final theme = Theme.of(context);
+    final gameProvider = Provider.of<GameProvider>(context);
 
     if (!loaded) {
       return Center(
@@ -354,6 +350,11 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
           ),
           const SizedBox(height: 24),
 
+          // Countdown Timer for Next Day
+          _buildCountdownTimer(context, gameProvider),
+
+          const SizedBox(height: 24),
+
           // Play Game Card
           _buildMenuCard(
             context,
@@ -384,8 +385,384 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
               );
             },
           ),
+
+          const SizedBox(height: 16),
+
+          // Rules Card
+          _buildRulesCard(context),
         ],
       ),
+    );
+  }
+
+  Widget _buildRulesCard(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: InkWell(
+        onTap: () {
+          _showRulesDialog(context);
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.blue.shade400,
+                Colors.blue.shade700,
+              ],
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.rule,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Game Rules',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Read important game rules & guidelines',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white,
+                size: 20,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showRulesDialog(BuildContext context) {
+    final theme = Theme.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.rule, color: theme.colorScheme.primary),
+            const SizedBox(width: 12),
+            Text(
+              'Game Rules',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildRuleItem(
+                context,
+                Icons.lock_clock,
+                'Freeze Time',
+                'Game submissions are frozen before the first match of the day starts. Once the first match begins, you cannot submit new predictions for that day. Submit predictions for all matches of the day before the freeze time.',
+                Colors.orange,
+              ),
+              const SizedBox(height: 16),
+              _buildRuleItem(
+                context,
+                Icons.block,
+                'No Revisions',
+                'Once you submit your predictions for a match, you cannot change or revert your answers. Make sure to review all your selections before submitting.',
+                Colors.red,
+              ),
+              const SizedBox(height: 16),
+              _buildRuleItem(
+                context,
+                Icons.stars,
+                'Scoring',
+                'Each correct answer earns you 10 points. Incorrect answers do not deduct points. Your total score is calculated based on all correct predictions.',
+                Colors.green,
+              ),
+              const SizedBox(height: 16),
+              _buildRuleItem(
+                context,
+                Icons.schedule,
+                'Match Selection',
+                'You can only play matches for days that are enabled by the admin. Days that have already started will be greyed out and unavailable.',
+                Colors.blue,
+              ),
+              const SizedBox(height: 16),
+              _buildRuleItem(
+                context,
+                Icons.quiz,
+                'Questions',
+                'Each match has 8 randomly selected questions.',
+                Colors.purple,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Got it',
+              style: TextStyle(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRuleItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String description,
+    Color color,
+  ) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Color.lerp(color, Colors.black, 0.2) ?? color,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCountdownTimer(BuildContext context, GameProvider gameProvider) {
+    final theme = Theme.of(context);
+    final nextMatchTime = gameProvider.getNextAvailableTournamentTime();
+    
+    if (nextMatchTime == null) {
+      return const SizedBox.shrink();
+    }
+    
+    return StreamBuilder<int>(
+      stream: Stream.periodic(const Duration(seconds: 1), (i) => i),
+      builder: (context, snapshot) {
+        final now = DateTime.now();
+        final difference = nextMatchTime.difference(now);
+        
+        if (difference.isNegative) {
+          return const SizedBox.shrink();
+        }
+        
+        final days = difference.inDays;
+        final hours = difference.inHours % 24;
+        final minutes = difference.inMinutes % 60;
+        final seconds = difference.inSeconds % 60;
+        
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.orange.shade400,
+                Colors.deepOrange.shade600,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.access_time,
+                color: Colors.white,
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Time to submit for next day',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        if (days > 0) ...[
+                          _buildTimeUnit('${days}d', Colors.white),
+                          const SizedBox(width: 4),
+                        ],
+                        _buildTimeUnit('${hours.toString().padLeft(2, '0')}h', Colors.white),
+                        const SizedBox(width: 4),
+                        _buildTimeUnit('${minutes.toString().padLeft(2, '0')}m', Colors.white),
+                        const SizedBox(width: 4),
+                        _buildTimeUnit('${seconds.toString().padLeft(2, '0')}s', Colors.white),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTimeUnit(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTournamentCountdown(BuildContext context, Tournament tournament, GameProvider gameProvider) {
+    // Get the first match time for this tournament
+    final firstMatchTime = gameProvider.getTournamentFirstMatchTime(tournament);
+    
+    if (firstMatchTime == null) {
+      return const SizedBox.shrink();
+    }
+    
+    return StreamBuilder<int>(
+      stream: Stream.periodic(const Duration(seconds: 1), (i) => i),
+      builder: (context, snapshot) {
+        final now = DateTime.now();
+        final difference = firstMatchTime!.difference(now);
+        
+        if (difference.isNegative) {
+          return const SizedBox.shrink();
+        }
+        
+        final hours = difference.inHours;
+        final minutes = difference.inMinutes % 60;
+        final seconds = difference.inSeconds % 60;
+        
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.orange.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.orange.shade200),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.access_time,
+                size: 14,
+                color: Colors.orange.shade700,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
+                style: TextStyle(
+                  color: Colors.orange.shade700,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -468,7 +845,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
   }
 
   Widget _buildTournamentList(
-      BuildContext context, List<Tournament> tournaments, bool loaded) {
+      BuildContext context, List<Tournament> tournaments, bool loaded, bool isAdmin) {
     final theme = Theme.of(context);
     // Use Consumer to rebuild when provider changes, ensuring time checks are current
     return Consumer<GameProvider>(
@@ -535,28 +912,30 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
             itemBuilder: (context, index) {
               final t = tournaments[index];
               final isPast = gameProvider.isTournamentFirstMatchPast(t);
-              // Debug: Print to console for all tournaments
-              print('[UI] Tournament "${t.name}" (${t.id}): isPast=$isPast, matches=${t.matches.length}');
-              if (t.matches.isNotEmpty) {
-                print('[UI]   First match: date="${t.matches[0].date}", time="${t.matches[0].time}"');
-              }
+              
+              // Check if tournament is playable (for non-admin users)
+              final isPlayable = isAdmin || gameProvider.isTournamentPlayable(t);
+              
+              // Tournament should be greyed out if: past OR not playable
+              final shouldGreyOut = isPast || !isPlayable;
+              
               return Opacity(
-                opacity: isPast ? 0.4 : 1.0, // More visible grey-out
+                opacity: shouldGreyOut ? 0.4 : 1.0, // More visible grey-out
                 child: Card(
                   margin: const EdgeInsets.only(bottom: 12),
-                  elevation: isPast ? 1 : 3,
-                  color: isPast ? Colors.grey[300] : null, // More visible grey background
+                  elevation: shouldGreyOut ? 1 : 3,
+                  color: shouldGreyOut ? Colors.grey[300] : null, // More visible grey background
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: isPast 
+                    side: shouldGreyOut 
                         ? BorderSide(color: Colors.grey[400]!, width: 1)
                         : BorderSide.none,
                   ),
                   child: AbsorbPointer(
-                    absorbing: isPast, // Completely disable interaction when past
+                    absorbing: shouldGreyOut, // Completely disable interaction when greyed out
                     child: InkWell(
                       borderRadius: BorderRadius.circular(20),
-                      onTap: isPast
+                      onTap: shouldGreyOut
                           ? null
                           : () {
                               final gameProvider =
@@ -570,7 +949,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              gradient: isPast
+                              gradient: shouldGreyOut
                                   ? null
                                   : LinearGradient(
                                       colors: [
@@ -578,11 +957,11 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                                         theme.colorScheme.secondary,
                                       ],
                                     ),
-                              color: isPast ? Colors.grey[400] : null,
+                              color: shouldGreyOut ? Colors.grey[400] : null,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(
-                              isPast ? Icons.lock_clock : Icons.emoji_events,
+                              shouldGreyOut ? Icons.lock_clock : Icons.emoji_events,
                               color: Colors.white,
                               size: 32,
                             ),
@@ -596,7 +975,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                                   t.name,
                                   style: theme.textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: isPast ? Colors.grey[600] : null,
+                                    color: shouldGreyOut ? Colors.grey[600] : null,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -605,7 +984,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                                     Icon(
                                       Icons.sports_cricket,
                                       size: 16,
-                                      color: isPast
+                                      color: shouldGreyOut
                                           ? Colors.grey[500]
                                           : theme.colorScheme.secondary,
                                     ),
@@ -613,12 +992,12 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                                     Text(
                                       '${t.matches.length} ${t.matches.length == 1 ? 'Match' : 'Matches'}',
                                       style: theme.textTheme.bodyMedium?.copyWith(
-                                        color: isPast
+                                        color: shouldGreyOut
                                             ? Colors.grey[500]
                                             : Colors.grey[600],
                                       ),
                                     ),
-                                    if (isPast) ...[
+                                    if (shouldGreyOut) ...[
                                       const SizedBox(width: 8),
                                       Container(
                                         padding: const EdgeInsets.symmetric(
@@ -631,13 +1010,13 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(
-                                              Icons.schedule,
+                                              isPast ? Icons.schedule : Icons.lock,
                                               size: 12,
                                               color: Colors.orange.shade800,
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
-                                              'Started',
+                                              isPast ? 'Started' : 'Opening Soon',
                                               style: TextStyle(
                                                 color: Colors.orange.shade800,
                                                 fontSize: 11,
@@ -650,12 +1029,16 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                                     ],
                                   ],
                                 ),
+                                if (!shouldGreyOut) ...[
+                                  const SizedBox(height: 8),
+                                  _buildTournamentCountdown(context, t, gameProvider),
+                                ],
                               ],
                             ),
                           ),
                           Icon(
-                            isPast ? Icons.lock : Icons.arrow_forward_ios,
-                            color: isPast
+                            shouldGreyOut ? Icons.lock : Icons.arrow_forward_ios,
+                            color: shouldGreyOut
                                 ? Colors.grey[500]
                                 : theme.colorScheme.primary,
                             size: 20,
@@ -916,13 +1299,13 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                         Icon(
                           Icons.quiz,
                           size: 20,
-                          color: theme.colorScheme.tertiary,
+                          color: Colors.grey[800],
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '${gameProvider.questions.length} Questions Ready',
+                          '${gameProvider.questions.length} Questions',
                           style: TextStyle(
-                            color: theme.colorScheme.tertiary,
+                            color: Colors.grey[800],
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -934,7 +1317,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                     onPressed: () => _startGame(context),
                     icon: const Icon(Icons.play_arrow, size: 28),
                     label: const Text(
-                      'Start Match',
+                      'Start Game',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -1393,7 +1776,10 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
     final question = gameProvider.currentQuestion;
     final selectedAnswer =
         question != null ? gameProvider.userAnswers[question.id] : null;
-    final isFrozen = gameProvider.isGameFrozen();
+    
+    // No freeze logic needed - day-level control (greyed out days) is sufficient
+    // Once a user selects a day, they can play without restrictions
+    final isFrozen = false;
 
     return Column(
       children: [

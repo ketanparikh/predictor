@@ -25,6 +25,7 @@ class GameProvider with ChangeNotifier {
   Set<String> _completedMatchIds = {};
   bool _testUnblock = false;
   Set<String> _playableTournamentIds = {}; // controlled by admin
+  bool _playableTournamentsLoaded = false; // track if config has been loaded
 
   List<Question> get questions => _questions;
   Map<String, String> get userAnswers => _userAnswers;
@@ -44,6 +45,7 @@ class GameProvider with ChangeNotifier {
   Set<String> get completedMatchIds => _completedMatchIds;
   bool get testUnblock => _testUnblock;
   Set<String> get playableTournamentIds => _playableTournamentIds;
+  bool get playableTournamentsLoaded => _playableTournamentsLoaded;
 
   Future<void> loadTournaments() async {
     try {
@@ -82,10 +84,12 @@ class GameProvider with ChangeNotifier {
       final configService = GameConfigService();
       _playableTournamentIds =
           await configService.fetchPlayableTournamentIds();
+      _playableTournamentsLoaded = true;
+      print('[GameProvider] Loaded playable tournament IDs: $_playableTournamentIds');
       notifyListeners();
     } catch (e) {
-      // ignore: avoid_print
       print('Error loading playable tournaments: $e');
+      // Don't set _playableTournamentsLoaded = true on error, so we know config wasn't loaded
     }
   }
 
@@ -217,9 +221,9 @@ class GameProvider with ChangeNotifier {
           .map((q) => Question.fromJson(q as Map<String, dynamic>))
           .toList();
 
-      // Randomly pick up to 10 questions from the bank for this match
+      // Randomly pick up to 8 questions from the bank for this match
       rawQuestions.shuffle(Random(match.id.hashCode));
-      rawQuestions = rawQuestions.take(10).toList();
+      rawQuestions = rawQuestions.take(8).toList();
 
       if (team1Name == null && team2Name == null) {
         _questions = rawQuestions;
@@ -341,18 +345,79 @@ class GameProvider with ChangeNotifier {
   }
 
   /// Returns tournaments filtered by admin-configured playable ids.
-  /// For admins or when no config exists, returns all tournaments.
+  /// For admins, returns all tournaments.
+  /// For non-admins: if config exists and is not empty, only return playable ones.
+  /// If config is empty (admin explicitly set to empty), return empty list.
   List<Tournament> getPlayableTournaments({required bool includeAll}) {
-    if (includeAll || _playableTournamentIds.isEmpty) {
-      return _tournaments;
+    if (includeAll) {
+      return _tournaments; // Admins see all
     }
+    // For non-admins: if config was loaded and is empty, nothing is playable
+    // If config was never loaded (empty by default), show all (backward compatibility)
+    // We can't distinguish between "never loaded" and "explicitly empty", so we'll
+    // assume empty means nothing is playable (admin must explicitly enable)
     return _tournaments
         .where((t) => _playableTournamentIds.contains(t.id))
         .toList();
   }
+  
+  /// Checks if a tournament is playable for non-admin users
+  bool isTournamentPlayable(Tournament tournament) {
+    // If config hasn't been loaded yet, allow access (backward compatibility)
+    // Once config is loaded, check if tournament is in the playable set
+    if (!_playableTournamentsLoaded) {
+      return true; // Config not loaded yet, allow access
+    }
+    // Config loaded: empty set means nothing is playable, otherwise check if tournament is in set
+    return _playableTournamentIds.contains(tournament.id);
+  }
+
+  /// Gets the next available tournament's first match DateTime
+  /// Returns null if no future tournament is available
+  DateTime? getNextAvailableTournamentTime() {
+    final now = DateTime.now();
+    DateTime? nextMatchTime;
+    
+    for (final tournament in _tournaments) {
+      // Skip if tournament is not playable
+      if (!isTournamentPlayable(tournament)) {
+        continue;
+      }
+      
+      // Skip if tournament's first match has already passed
+      if (isTournamentFirstMatchPast(tournament)) {
+        continue;
+      }
+      
+      // Find the earliest match time for this tournament
+      for (final match in tournament.matches) {
+        try {
+          final matchDate = DateTime.parse(match.date);
+          DateTime matchDateTime;
+          if (match.time != null && match.time!.isNotEmpty && match.time != 'TBD') {
+            matchDateTime = _parseMatchDateTime(matchDate, match.time!);
+          } else {
+            matchDateTime = DateTime(matchDate.year, matchDate.month, matchDate.day, 9, 0);
+          }
+          
+          // Check if this is in the future and earlier than current nextMatchTime
+          if (matchDateTime.isAfter(now)) {
+            if (nextMatchTime == null || matchDateTime.isBefore(nextMatchTime)) {
+              nextMatchTime = matchDateTime;
+            }
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+    }
+    
+    return nextMatchTime;
+  }
 
   /// Checks if the game should be frozen (before first match of the day).
   /// Returns true if current time is before the first match start time for the selected tournament.
+  /// This should be the inverse of isTournamentFirstMatchPast() for consistency.
   bool isGameFrozen() {
     if (_selectedTournament == null || _selectedTournament!.matches.isEmpty) {
       return false; // Can't freeze if no tournament/match selected
@@ -362,9 +427,10 @@ class GameProvider with ChangeNotifier {
     DateTime? firstMatchDateTime;
 
     // Find the earliest match time for this tournament/day
+    // Use the same logic as isTournamentFirstMatchPast() for consistency
     for (final match in _selectedTournament!.matches) {
       try {
-        // Parse match date
+        // Parse match date - same as isTournamentFirstMatchPast()
         final matchDate = DateTime.parse(match.date);
         
         // Parse match time if available
@@ -381,16 +447,27 @@ class GameProvider with ChangeNotifier {
         }
       } catch (e) {
         // Skip matches with invalid dates/times
+        print('[GameProvider] Error in isGameFrozen processing match ${match.id} (date: "${match.date}", time: "${match.time}"): $e');
         continue;
       }
     }
 
     if (firstMatchDateTime == null) {
+      print('[GameProvider] isGameFrozen: No valid match time found for tournament ${_selectedTournament!.id}');
       return false; // Can't freeze if no valid match time found
     }
 
-    // Game is frozen if current time is before the first match
-    return now.isBefore(firstMatchDateTime);
+    // Game is frozen if current time is before the first match start time
+    // This is the inverse of isTournamentFirstMatchPast()
+    final isFrozen = now.isBefore(firstMatchDateTime);
+    
+    // Debug logging
+    print('[GameProvider] isGameFrozen for tournament "${_selectedTournament!.name}":');
+    print('  First match: $firstMatchDateTime');
+    print('  Current time: $now');
+    print('  isFrozen: $isFrozen (now.isBefore = ${now.isBefore(firstMatchDateTime)})');
+    
+    return isFrozen;
   }
 
   /// Checks if a tournament's first match time has passed.
@@ -448,6 +525,32 @@ class GameProvider with ChangeNotifier {
     print('  isPast: $isPast');
     
     return isPast;
+  }
+
+  /// Gets the first match DateTime for a tournament
+  DateTime? getTournamentFirstMatchTime(Tournament tournament) {
+    if (tournament.matches.isEmpty) {
+      return null;
+    }
+    
+    DateTime? firstMatchTime;
+    for (final match in tournament.matches) {
+      try {
+        final matchDate = DateTime.parse(match.date);
+        DateTime matchDateTime;
+        if (match.time != null && match.time!.isNotEmpty && match.time != 'TBD') {
+          matchDateTime = _parseMatchDateTime(matchDate, match.time!);
+        } else {
+          matchDateTime = DateTime(matchDate.year, matchDate.month, matchDate.day, 9, 0);
+        }
+        if (firstMatchTime == null || matchDateTime.isBefore(firstMatchTime)) {
+          firstMatchTime = matchDateTime;
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+    return firstMatchTime;
   }
 
   /// Parses a time string (e.g., "09:00 AM", "14:30", "07AM - 08AM", "03:30PM – 04PM") and combines with date.

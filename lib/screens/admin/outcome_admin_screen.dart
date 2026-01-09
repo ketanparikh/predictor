@@ -30,11 +30,26 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
   }
 
   Future<void> _loadPlayableConfig() async {
-    final ids = await _configService.fetchPlayableTournamentIds();
     setState(() {
-      _playableTournamentIds = ids;
-      _loadingPlayable = false;
+      _loadingPlayable = true;
     });
+    try {
+      final ids = await _configService.fetchPlayableTournamentIds();
+      print('[Admin] Loaded playable tournament IDs: $ids');
+      if (mounted) {
+        setState(() {
+          _playableTournamentIds = ids;
+          _loadingPlayable = false;
+        });
+      }
+    } catch (e) {
+      print('[Admin] Error loading playable config: $e');
+      if (mounted) {
+        setState(() {
+          _loadingPlayable = false;
+        });
+      }
+    }
   }
 
   @override
@@ -128,6 +143,11 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
                                 ),
                               ),
                               const Spacer(),
+                              IconButton(
+                                icon: const Icon(Icons.refresh, size: 20),
+                                tooltip: 'Refresh',
+                                onPressed: _loadingPlayable ? null : _loadPlayableConfig,
+                              ),
                               if (_savingPlayable)
                                 const SizedBox(
                                   width: 18,
@@ -142,17 +162,38 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
                                           setState(() {
                                             _savingPlayable = true;
                                           });
-                                          await _configService
-                                              .savePlayableTournamentIds(
-                                                  _playableTournamentIds);
-                                          if (!mounted) return;
-                                          setState(() {
-                                            _savingPlayable = false;
-                                          });
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                                  content: Text(
-                                                      'Playable days updated')));
+                                          try {
+                                            print('[Admin] Saving playable tournament IDs: $_playableTournamentIds');
+                                            await _configService
+                                                .savePlayableTournamentIds(
+                                                    _playableTournamentIds);
+                                            
+                                            // Reload to verify save
+                                            await _loadPlayableConfig();
+                                            
+                                            // Also update GameProvider so non-admin users see changes
+                                            final gameProvider = Provider.of<GameProvider>(context, listen: false);
+                                            await gameProvider.loadPlayableTournaments();
+                                            
+                                            if (!mounted) return;
+                                            setState(() {
+                                              _savingPlayable = false;
+                                            });
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(const SnackBar(
+                                                    content: Text(
+                                                        'Playable days saved and updated')));
+                                          } catch (e) {
+                                            print('[Admin] Error saving playable config: $e');
+                                            if (!mounted) return;
+                                            setState(() {
+                                              _savingPlayable = false;
+                                            });
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        'Error saving: $e')));
+                                          }
                                         },
                                   icon: const Icon(Icons.save, size: 18),
                                   label: const Text('Save'),
@@ -169,41 +210,69 @@ class _OutcomeAdminScreenState extends State<OutcomeAdminScreen> {
                           else if (tournaments.isEmpty)
                             const Text('No tournaments (days) available')
                           else
-                            SizedBox(
-                              height: 80,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: tournaments.length,
-                                itemBuilder: (context, index) {
-                                  final t = tournaments[index];
-                                  // If no config saved yet, treat all as enabled by default
-                                  final enabled = _playableTournamentIds.isEmpty ||
-                                      _playableTournamentIds.contains(t.id);
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: FilterChip(
-                                      label: Text(t.name),
-                                      selected: enabled,
-                                      onSelected: (val) {
-                                        setState(() {
-                                          // If first time editing (set empty), start from "all enabled"
-                                          if (_playableTournamentIds.isEmpty) {
-                                            _playableTournamentIds = tournaments
-                                                .map((tt) => tt.id)
-                                                .toSet();
-                                          }
-
-                                          if (val) {
-                                            _playableTournamentIds.add(t.id);
-                                          } else {
-                                            _playableTournamentIds.remove(t.id);
-                                          }
-                                        });
-                                      },
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (_playableTournamentIds.isEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.orange.shade50,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: Colors.orange.shade200),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.info_outline, 
+                                              size: 16, 
+                                              color: Colors.orange.shade800),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              'No days are currently enabled. Select days to enable them.',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.orange.shade800,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                SizedBox(
+                                  height: 80,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: tournaments.length,
+                                    itemBuilder: (context, index) {
+                                      final t = tournaments[index];
+                                      // Check if this tournament is in the playable set
+                                      // Empty set means nothing is playable (admin must explicitly enable)
+                                      final enabled = _playableTournamentIds.contains(t.id);
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 8.0),
+                                        child: FilterChip(
+                                          label: Text(t.name),
+                                          selected: enabled,
+                                          onSelected: (val) {
+                                            setState(() {
+                                              if (val) {
+                                                _playableTournamentIds.add(t.id);
+                                              } else {
+                                                _playableTournamentIds.remove(t.id);
+                                              }
+                                              print('[Admin] Updated playable IDs: $_playableTournamentIds');
+                                            });
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                         ],
                       ),

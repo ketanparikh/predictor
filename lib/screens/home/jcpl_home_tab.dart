@@ -26,7 +26,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
   Timer? _countdownTimer;
 
   // Tournament start date - 10th Jan 2026
-  final DateTime _tournamentDate = DateTime(2026, 1, 10, 9, 0, 0);
+  final DateTime _tournamentDate = DateTime(2026, 1, 10, 7, 0, 0);
   Duration _timeRemaining = Duration.zero;
 
   @override

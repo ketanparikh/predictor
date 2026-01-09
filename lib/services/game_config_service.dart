@@ -28,15 +28,18 @@ class GameConfigService {
   /// Persists the set of playable tournament (day) ids configured by admin.
   Future<void> savePlayableTournamentIds(Set<String> ids) async {
     try {
+      print('[GameConfigService] Saving playable tournament IDs: $ids');
       await _firestore.collection(_collection).doc(_docId).set(
         {
           'playableTournamentIds': ids.toList(),
+          'updatedAt': FieldValue.serverTimestamp(),
         },
         SetOptions(merge: true),
       );
+      print('[GameConfigService] Successfully saved playable tournament IDs');
     } catch (e) {
-      // ignore: avoid_print
       print('Error saving playableTournamentIds: $e');
+      rethrow; // Re-throw so caller knows save failed
     }
   }
 }

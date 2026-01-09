@@ -19,6 +19,19 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
 
   void _startGame(BuildContext context) {
     final gameProvider = Provider.of<GameProvider>(context, listen: false);
+    
+    // Validate that questions are loaded
+    if (gameProvider.questions.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Questions are not loaded yet. Please wait...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+    
+    // Game is enabled until the first match starts (no freeze check needed)
     gameProvider.startGame();
   }
 
@@ -1214,124 +1227,182 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
     final theme = Theme.of(context);
     final gameProvider = Provider.of<GameProvider>(context);
     final match = gameProvider.selectedMatch!;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Card(
-          elevation: 8,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white,
-                  theme.colorScheme.primary.withOpacity(0.05),
-                ],
+    return Column(
+      children: [
+        // Back button header
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  final gameProvider =
+                      Provider.of<GameProvider>(context, listen: false);
+                  gameProvider.clearMatchSelection();
+                },
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
+              Text(
+                'Select Match',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Match ready screen content
+        Expanded(
+          child: SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Card(
+                  elevation: 8,
+                  child: Container(
                     decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
                       gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                         colors: [
-                          theme.colorScheme.primary,
-                          theme.colorScheme.secondary,
+                          Colors.white,
+                          theme.colorScheme.primary.withOpacity(0.05),
                         ],
                       ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.colorScheme.primary.withOpacity(0.3),
-                          blurRadius: 20,
-                          spreadRadius: 5,
-                        ),
-                      ],
                     ),
-                    child: const Icon(
-                      Icons.sports_cricket,
-                      size: 64,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    match.name,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.calendar_today,
-                          size: 16, color: Colors.grey[600]),
-                      const SizedBox(width: 6),
-                      Text(
-                        match.date,
-                        style: theme.textTheme.bodyLarge
-                            ?.copyWith(color: Colors.grey[600]),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.tertiary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: theme.colorScheme.tertiary.withOpacity(0.3),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.quiz,
-                          size: 20,
-                          color: Colors.grey[800],
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${gameProvider.questions.length} Questions',
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w600,
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  theme.colorScheme.primary,
+                                  theme.colorScheme.secondary,
+                                ],
+                              ),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: theme.colorScheme.primary.withOpacity(0.3),
+                                  blurRadius: 20,
+                                  spreadRadius: 5,
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.sports_cricket,
+                              size: 64,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 24),
+                          Text(
+                            match.name,
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.calendar_today,
+                                  size: 16, color: Colors.grey[600]),
+                              const SizedBox(width: 6),
+                              Text(
+                                match.date,
+                                style: theme.textTheme.bodyLarge
+                                    ?.copyWith(color: Colors.grey[600]),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.tertiary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: theme.colorScheme.tertiary.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.quiz,
+                                  size: 20,
+                                  color: Colors.grey[800],
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${gameProvider.questions.length} Questions',
+                                  style: TextStyle(
+                                    color: Colors.grey[800],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          if (gameProvider.questions.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Loading questions...',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ElevatedButton.icon(
+                            onPressed: gameProvider.questions.isEmpty
+                                ? null
+                                : () => _startGame(context),
+                            icon: const Icon(Icons.play_arrow, size: 28),
+                            label: const Text(
+                              'Start Game',
+                              style:
+                                  TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 18),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  ElevatedButton.icon(
-                    onPressed: () => _startGame(context),
-                    icon: const Icon(Icons.play_arrow, size: 28),
-                    label: const Text(
-                      'Start Game',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 18),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -1512,25 +1583,58 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
   Widget _buildGameScreen(BuildContext context) {
     final gameProvider = Provider.of<GameProvider>(context);
     final question = gameProvider.currentQuestion;
+    final theme = Theme.of(context);
 
     if (question == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildProgressBar(context),
-          const SizedBox(height: 24),
-          _buildQuestionCard(context, question),
-          const SizedBox(height: 24),
-          _buildOptionsList(context, question),
-          const SizedBox(height: 16),
-          _buildNavigationButtons(context),
-        ],
-      ),
+    return Column(
+      children: [
+        // Back button header
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  final gameProvider =
+                      Provider.of<GameProvider>(context, listen: false);
+                  gameProvider.clearMatchSelection();
+                },
+              ),
+              Expanded(
+                child: Text(
+                  gameProvider.selectedMatch?.name ?? 'Match',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Game screen content
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProgressBar(context),
+                const SizedBox(height: 24),
+                _buildQuestionCard(context, question),
+                const SizedBox(height: 24),
+                _buildOptionsList(context, question),
+                const SizedBox(height: 16),
+                _buildNavigationButtons(context),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

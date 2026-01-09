@@ -148,6 +148,16 @@ class GameProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearMatchSelection() {
+    _selectedMatch = null;
+    _questions = [];
+    _currentQuestionIndex = 0;
+    _userAnswers = {};
+    _gameStarted = false;
+    _gameCompleted = false;
+    notifyListeners();
+  }
+
   Future<void> loadCompletedMatchesForUser(String userId) async {
     try {
       _completedMatchIds =

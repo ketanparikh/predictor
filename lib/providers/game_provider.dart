@@ -166,6 +166,13 @@ class GameProvider with ChangeNotifier {
       if (_testUnblock) {
         _completedMatchIds = {};
       }
+      
+      // Debug: Log loaded completed matches
+      print('[GameProvider] Loaded ${_completedMatchIds.length} completed matches for user $userId');
+      for (final matchId in _completedMatchIds) {
+        print('  - $matchId');
+      }
+      
       notifyListeners();
     } catch (e) {
       print('Error loading completed matches: $e');
@@ -296,6 +303,40 @@ class GameProvider with ChangeNotifier {
   bool isMatchCompleted(String matchId) {
     if (_testUnblock) return false;
     return _completedMatchIds.contains(matchId);
+  }
+
+  /// Checks if a specific match has started (current time >= match start time).
+  /// Returns true if the match has started, false if it's still upcoming.
+  bool isMatchStarted(MatchInfo match) {
+    try {
+      final now = DateTime.now();
+      final matchDate = DateTime.parse(match.date);
+      
+      DateTime matchDateTime;
+      if (match.time != null && match.time!.isNotEmpty && match.time != 'TBD') {
+        matchDateTime = _parseMatchDateTime(matchDate, match.time!);
+      } else {
+        // If no time specified, default to 5:00 PM (17:00)
+        matchDateTime = DateTime(matchDate.year, matchDate.month, matchDate.day, 17, 0);
+        print('[GameProvider] Match ${match.id} has no time - defaulting to 5:00 PM');
+      }
+      
+      // Match has started if current time >= match start time
+      final hasStarted = now.compareTo(matchDateTime) >= 0;
+      
+      print('[GameProvider] Match ${match.id} "${match.name}":');
+      print('  Match time: $matchDateTime');
+      print('  Current time: $now');
+      print('  Has started: $hasStarted');
+      
+      return hasStarted;
+    } catch (e) {
+      print('[GameProvider] Error checking if match started: $e');
+      // If we can't parse the time, default to 5 PM
+      final matchDate = DateTime.parse(match.date);
+      final defaultTime = DateTime(matchDate.year, matchDate.month, matchDate.day, 17, 0);
+      return DateTime.now().compareTo(defaultTime) >= 0;
+    }
   }
 
   void startGame() {

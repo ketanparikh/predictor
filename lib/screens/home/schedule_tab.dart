@@ -96,6 +96,58 @@ class _ScheduleTabState extends State<ScheduleTab>
         final teams = (c['teams'] as List<dynamic>? ?? [])
             .map((t) => t as Map<String, dynamic>)
             .toList();
+        
+        // Sort teams by points (descending), then by NRR (descending)
+        // For Men's category, sort within each group separately
+        if (id == 'mens') {
+          final groupA = teams.where((t) => (t['group'] ?? '').toString().toUpperCase() == 'A').toList();
+          final groupB = teams.where((t) => (t['group'] ?? '').toString().toUpperCase() == 'B').toList();
+          
+          // Sort Group A
+          groupA.sort((a, b) {
+            final pointsA = (a['points'] ?? ((a['won'] ?? 0) * 2)) as num;
+            final pointsB = (b['points'] ?? ((b['won'] ?? 0) * 2)) as num;
+            if (pointsA != pointsB) {
+              return pointsB.compareTo(pointsA);
+            }
+            final nrrA = (a['nrr'] ?? 0.0) as num;
+            final nrrB = (b['nrr'] ?? 0.0) as num;
+            return nrrB.compareTo(nrrA);
+          });
+          
+          // Sort Group B
+          groupB.sort((a, b) {
+            final pointsA = (a['points'] ?? ((a['won'] ?? 0) * 2)) as num;
+            final pointsB = (b['points'] ?? ((b['won'] ?? 0) * 2)) as num;
+            if (pointsA != pointsB) {
+              return pointsB.compareTo(pointsA);
+            }
+            final nrrA = (a['nrr'] ?? 0.0) as num;
+            final nrrB = (b['nrr'] ?? 0.0) as num;
+            return nrrB.compareTo(nrrA);
+          });
+          
+          // Combine groups (Group A first, then Group B)
+          teams.clear();
+          teams.addAll(groupA);
+          teams.addAll(groupB);
+        } else {
+          // For other categories, sort all teams together
+          teams.sort((a, b) {
+            final pointsA = (a['points'] ?? ((a['won'] ?? 0) * 2)) as num;
+            final pointsB = (b['points'] ?? ((b['won'] ?? 0) * 2)) as num;
+            
+            if (pointsA != pointsB) {
+              return pointsB.compareTo(pointsA); // Descending order
+            }
+            
+            // If points are equal, sort by NRR (descending)
+            final nrrA = (a['nrr'] ?? 0.0) as num;
+            final nrrB = (b['nrr'] ?? 0.0) as num;
+            return nrrB.compareTo(nrrA); // Descending order
+          });
+        }
+        
         if (id.isNotEmpty) {
           _pointsTableByCategory[id] = teams;
         }
@@ -1336,27 +1388,25 @@ class _ScheduleTabState extends State<ScheduleTab>
             DataColumn(label: Text('P')),
             DataColumn(label: Text('W')),
             DataColumn(label: Text('L')),
-            DataColumn(label: Text('T')),
-            DataColumn(label: Text('NRR')),
             DataColumn(label: Text('Pts')),
+            DataColumn(label: Text('NRR')),
           ],
           rows: teams.map((team) {
             final name = (team['name'] ?? '') as String;
             final played = (team['played'] ?? 0) as int;
             final won = (team['won'] ?? 0) as int;
             final lost = (team['lost'] ?? 0) as int;
-            final tie = (team['tie'] ?? 0) as int;
             final nrr = (team['nrr'] ?? 0.0) as num;
-            final points = won * 2 + tie; // simple points formula
+            // Use points from JSON if available, otherwise calculate (won * 2)
+            final points = (team['points'] ?? (won * 2)) as num;
 
             return DataRow(cells: [
               DataCell(Text(name)),
               DataCell(Text('$played')),
               DataCell(Text('$won')),
               DataCell(Text('$lost')),
-              DataCell(Text('$tie')),
+              DataCell(Text('${points.toInt()}')),
               DataCell(Text(nrr.toStringAsFixed(2))),
-              DataCell(Text('$points')),
             ]);
           }).toList(),
         ),

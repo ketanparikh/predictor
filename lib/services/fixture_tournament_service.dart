@@ -15,6 +15,7 @@ class FixtureTournamentService {
   static const bool _debug = true; // emit console logs for troubleshooting
 
   // Map category id -> question file to use for all matches in that category
+  // Default prediction bank for most dates
   static const Map<String, String> _categoryQuestionFiles = {
     // All categories now use the shared prediction bank; questions are
     // randomized per match and team names are injected at runtime.
@@ -22,6 +23,14 @@ class FixtureTournamentService {
     'womens': 'assets/config/prediction_bank.json',
     'boys': 'assets/config/prediction_bank.json',
     'girls': 'assets/config/prediction_bank.json',
+  };
+
+  // Latest prediction bank for 17th and 18th Jan 2026
+  static const Map<String, String> _categoryQuestionFilesLatest = {
+    'mens': 'assets/config/prediction_bank_latest.json',
+    'womens': 'assets/config/prediction_bank_latest.json',
+    'boys': 'assets/config/prediction_bank_latest.json',
+    'girls': 'assets/config/prediction_bank_latest.json',
   };
 
   Future<List<Tournament>> loadTournamentsFromExcel() async {
@@ -85,8 +94,11 @@ class FixtureTournamentService {
               ? '$rawTeam1 vs $rawTeam2'
               : (rawTeam1.isNotEmpty ? rawTeam1 : rawTeam2);
 
-          final questionFile =
-              _categoryQuestionFiles[matchCategoryId] ?? _categoryQuestionFiles['mens']!;
+          // Use latest prediction bank for 17th and 18th Jan 2026
+          final useLatestBank = matchDateStr == '2026-01-17' || matchDateStr == '2026-01-18';
+          final questionFile = useLatestBank
+              ? (_categoryQuestionFilesLatest[matchCategoryId] ?? _categoryQuestionFilesLatest['mens']!)
+              : (_categoryQuestionFiles[matchCategoryId] ?? _categoryQuestionFiles['mens']!);
 
           final matchList = matchesByDate.putIfAbsent(matchDateStr, () => []);
           final sanitizedDate = matchDateStr.replaceAll('-', '_');

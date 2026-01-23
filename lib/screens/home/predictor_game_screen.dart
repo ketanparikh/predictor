@@ -1105,18 +1105,30 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
             itemBuilder: (context, index) {
               final m = tournament.matches[index];
               final completed = gameProvider.isMatchCompleted(m.id);
+              final hasStarted = gameProvider.isMatchStarted(m);
+              
+              // Allow play if match hasn't started (even if previously completed)
+              // This allows users to resubmit predictions until the match starts
+              final canPlay = !hasStarted;
+              
+              // Show "Done" only if completed AND match has started
+              final showDone = completed && hasStarted;
+              
+              // Debug logging
+              print('[MatchList] ${m.id}: completed=$completed, started=$hasStarted, canPlay=$canPlay, showDone=$showDone');
+              
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
-                elevation: completed ? 2 : 4,
+                elevation: canPlay ? 4 : 2,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20),
-                  onTap: completed
-                      ? null
-                      : () async {
+                  onTap: canPlay
+                      ? () async {
                           final gp =
                               Provider.of<GameProvider>(context, listen: false);
                           await gp.selectMatch(m);
-                        },
+                        }
+                      : null,
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
@@ -1124,18 +1136,18 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: completed
-                                ? Colors.green.withOpacity(0.1)
-                                : theme.colorScheme.secondary.withOpacity(0.1),
+                            color: hasStarted
+                                ? (completed ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1))
+                                : (completed ? Colors.blue.withOpacity(0.1) : theme.colorScheme.secondary.withOpacity(0.1)),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
-                            completed
-                                ? Icons.check_circle
-                                : Icons.sports_cricket,
-                            color: completed
-                                ? Colors.green
-                                : theme.colorScheme.secondary,
+                            hasStarted
+                                ? (completed ? Icons.check_circle : Icons.lock_clock)
+                                : (completed ? Icons.edit : Icons.sports_cricket),
+                            color: hasStarted
+                                ? (completed ? Colors.green : Colors.orange)
+                                : (completed ? Colors.blue : theme.colorScheme.secondary),
                             size: 28,
                           ),
                         ),
@@ -1148,7 +1160,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                                 m.name,
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: completed ? Colors.grey[600] : null,
+                                  color: !canPlay ? Colors.grey[600] : null,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -1166,12 +1178,27 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                                       color: Colors.grey[600],
                                     ),
                                   ),
+                                  if (m.time != null && m.time!.isNotEmpty && m.time != 'TBD') ...[
+                                    const SizedBox(width: 8),
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      m.time!,
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ],
                           ),
                         ),
-                        if (completed)
+                        if (showDone)
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
@@ -1198,6 +1225,74 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                                   'Done',
                                   style: TextStyle(
                                     color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else if (hasStarted && !completed)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.orange.withOpacity(0.15),
+                                  Colors.orange.withOpacity(0.08),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.orange.withOpacity(0.4),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.lock,
+                                    size: 16, color: Colors.orange),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Started',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else if (completed && !hasStarted)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.blue.withOpacity(0.15),
+                                  Colors.blue.withOpacity(0.08),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.blue.withOpacity(0.4),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.edit,
+                                    size: 16, color: Colors.blue),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Edit',
+                                  style: TextStyle(
+                                    color: Colors.blue,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12,
                                   ),

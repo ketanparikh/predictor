@@ -47,7 +47,7 @@ echo.
 
 REM Build Flutter Web App
 echo [4/5] Building Flutter Web App...
-flutter build web
+flutter build web --pwa-strategy=none
 if %errorlevel% neq 0 (
     echo ✗ Failed to build Flutter web app
     exit /b 1

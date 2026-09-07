@@ -7,7 +7,6 @@
   <meta name="description" content="JCPL - Jade Cricket Premier League">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <!-- Prevent caching of the shell so deploys show up on phones -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -15,7 +14,6 @@
   <!-- Google Sign-In Client ID -->
   <meta name="google-signin-client_id" content="318152754285-sjail15869rot66dgan9qbpogke709is.apps.googleusercontent.com">
 
-  <!-- iOS / Android web app -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -24,8 +22,27 @@
   <link rel="icon" type="image/png" href="favicon.png"/>
   <title>JCPL</title>
   <link rel="manifest" href="manifest.json">
-  <script src="flutter_bootstrap.js" async></script>
 </head>
 <body>
+  <script>
+    (async function boot() {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+        }
+        if (window.caches) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map((key) => caches.delete(key)));
+        }
+      } catch (e) {
+        console.warn('Could not clear old web cache', e);
+      }
+      const script = document.createElement('script');
+      script.src = 'flutter_bootstrap.js?v=' + {{flutter_service_worker_version}};
+      script.async = true;
+      document.body.appendChild(script);
+    })();
+  </script>
 </body>
 </html>

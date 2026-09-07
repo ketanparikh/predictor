@@ -140,9 +140,21 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
           return Scaffold(
             backgroundColor: AppTheme.backgroundColor,
             appBar: AppBar(
-              title: Text(
-                '${score.team1} vs ${score.team2}',
-                overflow: TextOverflow.ellipsis,
+              titleSpacing: 8,
+              title: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '${score.team1} vs ${score.team2}',
+                  maxLines: 2,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    height: 1.2,
+                  ),
+                ),
               ),
               flexibleSpace: Container(
                 decoration: BoxDecoration(

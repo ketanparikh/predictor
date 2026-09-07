@@ -59,7 +59,7 @@ Set-Location ..
 
 # Build Flutter Web App
 Write-Host "[4/5] Building Flutter Web App..." -ForegroundColor Yellow
-flutter build web
+flutter build web --pwa-strategy=none
 $flutterExitCode = $LASTEXITCODE
 if ($flutterExitCode -ne 0) {
     Write-Host "✗ Failed to build Flutter web app" -ForegroundColor Red

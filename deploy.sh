@@ -51,7 +51,7 @@ cd ..
 
 # Build Flutter Web App
 echo -e "${YELLOW}[4/5] Building Flutter Web App...${NC}"
-flutter build web
+flutter build web --pwa-strategy=none
 if [ $? -ne 0 ]; then
     echo -e "${RED}✗ Failed to build Flutter web app${NC}"
     exit 1

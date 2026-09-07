@@ -487,7 +487,7 @@ class _KeypadState extends State<_Keypad> {
                     Expanded(
                       child: _pad(context, 'W', () => _wicket(context), color: Colors.red),
                     ),
-                    const Expanded(child: SizedBox()),
+                    Expanded(child: _ballsLeftChip(context)),
                   ],
                 ),
               ],
@@ -512,6 +512,38 @@ class _KeypadState extends State<_Keypad> {
           child: LinearProgressIndicator(),
         ),
       ],
+    );
+  }
+
+  int get _ballsLeftInOver {
+    if (inn.needsNewBowler || inn.completed) return 0;
+    final used = inn.legalBalls % 6;
+    return used == 0 ? 6 : 6 - used;
+  }
+
+  Widget _ballsLeftChip(BuildContext context) {
+    final left = _ballsLeftInOver;
+    final scheme = Theme.of(context).colorScheme;
+    final label = left == 0 ? 'Over up' : '$left left';
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Center(
+        child: Chip(
+          label: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: scheme.onPrimary,
+            ),
+          ),
+          backgroundColor: scheme.primary,
+          visualDensity: const VisualDensity(horizontal: -1, vertical: -1),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+          side: BorderSide.none,
+        ),
+      ),
     );
   }
 

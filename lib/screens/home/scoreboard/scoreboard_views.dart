@@ -160,11 +160,12 @@ class _TeamScoreRow extends StatelessWidget {
         Expanded(
           child: Text(
             name,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 16,
+              height: 1.2,
               fontWeight: batting ? FontWeight.w800 : FontWeight.w500,
             ),
           ),

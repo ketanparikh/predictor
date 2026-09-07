@@ -100,5 +100,11 @@ service cloud.firestore {
       // Only admins can write game configuration
       allow write: if isAdmin();
     }
+
+    // Live match scores: everyone can read; only admins can write
+    match /liveScores/{matchId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }

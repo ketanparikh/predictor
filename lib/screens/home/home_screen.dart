@@ -8,6 +8,7 @@ import 'jcpl_home_tab.dart';
 import 'auctions_tab.dart';
 import 'schedule_tab.dart';
 import 'teams_tab.dart';
+import 'live_scoring_tab.dart';
 import '../admin/outcome_admin_screen.dart';
 import '../../providers/admin_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,8 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    // Predictor tab is index 4
-    if (index == 4) {
+    // Predictor tab is index 5
+    if (index == 5) {
       // Always show Game options (tournament list) when entering Predictor tab
       final gameProvider = Provider.of<GameProvider>(context, listen: false);
       gameProvider.clearTournamentSelection();
@@ -72,6 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return 'Schedule';
       case 4:
+        return 'Live Scoring';
+      case 5:
         return 'Predictor Game';
       default:
         return 'JCPL-3';
@@ -89,6 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return Icons.calendar_month;
       case 4:
+        return Icons.scoreboard;
+      case 5:
         return Icons.sports_cricket;
       default:
         return Icons.home;
@@ -532,6 +537,8 @@ class _HomeScreenState extends State<HomeScreen> {
           onNavigateToTab: _onItemTapped,
         );
       case 4:
+        return const LiveScoringTab();
+      case 5:
         return const PredictorGameScreen();
       default:
         return JcplHomeTab(onNavigateToTab: _onItemTapped);
@@ -1113,6 +1120,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onItemTapped,
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
@@ -1133,6 +1141,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.calendar_month_outlined),
             selectedIcon: Icon(Icons.calendar_month),
             label: 'Schedule',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.scoreboard_outlined),
+            selectedIcon: Icon(Icons.scoreboard),
+            label: 'Live',
           ),
           NavigationDestination(
             icon: Icon(Icons.sports_cricket_outlined),

@@ -1,6 +1,13 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.firebase.sign_in_provider == 'anonymous'
+      );
+    }
+
     // Leaderboard collection
     match /leaderboard/{document} {
       // Anyone can read the leaderboard
@@ -10,8 +17,7 @@ service cloud.firestore {
       allow write: if request.auth != null;
       
       // Allow admins to delete leaderboard entries
-      allow delete: if request.auth != null &&
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      allow delete: if isAdmin();
     }
     
     // Users collection (optional, for future features)
@@ -19,7 +25,7 @@ service cloud.firestore {
       // Allow users to read/write their own doc, or admins to read any user doc
       allow read: if request.auth != null && (
         request.auth.uid == userId ||
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        isAdmin()
       );
       allow write: if request.auth != null && request.auth.uid == userId;
 
@@ -27,7 +33,7 @@ service cloud.firestore {
       match /completedMatches/{matchId} {
         allow read, write: if request.auth != null && (
           request.auth.uid == userId ||
-          exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+          isAdmin()
         );
       }
 
@@ -41,38 +47,32 @@ service cloud.firestore {
     match /tournaments/{tournamentId} {
       allow read: if true;
       // Allow admins to delete tournament documents
-      allow delete: if request.auth != null &&
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      allow delete: if isAdmin();
       match /matches/{matchId} {
         allow read: if true;
         // Allow admins to delete matches and all nested collections
-        allow delete: if request.auth != null &&
-          exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+        allow delete: if isAdmin();
         // Only admins can write the outcome doc (stored under meta/outcome)
         match /meta/outcome {
           allow read: if true;
-          allow write: if request.auth != null &&
-            exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+          allow write: if isAdmin();
           // Allow admins to delete outcome docs
-          allow delete: if request.auth != null &&
-            exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+          allow delete: if isAdmin();
         }
         match /predictions/{predictionUserId} {
           // Allow owner to read/write, or admin to read (for listing/deletion)
           allow read: if request.auth != null && (
             request.auth.uid == predictionUserId ||
-            exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+            isAdmin()
           );
           allow write: if request.auth != null && request.auth.uid == predictionUserId;
           // Allow admins to delete any prediction
-          allow delete: if request.auth != null &&
-            exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+          allow delete: if isAdmin();
         }
         match /scores/{scoreUserId} {
           allow read: if true;
           // Allow admins to delete scores
-          allow delete: if request.auth != null &&
-            exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+          allow delete: if isAdmin();
         }
       }
     }
@@ -89,8 +89,7 @@ service cloud.firestore {
       match /teams/{teamId} {
         allow read: if true; // Anyone can read team data
         // Only admins can write (assign/remove players)
-        allow write: if request.auth != null &&
-          exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+        allow write: if isAdmin();
       }
     }
 
@@ -99,9 +98,7 @@ service cloud.firestore {
       // Anyone can read game configuration (needed for non-admin users to see playable days)
       allow read: if true;
       // Only admins can write game configuration
-      allow write: if request.auth != null &&
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      allow write: if isAdmin();
     }
   }
 }
-

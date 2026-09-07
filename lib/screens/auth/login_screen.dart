@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/admin_bypass_service.dart';
 import '../lets_play_splash_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -266,6 +267,17 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                           ),
                         ),
+                        const SizedBox(height: 16),
+                        TextButton(
+                          onPressed: _isLoading ? null : _handleAdminBypass,
+                          child: Text(
+                            'Continue as Admin',
+                            style: TextStyle(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -275,6 +287,100 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _handleAdminBypass() async {
+    final code = await showDialog<String>(
+      context: context,
+      builder: (context) => const _AdminAccessDialog(),
+    );
+
+    if (!mounted || code == null) return;
+
+    if (!AdminBypassService().matchesCode(code)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Incorrect admin code.'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.signInAsAdminBypass();
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (success) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const LetsPlaySplashScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            authProvider.errorMessage ?? 'Admin sign-in failed.',
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    }
+  }
+}
+
+class _AdminAccessDialog extends StatefulWidget {
+  const _AdminAccessDialog();
+
+  @override
+  State<_AdminAccessDialog> createState() => _AdminAccessDialogState();
+}
+
+class _AdminAccessDialogState extends State<_AdminAccessDialog> {
+  late final TextEditingController _codeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _codeController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    Navigator.of(context).pop(_codeController.text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Admin access'),
+      content: TextField(
+        controller: _codeController,
+        obscureText: true,
+        autofocus: true,
+        decoration: const InputDecoration(
+          labelText: 'Access code',
+          hintText: 'Enter admin code',
+        ),
+        onSubmitted: (_) => _submit(),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _submit,
+          child: const Text('Continue'),
+        ),
+      ],
     );
   }
 }

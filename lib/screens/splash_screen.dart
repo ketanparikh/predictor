@@ -39,10 +39,13 @@ class _SplashScreenState extends State<SplashScreen>
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await authProvider.checkAuthState();
+    if (!authProvider.isAuthenticated) {
+      await authProvider.restoreAdminBypassIfNeeded();
+    }
 
     if (!mounted) return;
 
-    if (authProvider.user != null) {
+    if (authProvider.isAuthenticated) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const HomeScreen()),
       );

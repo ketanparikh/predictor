@@ -10,15 +10,12 @@ class ScheduleTab extends StatefulWidget {
   const ScheduleTab({super.key, this.onNavigateToTab});
 
   @override
-  State<ScheduleTab> createState() => _ScheduleTabState();
+  State<ScheduleTab> createState() => _ScheduleScreenState();
 }
 
-class _ScheduleTabState extends State<ScheduleTab>
-    with SingleTickerProviderStateMixin {
+class _ScheduleScreenState extends State<ScheduleTab> {
   Map<String, dynamic>? _scheduleData;
   bool _isLoading = true;
-  late TabController _tabController;
-  late TabController _fixturesTabController;
   Map<String, List<Map<String, dynamic>>> _fixturesByCategory = {};
   Map<String, List<Map<String, dynamic>>> _pointsTableByCategory = {};
 
@@ -45,15 +42,6 @@ class _ScheduleTabState extends State<ScheduleTab>
   void initState() {
     super.initState();
     _loadScheduleData();
-    _tabController = TabController(length: 3, vsync: this);
-    _fixturesTabController = TabController(length: 4, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _fixturesTabController.dispose();
-    super.dispose();
   }
 
   Future<void> _loadScheduleData() async {
@@ -1239,35 +1227,36 @@ class _ScheduleTabState extends State<ScheduleTab>
 
     final theme = Theme.of(context);
 
-    return Column(
-      children: [
-        _buildHeader(context),
-        Container(
-          color: theme.colorScheme.primary.withOpacity(0.05),
-          child: TabBar(
-            controller: _tabController,
-            labelColor: theme.colorScheme.primary,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: theme.colorScheme.primary,
-            indicatorWeight: 3,
-            tabs: const [
-              Tab(text: 'Groups'),
-              Tab(text: 'Points Table'),
-              Tab(text: 'Fixtures'),
-            ],
+    return DefaultTabController(
+      length: 3,
+      child: Column(
+        children: [
+          _buildHeader(context),
+          Container(
+            color: theme.colorScheme.primary.withOpacity(0.05),
+            child: TabBar(
+              labelColor: theme.colorScheme.primary,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: theme.colorScheme.primary,
+              indicatorWeight: 3,
+              tabs: const [
+                Tab(text: 'Groups'),
+                Tab(text: 'Points Table'),
+                Tab(text: 'Fixtures'),
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildGroupsTab(context),
-              _buildPointsTableTab(context),
-              _buildFixturesTab(context),
-            ],
+          Expanded(
+            child: TabBarView(
+              children: [
+                _buildGroupsTab(context),
+                _buildPointsTableTab(context),
+                _buildFixturesTab(context),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -1629,37 +1618,42 @@ class _ScheduleTabState extends State<ScheduleTab>
   Widget _buildFixturesTab(BuildContext context) {
     final theme = Theme.of(context);
     final categories = _scheduleData?['categories'] as List? ?? [];
-    
-    return Column(
-      children: [
-        Container(
-          color: theme.colorScheme.primary.withOpacity(0.05),
-          child: TabBar(
-            controller: _fixturesTabController,
-            labelColor: theme.colorScheme.primary,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: theme.colorScheme.primary,
-            indicatorWeight: 3,
-            isScrollable: true,
-            tabs: categories.map((cat) {
-              final category = cat as Map<String, dynamic>;
-              return Tab(
-                text: category['name'] ?? category['id'],
-              );
-            }).toList(),
+
+    if (categories.isEmpty) {
+      return _buildComingSoon(context, 'Fixtures', Icons.calendar_today);
+    }
+
+    return DefaultTabController(
+      length: categories.length,
+      child: Column(
+        children: [
+          Container(
+            color: theme.colorScheme.primary.withOpacity(0.05),
+            child: TabBar(
+              labelColor: theme.colorScheme.primary,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: theme.colorScheme.primary,
+              indicatorWeight: 3,
+              isScrollable: true,
+              tabs: categories.map((cat) {
+                final category = cat as Map<String, dynamic>;
+                return Tab(
+                  text: category['name'] ?? category['id'],
+                );
+              }).toList(),
+            ),
           ),
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _fixturesTabController,
-            children: categories.map((cat) {
-              final category = cat as Map<String, dynamic>;
-              final categoryId = category['id'] as String;
-              return _buildCategoryFixtures(context, categoryId, category);
-            }).toList(),
+          Expanded(
+            child: TabBarView(
+              children: categories.map((cat) {
+                final category = cat as Map<String, dynamic>;
+                final categoryId = category['id'] as String;
+                return _buildCategoryFixtures(context, categoryId, category);
+              }).toList(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

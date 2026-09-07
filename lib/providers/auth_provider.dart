@@ -1,13 +1,22 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../services/admin_bypass_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AdminBypassService _adminBypass = AdminBypassService();
   User? _user;
 
+  bool _localAdminSession = false;
+
   User? get user => _user;
-  bool get isAuthenticated => _user != null;
+  bool get isAuthenticated => _user != null || _localAdminSession;
+  bool get isLocalAdminSession => _localAdminSession;
+  String get sessionDisplayName =>
+      _user?.displayName ??
+      _user?.email?.split('@').first ??
+      (_localAdminSession ? 'Admin' : 'Player');
 
   AuthProvider() {
     _auth.authStateChanges().listen((User? user) {
@@ -176,7 +185,48 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Skip Google sign-in. Uses anonymous auth when enabled; otherwise a local admin session.
+  Future<bool> signInAsAdminBypass() async {
+    try {
+      _errorMessage = null;
+      await _adminBypass.enable();
+      final credential = await _auth.signInAnonymously();
+      _user = credential.user;
+      _localAdminSession = true;
+      if (_user != null &&
+          (_user!.displayName == null || _user!.displayName!.isEmpty)) {
+        await _user!.updateDisplayName('Admin');
+        await _user!.reload();
+        _user = _auth.currentUser;
+      }
+      notifyListeners();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Admin bypass error: ${e.code} - ${e.message}');
+      return _enterLocalAdminSession();
+    } catch (e) {
+      debugPrint('Admin bypass error: $e');
+      return _enterLocalAdminSession();
+    }
+  }
+
+  Future<bool> _enterLocalAdminSession() async {
+    await _adminBypass.enable();
+    _localAdminSession = true;
+    _errorMessage = null;
+    notifyListeners();
+    return true;
+  }
+
+  Future<bool> restoreAdminBypassIfNeeded() async {
+    if (_auth.currentUser != null) return true;
+    if (!await _adminBypass.isEnabled()) return false;
+    return _enterLocalAdminSession();
+  }
+
   Future<void> signOut() async {
+    await _adminBypass.clear();
+    _localAdminSession = false;
     await _auth.signOut();
     _user = null;
     notifyListeners();

@@ -48,8 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    // Predictor tab is now index 3
-    if (index == 3) {
+    // Predictor tab is index 4
+    if (index == 4) {
       // Always show Game options (tournament list) when entering Predictor tab
       final gameProvider = Provider.of<GameProvider>(context, listen: false);
       gameProvider.clearTournamentSelection();
@@ -68,8 +68,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return 'Teams';
       case 2:
-        return 'Schedule';
+        return 'Auction';
       case 3:
+        return 'Schedule';
+      case 4:
         return 'Predictor Game';
       default:
         return 'JCPL-3';
@@ -83,8 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return Icons.groups_rounded;
       case 2:
-        return Icons.calendar_month;
+        return Icons.gavel;
       case 3:
+        return Icons.calendar_month;
+      case 4:
         return Icons.sports_cricket;
       default:
         return Icons.home;
@@ -521,8 +525,13 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return const TeamsTab();
       case 2:
-        return ScheduleTab(onNavigateToTab: _onItemTapped);
+        return const AuctionsTab();
       case 3:
+        return ScheduleTab(
+          key: const ValueKey('schedule-tab'),
+          onNavigateToTab: _onItemTapped,
+        );
+      case 4:
         return const PredictorGameScreen();
       default:
         return JcplHomeTab(onNavigateToTab: _onItemTapped);
@@ -1114,6 +1123,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.groups_outlined),
             selectedIcon: Icon(Icons.groups),
             label: 'Teams',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.gavel_outlined),
+            selectedIcon: Icon(Icons.gavel),
+            label: 'Auction',
           ),
           NavigationDestination(
             icon: Icon(Icons.calendar_month_outlined),

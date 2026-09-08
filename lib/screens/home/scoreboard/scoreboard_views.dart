@@ -271,7 +271,7 @@ class LiveInningsPanel extends StatelessWidget {
       margin: EdgeInsets.zero,
       child: Column(
         children: [
-          const _TableHeader(cells: ['Bowler', 'O', 'M', 'R', 'W', 'Econ', 'Wd', 'Nb'], numericWidth: 32),
+          const _TableHeader(cells: ['Bowler', 'O', 'M', 'R', 'W', 'Wd', 'Nb', 'Econ'], numericWidth: 32),
           if (bowler != null) _BowlerRow(bowler: bowler, current: true),
         ],
       ),
@@ -369,7 +369,7 @@ class _InningsCard extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 8),
-            const _TableHeader(cells: ['Bowler', 'O', 'M', 'R', 'W', 'Econ', 'Wd', 'Nb'], numericWidth: 32),
+            const _TableHeader(cells: ['Bowler', 'O', 'M', 'R', 'W', 'Wd', 'Nb', 'Econ'], numericWidth: 32),
             for (final b in innings.bowlers)
               _BowlerRow(
                 bowler: b,
@@ -754,9 +754,9 @@ class _BowlerRow extends StatelessWidget {
           _num('${bowler.maidens}', width: 32),
           _num('${bowler.runs}', width: 32),
           _num('${bowler.wickets}', bold: true, width: 32),
-          _num(bowler.econ.toStringAsFixed(1), width: 32),
           _num('${bowler.wides}', width: 32),
           _num('${bowler.noBalls}', width: 32),
+          _num(bowler.econ.toStringAsFixed(1), width: 32),
         ],
       ),
     );

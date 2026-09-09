@@ -4,6 +4,10 @@ import 'dart:convert';
 import 'package:excel/excel.dart' as excel;
 import 'package:intl/intl.dart';
 
+import '../../models/live_score.dart';
+import '../../services/live_score_service.dart';
+import '../../services/points_table_calculator.dart';
+
 class ScheduleTab extends StatefulWidget {
   final Function(int)? onNavigateToTab;
   
@@ -18,6 +22,7 @@ class _ScheduleScreenState extends State<ScheduleTab> {
   bool _isLoading = true;
   Map<String, List<Map<String, dynamic>>> _fixturesByCategory = {};
   Map<String, List<Map<String, dynamic>>> _pointsTableByCategory = {};
+  final LiveScoreService _liveScores = LiveScoreService();
 
   // Groups data from the image
   final List<Map<String, dynamic>> _groupA = [
@@ -1269,43 +1274,64 @@ class _ScheduleScreenState extends State<ScheduleTab> {
       return _buildComingSoon(context, 'Points Table', Icons.leaderboard);
     }
 
-    return DefaultTabController(
-      length: categories.length,
-      child: Column(
-        children: [
-          Container(
-            color: theme.colorScheme.primary.withOpacity(0.05),
-            child: TabBar(
-              isScrollable: true,
-              labelColor: theme.colorScheme.primary,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: theme.colorScheme.primary,
-              tabs: [
-                for (final cat in categories)
-                  Tab(text: (cat['name'] ?? cat['id']) as String),
-              ],
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                for (final cat in categories)
-                  _buildPointsTableForCategory(
-                    context,
-                    (cat['id'] as String?) ?? '',
-                    cat,
+    return StreamBuilder<Map<String, LiveScore>>(
+      stream: _liveScores.watchScores(),
+      builder: (context, snapshot) {
+        final tables = PointsTableCalculator.merge(
+          seedByCategory: _pointsTableByCategory,
+          scores: snapshot.data?.values ?? const [],
+        );
+        final hasLiveResults =
+            (snapshot.data?.values ?? const []).any((s) => s.isComplete);
+
+        return DefaultTabController(
+          length: categories.length,
+          child: Column(
+            children: [
+              Container(
+                color: theme.colorScheme.primary.withOpacity(0.05),
+                child: TabBar(
+                  isScrollable: true,
+                  labelColor: theme.colorScheme.primary,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: theme.colorScheme.primary,
+                  tabs: [
+                    for (final cat in categories)
+                      Tab(text: (cat['name'] ?? cat['id']) as String),
+                  ],
+                ),
+              ),
+              if (hasLiveResults)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                  child: Text(
+                    'Updated from completed live matches',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[700],
+                    ),
                   ),
-              ],
-            ),
+                ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    for (final cat in categories)
+                      _buildPointsTableForCategory(
+                        context,
+                        (cat['id'] as String?) ?? '',
+                        tables[(cat['id'] as String?) ?? ''] ?? const [],
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildPointsTableForCategory(
-      BuildContext context, String categoryId, Map<String, dynamic> category) {
-    final teams = _pointsTableByCategory[categoryId] ?? [];
+      BuildContext context, String categoryId, List<Map<String, dynamic>> teams) {
     if (teams.isEmpty) {
       return Center(
         child: Text(

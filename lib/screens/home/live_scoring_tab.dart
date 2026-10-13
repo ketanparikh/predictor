@@ -7,6 +7,7 @@ import '../../providers/admin_provider.dart';
 import '../../providers/game_provider.dart';
 import '../../services/live_score_service.dart';
 import 'scoreboard/match_scoreboard_screen.dart';
+import 'weekend/weekend_setup_view.dart';
 
 class LiveScoringTab extends StatefulWidget {
   const LiveScoringTab({super.key});
@@ -30,12 +31,37 @@ class _LiveScoringTabState extends State<LiveScoringTab> {
     });
   }
 
-  List<_LiveMatch> _allMatches(List<Tournament> tournaments) {
+  List<_LiveMatch> _allMatches(
+    List<Tournament> tournaments,
+    Map<String, LiveScore> scores,
+  ) {
     final matches = <_LiveMatch>[];
+    final seen = <String>{};
     for (final tournament in tournaments) {
       for (final match in tournament.matches) {
         matches.add(_LiveMatch(day: tournament, match: match));
+        seen.add(match.id);
       }
+    }
+    for (final score in scores.values) {
+      if (!score.isWeekendMatch || seen.contains(score.matchId)) continue;
+      matches.add(
+        _LiveMatch(
+          day: Tournament(
+            id: 'weekend',
+            name: score.dayName ?? 'Weekend',
+            matches: const [],
+          ),
+          match: MatchInfo(
+            id: score.matchId,
+            name: '${score.team1} vs ${score.team2}',
+            date: score.dayName ?? '',
+            questionFile: 'assets/config/prediction_bank.json',
+            time: score.matchTime,
+            category: 'weekend',
+          ),
+        ),
+      );
     }
     return matches;
   }
@@ -80,16 +106,27 @@ class _LiveScoringTabState extends State<LiveScoringTab> {
       stream: _scoreService.watchScores(),
       builder: (context, snapshot) {
         final scores = snapshot.data ?? {};
-        final matches = _allMatches(game.tournaments).where((item) {
+        final weekendMatches = scores.values
+            .where((score) => score.isWeekendMatch)
+            .toList()
+          ..sort((a, b) => '${a.team1}${a.team2}'.compareTo('${b.team1}${b.team2}'));
+        final matches = _allMatches(game.tournaments, scores).where((item) {
           final score = _scoreFor(item, scores);
+          if (score.isWeekendMatch && !score.weekendSheetsReady) return false;
+          if (_filter == 'weekend') return false;
           if (_filter == 'all') return true;
           return score.status == _filter;
         }).toList();
 
         matches.sort((a, b) {
+          final aScore = _scoreFor(a, scores);
+          final bScore = _scoreFor(b, scores);
+          final aWeekend = aScore.isWeekendMatch && aScore.weekendSheetsReady;
+          final bWeekend = bScore.isWeekendMatch && bScore.weekendSheetsReady;
+          if (aWeekend != bWeekend) return aWeekend ? -1 : 1;
           const order = {'live': 0, 'upcoming': 1, 'completed': 2};
-          final as = order[_scoreFor(a, scores).status] ?? 3;
-          final bs = order[_scoreFor(b, scores).status] ?? 3;
+          final as = order[aScore.status] ?? 3;
+          final bs = order[bScore.status] ?? 3;
           if (as != bs) return as.compareTo(bs);
           return a.match.date.compareTo(b.match.date);
         });
@@ -119,6 +156,12 @@ class _LiveScoringTabState extends State<LiveScoringTab> {
                       onTap: () => setState(() => _filter = 'upcoming'),
                     ),
                     _FilterChip(
+                      label: 'Weekend',
+                      selected: _filter == 'weekend',
+                      color: Colors.indigo,
+                      onTap: () => setState(() => _filter = 'weekend'),
+                    ),
+                    _FilterChip(
                       label: 'Completed',
                       selected: _filter == 'completed',
                       onTap: () => setState(() => _filter = 'completed'),
@@ -128,29 +171,34 @@ class _LiveScoringTabState extends State<LiveScoringTab> {
               ),
             ),
             Expanded(
-              child: matches.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No matches to show',
-                        style: theme.textTheme.bodyLarge
-                            ?.copyWith(color: Colors.grey[600]),
-                      ),
+              child: _filter == 'weekend'
+                  ? WeekendSetupView(
+                      matches: weekendMatches,
+                      isAdmin: isAdmin,
                     )
-                  : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                      itemCount: matches.length,
-                      itemBuilder: (context, index) {
-                        final item = matches[index];
-                        final score = _scoreFor(item, scores);
-                        return _ScoreCard(
-                          dayName: item.day.name,
-                          match: item.match,
-                          score: score,
-                          isAdmin: isAdmin,
-                          onOpen: () => _openMatch(item, score),
-                        );
-                      },
-                    ),
+                  : matches.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No matches to show',
+                            style: theme.textTheme.bodyLarge
+                                ?.copyWith(color: Colors.grey[600]),
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                          itemCount: matches.length,
+                          itemBuilder: (context, index) {
+                            final item = matches[index];
+                            final score = _scoreFor(item, scores);
+                            return _ScoreCard(
+                              dayName: item.day.name,
+                              match: item.match,
+                              score: score,
+                              isAdmin: isAdmin,
+                              onOpen: () => _openMatch(item, score),
+                            );
+                          },
+                        ),
             ),
           ],
         );
@@ -257,6 +305,26 @@ class _ScoreCard extends StatelessWidget {
                           ?.copyWith(color: Colors.grey[600]),
                     ),
                   const SizedBox(width: 8),
+                  if (score.isWeekendMatch) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.indigo.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.indigo.shade200),
+                      ),
+                      child: Text(
+                        'WEEKEND',
+                        style: TextStyle(
+                          color: Colors.indigo.shade700,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

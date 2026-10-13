@@ -3,13 +3,10 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/game_provider.dart';
 import '../auth/login_screen.dart';
-import 'predictor_game_screen.dart';
 import 'jcpl_home_tab.dart';
-import 'auctions_tab.dart';
-import 'schedule_tab.dart';
-import 'teams_tab.dart';
-import 'live_scoring_tab.dart';
 import '../admin/outcome_admin_screen.dart';
+import '../../widgets/coming_soon_view.dart';
+import '../../theme/app_theme.dart';
 import '../../providers/admin_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -49,9 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    // Predictor tab is index 5
-    if (index == 5) {
-      // Always show Game options (tournament list) when entering Predictor tab
+    // Game tab is index 4
+    if (index == 4) {
+      // Reset predictor tournament list when entering the Game tab
       final gameProvider = Provider.of<GameProvider>(context, listen: false);
       gameProvider.clearTournamentSelection();
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -65,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _getAppBarTitle() {
     switch (_selectedIndex) {
       case 0:
-        return 'JCPL-3';
+        return 'JCPL-4';
       case 1:
         return 'Teams';
       case 2:
@@ -73,11 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return 'Schedule';
       case 4:
-        return 'Live Scoring';
-      case 5:
-        return 'Predictor Game';
+        return 'Game';
       default:
-        return 'JCPL-3';
+        return 'JCPL-4';
     }
   }
 
@@ -92,9 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return Icons.calendar_month;
       case 4:
-        return Icons.scoreboard;
-      case 5:
-        return Icons.sports_cricket;
+        return Icons.sports_esports;
       default:
         return Icons.home;
     }
@@ -528,18 +521,29 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return JcplHomeTab(onNavigateToTab: _onItemTapped);
       case 1:
-        return const TeamsTab();
+        return const ComingSoonView(
+          title: 'Coming Soon',
+          message: 'JCPL-4 teams and player profiles will be announced shortly.',
+          icon: Icons.groups,
+        );
       case 2:
-        return const AuctionsTab();
+        return const ComingSoonView(
+          title: 'Coming Soon',
+          message: 'The JCPL-4 auction will open once teams are finalized.',
+          icon: Icons.gavel,
+        );
       case 3:
-        return ScheduleTab(
-          key: const ValueKey('schedule-tab'),
-          onNavigateToTab: _onItemTapped,
+        return const ComingSoonView(
+          title: 'Coming Soon',
+          message: 'Fixtures and the points table will be published shortly.',
+          icon: Icons.calendar_month,
         );
       case 4:
-        return const LiveScoringTab();
-      case 5:
-        return const PredictorGameScreen();
+        return const ComingSoonView(
+          title: 'Coming Soon',
+          message: 'Predictor, Bracket, and Fantasy will open for JCPL-4 soon.',
+          icon: Icons.sports_esports,
+        );
       default:
         return JcplHomeTab(onNavigateToTab: _onItemTapped);
     }
@@ -548,7 +552,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final theme = Theme.of(context);
     final adminProvider = Provider.of<AdminProvider>(context);
 
     // Debug admin status
@@ -563,17 +566,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                theme.colorScheme.primary,
-                theme.colorScheme.secondary,
-                theme.colorScheme.primary.withOpacity(0.8),
-              ],
-              stops: const [0.0, 0.5, 1.0],
-            ),
+          decoration: const BoxDecoration(
+            gradient: AppTheme.stadiumGradient,
           ),
         ),
         title: Container(
@@ -1143,14 +1137,9 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Schedule',
           ),
           NavigationDestination(
-            icon: Icon(Icons.scoreboard_outlined),
-            selectedIcon: Icon(Icons.scoreboard),
-            label: 'Live',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.sports_cricket_outlined),
-            selectedIcon: Icon(Icons.sports_cricket),
-            label: 'Predictor',
+            icon: Icon(Icons.sports_esports_outlined),
+            selectedIcon: Icon(Icons.sports_esports),
+            label: 'Game',
           ),
         ],
       ),

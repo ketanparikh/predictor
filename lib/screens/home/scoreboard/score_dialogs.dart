@@ -108,6 +108,7 @@ Future<WicketChoice?> showWicketSheet(
   required int maxWickets,
   required List<String> battingSquad,
   required List<String> bowlingSquad,
+  bool allowManual = false,
 }) {
   return showModalBottomSheet<WicketChoice>(
     context: context,
@@ -119,6 +120,7 @@ Future<WicketChoice?> showWicketSheet(
         maxWickets: maxWickets,
         battingSquad: battingSquad,
         bowlingSquad: bowlingSquad,
+        allowManual: allowManual,
       );
     },
   );
@@ -129,12 +131,14 @@ class _WicketSheet extends StatefulWidget {
   final int maxWickets;
   final List<String> battingSquad;
   final List<String> bowlingSquad;
+  final bool allowManual;
 
   const _WicketSheet({
     required this.innings,
     required this.maxWickets,
     required this.battingSquad,
     required this.bowlingSquad,
+    this.allowManual = false,
   });
 
   @override
@@ -158,7 +162,24 @@ class _WicketSheetState extends State<_WicketSheet> {
   String? _fielder;
   String? _newBatter;
 
-  bool get _lastWicket => widget.innings.wickets + 1 >= widget.maxWickets;
+  bool get _noBattersLeft {
+    if (widget.battingSquad.isEmpty) return false;
+    final dismissed = widget.innings.batters
+        .where((b) => b.out)
+        .map((b) => b.name.toLowerCase())
+        .toSet();
+    final atCrease = {
+      widget.innings.striker.toLowerCase(),
+      widget.innings.nonStriker.toLowerCase(),
+    };
+    return widget.battingSquad.every((player) {
+      final key = player.toLowerCase();
+      return dismissed.contains(key) || atCrease.contains(key);
+    });
+  }
+
+  bool get _lastWicket =>
+      widget.innings.wickets + 1 >= widget.maxWickets || _noBattersLeft;
 
   int get _finalStep => _lastWicket ? 0 : 1;
 
@@ -307,6 +328,7 @@ class _WicketSheetState extends State<_WicketSheet> {
                         runs: _runs,
                         outNonStriker: _outNonStriker,
                         fielder: _fielder,
+                        allowManual: widget.allowManual,
                         onType: (type) => setState(() {
                           _type = type;
                           _fielder = null;
@@ -318,6 +340,7 @@ class _WicketSheetState extends State<_WicketSheet> {
                     : _BatterStep(
                         players: newBatters,
                         selected: _newBatter,
+                        allowManual: widget.allowManual,
                         onSelect: (name) => setState(() => _newBatter = name),
                       ),
               ),
@@ -375,6 +398,7 @@ class _CombinedDetailsStep extends StatelessWidget {
   final int runs;
   final bool outNonStriker;
   final String? fielder;
+  final bool allowManual;
   final ValueChanged<String> onType;
   final ValueChanged<int> onRuns;
   final ValueChanged<bool> onOutNonStriker;
@@ -387,6 +411,7 @@ class _CombinedDetailsStep extends StatelessWidget {
     required this.runs,
     required this.outNonStriker,
     required this.fielder,
+    required this.allowManual,
     required this.onType,
     required this.onRuns,
     required this.onOutNonStriker,
@@ -467,16 +492,31 @@ class _CombinedDetailsStep extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 8),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  for (final player in bowlingSquad)
-                    ScoreSelectChip(
-                      label: player,
-                      selected: fielder == player,
-                      onTap: () => onFielder(player),
+                  if (bowlingSquad.isNotEmpty)
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        for (final player in bowlingSquad)
+                          ScoreSelectChip(
+                            label: player,
+                            selected: fielder == player,
+                            onTap: () => onFielder(player),
+                          ),
+                      ],
                     ),
+                  if (allowManual) ...[
+                    const SizedBox(height: 10),
+                    ManualNameRow(
+                      hint: type == 'stumped'
+                          ? 'Type wicketkeeper name'
+                          : 'Type fielder name',
+                      onSubmit: onFielder,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -490,11 +530,13 @@ class _CombinedDetailsStep extends StatelessWidget {
 class _BatterStep extends StatelessWidget {
   final List<String> players;
   final String? selected;
+  final bool allowManual;
   final ValueChanged<String> onSelect;
 
   const _BatterStep({
     required this.players,
     required this.selected,
+    required this.allowManual,
     required this.onSelect,
   });
 
@@ -504,12 +546,20 @@ class _BatterStep extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Only players still to bat are listed.',
+          allowManual
+              ? 'Type the incoming batter, or pick a name already used in this match.'
+              : 'Only players still to bat are listed.',
           style: TextStyle(color: Colors.grey[700], fontSize: 13),
         ),
         const SizedBox(height: 12),
+        if (allowManual)
+          ManualNameRow(
+            hint: 'Type new batter name',
+            onSubmit: onSelect,
+          ),
+        const SizedBox(height: 12),
         Expanded(
-          child: players.isEmpty
+          child: players.isEmpty && !allowManual
               ? Center(
                   child: Text(
                     'No batters still to come in',
@@ -530,6 +580,61 @@ class _BatterStep extends StatelessWidget {
                     ],
                   ),
                 ),
+        ),
+      ],
+    );
+  }
+}
+
+class ManualNameRow extends StatefulWidget {
+  final String hint;
+  final ValueChanged<String> onSubmit;
+
+  const ManualNameRow({
+    super.key,
+    required this.hint,
+    required this.onSubmit,
+  });
+
+  @override
+  State<ManualNameRow> createState() => _ManualNameRowState();
+}
+
+class _ManualNameRowState extends State<ManualNameRow> {
+  final _controller = TextEditingController();
+
+  void _submit() {
+    final name = _controller.text.trim();
+    if (name.isEmpty) return;
+    widget.onSubmit(name);
+    _controller.clear();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: _controller,
+            textCapitalization: TextCapitalization.words,
+            decoration: InputDecoration(
+              hintText: widget.hint,
+              isDense: true,
+            ),
+            onSubmitted: (_) => _submit(),
+          ),
+        ),
+        const SizedBox(width: 8),
+        FilledButton(
+          onPressed: _submit,
+          child: const Text('Add'),
         ),
       ],
     );

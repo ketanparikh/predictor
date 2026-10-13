@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'screens/splash_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/game_provider.dart';
 import 'providers/admin_provider.dart';
 import 'providers/auction_provider.dart';
 import 'theme/app_theme.dart';
+import 'widgets/stadium_hue.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -32,10 +31,17 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuctionProvider()),
       ],
       child: MaterialApp(
-        title: 'JCPL',
+        title: 'JCPL-4',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         themeMode: ThemeMode.light,
+        builder: (context, child) => Stack(
+          fit: StackFit.expand,
+          children: [
+            if (child != null) child,
+            const StadiumHue(),
+          ],
+        ),
         home: const SplashScreen(),
       ),
     );

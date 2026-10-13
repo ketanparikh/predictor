@@ -106,5 +106,39 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    // Bracket challenge: everyone can read; owners write picks until locked
+    match /brackets/{category} {
+      allow read: if true;
+      allow write: if isAdmin();
+      match /picks/{userId} {
+        allow read: if true;
+        allow create, update: if request.auth != null
+          && request.auth.uid == userId
+          && (
+            isAdmin() ||
+            !exists(/databases/$(database)/documents/brackets/$(category)) ||
+            get(/databases/$(database)/documents/brackets/$(category)).data.locked != true
+          );
+        allow delete: if isAdmin() || (request.auth != null && request.auth.uid == userId);
+      }
+    }
+
+    // Dream11-style fantasy: lock entries once the live match has started
+    match /fantasy/{matchId} {
+      allow read: if true;
+      allow write: if isAdmin();
+      match /entries/{userId} {
+        allow read: if true;
+        allow create, update: if request.auth != null
+          && request.auth.uid == userId
+          && (
+            isAdmin() ||
+            !exists(/databases/$(database)/documents/liveScores/$(matchId)) ||
+            get(/databases/$(database)/documents/liveScores/$(matchId)).data.status == 'upcoming'
+          );
+        allow delete: if isAdmin() || (request.auth != null && request.auth.uid == userId);
+      }
+    }
   }
 }

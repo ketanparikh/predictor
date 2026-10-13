@@ -4,6 +4,7 @@ class MatchInfo {
   final String date; // ISO or friendly string from config
   final String questionFile; // path under assets/config/
   final String? time; // Optional time string (e.g., "09:00 AM" or "TBD")
+  final String? category; // mens / womens / boys / girls from the schedule
 
   MatchInfo({
     required this.id,
@@ -11,6 +12,7 @@ class MatchInfo {
     required this.date,
     required this.questionFile,
     this.time,
+    this.category,
   });
 
   factory MatchInfo.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class MatchInfo {
       date: json['date'] as String,
       questionFile: json['questionFile'] as String,
       time: json['time'] as String?,
+      category: json['category'] as String?,
     );
   }
 }

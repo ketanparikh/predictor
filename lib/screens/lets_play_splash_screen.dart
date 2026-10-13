@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../theme/app_theme.dart';
 import 'home/home_screen.dart';
 
 class LetsPlaySplashScreen extends StatefulWidget {
@@ -12,6 +14,7 @@ class _LetsPlaySplashScreenState extends State<LetsPlaySplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -22,6 +25,9 @@ class _LetsPlaySplashScreenState extends State<LetsPlaySplashScreen>
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
     _controller.forward();
     _goToHome();
@@ -43,112 +49,82 @@ class _LetsPlaySplashScreenState extends State<LetsPlaySplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.colorScheme.primary,
-              theme.colorScheme.secondary,
-              theme.colorScheme.tertiary,
-            ],
-            stops: const [0.0, 0.5, 1.0],
-          ),
-        ),
-        child: Center(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Enhanced cricket icon with animation effect
-                Container(
-                  padding: const EdgeInsets.all(32),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 40,
-                        spreadRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
+        decoration: const BoxDecoration(gradient: AppTheme.stadiumGradient),
+        child: Stack(
+          children: [
+            Positioned(
+              top: 80,
+              left: -50,
+              child: Transform.rotate(
+                angle: -0.45,
+                child: Container(
+                  width: 240,
+                  height: 16,
+                  color: AppTheme.secondaryColor.withOpacity(0.4),
+                ),
+              ),
+            ),
+            Center(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.sports_cricket,
-                        size: 120,
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withOpacity(0.5),
-                            blurRadius: 25,
+                      Container(
+                        padding: const EdgeInsets.all(28),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppTheme.accentColor,
+                            width: 3,
                           ),
-                        ],
+                          color: Colors.white.withOpacity(0.08),
+                        ),
+                        child: const Icon(
+                          Icons.sports_cricket,
+                          size: 96,
+                          color: Colors.white,
+                        ),
                       ),
-                      Positioned(
-                        right: 10,
-                        top: 15,
-                        child: Icon(
-                          Icons.emoji_events,
-                          size: 40,
-                          color: Colors.white.withOpacity(0.9),
+                      const SizedBox(height: 28),
+                      Text(
+                        'JCPL-4',
+                        style: GoogleFonts.barlowCondensed(
+                          fontSize: 56,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 4,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Jade Cricket Premier League',
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          color: Colors.white.withOpacity(0.85),
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        "LET'S PLAY",
+                        style: GoogleFonts.barlowCondensed(
+                          fontSize: 40,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.accentColor,
+                          letterSpacing: 3,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
-                // JCPL-3 branding
-                ShaderMask(
-                  shaderCallback: (bounds) => const LinearGradient(
-                    colors: [Colors.white, Colors.amber, Colors.white],
-                  ).createShader(bounds),
-                  child: const Text(
-                    'JCPL-3',
-                    style: TextStyle(
-                      fontSize: 42,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                      letterSpacing: 4,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Jade Cricket Premier League',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white.withOpacity(0.9),
-                    letterSpacing: 1,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Enhanced "Let's Play!" text
-                const Text(
-                  "Let's Play!",
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 2,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black45,
-                        blurRadius: 15,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

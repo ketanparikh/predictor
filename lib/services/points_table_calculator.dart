@@ -1,4 +1,5 @@
 import '../models/live_score.dart';
+import '../utils/match_teams.dart';
 
 class PointsTableCalculator {
   static Map<String, List<Map<String, dynamic>>> merge({
@@ -19,7 +20,7 @@ class PointsTableCalculator {
         return copy;
       }).toList();
       _applyScores(teams, completed);
-      _sortTeams(entry.key, teams);
+      sortTeams(entry.key, teams);
       out[entry.key] = teams;
     }
     return out;
@@ -94,18 +95,7 @@ class PointsTableCalculator {
     return null;
   }
 
-  static String _norm(String value) {
-    final key = value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
-    switch (key) {
-      case 'mangoyorkers':
-        return 'mangoman';
-      case 'inergystrickers':
-      case 'inergystrikers':
-        return 'inergystrickers';
-      default:
-        return key;
-    }
-  }
+  static String _norm(String value) => canonicalTeamKey(value);
 
   static void _addMatch(_Acc team) {
     team.team['played'] = (team.team['played'] as num? ?? 0).toInt() + 1;
@@ -153,7 +143,7 @@ class PointsTableCalculator {
     return innings.legalBalls / 6.0;
   }
 
-  static void _sortTeams(String categoryId, List<Map<String, dynamic>> teams) {
+  static void sortTeams(String categoryId, List<Map<String, dynamic>> teams) {
     int compare(Map<String, dynamic> a, Map<String, dynamic> b) {
       final pointsA = (a['points'] ?? ((a['won'] ?? 0) * 2)) as num;
       final pointsB = (b['points'] ?? ((b['won'] ?? 0) * 2)) as num;

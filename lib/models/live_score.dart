@@ -357,6 +357,9 @@ class LiveScore {
   final List<String> team1Squad;
   final List<String> team2Squad;
   final List<Innings> innings;
+  final bool isWeekendMatch;
+  final bool team1SheetSubmitted;
+  final bool team2SheetSubmitted;
 
   const LiveScore({
     required this.matchId,
@@ -381,11 +384,34 @@ class LiveScore {
     this.team1Squad = const [],
     this.team2Squad = const [],
     this.innings = const [],
+    this.isWeekendMatch = false,
+    this.team1SheetSubmitted = false,
+    this.team2SheetSubmitted = false,
   });
+
+  bool get weekendSheetsReady =>
+      isWeekendMatch &&
+      team1.trim().isNotEmpty &&
+      team2.trim().isNotEmpty &&
+      team1SheetSubmitted &&
+      team2SheetSubmitted &&
+      team1Squad.length >= 2 &&
+      team2Squad.length >= 2;
 
   bool get hasStarted => innings.isNotEmpty;
   bool get isLive => status == 'live';
   bool get isComplete => status == 'completed';
+
+  /// Winning team name for a completed match, or null on a tie / incomplete.
+  String? get winnerName {
+    if (!isComplete) return null;
+    final first = inningsNumber(1);
+    final second = inningsNumber(2);
+    if (first == null || second == null) return null;
+    if (second.runs > first.runs) return second.battingTeam;
+    if (second.runs < first.runs) return first.battingTeam;
+    return null;
+  }
 
   Innings? get liveInnings {
     if (innings.isEmpty) return null;
@@ -407,9 +433,46 @@ class LiveScore {
   }
 
   List<String> squadFor(String teamName) {
-    if (teamName == team1) return team1Squad;
-    if (teamName == team2) return team2Squad;
+    final key = teamName.trim().toLowerCase();
+    if (key.isEmpty) return const [];
+    if (team1.trim().toLowerCase() == key) return team1Squad;
+    if (team2.trim().toLowerCase() == key) return team2Squad;
     return const [];
+  }
+
+  /// Drop toss, innings and previous batsman/bowler picks.
+  LiveScore resetPlay() {
+    return copyWith(
+      innings: const [],
+      status: 'upcoming',
+      clearResult: true,
+      clearToss: true,
+      currentInnings: 1,
+      battingSide: 1,
+      team1Runs: 0,
+      team1Wickets: 0,
+      team1Overs: 0,
+      team2Runs: 0,
+      team2Wickets: 0,
+      team2Overs: 0,
+    );
+  }
+
+  /// Wipe a weekend side so a replacement team cannot inherit old names.
+  LiveScore clearWeekendSide(int side) {
+    final cleared = resetPlay();
+    if (side == 1) {
+      return cleared.copyWith(
+        team1: '',
+        team1Squad: const [],
+        team1SheetSubmitted: false,
+      );
+    }
+    return cleared.copyWith(
+      team2: '',
+      team2Squad: const [],
+      team2SheetSubmitted: false,
+    );
   }
 
   String get team1ScoreLine => _line(team1, team1Runs, team1Wickets, team1Overs);
@@ -448,9 +511,12 @@ class LiveScore {
       currentInnings: (map['currentInnings'] as num?)?.toInt() ?? 1,
       tossWinner: map['tossWinner'] as String?,
       tossDecision: map['tossDecision'] as String?,
-      team1Squad: ((map['team1Squad'] as List?) ?? []).map((e) => '$e').toList(),
-      team2Squad: ((map['team2Squad'] as List?) ?? []).map((e) => '$e').toList(),
+      team1Squad: _stringList(map['team1Squad']),
+      team2Squad: _stringList(map['team2Squad']),
       innings: _mapList(map['innings'], Innings.fromMap),
+      isWeekendMatch: map['isWeekendMatch'] == true,
+      team1SheetSubmitted: _sheetSubmitted(map, 'team1SheetSubmitted', map['team1Squad']),
+      team2SheetSubmitted: _sheetSubmitted(map, 'team2SheetSubmitted', map['team2Squad']),
     );
   }
 
@@ -477,6 +543,9 @@ class LiveScore {
       'team1Squad': team1Squad,
       'team2Squad': team2Squad,
       'innings': innings.map((i) => i.toMap()).toList(),
+      'isWeekendMatch': isWeekendMatch,
+      'team1SheetSubmitted': team1SheetSubmitted,
+      'team2SheetSubmitted': team2SheetSubmitted,
     };
   }
 
@@ -503,6 +572,10 @@ class LiveScore {
     List<String>? team1Squad,
     List<String>? team2Squad,
     List<Innings>? innings,
+    bool? isWeekendMatch,
+    bool? team1SheetSubmitted,
+    bool? team2SheetSubmitted,
+    bool clearToss = false,
   }) {
     return LiveScore(
       matchId: matchId,
@@ -522,13 +595,37 @@ class LiveScore {
       maxOvers: maxOvers ?? this.maxOvers,
       maxWickets: maxWickets ?? this.maxWickets,
       currentInnings: currentInnings ?? this.currentInnings,
-      tossWinner: tossWinner ?? this.tossWinner,
-      tossDecision: tossDecision ?? this.tossDecision,
+      tossWinner: clearToss ? null : (tossWinner ?? this.tossWinner),
+      tossDecision: clearToss ? null : (tossDecision ?? this.tossDecision),
       team1Squad: team1Squad ?? this.team1Squad,
       team2Squad: team2Squad ?? this.team2Squad,
       innings: innings ?? this.innings,
+      isWeekendMatch: isWeekendMatch ?? this.isWeekendMatch,
+      team1SheetSubmitted: team1SheetSubmitted ?? this.team1SheetSubmitted,
+      team2SheetSubmitted: team2SheetSubmitted ?? this.team2SheetSubmitted,
     );
   }
+}
+
+bool _sheetSubmitted(Map<String, dynamic> map, String key, dynamic rawSquad) {
+  if (map.containsKey(key)) return map[key] == true;
+  final squad = ((rawSquad as List?) ?? []).map((e) => '$e'.trim()).where((e) => e.isNotEmpty);
+  return squad.length >= 2;
+}
+
+List<String> _stringList(dynamic raw) {
+  if (raw is! List) return <String>[];
+  final names = <String>[];
+  for (final item in raw) {
+    final name = item is Map
+        ? '${item['name'] ?? ''}'.trim()
+        : '$item'.trim();
+    if (name.isEmpty || name == 'null') continue;
+    if (!names.any((existing) => existing.toLowerCase() == name.toLowerCase())) {
+      names.add(name);
+    }
+  }
+  return names;
 }
 
 List<T> _mapList<T>(

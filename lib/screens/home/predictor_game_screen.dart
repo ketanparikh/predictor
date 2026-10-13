@@ -259,7 +259,7 @@ class _PredictorGameScreenState extends State<PredictorGameScreen> {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      '10th January 2026',
+                      '9th January 2027',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

@@ -1,11 +1,11 @@
 {
-    "name": "JCPL",
-    "short_name": "JCPL",
+    "name": "JCPL-4",
+    "short_name": "JCPL-4",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#1a73e8",
-    "theme_color": "#1a73e8",
-    "description": "Test your cricket knowledge and compete on the leaderboard",
+    "background_color": "#05031A",
+    "theme_color": "#05031A",
+    "description": "JCPL-4 - Jade Cricket Premier League",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../models/live_score.dart';
 import '../../services/live_score_service.dart';
 import '../../services/points_table_calculator.dart';
+import '../../utils/team_placeholders.dart';
 
 class ScheduleTab extends StatefulWidget {
   final Function(int)? onNavigateToTab;
@@ -26,21 +27,21 @@ class _ScheduleScreenState extends State<ScheduleTab> {
 
   // Groups data from the image
   final List<Map<String, dynamic>> _groupA = [
-    {'name': 'Powerpoint', 'category': 'A'},
-    {'name': 'Inergy Strickers', 'category': 'A'},
-    {'name': 'Mango Yorkers', 'category': 'A'},
-    {'name': 'Team Housewise', 'category': 'A'},
-    {'name': 'Pictonions', 'category': 'A'},
-    {'name': 'Jade 4 Lions', 'category': 'A'},
+    {'name': 'Team 1', 'category': 'A'},
+    {'name': 'Team 2', 'category': 'A'},
+    {'name': 'Team 3', 'category': 'A'},
+    {'name': 'Team 4', 'category': 'A'},
+    {'name': 'Team 5', 'category': 'A'},
+    {'name': 'Team 6', 'category': 'A'},
   ];
 
   final List<Map<String, dynamic>> _groupB = [
-    {'name': 'Team Yogic Dhuranders', 'category': 'B'},
-    {'name': 'MentoMap', 'category': 'B'},
-    {'name': 'Fiery Sun Warriors', 'category': 'B'},
-    {'name': 'SBCC Titans', 'category': 'B'},
-    {'name': 'Dalnex Automators', 'category': 'B'},
-    {'name': 'Team Triphobo', 'category': 'B'},
+    {'name': 'Team 7', 'category': 'B'},
+    {'name': 'Team 8', 'category': 'B'},
+    {'name': 'Team 9', 'category': 'B'},
+    {'name': 'Team 10', 'category': 'B'},
+    {'name': 'Team 11', 'category': 'B'},
+    {'name': 'Team 12', 'category': 'B'},
   ];
 
   @override
@@ -214,6 +215,17 @@ class _ScheduleScreenState extends State<ScheduleTab> {
             _fixturesByCategory[category]!.add(match as Map<String, dynamic>);
           }
         }
+      }
+    }
+    _applyTeamPlaceholders();
+  }
+
+  void _applyTeamPlaceholders() {
+    for (final category in _fixturesByCategory.keys) {
+      final placeholders = TeamPlaceholders();
+      for (final match in _fixturesByCategory[category]!) {
+        match['team1'] = placeholders.name('${match['team1'] ?? ''}', category: category);
+        match['team2'] = placeholders.name('${match['team2'] ?? ''}', category: category);
       }
     }
   }

@@ -79,16 +79,49 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
   }
 
   LiveScore _merged(LiveScore? remote) {
-    final base = remote ?? widget.initial;
+    final initial = widget.initial;
+    final base = remote ?? initial;
+    final weekend = base.isWeekendMatch || initial.isWeekendMatch;
+    if (weekend) {
+      return base.copyWith(
+        dayName: base.dayName ?? widget.dayName,
+        matchTime: base.matchTime ?? widget.match.time,
+        isWeekendMatch: true,
+      );
+    }
     return base.copyWith(
-      team1: base.team1.isEmpty ? widget.initial.team1 : base.team1,
-      team2: base.team2.isEmpty ? widget.initial.team2 : base.team2,
+      team1: base.team1.isEmpty ? initial.team1 : base.team1,
+      team2: base.team2.isEmpty ? initial.team2 : base.team2,
       dayName: base.dayName ?? widget.dayName,
       matchTime: base.matchTime ?? widget.match.time,
     );
   }
 
+  LiveScore _withPending(LiveScore remote) {
+    final pending = _pending;
+    if (pending == null) return remote;
+    if (remote.isWeekendMatch && !remote.hasStarted && pending.hasStarted) {
+      return remote;
+    }
+    if (pending.innings.length < remote.innings.length) return remote;
+    if (remote.isWeekendMatch || pending.isWeekendMatch) {
+      return pending.copyWith(
+        team1: remote.team1,
+        team2: remote.team2,
+        team1Squad: List<String>.from(remote.team1Squad),
+        team2Squad: List<String>.from(remote.team2Squad),
+        team1SheetSubmitted: remote.team1SheetSubmitted,
+        team2SheetSubmitted: remote.team2SheetSubmitted,
+        isWeekendMatch: true,
+      );
+    }
+    return pending;
+  }
+
   LiveScore _withAuctionSquads(LiveScore score, AuctionProvider auction) {
+    if (score.isWeekendMatch) {
+      return score;
+    }
     List<String> squad(String teamName, List<String> existing) {
       final fromProfile = _rosters.playersFor(
         teamName,
@@ -128,18 +161,19 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
       child: StreamBuilder<LiveScore?>(
         stream: _service.watchScore(widget.match.id),
         builder: (context, snapshot) {
-          var score = _merged(snapshot.data);
-          final pending = _pending;
-          if (pending != null &&
-              pending.innings.length >= score.innings.length) {
-            score = pending;
-          }
+          var score = _withPending(_merged(snapshot.data));
           score = _withAuctionSquads(score, auction);
           _lastShown = score;
 
           return Scaffold(
             backgroundColor: AppTheme.backgroundColor,
             appBar: AppBar(
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                tooltip: 'Back',
+                onPressed: () => Navigator.of(context).maybePop(),
+              ),
               titleSpacing: 8,
               title: FittedBox(
                 fit: BoxFit.scaleDown,
@@ -157,13 +191,8 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
                 ),
               ),
               flexibleSpace: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.primaryColor,
-                      Colors.orange.shade700,
-                    ],
-                  ),
+                decoration: const BoxDecoration(
+                  gradient: AppTheme.stadiumGradient,
                 ),
               ),
               bottom: TabBar(
@@ -187,7 +216,7 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
                   color: kScoreboardNavy,
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                   child: Text(
-                    '${widget.dayName}${widget.match.time != null ? '  •  ${widget.match.time}' : ''}  •  JCPL-3',
+                    '${widget.dayName}${widget.match.time != null ? '  •  ${widget.match.time}' : ''}${score.isWeekendMatch ? '  •  Weekend' : ''}  •  JCPL-4',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.65),
                       fontSize: 12,

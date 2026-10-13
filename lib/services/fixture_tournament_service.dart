@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import '../models/tournament.dart';
+import '../utils/team_placeholders.dart';
 
 /// Builds predictor "tournaments" (day-wise lists of matches) from the Excel schedule.
 ///
@@ -36,6 +37,7 @@ class FixtureTournamentService {
   Future<List<Tournament>> loadTournamentsFromExcel() async {
     // Group matches by date (yyyy-MM-dd)
     final Map<String, List<MatchInfo>> matchesByDate = {};
+    final placeholders = TeamPlaceholders();
 
     try {
       final ByteData data = await rootBundle.load(_excelPath);
@@ -59,8 +61,9 @@ class FixtureTournamentService {
             _indexOfHeader(headerTexts, 'category', fallback: 2);
         final team1Col = _indexOfHeader(headerTexts, 'team 1',
             altKeys: const ['team1'], fallback: 3);
-        final team2Col = _indexOfHeader(headerTexts, 'team 2',
-            altKeys: const ['team2'], fallback: 4);
+        var team2Col = _indexOfHeader(headerTexts, 'team 2',
+            altKeys: const ['team2'], fallback: -1);
+        if (team2Col < 0) team2Col = team1Col + 1;
 
         if (_debug) {
           print(
@@ -87,12 +90,17 @@ class FixtureTournamentService {
           if (rawTeam1.isEmpty && rawTeam2.isEmpty) continue;
 
           // Determine category only for question-file mapping
-          final matchCategoryId =
-              _detectCategoryId(_cellString(row, categoryCol));
+          final matchCategoryId = _detectCategoryId(
+            _cellString(row, categoryCol),
+            team1: rawTeam1,
+            team2: rawTeam2,
+          );
 
-          final matchName = rawTeam1.isNotEmpty && rawTeam2.isNotEmpty
-              ? '$rawTeam1 vs $rawTeam2'
-              : (rawTeam1.isNotEmpty ? rawTeam1 : rawTeam2);
+          final team1 = placeholders.name(rawTeam1, category: matchCategoryId);
+          final team2 = placeholders.name(rawTeam2, category: matchCategoryId);
+          final matchName = team1 != 'TBD' && team2 != 'TBD'
+              ? '$team1 vs $team2'
+              : (team1 != 'TBD' ? team1 : team2);
 
           // Use latest prediction bank for 17th and 18th Jan 2026
           final useLatestBank = matchDateStr == '2026-01-17' || matchDateStr == '2026-01-18';
@@ -115,6 +123,7 @@ class FixtureTournamentService {
               date: matchDateStr,
               questionFile: questionFile,
               time: matchTime,
+              category: matchCategoryId,
             ),
           );
 
@@ -181,13 +190,24 @@ class FixtureTournamentService {
     return cell.value.toString().trim();
   }
 
-  static String _detectCategoryId(String rawCategory) {
-    final v = rawCategory.toLowerCase();
-    if (v.contains('boy')) return 'boys';
-    if (v.contains('girl')) return 'girls';
-    if (v.contains('women') || v.contains('womens')) return 'womens';
-    if (v.contains('men') || v.contains('mens')) return 'mens';
-    return 'mens';
+  static String _detectCategoryId(
+    String rawCategory, {
+    String team1 = '',
+    String team2 = '',
+  }) {
+    String? from(String value) {
+      final v = value.toLowerCase();
+      if (v.contains('boy')) return 'boys';
+      if (v.contains('girl')) return 'girls';
+      if (v.contains('women') || v.contains('womens')) return 'womens';
+      if (v.contains('men') || v.contains('mens')) return 'mens';
+      return null;
+    }
+
+    return from(rawCategory) ??
+        from(team1) ??
+        from(team2) ??
+        'mens';
   }
 
   static String _parseDateString(List<excel.Data?> row, int dateCol) {

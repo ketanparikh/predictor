@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/admin_bypass_service.dart';
 import '../lets_play_splash_screen.dart';
+import '../../theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -49,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Welcome to JCPL! 🏏'),
+          content: const Text('Welcome to JCPL-4! 🏏'),
           backgroundColor: Theme.of(context).colorScheme.secondary,
           duration: const Duration(seconds: 2),
         ),
@@ -83,15 +84,8 @@ class _LoginScreenState extends State<LoginScreen>
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.colorScheme.primary.withOpacity(0.1),
-              theme.colorScheme.secondary.withOpacity(0.1),
-            ],
-          ),
+        decoration: const BoxDecoration(
+          gradient: AppTheme.stadiumGradient,
         ),
         child: SafeArea(
           child: Center(
@@ -175,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen>
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Season 3',
+                            'Season 4',
                             style: TextStyle(
                               fontSize: 13,
                               color: theme.colorScheme.secondary,

@@ -5,6 +5,8 @@ import 'dart:async';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui;
 
+import '../../theme/app_theme.dart';
+
 class JcplHomeTab extends StatefulWidget {
   final Function(int) onNavigateToTab;
 
@@ -25,8 +27,8 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
   Timer? _sponsorTimer;
   Timer? _countdownTimer;
 
-  // Tournament start date - 10th Jan 2026
-  final DateTime _tournamentDate = DateTime(2026, 1, 10, 7, 0, 0);
+  // Tournament start date - 9th Jan 2027
+  final DateTime _tournamentDate = DateTime(2027, 1, 9, 7, 0, 0);
   Duration _timeRemaining = Duration.zero;
 
   @override
@@ -129,8 +131,8 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
           children: [
             _buildCountdownSection(context),
             _buildHeroCarousel(context),
+            _buildRegistrationBar(context),
             _buildGlimpsesSection(context),
-            _buildSponsorsSection(context),
             const SizedBox(height: 24),
           ],
         ),
@@ -140,7 +142,6 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
 
   // Countdown Section - Above hero
   Widget _buildCountdownSection(BuildContext context) {
-    final theme = Theme.of(context);
     final days = _timeRemaining.inDays;
     final hours = _timeRemaining.inHours.remainder(24);
     final minutes = _timeRemaining.inMinutes.remainder(60);
@@ -149,15 +150,8 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.deepPurple.shade700,
-            Colors.purple.shade500,
-          ],
-        ),
+      decoration: const BoxDecoration(
+        gradient: AppTheme.stadiumGradient,
       ),
       child: Column(
         children: [
@@ -166,7 +160,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
             children: [
               ShaderMask(
                 shaderCallback: (bounds) => const LinearGradient(
-                  colors: [Colors.white, Colors.amber, Colors.white],
+                  colors: [Colors.white, AppTheme.accentLight, Colors.white],
                 ).createShader(bounds),
                 child: const Text(
                   'JCPL',
@@ -183,13 +177,13 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.amber,
+                  color: AppTheme.accentColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Text(
-                  'Season 3',
+                  'Season 4',
                   style: TextStyle(
-                    color: Colors.black87,
+                    color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -238,7 +232,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
           Text(
             value,
             style: const TextStyle(
-              color: Colors.amber,
+              color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
               fontFamily: 'monospace',
@@ -321,8 +315,9 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
   Widget _buildHeroAdCard(BuildContext context, Map<String, dynamic> ad) {
     final colorHex = ad['color'] as String? ?? '#1565C0';
     final color = Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
+    final url = ad['url'] as String?;
 
-    return Container(
+    final card = Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -378,6 +373,15 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
         ],
       ),
     );
+
+    if (url == null || url.isEmpty) return card;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => html.window.open(url, '_blank'),
+        child: card,
+      ),
+    );
   }
 
   Widget _buildDefaultAdCard(BuildContext context) {
@@ -397,7 +401,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
             const Icon(Icons.sports_cricket, color: Colors.white, size: 40),
             const SizedBox(height: 8),
             const Text(
-              'Welcome to JCPL Season 3!',
+              'Welcome to JCPL-4!',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -412,20 +416,19 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
 
   // Registration Bar - Dynamic with animation
   Widget _buildRegistrationBar(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
+          colors: [AppTheme.secondaryColor, AppTheme.accentColor],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.primary.withOpacity(0.4),
+            color: AppTheme.accentColor.withOpacity(0.4),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -519,7 +522,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF00C853),
+                    foregroundColor: AppTheme.secondaryColor,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 18, vertical: 10),
                     shape: RoundedRectangleBorder(
@@ -589,7 +592,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Glimpses of Previous JCPL',
+                    'Glimpses of JCPL',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -598,7 +601,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Tap to view',
+                    'Season 1 · Season 2 · Season 3',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.8),
                       fontSize: 12,
@@ -615,6 +618,12 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     );
   }
 
+  List<_GlimpseSeason> get _glimpseSeasons => [
+        const _GlimpseSeason(title: 'Season 1', images: []),
+        _GlimpseSeason(title: 'Season 2', images: _season2Images),
+        const _GlimpseSeason(title: 'Season 3', images: []),
+      ];
+
   void _showGlimpsesDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -629,7 +638,6 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
           ),
           child: Column(
             children: [
-              // Header
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -648,7 +656,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                     const SizedBox(width: 12),
                     const Expanded(
                       child: Text(
-                        'Glimpses of Previous JCPL',
+                        'Glimpses of JCPL',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -663,7 +671,136 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                   ],
                 ),
               ),
-              // Grid
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                  children: [
+                    for (final season in _glimpseSeasons) ...[
+                      _buildSeasonCard(context, season),
+                      const SizedBox(height: 12),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSeasonCard(BuildContext context, _GlimpseSeason season) {
+    final theme = Theme.of(context);
+    final photoCount = season.images.length;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _showSeasonGallery(context, season),
+        borderRadius: BorderRadius.circular(16),
+        child: Ink(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.15)),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.primary.withValues(alpha: 0.08),
+                theme.colorScheme.secondary.withValues(alpha: 0.08),
+              ],
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  photoCount > 0 ? Icons.photo_library : Icons.photo_outlined,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      season.title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      photoCount > 0
+                          ? '$photoCount photos'
+                          : 'Photos coming soon',
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: Colors.grey.shade500),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSeasonGallery(BuildContext context, _GlimpseSeason season) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(16),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary,
+                    ],
+                  ),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.photo_library, color: Colors.white),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        season.title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.all(12),
@@ -673,14 +810,17 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
                     mainAxisSpacing: 10,
                     childAspectRatio: 1.3,
                   ),
-                  itemCount: _adImages.length,
+                  itemCount: season.images.isEmpty ? 4 : season.images.length,
                   itemBuilder: (context, index) {
+                    if (season.images.isEmpty) {
+                      return _buildPhotoPlaceholder();
+                    }
                     return GestureDetector(
-                      onTap: () => _showFullImage(context, index),
+                      onTap: () => _showFullImage(context, season.images, index),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.asset(
-                          _adImages[index],
+                          season.images[index],
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -695,8 +835,32 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     );
   }
 
-  void _showFullImage(BuildContext context, int initialIndex) {
-    Navigator.pop(context); // Close grid dialog
+  Widget _buildPhotoPlaceholder() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300, style: BorderStyle.solid),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.image_outlined, size: 36, color: Colors.grey.shade400),
+          const SizedBox(height: 8),
+          Text(
+            'Coming soon',
+            style: TextStyle(
+              color: Colors.grey.shade500,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFullImage(BuildContext context, List<String> images, int initialIndex) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -706,12 +870,12 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
           children: [
             PageView.builder(
               controller: PageController(initialPage: initialIndex),
-              itemCount: _adImages.length,
+              itemCount: images.length,
               itemBuilder: (context, index) {
                 return InteractiveViewer(
                   child: Center(
                     child: Image.asset(
-                      _adImages[index],
+                      images[index],
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -732,8 +896,7 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
     );
   }
 
-  // List of advertisement images
-  final List<String> _adImages = const [
+  static const List<String> _season2Images = [
     'assets/images/DSC_0063.jpg',
     'assets/images/DSC_9814.jpg',
     'assets/images/DSC_9835.jpg',
@@ -1274,6 +1437,13 @@ class _JcplHomeTabState extends State<JcplHomeTab> {
   }
 }
 
+class _GlimpseSeason {
+  final String title;
+  final List<String> images;
+
+  const _GlimpseSeason({required this.title, required this.images});
+}
+
 class _TitleSponsorVideoDialog extends StatefulWidget {
   final Map<String, dynamic> sponsor;
 
@@ -1411,7 +1581,7 @@ class _TitleSponsorVideoDialogState extends State<_TitleSponsorVideoDialog> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Thank you for supporting JCPL Season 3! 🏏',
+                    'Thank you for supporting JCPL-4! 🏏',
                     style: TextStyle(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.w500,

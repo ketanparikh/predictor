@@ -28,6 +28,11 @@ class ScoringConsole extends StatelessWidget {
     final inn = score.liveInnings;
     if (!score.hasStarted) {
       return _MatchSetup(
+        key: ValueKey(
+          '${score.matchId}|${score.status}|${score.innings.length}|'
+          '${score.team1}|${score.team2}|'
+          '${score.team1Squad.join(',')}|${score.team2Squad.join(',')}',
+        ),
         score: score,
         saving: saving,
         error: error,
@@ -36,6 +41,9 @@ class ScoringConsole extends StatelessWidget {
     }
     if (inn != null && inn.completed && inn.number == 1 && score.inningsNumber(2) == null) {
       return _SecondInningsSetup(
+        key: ValueKey(
+          '${score.matchId}|2|${score.team1Squad.join(',')}|${score.team2Squad.join(',')}',
+        ),
         score: score,
         saving: saving,
         error: error,
@@ -71,6 +79,7 @@ class _MatchSetup extends StatefulWidget {
   final Future<void> Function(LiveScore next) onStart;
 
   const _MatchSetup({
+    super.key,
     required this.score,
     required this.saving,
     required this.error,
@@ -91,23 +100,73 @@ class _MatchSetupState extends State<_MatchSetup> {
   String? _nonStriker;
   String? _bowler;
   String? _startError;
+  late bool _weekend;
+  late List<String> _team1Squad;
+  late List<String> _team2Squad;
 
   @override
   void initState() {
     super.initState();
-    _overs = widget.score.maxOvers;
-    _wickets = widget.score.maxWickets;
+    _overs = widget.score.maxOvers.clamp(1, 10);
+    _wickets = widget.score.maxWickets.clamp(1, 10);
     _battingFirst = widget.score.team1;
     _tossWinner = widget.score.team1;
+    _weekend = widget.score.isWeekendMatch;
+    _syncSquadsFromScore();
+    _striker = null;
+    _nonStriker = null;
+    _bowler = null;
   }
 
-  List<String> get _battingSquad => widget.score.squadFor(_battingFirst);
+  @override
+  void didUpdateWidget(covariant _MatchSetup oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final score = widget.score;
+    if (score.team1 != oldWidget.score.team1 ||
+        score.team2 != oldWidget.score.team2) {
+      _battingFirst = score.team1;
+      _tossWinner = score.team1;
+      _tossDecision = 'bat';
+      _striker = null;
+      _nonStriker = null;
+      _bowler = null;
+    }
+    if (oldWidget.score.hasStarted && !score.hasStarted) {
+      _striker = null;
+      _nonStriker = null;
+      _bowler = null;
+    }
+    _weekend = score.isWeekendMatch;
+    _syncSquadsFromScore();
+    _resetPlayers();
+  }
 
-  List<String> get _bowlingSquad => widget.score.squadFor(
-        _battingFirst == widget.score.team1
-            ? widget.score.team2
-            : widget.score.team1,
-      );
+  void _syncSquadsFromScore() {
+    _team1Squad = List<String>.from(widget.score.team1Squad);
+    _team2Squad = List<String>.from(widget.score.team2Squad);
+  }
+
+  List<String> _squadForTeam(String team) {
+    final fromScore = widget.score.squadFor(team);
+    if (fromScore.isNotEmpty) return fromScore;
+    final key = team.trim().toLowerCase();
+    if (key.isNotEmpty && key == widget.score.team1.trim().toLowerCase()) {
+      return _team1Squad;
+    }
+    if (key.isNotEmpty && key == widget.score.team2.trim().toLowerCase()) {
+      return _team2Squad;
+    }
+    return fromScore;
+  }
+
+  List<String> get _battingSquad => _squadForTeam(_battingFirst);
+
+  List<String> get _bowlingSquad {
+    final bowlingTeam = _battingFirst == widget.score.team1
+        ? widget.score.team2
+        : widget.score.team1;
+    return _squadForTeam(bowlingTeam);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,17 +176,47 @@ class _MatchSetupState extends State<_MatchSetup> {
         Text('Start match', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 4),
         Text(
-          'Pick openers and the opening bowler from each team profile.',
+          widget.score.weekendSheetsReady
+              ? 'Pick openers and the opening bowler from the submitted weekend sheets.'
+              : _weekend
+                  ? 'Add both squads first, then pick openers and the bowler from the dropdowns.'
+                  : 'Pick openers and the opening bowler from each team profile.',
           style: TextStyle(color: Colors.grey[700]),
         ),
-        const SizedBox(height: 16),
+        if (!widget.score.weekendSheetsReady) ...[
+          const SizedBox(height: 12),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Weekend match'),
+            subtitle: const Text('Enter both teams manually, then select players as usual'),
+            value: _weekend,
+            onChanged: _toggleWeekend,
+          ),
+          if (_weekend) ...[
+            const SizedBox(height: 8),
+            _SquadEditor(
+              teamName: widget.score.team1,
+              players: _team1Squad,
+              onAdd: (name) => _addPlayer(1, name),
+              onRemove: (name) => _removePlayer(1, name),
+            ),
+            const SizedBox(height: 12),
+            _SquadEditor(
+              teamName: widget.score.team2,
+              players: _team2Squad,
+              onAdd: (name) => _addPlayer(2, name),
+              onRemove: (name) => _removePlayer(2, name),
+            ),
+          ],
+        ],
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
               child: _Dropdown<int>(
                 label: 'Overs',
                 value: _overs,
-                items: const [6, 8, 10, 12, 15, 20],
+                items: const [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                 onChanged: (v) => setState(() => _overs = v),
               ),
             ),
@@ -136,7 +225,7 @@ class _MatchSetupState extends State<_MatchSetup> {
               child: _Dropdown<int>(
                 label: 'Wickets',
                 value: _wickets,
-                items: const [6, 7, 8, 9, 10],
+                items: const [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                 onChanged: (v) => setState(() => _wickets = v),
               ),
             ),
@@ -209,6 +298,58 @@ class _MatchSetupState extends State<_MatchSetup> {
     );
   }
 
+  Future<void> _toggleWeekend(bool value) async {
+    setState(() {
+      _weekend = value;
+      _striker = null;
+      _nonStriker = null;
+      _bowler = null;
+      if (value && !widget.score.isWeekendMatch) {
+        _team1Squad = [];
+        _team2Squad = [];
+      }
+    });
+    await _persistWeekend();
+  }
+
+  void _addPlayer(int side, String name) {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) return;
+    final list = side == 1 ? _team1Squad : _team2Squad;
+    if (list.any((player) => player.toLowerCase() == trimmed.toLowerCase())) {
+      return;
+    }
+    setState(() {
+      list.add(trimmed);
+      list.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    });
+    _persistWeekend();
+  }
+
+  void _removePlayer(int side, String name) {
+    setState(() {
+      final list = side == 1 ? _team1Squad : _team2Squad;
+      list.removeWhere((player) => player == name);
+      if (_striker == name) _striker = null;
+      if (_nonStriker == name) _nonStriker = null;
+      if (_bowler == name) _bowler = null;
+    });
+    _persistWeekend();
+  }
+
+  Future<void> _persistWeekend() async {
+    if (widget.score.weekendSheetsReady) return;
+    try {
+      await widget.onStart(
+        widget.score.copyWith(
+          isWeekendMatch: _weekend,
+          team1Squad: _weekend ? List<String>.from(_team1Squad) : widget.score.team1Squad,
+          team2Squad: _weekend ? List<String>.from(_team2Squad) : widget.score.team2Squad,
+        ),
+      );
+    } catch (_) {}
+  }
+
   void _applyToss({String? winner, String? decision}) {
     if (winner != null) _tossWinner = winner;
     if (decision != null) _tossDecision = decision;
@@ -231,7 +372,9 @@ class _MatchSetupState extends State<_MatchSetup> {
     final non = _nonStriker?.trim() ?? '';
     final bowler = _bowler?.trim() ?? '';
     if (striker.isEmpty || non.isEmpty || bowler.isEmpty) {
-      setState(() => _startError = 'Select striker, non-striker and bowler');
+      setState(() => _startError = _weekend
+          ? 'Add both squads, then select striker, non-striker and bowler'
+          : 'Select striker, non-striker and bowler');
       return;
     }
     if (striker == non) {
@@ -239,10 +382,13 @@ class _MatchSetupState extends State<_MatchSetup> {
       return;
     }
     setState(() => _startError = null);
-    var next = widget.score.copyWith(
-      team1Squad: widget.score.team1Squad,
-      team2Squad: widget.score.team2Squad,
-    );
+    var next = widget.score.weekendSheetsReady
+        ? widget.score
+        : widget.score.copyWith(
+            team1Squad: _weekend ? List<String>.from(_team1Squad) : widget.score.team1Squad,
+            team2Squad: _weekend ? List<String>.from(_team2Squad) : widget.score.team2Squad,
+            isWeekendMatch: _weekend,
+          );
     next = ScoringEngine.addToSquad(next, _battingFirst == next.team1 ? 1 : 2, striker);
     next = ScoringEngine.addToSquad(next, _battingFirst == next.team1 ? 1 : 2, non);
     next = ScoringEngine.addToSquad(
@@ -276,6 +422,7 @@ class _SecondInningsSetup extends StatefulWidget {
   final Future<void> Function(LiveScore next) onStart;
 
   const _SecondInningsSetup({
+    super.key,
     required this.score,
     required this.saving,
     required this.error,
@@ -507,12 +654,54 @@ class _KeypadState extends State<_Keypad> {
             child: const Text('Undo last action'),
           ),
         ),
+        const SizedBox(height: 8),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: saving ? null : () => _completeInnings(context),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.red.shade700,
+              side: BorderSide(color: Colors.red.shade300),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            child: Text(
+              inn.number == 1 ? 'Complete innings' : 'Complete innings & match',
+            ),
+          ),
+        ),
         if (saving) const Padding(
           padding: EdgeInsets.only(top: 12),
           child: LinearProgressIndicator(),
         ),
       ],
     );
+  }
+
+  Future<void> _completeInnings(BuildContext context) async {
+    final first = inn.number == 1;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Complete innings?'),
+        content: Text(
+          first
+              ? 'This will close the 1st innings at ${inn.scoreLine} and move to the chase.'
+              : 'This will close the 2nd innings at ${inn.scoreLine} and finish the match.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Complete innings'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await onSave(ScoringEngine.endInnings(score));
   }
 
   int get _ballsLeftInOver {
@@ -719,6 +908,98 @@ class _KeypadState extends State<_Keypad> {
   }
 }
 
+class _SquadEditor extends StatefulWidget {
+  final String teamName;
+  final List<String> players;
+  final ValueChanged<String> onAdd;
+  final ValueChanged<String> onRemove;
+
+  const _SquadEditor({
+    required this.teamName,
+    required this.players,
+    required this.onAdd,
+    required this.onRemove,
+  });
+
+  @override
+  State<_SquadEditor> createState() => _SquadEditorState();
+}
+
+class _SquadEditorState extends State<_SquadEditor> {
+  final _controller = TextEditingController();
+
+  void _submit() {
+    final name = _controller.text.trim();
+    if (name.isEmpty) return;
+    widget.onAdd(name);
+    _controller.clear();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.teamName,
+              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+            ),
+            Text(
+              widget.players.isEmpty
+                  ? 'No players yet'
+                  : '${widget.players.length} player${widget.players.length == 1 ? '' : 's'}',
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            if (widget.players.isNotEmpty)
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  for (final player in widget.players)
+                    InputChip(
+                      label: Text(player),
+                      onDeleted: () => widget.onRemove(player),
+                    ),
+                ],
+              ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: const InputDecoration(
+                      hintText: 'Type player name',
+                      isDense: true,
+                    ),
+                    onSubmitted: (_) => _submit(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                FilledButton(
+                  onPressed: _submit,
+                  child: const Text('Add'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _Dropdown<T> extends StatelessWidget {
   final String label;
   final T value;
@@ -766,6 +1047,7 @@ class _PlayerDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = players.where((p) => p != exclude).toList();
+    final selected = value != null && options.contains(value) ? value : null;
 
     if (options.isEmpty) {
       return InputDecorator(
@@ -781,24 +1063,28 @@ class _PlayerDropdown extends StatelessWidget {
     }
 
     return InkWell(
-      onTap: () => _openPicker(context, options),
+      onTap: () => _openPicker(context, options, selected),
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: label,
           suffixIcon: const Icon(Icons.arrow_drop_down),
         ),
         child: Text(
-          value ?? 'Select player',
+          selected ?? 'Select player',
           style: TextStyle(
             fontSize: 16,
-            color: value == null ? Colors.grey[600] : null,
+            color: selected == null ? Colors.grey[600] : null,
           ),
         ),
       ),
     );
   }
 
-  Future<void> _openPicker(BuildContext context, List<String> options) async {
+  Future<void> _openPicker(
+    BuildContext context,
+    List<String> options,
+    String? selected,
+  ) async {
     final chosen = await showModalBottomSheet<String>(
       context: context,
       useRootNavigator: true,
@@ -826,7 +1112,7 @@ class _PlayerDropdown extends StatelessWidget {
                         for (final name in options)
                           ScoreSelectChip(
                             label: name,
-                            selected: name == value,
+                            selected: name == selected,
                             onTap: () => Navigator.pop(ctx, name),
                           ),
                       ],

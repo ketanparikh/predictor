@@ -1,225 +1,32 @@
 {
   "teams": [
-    {
-      "id": "team_1",
-      "sponsor": "Sujal Mudliar",
-      "captain": "Akshay Pore",
-      "viceCaptain": "Ayush Asawa"
-    },
-    {
-      "id": "team_2",
-      "sponsor": "Mahesh Kulkarni",
-      "captain": "Mahesh Kulkarni",
-      "viceCaptain": "Vinay Korlepara"
-    },
-    {
-      "id": "team_3",
-      "sponsor": "Ganesh Raghuram",
-      "captain": "Ganesh Raghuram",
-      "viceCaptain": "Aditya Joshi"
-    },
-    {
-      "id": "team_4",
-      "sponsor": "Priyank Agarwal",
-      "captain": "Amol Pawar",
-      "viceCaptain": "Pankaj Guglani"
-    },
-    {
-      "id": "team_5",
-      "sponsor": "Saket Newaskar",
-      "captain": "Saket Newaskar",
-      "viceCaptain": "Tanmay Shahane"
-    },
-    {
-      "id": "team_6",
-      "sponsor": "Ranjan",
-      "captain": "Vedant Rathi",
-      "viceCaptain": "Kabir Vaidya"
-    },
-    {
-      "id": "team_7",
-      "sponsor": "Ayush Jain",
-      "captain": "Kiran Jagtap",
-      "viceCaptain": "Paras Bheda"
-    },
-    {
-      "id": "team_8",
-      "sponsor": "Juhi Mittal",
-      "captain": "Avinash Gupta",
-      "viceCaptain": "Mandar Dehadrai"
-    },
-    {
-      "id": "team_9",
-      "sponsor": "Amit Gupta",
-      "captain": "Amit Gupta",
-      "viceCaptain": "Ashish Singh"
-    },
-    {
-      "id": "team_10",
-      "sponsor": "Shyamsunder Mandava",
-      "captain": "Dinesh Mandava",
-      "viceCaptain": "Akshay Wardhane"
-    },
-    {
-      "id": "team_11",
-      "sponsor": "Siddharth Pednekar",
-      "captain": "Siddharth Pednekar",
-      "viceCaptain": "Dipal Panchal"
-    },
-    {
-      "id": "team_12",
-      "sponsor": "Dhruv Jhalani",
-      "captain": "Dhruv Jhalani",
-      "viceCaptain": "Ketan Parikh"
-    }
+    { "id": "team_1", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_2", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_3", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_4", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_5", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_6", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_7", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_8", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_9", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_10", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_11", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" },
+    { "id": "team_12", "sponsor": "Sponsor TBA", "captain": "Captain TBA", "viceCaptain": "Vice Captain TBA" }
   ],
   "womensTeams": [
-    {
-      "id": "womens_team_1",
-      "name": "Sapphire Titans",
-      "companyName": "Growwth",
-      "sponsor": "Yoshita",
-      "players": [
-        "Pallavi Vichare",
-        "Kanika Mutreja",
-        "Suvarna Dubey",
-        "Tulsi Parikh",
-        "Shubhangi Patkar",
-        "Priyanka Murkute",
-        "Manika Goel"        
-      ]
-    },
-    {
-      "id": "womens_team_2",
-      "name": "Jade Unicorns",
-      "companyName": "Growwth",
-      "sponsor": "Yoshita",
-      "players": [
-        "Khushboo Behede",
-        "Pradnya Kulkarni",
-        "Avani Pawar",
-        "Prarthana Wagh",
-        "Soundarya Kad",
-        "Rashmi Amritkar",
-        "Rupal Chiplunkar"
-        ]
-    },
-    {
-      "id": "womens_team_3",
-      "name": "Strike Queens",
-      "companyName": "Growwth",
-      "sponsor": "Yoshita",
-      "players": [
-        "Yoshita",
-        "Reena Singh",
-        "Priya Hora",
-        "Amruta Charpe",
-        "Himali Kharkar",
-        "Vaishali Patil",
-        "Shubhada Katdare"
-        ]
-    },
-    {
-      "id": "womens_team_4",
-      "name": "Jade Cardinals",
-      "companyName": "Growwth",
-      "sponsor": "Yoshita",
-      "players": [
-        "Priya Narayanan",
-        "Renu ",
-        "Manisha Thube",
-        "Nisha Kad",
-        "Medha Pawar",
-        "Trupti Khanna",
-        "Jagjot Kaur Saroa"
-      ]
-    }
+    { "id": "womens_team_1", "name": "Women's Team 1", "companyName": "TBA", "sponsor": "Sponsor TBA", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] },
+    { "id": "womens_team_2", "name": "Women's Team 2", "companyName": "TBA", "sponsor": "Sponsor TBA", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] },
+    { "id": "womens_team_3", "name": "Women's Team 3", "companyName": "TBA", "sponsor": "Sponsor TBA", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] },
+    { "id": "womens_team_4", "name": "Women's Team 4", "companyName": "TBA", "sponsor": "Sponsor TBA", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] }
   ],
   "boysTeams": [
-    {
-      "id": "boys_team_1",
-      "name": "Jade Infernos",
-      "captain": "Swarnim Chavan",
-      "players": [
-        "Swarnim Chavan",
-        "Reyansh Parikh",
-        "Vihaan Poduval",
-        "Riaan Mathur",
-        "Darsh Bhagat",
-        "Vihaan Vichare",
-        "Reyansh Jadhao"
-      ]
-    },
-    {
-      "id": "boys_team_2",
-      "name": "Jade Dominators",
-      "captain": "Shreeyansh Nalbilwar",
-      "players": [
-        "Shreeyansh Nalbilwar",
-        "Vedant Chaudhari",
-        "Sharvin Batwal",
-        "Manit Bathiya",
-        "Reyansh Agarwal",
-        "Aaryan Joshi",
-        "Arnav Shinde"
-      ]
-    },
-    {
-      "id": "boys_team_3",
-      "name": "Jade Red Dragons",
-      "captain": "Tejwardhan Rathod",
-      "players": [
-        "Tejwardhan Rathod",
-        "Suhaan Chandwani",
-        "Malhar Dehadrai",
-        "Arjun Ganesh",
-        "Reyansh Jaisinghani",
-        "Shaunak Vichare",
-        "Sharan Panchal"
-      ]
-    },
-    {
-      "id": "boys_team_4",
-      "name": "Fantom Legions",
-      "captain": "Hridhaan Parikh",
-      "players": [
-        "Hridhaan Parikh",
-        "Shaurya Mehta",
-        "Krushna Deokar",
-        "Luv Bahirwani",
-        "Vihaan Soni",
-        "Aarav Kumar",
-        "Naksh Verma"
-      ]
-    }
+    { "id": "boys_team_1", "name": "Boys Team 1", "captain": "Captain TBA", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] },
+    { "id": "boys_team_2", "name": "Boys Team 2", "captain": "Captain TBA", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] },
+    { "id": "boys_team_3", "name": "Boys Team 3", "captain": "Captain TBA", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] },
+    { "id": "boys_team_4", "name": "Boys Team 4", "captain": "Captain TBA", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] }
   ],
   "girlsTeams": [
-    {
-      "id": "girls_team_1",
-      "name": "Scarlet Sirens",
-      "players": [
-        "Srisha Vengurlekar",
-        "Aarna Dubey",
-        "Avisha Singhal",
-        "Siddhie khanna",
-        "Gauri kulkarni",
-        "Sanvi Gaikwad",
-        "Tanisha Kaur Arora"
-      ]
-    },
-    {
-      "id": "girls_team_2",
-      "name": "Sapphire Strikers",
-      "players": [
-        "Khushi Dulhani",
-        "Vivanya Mohite Pawar",
-        "Tanvi korlepara",
-        "Swara Wagh",
-        "Riana Sahoo",
-        "Trisha Savalwade",
-        "Aarvi Behade"
-      ]
-    }
+    { "id": "girls_team_1", "name": "Girls Team 1", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] },
+    { "id": "girls_team_2", "name": "Girls Team 2", "players": ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"] }
   ]
 }
-

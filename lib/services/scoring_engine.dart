@@ -499,15 +499,17 @@ class ScoringEngine {
         ));
         partnershipRuns = 0;
         partnershipBalls = 0;
-        if (wickets < maxWickets &&
-            event.newBatsman != null &&
-            event.newBatsman!.trim().isNotEmpty) {
-          ensureBatter(event.newBatsman!);
+        final incoming = event.newBatsman?.trim() ?? '';
+        if (wickets < maxWickets && incoming.isNotEmpty) {
+          ensureBatter(incoming);
           if (event.outNonStriker) {
-            nonStriker = event.newBatsman!;
+            nonStriker = incoming;
           } else {
-            striker = event.newBatsman!;
+            striker = incoming;
           }
+        } else if (incoming.isEmpty) {
+          completed = true;
+          needsNewBowler = false;
         }
       }
 
@@ -541,7 +543,7 @@ class ScoringEngine {
       final oversDone = legalBalls >= maxOvers * 6;
       final chaseDone =
           chaseTarget != null && runs >= chaseTarget;
-      if (allOut || oversDone || chaseDone) {
+      if (allOut || oversDone || chaseDone || completed) {
         completed = true;
         needsNewBowler = false;
       }

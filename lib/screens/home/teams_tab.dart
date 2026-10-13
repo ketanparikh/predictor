@@ -967,7 +967,7 @@ class _TeamsTabState extends State<TeamsTab> {
                       if (_womensTeamsData.isNotEmpty) ...[
                         const SizedBox(height: 6),
                         Text(
-                          'Sponsor: ${_womensTeamsData[0]['companyName'] ?? 'Growwth'} - ${_womensTeamsData[0]['sponsor'] ?? 'Yoshita'}',
+                          'Sponsor: ${_womensTeamsData[0]['companyName'] ?? 'TBA'} - ${_womensTeamsData[0]['sponsor'] ?? 'Sponsor TBA'}',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -1031,8 +1031,8 @@ class _TeamsTabState extends State<TeamsTab> {
     ];
     final colors = teamColors[index % teamColors.length];
     final teamName = teamData['name'] as String? ?? 'Team ${index + 1}';
-    final companyName = teamData['companyName'] as String? ?? 'Growwth';
-    final sponsor = teamData['sponsor'] as String? ?? 'Yoshita';
+    final companyName = teamData['companyName'] as String? ?? 'TBA';
+    final sponsor = teamData['sponsor'] as String? ?? 'Sponsor TBA';
     final players = (teamData['players'] as List<dynamic>?)
             ?.map((p) => p.toString())
             .toList() ??
@@ -1200,8 +1200,8 @@ class _TeamsTabState extends State<TeamsTab> {
 
   void _showWomensTeamDetails(BuildContext context, String teamName,
       Map<String, dynamic> teamData, List<Color> teamColors, ThemeData theme) {
-    final companyName = teamData['companyName'] as String? ?? 'Growwth';
-    final sponsor = teamData['sponsor'] as String? ?? 'Yoshita';
+    final companyName = teamData['companyName'] as String? ?? 'TBA';
+    final sponsor = teamData['sponsor'] as String? ?? 'Sponsor TBA';
     final players = (teamData['players'] as List<dynamic>?)
             ?.map((p) => p.toString())
             .toList() ??

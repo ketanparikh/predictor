@@ -27,6 +27,12 @@ class LiveScoreService {
     });
   }
 
+  Future<LiveScore?> getScore(String matchId) async {
+    final doc = await _db.collection(_collection).doc(matchId).get();
+    if (!doc.exists || doc.data() == null) return null;
+    return _fromDoc(doc.id, doc.data()!);
+  }
+
   Future<void> saveScore(LiveScore score) async {
     await _db.collection(_collection).doc(score.matchId).set(
       {
@@ -34,5 +40,71 @@ class LiveScoreService {
         'updatedAt': FieldValue.serverTimestamp(),
       },
     );
+  }
+
+  Future<void> deleteScore(String matchId) async {
+    await _db.collection(_collection).doc(matchId).delete();
+  }
+
+  static const _playReset = {
+    'innings': <Map<String, dynamic>>[],
+    'status': 'upcoming',
+    'result': null,
+    'tossWinner': null,
+    'tossDecision': null,
+    'currentInnings': 1,
+    'battingSide': 1,
+    'team1Runs': 0,
+    'team1Wickets': 0,
+    'team1Overs': 0,
+    'team2Runs': 0,
+    'team2Wickets': 0,
+    'team2Overs': 0,
+  };
+
+  /// Wipe one weekend side and any previous batsman/bowler picks.
+  Future<void> clearWeekendTeam(String matchId, int side) async {
+    final fields = side == 1
+        ? {
+            'team1': '',
+            'team1Squad': <String>[],
+            'team1SheetSubmitted': false,
+          }
+        : {
+            'team2': '',
+            'team2Squad': <String>[],
+            'team2SheetSubmitted': false,
+          };
+    await _db.collection(_collection).doc(matchId).update({
+      ...fields,
+      ..._playReset,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> saveWeekendTeamName(String matchId, int side, String name) async {
+    final fields = side == 1
+        ? {
+            'team1': name,
+            'team1Squad': <String>[],
+            'team1SheetSubmitted': false,
+          }
+        : {
+            'team2': name,
+            'team2Squad': <String>[],
+            'team2SheetSubmitted': false,
+          };
+    await _db.collection(_collection).doc(matchId).update({
+      ...fields,
+      ..._playReset,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> resetWeekendPlay(String matchId) async {
+    await _db.collection(_collection).doc(matchId).update({
+      ..._playReset,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 }

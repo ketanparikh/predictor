@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../models/live_score.dart';
 
-const Color kScoreboardNavy = Color(0xFF071524);
-const Color kScoreboardGreen = Color(0xFF16a34a);
+const Color kScoreboardNavy = Color(0xFF071A2B);
+const Color kScoreboardGreen = Color(0xFF00C853);
 
 class ScoreboardHeader extends StatelessWidget {
   final LiveScore score;
@@ -27,6 +27,26 @@ class ScoreboardHeader extends StatelessWidget {
           Row(
             children: [
               _StatusPill(score: score),
+              if (score.isWeekendMatch) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: const Text(
+                    'WEEKEND',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                ),
+              ],
               const Spacer(),
               if (score.matchTime != null)
                 Text(
@@ -308,7 +328,9 @@ class _InningsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final yetToBat = squad
-        .where((p) => innings.batters.every((b) => b.name != p))
+        .where((p) => innings.batters.every(
+              (b) => b.name.trim().toLowerCase() != p.trim().toLowerCase(),
+            ))
         .toList();
     return Card(
       margin: EdgeInsets.zero,

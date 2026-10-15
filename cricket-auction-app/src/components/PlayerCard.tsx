@@ -2,7 +2,7 @@ import React from 'react';
 import { Player, Team } from '../types/auction';
 import { GradeBadge } from './GradeBadge';
 import { RoleBadge } from './RoleBadge';
-import { Gavel, Edit2, Trash2, Heart, Scale, ShieldCheck, User } from 'lucide-react';
+import { Gavel, Edit2, Trash2, Heart, Scale, ShieldCheck, User, Crown, Star, Tag } from 'lucide-react';
 
 interface PlayerCardProps {
   player: Player;
@@ -44,9 +44,29 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       {/* Top Header Strip */}
       <div className="p-4 pb-3">
         <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
             <GradeBadge grade={player.grade} size="sm" />
             <RoleBadge role={player.role} size="sm" />
+            {player.isCaptain && (
+              <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold flex items-center gap-0.5 border border-amber-500/30">
+                <Crown className="w-2.5 h-2.5 text-amber-400" /> Captain
+              </span>
+            )}
+            {player.isViceCaptain && (
+              <span className="px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px] font-mono font-bold flex items-center gap-0.5 border border-sky-500/30">
+                <Star className="w-2.5 h-2.5 text-sky-400" /> VC
+              </span>
+            )}
+            {(player.sponsorTag || player.isSponsored) && (
+              <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold flex items-center gap-0.5 border border-emerald-500/30">
+                <Tag className="w-2.5 h-2.5 text-emerald-400" /> {player.sponsorTag || 'Sponsored'}
+              </span>
+            )}
+            {player.auctionOrder && (
+              <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 text-[10px] font-mono font-bold">
+                #{player.auctionOrder}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5">

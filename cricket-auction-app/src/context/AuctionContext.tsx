@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
-import { Team, Player, AuctionTransaction, AuctionRules, TournamentInfo, BidRecord } from '../types/auction';
+import { Team, Player, AuctionTransaction, AuctionRules, TournamentInfo, BidRecord, GradeBasePrices } from '../types/auction';
 import { initialTeams, initialPlayers, initialAuctionRules, initialTournamentInfo } from '../data/demoData';
 import { loadStoredState, saveStoredState, clearAuctionStorage, AppStoredState } from '../utils/storage';
 import { soundFx } from '../utils/audio';
@@ -42,12 +42,21 @@ interface AuctionContextType {
   placeBid: (teamId: string, incrementOrAmount?: number, isAbsoluteAmount?: boolean) => { success: boolean; message?: string };
   undoLastBid: () => void;
   markPlayerSold: () => { success: boolean; message?: string };
+  directSellPlayer: (teamId: string, amount: number) => { success: boolean; message?: string };
   markPlayerUnsold: () => void;
   skipOrNextPlayer: () => void;
   reAuctionPlayer: (playerId: string) => void;
   undoTransaction: (transactionId: string) => void;
   lastActionResult: LastAuctionResult | null;
   undoLastResult: () => { success: boolean; message: string };
+
+  // Spending Optimization
+  calculateMaxAllowableBid: (team: Team, player?: Player | null) => { maxBid: number; minReserveRequired: number; remainingSlotsNeeded: number; reason?: string };
+
+  // Mock Auction
+  isMockAuction: boolean;
+  toggleMockAuction: (enable?: boolean) => void;
+  resetMockAuction: () => void;
 
   // Player Database Management
   addPlayer: (playerData: Omit<Player, 'id' | 'status'>) => Player;
@@ -65,10 +74,9 @@ interface AuctionContextType {
   removePlayerFromSquad: (teamId: string, playerId: string) => void;
   toggleWishlist: (teamId: string, playerId: string) => void;
 
-
   // Configuration & Utilities
   updateRules: (rules: AuctionRules) => void;
-  syncGradeBasePricesToPlayers: (gradePrices?: { gradeA: number; gradeB: number; gradeC: number }) => void;
+  syncGradeBasePricesToPlayers: (gradePrices?: GradeBasePrices) => void;
   updateTournament: (info: TournamentInfo) => void;
   resetToDemoData: () => void;
   clearAllData: () => void;
@@ -78,6 +86,45 @@ interface AuctionContextType {
 const AuctionContext = createContext<AuctionContextType | undefined>(undefined);
 
 const BROADCAST_CHANNEL_NAME = 'cricket_auction_sync_channel';
+
+export function calculateMaxBidForTeam(
+  team: Team,
+  rules: AuctionRules,
+  _player?: Player | null
+): { maxBid: number; minReserveRequired: number; remainingSlotsNeeded: number; reason?: string } {
+  const minSquadSize = rules.squadRules.minSquadSize || 9;
+  const currentSquadSize = team.squad.length;
+  // If team already has or needs at most 1 player to reach minSquadSize
+  if (currentSquadSize >= minSquadSize - 1) {
+    return {
+      maxBid: Math.max(0, team.remainingBudget),
+      minReserveRequired: 0,
+      remainingSlotsNeeded: 0,
+    };
+  }
+
+  // After acquiring this player, how many more slots must still be filled to reach minSquadSize?
+  const slotsRemainingAfterThis = Math.max(0, minSquadSize - (currentSquadSize + 1));
+  const baseC = rules.gradeBasePrices?.gradeC ?? 1000;
+  const minBasePrice = Math.min(
+    rules.gradeBasePrices?.gradeAPlus ?? 7000,
+    rules.gradeBasePrices?.gradeA ?? 5000,
+    rules.gradeBasePrices?.gradeB ?? 3000,
+    baseC
+  );
+
+  const minReserveRequired = slotsRemainingAfterThis * minBasePrice;
+  const maxBid = Math.max(0, team.remainingBudget - minReserveRequired);
+
+  return {
+    maxBid,
+    minReserveRequired,
+    remainingSlotsNeeded: slotsRemainingAfterThis,
+    reason: slotsRemainingAfterThis > 0 
+      ? `Must reserve ${minReserveRequired.toLocaleString()} pts for ${slotsRemainingAfterThis} remaining squad slot(s) (min base price ${minBasePrice.toLocaleString()} pts).` 
+      : undefined
+  };
+}
 
 export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -92,6 +139,18 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [currentBidderId, setCurrentBidderId] = useState<string | null>(null);
   const [bidHistory, setBidHistory] = useState<BidRecord[]>([]);
   const [lastActionResult, setLastActionResult] = useState<LastAuctionResult | null>(null);
+
+  // Mock Auction Mode state
+  const [isMockAuction, setIsMockAuction] = useState<boolean>(false);
+  const [mockSnapshot, setMockSnapshot] = useState<{
+    teams: Team[];
+    players: Player[];
+    transactions: AuctionTransaction[];
+    currentPlayerId: string | null;
+    currentBid: number;
+    currentBidderId: string | null;
+    bidHistory: BidRecord[];
+  } | null>(null);
 
   // Timer
   const [timerSeconds, setTimerSeconds] = useState<number>(15);
@@ -320,6 +379,51 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   const currentPlayer = players.find(p => p.id === currentPlayerId) || null;
   const currentBidder = teams.find(t => t.id === currentBidderId) || null;
 
+  const toggleMockAuction = useCallback((enable?: boolean) => {
+    setIsMockAuction(prev => {
+      const nextVal = enable !== undefined ? enable : !prev;
+      if (nextVal) {
+        setMockSnapshot({
+          teams: JSON.parse(JSON.stringify(teams)),
+          players: JSON.parse(JSON.stringify(players)),
+          transactions: JSON.parse(JSON.stringify(transactions)),
+          currentPlayerId,
+          currentBid,
+          currentBidderId,
+          bidHistory: JSON.parse(JSON.stringify(bidHistory)),
+        });
+      } else {
+        if (mockSnapshot) {
+          setTeams(mockSnapshot.teams);
+          setPlayers(mockSnapshot.players);
+          setTransactions(mockSnapshot.transactions);
+          setCurrentPlayerId(mockSnapshot.currentPlayerId);
+          setCurrentBid(mockSnapshot.currentBid);
+          setCurrentBidderId(mockSnapshot.currentBidderId);
+          setBidHistory(mockSnapshot.bidHistory);
+          setMockSnapshot(null);
+        }
+      }
+      return nextVal;
+    });
+  }, [teams, players, transactions, currentPlayerId, currentBid, currentBidderId, bidHistory, mockSnapshot]);
+
+  const resetMockAuction = useCallback(() => {
+    if (mockSnapshot) {
+      setTeams(JSON.parse(JSON.stringify(mockSnapshot.teams)));
+      setPlayers(JSON.parse(JSON.stringify(mockSnapshot.players)));
+      setTransactions(JSON.parse(JSON.stringify(mockSnapshot.transactions)));
+      setCurrentPlayerId(mockSnapshot.currentPlayerId);
+      setCurrentBid(mockSnapshot.currentBid);
+      setCurrentBidderId(mockSnapshot.currentBidderId);
+      setBidHistory(JSON.parse(JSON.stringify(mockSnapshot.bidHistory)));
+    }
+  }, [mockSnapshot]);
+
+  const calculateMaxAllowableBid = useCallback((team: Team, player?: Player | null) => {
+    return calculateMaxBidForTeam(team, rules, player || currentPlayer);
+  }, [rules, currentPlayer]);
+
   // Timer ticker
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -406,7 +510,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       return { success: false, message: `New bid (${newBidAmount.toLocaleString()}) must exceed current bid (${currentBid.toLocaleString()}).` };
     }
 
-    // Team Budget validation
+    // Team Budget validation (Points cannot overflow)
     if (newBidAmount > team.remainingBudget) {
       return { 
         success: false, 
@@ -414,7 +518,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       };
     }
 
-    // Max Squad limit validation (Max 9 players)
+    // Dynamic spending optimization check (Max allowable bid)
+    const { maxBid, reason } = calculateMaxBidForTeam(team, rules, currentPlayer);
+    if (newBidAmount > maxBid) {
+      return {
+        success: false,
+        message: `Overspending Alert! ${team.name} can bid at most ${maxBid.toLocaleString()} pts. ${reason || 'Must reserve purse for remaining squad slots.'}`
+      };
+    }
+
+    // Max Squad limit validation
     if (team.squad.length >= rules.squadRules.maxSquadSize) {
       return { 
         success: false, 
@@ -424,46 +537,35 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     const squadPlayers = players.filter(p => team.squad.includes(p.id));
 
-    // Role-based Cap Validation (3 Batsmen, 3 Bowlers, 3 All-rounders)
-    if (currentPlayer.role === 'Batsman' || currentPlayer.role === 'Wicketkeeper') {
-      const batsCount = squadPlayers.filter(p => p.role === 'Batsman' || p.role === 'Wicketkeeper').length;
-      if (batsCount >= (rules.squadRules.maxBatsmen || 3)) {
+    // Sponsor limit check: Max 1 sponsor per team
+    const isCurrentPlayerSponsored = !!(currentPlayer.isSponsored || (currentPlayer.sponsorTag && currentPlayer.sponsorTag.trim()));
+    if (isCurrentPlayerSponsored) {
+      const existingSponsored = squadPlayers.find(p => p.isSponsored || (p.sponsorTag && p.sponsorTag.trim()));
+      if (existingSponsored) {
         return {
           success: false,
-          message: `Batsman cap reached! ${team.name} already has ${batsCount} Batsmen/WK (Max ${rules.squadRules.maxBatsmen || 3}).`,
-        };
-      }
-    } else if (currentPlayer.role === 'Bowler') {
-      const bowlCount = squadPlayers.filter(p => p.role === 'Bowler').length;
-      if (bowlCount >= (rules.squadRules.maxBowlers || 3)) {
-        return {
-          success: false,
-          message: `Bowler cap reached! ${team.name} already has ${bowlCount} Bowlers (Max ${rules.squadRules.maxBowlers || 3}).`,
-        };
-      }
-    } else if (currentPlayer.role === 'All-rounder') {
-      const arCount = squadPlayers.filter(p => p.role === 'All-rounder').length;
-      if (arCount >= (rules.squadRules.maxAllRounders || 3)) {
-        return {
-          success: false,
-          message: `All-Rounder cap reached! ${team.name} already has ${arCount} All-Rounders (Max ${rules.squadRules.maxAllRounders || 3}).`,
+          message: `Sponsor limit reached! ${team.name} already has a sponsored player (${existingSponsored.name}${existingSponsored.sponsorTag ? ` - ${existingSponsored.sponsorTag}` : ''}). Each team can have at most 1 sponsored player.`
         };
       }
     }
 
     // Grade Limits Validation
-    if (currentPlayer.grade === 'A') {
+    if (currentPlayer.grade === 'A+' && rules.squadRules.maxGradeAPlus !== undefined) {
+      const gradeAPlusCount = squadPlayers.filter(p => p.grade === 'A+').length;
+      if (gradeAPlusCount >= rules.squadRules.maxGradeAPlus) {
+        return { success: false, message: `${team.name} already has maximum allowed Grade A+ players (${rules.squadRules.maxGradeAPlus}).` };
+      }
+    } else if (currentPlayer.grade === 'A' && rules.squadRules.maxGradeA !== undefined) {
       const gradeACount = squadPlayers.filter(p => p.grade === 'A').length;
       if (gradeACount >= rules.squadRules.maxGradeA) {
         return { success: false, message: `${team.name} already has maximum allowed Grade A players (${rules.squadRules.maxGradeA}).` };
       }
-    } else if (currentPlayer.grade === 'B') {
+    } else if (currentPlayer.grade === 'B' && rules.squadRules.maxGradeB !== undefined) {
       const gradeBCount = squadPlayers.filter(p => p.grade === 'B').length;
       if (gradeBCount >= rules.squadRules.maxGradeB) {
         return { success: false, message: `${team.name} already has maximum allowed Grade B players (${rules.squadRules.maxGradeB}).` };
       }
     }
-
 
     // Record bid
     const newRecord: BidRecord = {
@@ -485,7 +587,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     soundFx.playBid();
 
     return { success: true };
-  }, [teams, currentPlayer, currentBidderId, currentBid, rules]);
+  }, [teams, currentPlayer, currentBidderId, currentBid, rules, players]);
 
   // UNDO LAST BID
   const undoLastBid = useCallback(() => {
@@ -515,12 +617,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     const finalPrice = currentBid;
 
-    // 1. Update Team Budget & Squad
+    // 1. Update Team Budget & Squad (Overflow guarded)
     setTeams(prev => prev.map(t => {
       if (t.id === winningTeam.id) {
         return {
           ...t,
-          remainingBudget: t.remainingBudget - finalPrice,
+          remainingBudget: Math.max(0, t.remainingBudget - finalPrice),
           totalSpent: t.totalSpent + finalPrice,
           squad: [...t.squad, currentPlayer.id],
         };
@@ -586,6 +688,113 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     return { success: true };
   }, [currentPlayer, currentBidderId, teams, currentBid, bidHistory, rules.animationsEnabled]);
+
+  // DIRECT SELL PLAYER (Single-screen quick assignment)
+  const directSellPlayer = useCallback((teamId: string, amount: number): { success: boolean; message?: string } => {
+    if (!currentPlayer) return { success: false, message: 'No active player in auction.' };
+    const team = teams.find(t => t.id === teamId);
+    if (!team) return { success: false, message: 'Selected franchise not found.' };
+
+    if (amount <= 0) {
+      return { success: false, message: 'Sale amount must be greater than 0.' };
+    }
+
+    if (team.squad.length >= rules.squadRules.maxSquadSize) {
+      return { success: false, message: `Squad full! ${team.name} already has maximum ${rules.squadRules.maxSquadSize} players.` };
+    }
+
+    if (amount > team.remainingBudget) {
+      return { success: false, message: `Insufficient budget! ${team.name} has only ${team.remainingBudget.toLocaleString()} points remaining.` };
+    }
+
+    const { maxBid, reason } = calculateMaxBidForTeam(team, rules, currentPlayer);
+    if (amount > maxBid) {
+      return {
+        success: false,
+        message: `Overspending Alert! ${team.name} can spend at most ${maxBid.toLocaleString()} pts. ${reason || 'Must reserve purse for remaining squad slots.'}`
+      };
+    }
+
+    const squadPlayers = players.filter(p => team.squad.includes(p.id));
+    const isCurrentPlayerSponsored = !!(currentPlayer.isSponsored || (currentPlayer.sponsorTag && currentPlayer.sponsorTag.trim()));
+    if (isCurrentPlayerSponsored) {
+      const existingSponsored = squadPlayers.find(p => p.isSponsored || (p.sponsorTag && p.sponsorTag.trim()));
+      if (existingSponsored) {
+        return {
+          success: false,
+          message: `Sponsor limit reached! ${team.name} already has a sponsored player (${existingSponsored.name}${existingSponsored.sponsorTag ? ` - ${existingSponsored.sponsorTag}` : ''}). Each team can have at most 1 sponsored player.`
+        };
+      }
+    }
+
+    const finalPrice = amount;
+
+    setTeams(prev => prev.map(t => {
+      if (t.id === team.id) {
+        return {
+          ...t,
+          remainingBudget: Math.max(0, t.remainingBudget - finalPrice),
+          totalSpent: t.totalSpent + finalPrice,
+          squad: [...t.squad, currentPlayer.id],
+        };
+      }
+      return t;
+    }));
+
+    setPlayers(prev => prev.map(p => {
+      if (p.id === currentPlayer.id) {
+        return {
+          ...p,
+          status: 'sold',
+          teamId: team.id,
+          soldPrice: finalPrice,
+        };
+      }
+      return p;
+    }));
+
+    const txId = `tx-${Date.now()}`;
+    const tx: AuctionTransaction = {
+      id: txId,
+      playerId: currentPlayer.id,
+      playerName: currentPlayer.name,
+      playerRole: currentPlayer.role,
+      playerGrade: currentPlayer.grade,
+      teamId: team.id,
+      teamName: team.name,
+      basePrice: currentPlayer.basePrice,
+      soldPrice: finalPrice,
+      timestamp: new Date().toISOString(),
+      bidHistory: [...bidHistory],
+    };
+    setTransactions(prev => [tx, ...prev]);
+
+    setLastActionResult({
+      type: 'sold',
+      player: currentPlayer,
+      teamId: team.id,
+      teamName: team.name,
+      soldPrice: finalPrice,
+      transactionId: txId,
+      bidHistory: [...bidHistory],
+      currentBid: finalPrice,
+      currentBidderId: team.id,
+    });
+
+    soundFx.playGavel();
+    soundFx.playFanfare();
+    if (rules.animationsEnabled) {
+      triggerSoldConfetti();
+    }
+
+    setIsTimerRunning(false);
+    setCurrentPlayerId(null);
+    setCurrentBid(0);
+    setCurrentBidderId(null);
+    setBidHistory([]);
+
+    return { success: true };
+  }, [currentPlayer, teams, players, rules, bidHistory]);
 
   // MARK PLAYER UNSOLD
   const markPlayerUnsold = useCallback(() => {
@@ -843,7 +1052,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       basePrice: r.basePrice,
       description: r.description || r.previousPerformance || r.notes,
       status: 'upcoming',
-      auctionOrder: (replaceExisting ? 0 : players.length) + idx + 1,
+      auctionOrder: r.auctionOrder !== undefined ? r.auctionOrder : ((replaceExisting ? 0 : players.length) + idx + 1),
+      isCaptain: r.isCaptain,
+      isViceCaptain: r.isViceCaptain,
+      sponsorTag: r.sponsorTag,
+      isSponsored: r.isSponsored || !!(r.sponsorTag && r.sponsorTag.trim()),
+      photo: r.photo,
       previousPerformance: r.previousPerformance || r.description,
       notes: r.notes || r.description,
       stats: {
@@ -979,11 +1193,17 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, []);
 
   // SYNC GRADE BASE PRICES TO ALL UPCOMING PLAYERS
-  const syncGradeBasePricesToPlayers = useCallback((gradePrices?: { gradeA: number; gradeB: number; gradeC: number }) => {
-    const prices = gradePrices || rules.gradeBasePrices || { gradeA: 5000, gradeB: 3000, gradeC: 1000 };
+  const syncGradeBasePricesToPlayers = useCallback((gradePrices?: GradeBasePrices) => {
+    const prices = gradePrices || rules.gradeBasePrices || { gradeAPlus: 7000, gradeA: 5000, gradeB: 3000, gradeC: 1000 };
     setPlayers(prev => prev.map(p => {
       if (p.status === 'upcoming') {
-        const newPrice = p.grade === 'A' ? prices.gradeA : p.grade === 'B' ? prices.gradeB : prices.gradeC;
+        const newPrice = p.grade === 'A+' 
+          ? prices.gradeAPlus 
+          : p.grade === 'A' 
+          ? prices.gradeA 
+          : p.grade === 'B' 
+          ? prices.gradeB 
+          : prices.gradeC;
         return { ...p, basePrice: newPrice };
       }
       return p;
@@ -1074,12 +1294,17 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         placeBid,
         undoLastBid,
         markPlayerSold,
+        directSellPlayer,
         markPlayerUnsold,
         skipOrNextPlayer,
         reAuctionPlayer,
         undoTransaction,
         lastActionResult,
         undoLastResult,
+        calculateMaxAllowableBid,
+        isMockAuction,
+        toggleMockAuction,
+        resetMockAuction,
         addPlayer,
         editPlayer,
         deletePlayer,

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { exportStateAsJSON, loadStoredState } from '../utils/storage';
+import { GradeBasePrices } from '../types/auction';
 import {
   Settings,
   Shield,
@@ -16,6 +17,7 @@ import {
   AlertTriangle,
   Coins,
   Tag,
+  Crown,
 } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
@@ -46,14 +48,16 @@ export const SettingsPage: React.FC = () => {
 
   // Squad Rules state
   const [minSquadSize, setMinSquadSize] = useState(rules.squadRules.minSquadSize || 9);
-  const [maxSquadSize, setMaxSquadSize] = useState(rules.squadRules.maxSquadSize || 9);
-  const [maxBatsmen, setMaxBatsmen] = useState(rules.squadRules.maxBatsmen || 3);
-  const [maxBowlers, setMaxBowlers] = useState(rules.squadRules.maxBowlers || 3);
-  const [maxAllRounders, setMaxAllRounders] = useState(rules.squadRules.maxAllRounders || 3);
-  const [maxGradeA, setMaxGradeA] = useState(rules.squadRules.maxGradeA || 3);
-  const [maxGradeB, setMaxGradeB] = useState(rules.squadRules.maxGradeB || 5);
+  const [maxSquadSize, setMaxSquadSize] = useState(rules.squadRules.maxSquadSize || 15);
+  const [maxGradeAPlus, setMaxGradeAPlus] = useState(rules.squadRules.maxGradeAPlus || 1);
+  const [maxGradeA, setMaxGradeA] = useState(rules.squadRules.maxGradeA || 5);
+  const [maxGradeB, setMaxGradeB] = useState(rules.squadRules.maxGradeB || 8);
+  const [maxGradeC, setMaxGradeC] = useState(rules.squadRules.maxGradeC || 15);
 
-  // Dedicated Grade Base Prices state (default Grade A: 5000, Grade B: 3000, Grade C: 1000)
+  // Dedicated Grade Base Prices state (default Grade A+: 7000, Grade A: 5000, Grade B: 3000, Grade C: 1000)
+  const [gradeAPlusBasePrice, setGradeAPlusBasePrice] = useState(
+    rules.gradeBasePrices?.gradeAPlus ?? 7000
+  );
   const [gradeABasePrice, setGradeABasePrice] = useState(
     rules.gradeBasePrices?.gradeA === 5100 ? 5000 : (rules.gradeBasePrices?.gradeA ?? 5000)
   );
@@ -78,7 +82,8 @@ export const SettingsPage: React.FC = () => {
       venue: venue.trim() || undefined,
     });
 
-    const newGradePrices = {
+    const newGradePrices: GradeBasePrices = {
+      gradeAPlus: Number(gradeAPlusBasePrice),
       gradeA: Number(gradeABasePrice),
       gradeB: Number(gradeBBasePrice),
       gradeC: Number(gradeCBasePrice),
@@ -97,11 +102,10 @@ export const SettingsPage: React.FC = () => {
         ...rules.squadRules,
         minSquadSize: Number(minSquadSize),
         maxSquadSize: Number(maxSquadSize),
-        maxBatsmen: Number(maxBatsmen),
-        maxBowlers: Number(maxBowlers),
-        maxAllRounders: Number(maxAllRounders),
+        maxGradeAPlus: Number(maxGradeAPlus),
         maxGradeA: Number(maxGradeA),
         maxGradeB: Number(maxGradeB),
+        maxGradeC: Number(maxGradeC),
       },
     });
 
@@ -114,22 +118,24 @@ export const SettingsPage: React.FC = () => {
   };
 
   const handleManualSyncPrices = () => {
-    const newGradePrices = {
+    const newGradePrices: GradeBasePrices = {
+      gradeAPlus: Number(gradeAPlusBasePrice),
       gradeA: Number(gradeABasePrice),
       gradeB: Number(gradeBBasePrice),
       gradeC: Number(gradeCBasePrice),
     };
     syncGradeBasePricesToPlayers(newGradePrices);
-    setSyncSuccessMsg(`Successfully updated all upcoming players to Grade A: ${gradeABasePrice}, Grade B: ${gradeBBasePrice}, Grade C: ${gradeCBasePrice} pts!`);
+    setSyncSuccessMsg(`Successfully updated all upcoming players to Grade A+: ${gradeAPlusBasePrice}, Grade A: ${gradeABasePrice}, Grade B: ${gradeBBasePrice}, Grade C: ${gradeCBasePrice} pts!`);
     setTimeout(() => setSyncSuccessMsg(null), 3500);
   };
 
   const handleResetToDefaultPrices = () => {
+    setGradeAPlusBasePrice(7000);
     setGradeABasePrice(5000);
     setGradeBBasePrice(3000);
     setGradeCBasePrice(1000);
-    syncGradeBasePricesToPlayers({ gradeA: 5000, gradeB: 3000, gradeC: 1000 });
-    setSyncSuccessMsg('Reset and synced all base prices to Grade A: 5000, Grade B: 3000, Grade C: 1000 pts!');
+    syncGradeBasePricesToPlayers({ gradeAPlus: 7000, gradeA: 5000, gradeB: 3000, gradeC: 1000 });
+    setSyncSuccessMsg('Reset and synced all base prices to Grade A+: 7000, Grade A: 5000, Grade B: 3000, Grade C: 1000 pts!');
     setTimeout(() => setSyncSuccessMsg(null), 3500);
   };
 
@@ -313,13 +319,36 @@ export const SettingsPage: React.FC = () => {
             Set the default starting auction base prices for each player grade. These prices will automatically apply when AI categorizes players or when importing Excel rosters without specified base prices.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
+            {/* Grade A+ */}
+            <div className="p-4 rounded-xl bg-slate-950/60 border border-purple-500/40">
+              <div className="flex items-center justify-between mb-2 font-sans">
+                <span className="font-bold text-purple-300 flex items-center gap-1.5">
+                  <Crown className="w-3.5 h-3.5 text-amber-400" />
+                  Grade A+ (Captains / Marquee)
+                </span>
+                <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-bold">Tier A+</span>
+              </div>
+              <label className="text-slate-400 font-sans block text-[11px] mb-1">Base Price (points)</label>
+              <div className="relative">
+                <input
+                  type="number"
+                  min="100"
+                  step="500"
+                  value={gradeAPlusBasePrice}
+                  onChange={e => setGradeAPlusBasePrice(Number(e.target.value))}
+                  className="w-full px-3 py-2 bg-slate-900 border border-purple-500/40 rounded-lg text-purple-300 font-bold text-sm focus:outline-none focus:border-purple-400"
+                />
+              </div>
+              <span className="text-[10px] text-slate-500 font-sans mt-1 block">Default: 7000 points</span>
+            </div>
+
             {/* Grade A */}
             <div className="p-4 rounded-xl bg-slate-950/60 border border-amber-500/30">
               <div className="flex items-center justify-between mb-2 font-sans">
                 <span className="font-bold text-amber-300 flex items-center gap-1.5">
                   <Tag className="w-3.5 h-3.5 text-amber-400" />
-                  Grade A (Elite / Proven)
+                  Grade A (Stars / VC)
                 </span>
                 <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold">Tier A</span>
               </div>
@@ -365,7 +394,7 @@ export const SettingsPage: React.FC = () => {
               <div className="flex items-center justify-between mb-2 font-sans">
                 <span className="font-bold text-emerald-300 flex items-center gap-1.5">
                   <Tag className="w-3.5 h-3.5 text-emerald-400" />
-                  Grade C (Beginner / Casual)
+                  Grade C (Regular)
                 </span>
                 <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">Tier C</span>
               </div>
@@ -402,7 +431,7 @@ export const SettingsPage: React.FC = () => {
                 onClick={handleResetToDefaultPrices}
                 className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold transition-all cursor-pointer"
               >
-                Reset to Standard (5000 / 3000 / 1000)
+                Reset to Standard (7000 / 5000 / 3000 / 1000)
               </button>
               <button
                 type="button"
@@ -427,55 +456,43 @@ export const SettingsPage: React.FC = () => {
           <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider">
             Squad Rules & Grade Limits
           </h2>
+          <p className="text-xs text-slate-400">
+            Teams have flexible squad composition (unrestricted distribution of Batsmen, Bowlers, and Wicketkeepers). Configure squad size bounds and marquee grade caps below.
+          </p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 text-xs font-mono">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-xs font-mono">
             <div>
-              <label className="text-slate-400 font-sans">Squad Size Cap</label>
+              <label className="text-slate-400 font-sans">Min Squad Size</label>
               <input
                 type="number"
                 min="1"
                 max="25"
-                value={maxSquadSize}
-                onChange={e => {
-                  setMaxSquadSize(Number(e.target.value));
-                  setMinSquadSize(Number(e.target.value));
-                }}
+                value={minSquadSize}
+                onChange={e => setMinSquadSize(Number(e.target.value))}
                 className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-bold"
               />
             </div>
 
             <div>
-              <label className="text-slate-400 font-sans">Max Batsmen/WK</label>
+              <label className="text-slate-400 font-sans">Max Squad Size</label>
               <input
                 type="number"
                 min="1"
-                max="10"
-                value={maxBatsmen}
-                onChange={e => setMaxBatsmen(Number(e.target.value))}
-                className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-rose-300 font-bold"
+                max="25"
+                value={maxSquadSize}
+                onChange={e => setMaxSquadSize(Number(e.target.value))}
+                className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-bold"
               />
             </div>
 
             <div>
-              <label className="text-slate-400 font-sans">Max Bowlers</label>
+              <label className="text-slate-400 font-sans">Max Grade A+ (Captains)</label>
               <input
                 type="number"
                 min="1"
-                max="10"
-                value={maxBowlers}
-                onChange={e => setMaxBowlers(Number(e.target.value))}
-                className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-indigo-300 font-bold"
-              />
-            </div>
-
-            <div>
-              <label className="text-slate-400 font-sans">Max All-Rounders</label>
-              <input
-                type="number"
-                min="1"
-                max="10"
-                value={maxAllRounders}
-                onChange={e => setMaxAllRounders(Number(e.target.value))}
+                max="5"
+                value={maxGradeAPlus}
+                onChange={e => setMaxGradeAPlus(Number(e.target.value))}
                 className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-purple-300 font-bold"
               />
             </div>
@@ -492,7 +509,6 @@ export const SettingsPage: React.FC = () => {
               />
             </div>
           </div>
-
         </div>
 
         {/* Save Changes Button */}

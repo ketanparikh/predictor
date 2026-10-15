@@ -31,7 +31,6 @@ export const AnalyticsPage: React.FC = () => {
   const roleCounts: Record<string, number> = {
     Batsman: 0,
     Bowler: 0,
-    'All-rounder': 0,
     Wicketkeeper: 0,
   };
   players.filter(p => p.status === 'sold').forEach(p => {
@@ -43,10 +42,11 @@ export const AnalyticsPage: React.FC = () => {
     value,
   }));
 
-  const ROLE_COLORS = ['#f43f5e', '#6366f1', '#a855f7', '#f59e0b'];
+  const ROLE_COLORS = ['#f43f5e', '#6366f1', '#f59e0b'];
 
   // 3. Grade Spending Data
   const gradeSpending: Record<string, { total: number; count: number }> = {
+    'A+': { total: 0, count: 0 },
     A: { total: 0, count: 0 },
     B: { total: 0, count: 0 },
     C: { total: 0, count: 0 },

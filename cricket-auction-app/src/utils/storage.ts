@@ -60,9 +60,10 @@ export const loadStoredState = (): AppStoredState => {
     let loadedPlayers: Player[] = rawPlayers ? JSON.parse(rawPlayers) : initialPlayers;
     let loadedRules: AuctionRules = rawRules ? JSON.parse(rawRules) : initialAuctionRules;
 
-    // Normalize grade base prices to 5000, 3000, 1000
+    // Normalize grade base prices to 7000, 5000, 3000, 1000
     if (
       !loadedRules.gradeBasePrices ||
+      !loadedRules.gradeBasePrices.gradeAPlus ||
       loadedRules.gradeBasePrices.gradeA === 5100 ||
       loadedRules.gradeBasePrices.gradeB === 3100 ||
       loadedRules.gradeBasePrices.gradeC === 1100
@@ -70,9 +71,10 @@ export const loadStoredState = (): AppStoredState => {
       loadedRules = {
         ...loadedRules,
         gradeBasePrices: {
-          gradeA: 5000,
-          gradeB: 3000,
-          gradeC: 1000,
+          gradeAPlus: loadedRules.gradeBasePrices?.gradeAPlus || 7000,
+          gradeA: loadedRules.gradeBasePrices?.gradeA || 5000,
+          gradeB: loadedRules.gradeBasePrices?.gradeB || 3000,
+          gradeC: loadedRules.gradeBasePrices?.gradeC || 1000,
         },
       };
       localStorage.setItem(STORAGE_KEYS.RULES, JSON.stringify(loadedRules));

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Player, PlayerGrade, PlayerRole, BattingStyle, BowlingStyle } from '../types/auction';
 import { useAuction } from '../context/AuctionContext';
 import { calculatePlayerRating } from '../utils/aiEngine';
-import { X, Sparkles, User, Save, AlertCircle } from 'lucide-react';
+import { calculateRecommendedGrade } from '../utils/excelParser';
+import { X, Sparkles, User, Save, AlertCircle, Crown, Star, Tag, Hash } from 'lucide-react';
 
 interface PlayerModalProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
   onOpenCricHeroes,
 }) => {
   const { rules } = useAuction();
-  const gradeBasePrices = rules.gradeBasePrices || { gradeA: 5000, gradeB: 3000, gradeC: 1000 };
+  const gradeBasePrices = rules.gradeBasePrices || { gradeAPlus: 7000, gradeA: 5000, gradeB: 3000, gradeC: 1000 };
 
   const [name, setName] = useState('');
   const [age, setAge] = useState(24);
@@ -35,6 +36,13 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
   const [photo, setPhoto] = useState('');
   const [previousPerformance, setPreviousPerformance] = useState('');
   const [notes, setNotes] = useState('');
+
+  // Extended Tournament Fields
+  const [auctionOrder, setAuctionOrder] = useState<number>(1);
+  const [isCaptain, setIsCaptain] = useState<boolean>(false);
+  const [isViceCaptain, setIsViceCaptain] = useState<boolean>(false);
+  const [sponsorTag, setSponsorTag] = useState<string>('');
+  const [isSponsored, setIsSponsored] = useState<boolean>(false);
 
   // Stats
   const [matches, setMatches] = useState(30);
@@ -51,7 +59,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
   const [catches, setCatches] = useState(15);
   const [stumpings, setStumpings] = useState(0);
 
-  const [aiSuggestion, setAiSuggestion] = useState<{ grade: PlayerGrade; score: number } | null>(null);
+  const [aiSuggestion, setAiSuggestion] = useState<{ grade: PlayerGrade; score: number; reason?: string } | null>(null);
 
   useEffect(() => {
     if (playerToEdit) {
@@ -60,7 +68,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
       setAgeCategory(playerToEdit.ageCategory || (playerToEdit.age && playerToEdit.age <= 14 ? 'Below 14' : 'Above 14'));
       setGender(playerToEdit.gender || 'Male');
       setExperience(playerToEdit.experience || 4);
-      setRole(playerToEdit.role || 'Batsman');
+      setRole((playerToEdit.role as string) === 'All-rounder' ? 'Batsman' : playerToEdit.role || 'Batsman');
       setBattingStyle(playerToEdit.battingStyle || 'Right-hand bat');
       setBowlingStyle(playerToEdit.bowlingStyle || 'None');
       setGrade(playerToEdit.grade || 'B');
@@ -68,6 +76,12 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
       setPhoto(playerToEdit.photo || '');
       setPreviousPerformance(playerToEdit.previousPerformance || '');
       setNotes(playerToEdit.notes || '');
+
+      setAuctionOrder(playerToEdit.auctionOrder || 1);
+      setIsCaptain(Boolean(playerToEdit.isCaptain));
+      setIsViceCaptain(Boolean(playerToEdit.isViceCaptain));
+      setSponsorTag(playerToEdit.sponsorTag || '');
+      setIsSponsored(Boolean(playerToEdit.isSponsored || playerToEdit.sponsorTag));
 
       if (playerToEdit.stats) {
         setMatches(playerToEdit.stats.matches ?? 30);
@@ -93,10 +107,15 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
       setBattingStyle('Right-hand bat');
       setBowlingStyle('None');
       setGrade('B');
-      setBasePrice(3000);
+      setBasePrice(gradeBasePrices.gradeB || 3000);
       setPhoto('');
       setPreviousPerformance('');
       setNotes('');
+      setAuctionOrder(1);
+      setIsCaptain(false);
+      setIsViceCaptain(false);
+      setSponsorTag('');
+      setIsSponsored(false);
       setMatches(30);
       setRuns(850);
       setAverage(35.5);
@@ -113,44 +132,36 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
     }
   }, [playerToEdit, isOpen]);
 
-  // AI Recommendation recalculator
+  // AI & Stats Recommendation recalculator
   const runAiGrading = () => {
-    const dummyPlayer: Partial<Player> = {
+    const statsObj = {
+      runs,
+      average,
+      strikeRate,
+      fifties,
+      hundreds,
+      wickets,
+      bowlingAverage,
+      economyRate,
+      catches,
+      stumpings,
+    };
+
+    const rec = calculateRecommendedGrade(statsObj, role, isCaptain, isViceCaptain);
+    const score = calculatePlayerRating({
       role,
       experience,
-      stats: {
-        matches,
-        runs,
-        average,
-        strikeRate,
-        highestScore,
-        fifties,
-        hundreds,
-        wickets,
-        bowlingAverage,
-        economyRate,
-        bestBowling,
-        catches,
-        stumpings,
-      },
-    };
-    const score = calculatePlayerRating(dummyPlayer);
-    let recGrade: PlayerGrade = 'C';
+      stats: { matches, ...statsObj, highestScore, bestBowling },
+    });
+
     let recPrice = gradeBasePrices.gradeC;
+    if (rec.grade === 'A+') recPrice = gradeBasePrices.gradeAPlus || 7000;
+    else if (rec.grade === 'A') recPrice = gradeBasePrices.gradeA || 5000;
+    else if (rec.grade === 'B') recPrice = gradeBasePrices.gradeB || 3000;
+    else recPrice = gradeBasePrices.gradeC || 1000;
 
-    if (score >= 75) {
-      recGrade = 'A';
-      recPrice = gradeBasePrices.gradeA;
-    } else if (score >= 50) {
-      recGrade = 'B';
-      recPrice = gradeBasePrices.gradeB;
-    } else {
-      recGrade = 'C';
-      recPrice = gradeBasePrices.gradeC;
-    }
-
-    setAiSuggestion({ grade: recGrade, score });
-    setGrade(recGrade);
+    setAiSuggestion({ grade: rec.grade, score, reason: rec.reason });
+    setGrade(rec.grade);
     setBasePrice(recPrice);
   };
 
@@ -174,6 +185,11 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
       photo: photo.trim() || undefined,
       previousPerformance: previousPerformance.trim() || undefined,
       notes: notes.trim() || undefined,
+      auctionOrder: Number(auctionOrder) || 1,
+      isCaptain: Boolean(isCaptain),
+      isViceCaptain: Boolean(isViceCaptain),
+      sponsorTag: sponsorTag.trim() || undefined,
+      isSponsored: Boolean(isSponsored || sponsorTag.trim()),
       stats: {
         matches: Number(matches),
         runs: Number(runs),
@@ -220,7 +236,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                   onClose();
                   onOpenCricHeroes();
                 }}
-                className="px-3 py-1.5 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30 text-xs font-bold transition-all flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>Auto-fill from CricHeroes</span>
@@ -228,7 +244,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
             )}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -241,13 +257,13 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
             <div className="flex items-center gap-2.5">
               <Sparkles className="w-5 h-5 text-amber-400 flex-shrink-0" />
               <div className="text-xs text-slate-300">
-                <span className="font-semibold text-amber-300">AI Assistant:</span> Auto-calculate Grade and Base Price based on player stats.
+                <span className="font-semibold text-amber-300">Grade Decider:</span> Auto-calculate Grade (A+, A, B, C) and Base Price based on player stats & leadership status.
               </div>
             </div>
             <button
               type="button"
               onClick={runAiGrading}
-              className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all shadow flex items-center gap-1.5 flex-shrink-0"
+              className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all shadow flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5" />
               Auto-Grade Player
@@ -258,10 +274,90 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
             <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-emerald-400" />
               <span>
-                AI Recommended: <strong>Grade {aiSuggestion.grade}</strong> (Composite Rating Score: {aiSuggestion.score}/100).
+                Recommended: <strong>Grade {aiSuggestion.grade}</strong> (Composite Rating: {aiSuggestion.score}/100) — {aiSuggestion.reason}
               </span>
             </div>
           )}
+
+          {/* Tournament Tags & Roles */}
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+            <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">
+              Tournament Classification & Roles
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Auction Order */}
+              <div>
+                <label className="block text-[11px] font-medium text-slate-400 mb-1 flex items-center gap-1">
+                  <Hash className="w-3 h-3 text-sky-400" /> Auction Lot Sequence #
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={auctionOrder}
+                  onChange={e => setAuctionOrder(Number(e.target.value))}
+                  className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              {/* Sponsor Tag */}
+              <div>
+                <label className="block text-[11px] font-medium text-slate-400 mb-1 flex items-center gap-1">
+                  <Tag className="w-3 h-3 text-emerald-400" /> Sponsor Tag (max 1 per team)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Red Bull, MRF"
+                  value={sponsorTag}
+                  onChange={e => {
+                    setSponsorTag(e.target.value);
+                    if (e.target.value.trim()) setIsSponsored(true);
+                  }}
+                  className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-emerald-300 font-mono text-sm focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              {/* Checkboxes: Captain & Vice Captain */}
+              <div className="flex items-center gap-4 pt-4">
+                <label className="flex items-center gap-1.5 text-xs text-amber-300 cursor-pointer font-bold">
+                  <input
+                    type="checkbox"
+                    checked={isCaptain}
+                    onChange={e => {
+                      const checked = e.target.checked;
+                      setIsCaptain(checked);
+                      if (checked) {
+                        setIsViceCaptain(false);
+                        setGrade('A+');
+                        setBasePrice(gradeBasePrices.gradeAPlus || 7000);
+                      }
+                    }}
+                    className="rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
+                  />
+                  <Crown className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Captain (Grade A+)</span>
+                </label>
+
+                <label className="flex items-center gap-1.5 text-xs text-sky-300 cursor-pointer font-bold">
+                  <input
+                    type="checkbox"
+                    checked={isViceCaptain}
+                    onChange={e => {
+                      const checked = e.target.checked;
+                      setIsViceCaptain(checked);
+                      if (checked) {
+                        setIsCaptain(false);
+                        setGrade('A');
+                        setBasePrice(gradeBasePrices.gradeA || 5000);
+                      }
+                    }}
+                    className="rounded border-slate-700 bg-slate-900 text-sky-500 focus:ring-sky-500"
+                  />
+                  <Star className="w-3.5 h-3.5 text-sky-400" />
+                  <span>Vice Captain (Grade A)</span>
+                </label>
+              </div>
+            </div>
+          </div>
 
           {/* Core Info */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -331,16 +427,15 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Playing Role</label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Primary Role *</label>
               <select
                 value={role}
                 onChange={e => setRole(e.target.value as PlayerRole)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-amber-300 font-bold text-sm focus:outline-none focus:border-amber-500"
               >
-                <option value="Batsman">Batsman</option>
-                <option value="Bowler">Bowler</option>
-                <option value="All-rounder">All-rounder</option>
-                <option value="Wicketkeeper">Wicketkeeper</option>
+                <option value="Batsman">🏏 Batsman</option>
+                <option value="Bowler">🎯 Bowler</option>
+                <option value="Wicketkeeper">🧤 Wicketkeeper</option>
               </select>
             </div>
 
@@ -351,13 +446,22 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 onChange={e => {
                   const newGrade = e.target.value as PlayerGrade;
                   setGrade(newGrade);
-                  setBasePrice(newGrade === 'A' ? gradeBasePrices.gradeA : newGrade === 'B' ? gradeBasePrices.gradeB : gradeBasePrices.gradeC);
+                  const newPrice =
+                    newGrade === 'A+'
+                      ? gradeBasePrices.gradeAPlus || 7000
+                      : newGrade === 'A'
+                      ? gradeBasePrices.gradeA || 5000
+                      : newGrade === 'B'
+                      ? gradeBasePrices.gradeB || 3000
+                      : gradeBasePrices.gradeC || 1000;
+                  setBasePrice(newPrice);
                 }}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500 font-bold"
               >
-                <option value="A">Grade A (Elite - {gradeBasePrices.gradeA} pts)</option>
-                <option value="B">Grade B (Strong - {gradeBasePrices.gradeB} pts)</option>
-                <option value="C">Grade C (Developing - {gradeBasePrices.gradeC} pts)</option>
+                <option value="A+">👑 Grade A+ (Marquee / Captain - {gradeBasePrices.gradeAPlus || 7000} pts)</option>
+                <option value="A">⭐ Grade A (Elite / Vice Captain - {gradeBasePrices.gradeA} pts)</option>
+                <option value="B">⚡ Grade B (Core - {gradeBasePrices.gradeB} pts)</option>
+                <option value="C">🌱 Grade C (Emerging - {gradeBasePrices.gradeC} pts)</option>
               </select>
             </div>
           </div>
@@ -403,7 +507,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 required
                 value={basePrice}
                 onChange={e => setBasePrice(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-amber-400 font-mono font-bold text-sm focus:outline-none focus:border-amber-500"
               />
             </div>
           </div>
@@ -453,9 +557,10 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                   min="0"
                   value={strikeRate}
                   onChange={e => setStrikeRate(Number(e.target.value))}
-                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
+                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-sky-400 font-bold"
                 />
               </div>
+
               <div>
                 <label className="text-slate-400">Highest Score</label>
                 <input
@@ -468,14 +573,14 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
               </div>
               <div>
                 <label className="text-slate-400">50s / 100s</label>
-                <div className="flex gap-1 mt-1">
+                <div className="flex gap-2">
                   <input
                     type="number"
                     min="0"
                     placeholder="50s"
                     value={fifties}
                     onChange={e => setFifties(Number(e.target.value))}
-                    className="w-1/2 px-2 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
+                    className="w-1/2 mt-1 px-2 py-1.5 bg-slate-950 border border-slate-800 rounded text-white text-center"
                   />
                   <input
                     type="number"
@@ -483,7 +588,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                     placeholder="100s"
                     value={hundreds}
                     onChange={e => setHundreds(Number(e.target.value))}
-                    className="w-1/2 px-2 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
+                    className="w-1/2 mt-1 px-2 py-1.5 bg-slate-950 border border-slate-800 rounded text-white text-center"
                   />
                 </div>
               </div>
@@ -494,11 +599,11 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                   min="0"
                   value={wickets}
                   onChange={e => setWickets(Number(e.target.value))}
-                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
+                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-emerald-400 font-bold"
                 />
               </div>
               <div>
-                <label className="text-slate-400">Bowling Economy</label>
+                <label className="text-slate-400">Economy Rate</label>
                 <input
                   type="number"
                   step="0.01"
@@ -511,45 +616,48 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
             </div>
           </div>
 
-          {/* Notes & Prior Performance */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Description & Performance */}
+          <div className="space-y-3">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Previous Performance</label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">
+                Previous Performance & Achievements
+              </label>
               <textarea
                 rows={2}
                 value={previousPerformance}
                 onChange={e => setPreviousPerformance(e.target.value)}
-                placeholder="e.g. MVP in 2025 Regional Cup..."
+                placeholder="Key highlights, previous club representations, awards..."
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-xs focus:outline-none focus:border-amber-500"
               />
             </div>
+
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Scouting Notes</label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Notes / Scout Evaluation</label>
               <textarea
                 rows={2}
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
-                placeholder="e.g. Powerplay hitter, accurate death bowling..."
+                placeholder="Tactical strengths, fitness, match-winner traits..."
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-xs focus:outline-none focus:border-amber-500"
               />
             </div>
           </div>
 
-          {/* Footer Actions */}
+          {/* Footer Submit Buttons */}
           <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition-colors"
+              className="px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all shadow flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center gap-1.5 cursor-pointer"
             >
               <Save className="w-4 h-4" />
-              Save Player
+              <span>{isExistingEdit ? 'Save Changes' : 'Register Player'}</span>
             </button>
           </div>
         </form>

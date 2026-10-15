@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Player, PlayerGrade, PlayerRole, BattingStyle, BowlingStyle, Team, AuctionTransaction, TournamentInfo, GradeBasePrices } from '../types/auction';
+import { Player, PlayerGrade, PlayerRole, BattingStyle, BowlingStyle, Team, AuctionTransaction, TournamentInfo, GradeBasePrices, PlayerStats } from '../types/auction';
 
 export interface ParsedPlayerRow {
   name: string;
@@ -31,9 +31,78 @@ export interface ParsedPlayerRow {
   stumpings: number;
   previousPerformance: string;
   notes: string;
+  isCaptain?: boolean;
+  isViceCaptain?: boolean;
+  sponsorTag?: string;
+  isSponsored?: boolean;
+  photo?: string;
+  auctionOrder?: number;
   errors: string[];
   warnings: string[];
   rawIndex: number;
+}
+
+/**
+ * Decides player grade based on cricket statistics and roles:
+ * - A+: Captain / Marquee Leader
+ * - A : Elite performer (or Vice-Captain)
+ * - B : Proven reliable performer
+ * - C : Regular / developing participant
+ */
+export function calculateRecommendedGrade(
+  stats: Partial<PlayerStats>,
+  role: PlayerRole,
+  isCaptain?: boolean,
+  isViceCaptain?: boolean
+): { grade: PlayerGrade; reason: string } {
+  if (isCaptain) {
+    return { grade: 'A+', reason: 'Designated Team Captain / Marquee Leader' };
+  }
+  if (isViceCaptain) {
+    return { grade: 'A', reason: 'Designated Team Vice-Captain' };
+  }
+
+  const runs = stats.runs || 0;
+  const avg = stats.average || 0;
+  const sr = stats.strikeRate || 0;
+  const wickets = stats.wickets || 0;
+  const bowlAvg = stats.bowlingAverage || 0;
+  const econ = stats.economyRate || 0;
+  const centuries = stats.hundreds || 0;
+  const halfCenturies = stats.fifties || 0;
+  const dismissals = (stats.catches || 0) + (stats.stumpings || 0);
+
+  if (role === 'Batsman') {
+    if (runs >= 1200 || avg >= 38 || (centuries >= 1 && runs >= 600) || halfCenturies >= 8) {
+      return { grade: 'A', reason: `Elite batsman (${runs} runs, avg ${avg.toFixed(1)}, ${centuries} 100s, ${halfCenturies} 50s)` };
+    }
+    if (runs >= 450 || avg >= 24 || halfCenturies >= 2 || sr >= 135) {
+      return { grade: 'B', reason: `Proven batsman (${runs} runs, avg ${avg.toFixed(1)}, SR ${sr})` };
+    }
+    return { grade: 'C', reason: `Developing batsman (${runs} runs)` };
+  }
+
+  if (role === 'Bowler') {
+    if (wickets >= 35 || (wickets >= 20 && bowlAvg > 0 && bowlAvg <= 18 && econ <= 6.5)) {
+      return { grade: 'A', reason: `Frontline strike bowler (${wickets} wkts, avg ${bowlAvg.toFixed(1)}, econ ${econ.toFixed(1)})` };
+    }
+    if (wickets >= 12 || (bowlAvg > 0 && bowlAvg <= 26 && econ <= 8.5)) {
+      return { grade: 'B', reason: `Reliable bowler (${wickets} wkts, econ ${econ.toFixed(1)})` };
+    }
+    return { grade: 'C', reason: `Developing bowler (${wickets} wkts)` };
+  }
+
+  if (role === 'Wicketkeeper') {
+    if ((dismissals >= 20 && runs >= 600) || runs >= 1000 || dismissals >= 30) {
+      return { grade: 'A', reason: `Elite wicketkeeper-batter (${dismissals} dismissals, ${runs} runs)` };
+    }
+    if (dismissals >= 8 || runs >= 350) {
+      return { grade: 'B', reason: `Primary keeper (${dismissals} dismissals, ${runs} runs)` };
+    }
+    return { grade: 'C', reason: `Reserve keeper (${dismissals} dismissals)` };
+  }
+
+  return { grade: 'C', reason: 'Regular player' };
 }
 
 /**
@@ -149,6 +218,7 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
   const rawRows: Record<string, unknown>[] = XLSX.utils.sheet_to_json(sheet, { defval: '' });
 
   const defaultGradePrices: GradeBasePrices = {
+    gradeAPlus: customGradePrices?.gradeAPlus ?? 7000,
     gradeA: customGradePrices?.gradeA ?? 5000,
     gradeB: customGradePrices?.gradeB ?? 3000,
     gradeC: customGradePrices?.gradeC ?? 1000,
@@ -278,12 +348,31 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
     } else if (rawRoleStr.includes('bowl')) {
       role = 'Bowler';
     } else if (rawRoleStr.includes('all') || rawRoleStr.includes('round')) {
-      role = 'All-rounder';
+      role = 'Batsman';
+      warnings.push(`Mapped All-rounder to Batsman (app strictly features 3 roles: Batsman, Bowler, Wicketkeeper).`);
     } else if (rawRoleStr.includes('bat')) {
       role = 'Batsman';
     } else {
       warnings.push(`Defaulted primary skill to Batsman (original: "${rawRoleStr}")`);
     }
+
+    // Captain & Vice Captain Detection
+    const captainVal = String(findVal(['captain', 'is captain', 'captaincy', 'team captain', 'role in team', 'designation', 'interested in captaincy']) || '').trim().toLowerCase();
+    const isCaptain = captainVal === 'yes' || captainVal === 'captain' || captainVal === 'c' || captainVal === 'true';
+    const isViceCaptain = !isCaptain && (captainVal === 'vice captain' || captainVal === 'vice-captain' || captainVal === 'vc');
+
+    // Sponsor Tag Detection
+    const sponsorVal = String(findVal(['sponsor', 'sponsortag', 'sponsor tag', 'sponsored', 'sponsorship']) || '').trim();
+    const isSponsored = !!sponsorVal && sponsorVal.toLowerCase() !== 'no' && sponsorVal.toLowerCase() !== 'none' && sponsorVal.toLowerCase() !== 'false';
+    const sponsorTag = isSponsored ? sponsorVal : undefined;
+
+    // Photo / Image URL Detection
+    const rawPhoto = String(findVal(['photo', 'photo url', 'photourl', 'image', 'image url', 'picture', 'pic', 'avatar', 'img']) || '').trim();
+    const photo = rawPhoto && (rawPhoto.startsWith('http') || rawPhoto.startsWith('data:') || rawPhoto.startsWith('/') || rawPhoto.includes('.')) ? rawPhoto : undefined;
+
+    // Auction Order Sequencing
+    const rawOrder = findVal(['auction order', 'auctionorder', 'order', 'lot', 'lot no', 'lot number', 'sequence', 'seq']);
+    const auctionOrder = typeof rawOrder === 'number' && !isNaN(rawOrder) ? rawOrder : typeof rawOrder === 'string' && !isNaN(Number(rawOrder)) && Number(rawOrder) > 0 ? Number(rawOrder) : undefined;
 
     // Fetch Description from Excel (e.g. 'Any Cricket Experience/Achievements', 'Description', 'Bio', etc.)
     const rawDesc = String(findVal([
@@ -311,29 +400,51 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
 
     const building = String(findVal(['building']) || '').trim();
     const flat = String(findVal(['flat number', 'flat', 'flat no']) || '').trim();
-    const captaincy = String(findVal(['interested in captaincy', 'captaincy']) || '').trim();
+    const captaincyCandidate = String(findVal(['interested in captaincy', 'captaincy']) || '').trim();
 
     let extraNotes = '';
     if (building || flat) extraNotes += `Flat: ${building}${flat ? '-' + flat : ''}`;
-    if (captaincy.toLowerCase() === 'yes') extraNotes += extraNotes ? ' | Captaincy Candidate' : 'Captaincy Candidate';
+    if (isCaptain) extraNotes += extraNotes ? ' | 👑 Team Captain' : '👑 Team Captain';
+    else if (isViceCaptain) extraNotes += extraNotes ? ' | ⭐ Vice Captain' : '⭐ Vice Captain';
+    else if (captaincyCandidate.toLowerCase() === 'yes') extraNotes += extraNotes ? ' | Captaincy Candidate' : 'Captaincy Candidate';
+    if (sponsorTag) extraNotes += extraNotes ? ` | 🏷️ Sponsor: ${sponsorTag}` : `🏷️ Sponsor: ${sponsorTag}`;
 
     const description = rawDesc;
     const notes = extraNotes ? (rawDesc ? `${extraNotes} • ${rawDesc}` : extraNotes) : rawDesc;
 
-    // Experience in years (numeric fallback for calculations)
+    // Experience in years
     const expNum = parseFloat(rawDesc.replace(/[^\d.]/g, ''));
     const rawExp = !isNaN(expNum) && expNum > 0 && expNum <= 30 ? Math.round(expNum) : Math.max(1, Math.min(15, Math.round(rawAge / 4)));
 
-    // Determine Grade via AI Analysis of description & experience, or explicit column if specified
+    // Parse Numerical Stats first so they can inform grade recommendation
+    const matches = Number(findVal(['matches', 'matches played', 'mat', 'match'])) || 0;
+    const runs = Number(findVal(['runs', 'total runs', 'run'])) || 0;
+    const average = Number(findVal(['average', 'batting average', 'avg', 'bat avg'])) || 0;
+    const strikeRate = Number(findVal(['strike rate', 'strikerate', 'sr'])) || (runs > 0 ? 125 : 0);
+    const highestScore = Number(findVal(['highest score', 'high score', 'hs', 'high'])) || 0;
+    const fifties = Number(findVal(['fifties', '50s', 'half centuries'])) || 0;
+    const hundreds = Number(findVal(['hundreds', '100s', 'centuries'])) || 0;
+
+    const wickets = Number(findVal(['wickets', 'wkts', 'wkt'])) || 0;
+    const bowlingAverage = Number(findVal(['bowling average', 'bowl avg', 'bowl average'])) || 0;
+    const economyRate = Number(findVal(['economy', 'economy rate', 'econ', 'er'])) || 0;
+    const bestBowling = String(findVal(['best bowling', 'best', 'bb']) || (wickets > 0 ? '3/25' : 'N/A'));
+    const catches = Number(findVal(['catches', 'ct'])) || 0;
+    const stumpings = Number(findVal(['stumpings', 'st'])) || 0;
+
+    // Determine Grade: A+, A, B, C or stats-based auto recommendation
     const rawGradeVal = findVal(['grade', 'player grade', 'tier', 'category']);
     let grade: PlayerGrade = 'C';
     let gradeReason: string = '';
 
     if (rawGradeVal !== undefined && String(rawGradeVal).trim()) {
       const rawGradeStr = String(rawGradeVal).trim().toUpperCase();
-      if (rawGradeStr.startsWith('A')) {
-        grade = 'A';
-        gradeReason = 'Specified in Excel spreadsheet';
+      if (rawGradeStr === 'A+' || rawGradeStr.includes('A+') || rawGradeStr.includes('APLUS')) {
+        grade = 'A+';
+        gradeReason = 'Specified Grade A+ in Excel';
+      } else if (rawGradeStr.startsWith('A')) {
+        grade = isCaptain ? 'A+' : 'A';
+        gradeReason = isCaptain ? 'Team Captain (Grade A+)' : 'Specified in Excel spreadsheet';
       } else if (rawGradeStr.startsWith('B')) {
         grade = 'B';
         gradeReason = 'Specified in Excel spreadsheet';
@@ -341,15 +452,17 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
         grade = 'C';
         gradeReason = 'Specified in Excel spreadsheet';
       } else {
-        const aiEvaluation = analyzePlayerGradeWithAI(description, rawExp, captaincy, rawAge);
-        grade = aiEvaluation.grade;
-        gradeReason = aiEvaluation.reason;
+        const statsObj = { matches, runs, average, strikeRate, highestScore, fifties, hundreds, wickets, bowlingAverage, economyRate, bestBowling, catches, stumpings };
+        const rec = calculateRecommendedGrade(statsObj, role, isCaptain, isViceCaptain);
+        grade = rec.grade;
+        gradeReason = rec.reason;
       }
     } else {
-      // Run AI evaluation on description and experience
-      const aiEvaluation = analyzePlayerGradeWithAI(description, rawExp, captaincy, rawAge);
-      grade = aiEvaluation.grade;
-      gradeReason = aiEvaluation.reason;
+      // Auto-evaluate grade from Stats and Captaincy
+      const statsObj = { matches, runs, average, strikeRate, highestScore, fifties, hundreds, wickets, bowlingAverage, economyRate, bestBowling, catches, stumpings };
+      const rec = calculateRecommendedGrade(statsObj, role, isCaptain, isViceCaptain);
+      grade = rec.grade;
+      gradeReason = rec.reason;
     }
 
     // Determine Batting Style
@@ -370,26 +483,17 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
     }
 
     // Numerical Stats (uses configured Grade Base Prices if not specified in excel)
-    const fallbackBasePrice = grade === 'A' ? defaultGradePrices.gradeA : grade === 'B' ? defaultGradePrices.gradeB : defaultGradePrices.gradeC;
+    const fallbackBasePrice = grade === 'A+' 
+      ? defaultGradePrices.gradeAPlus 
+      : grade === 'A' 
+      ? defaultGradePrices.gradeA 
+      : grade === 'B' 
+      ? defaultGradePrices.gradeB 
+      : defaultGradePrices.gradeC;
     const basePrice = Number(findVal(['base price', 'baseprice', 'price', 'base'])) || fallbackBasePrice;
     if (basePrice <= 0) {
       errors.push('Base price must be greater than 0.');
     }
-
-    const matches = Number(findVal(['matches', 'matches played', 'mat', 'match'])) || 0;
-    const runs = Number(findVal(['runs', 'total runs', 'run'])) || 0;
-    const average = Number(findVal(['average', 'batting average', 'avg', 'bat avg'])) || 0;
-    const strikeRate = Number(findVal(['strike rate', 'strikerate', 'sr'])) || (runs > 0 ? 125 : 0);
-    const highestScore = Number(findVal(['highest score', 'high score', 'hs', 'high'])) || 0;
-    const fifties = Number(findVal(['fifties', '50s', 'half centuries'])) || 0;
-    const hundreds = Number(findVal(['hundreds', '100s', 'centuries'])) || 0;
-
-    const wickets = Number(findVal(['wickets', 'wkts', 'wkt'])) || 0;
-    const bowlingAverage = Number(findVal(['bowling average', 'bowl avg', 'bowl average'])) || 0;
-    const economyRate = Number(findVal(['economy', 'economy rate', 'econ', 'er'])) || 0;
-    const bestBowling = String(findVal(['best bowling', 'best', 'bb']) || (wickets > 0 ? '3/25' : 'N/A'));
-    const catches = Number(findVal(['catches', 'ct'])) || 0;
-    const stumpings = Number(findVal(['stumpings', 'st'])) || 0;
 
     const previousPerformance = String(findVal(['previous performance', 'performance', 'history', 'past performance']) || '');
     const userNotes = String(findVal(['notes', 'comments', 'additional notes']) || '');
@@ -423,6 +527,12 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
       stumpings,
       previousPerformance: previousPerformance || description,
       notes: finalNotes,
+      isCaptain,
+      isViceCaptain,
+      sponsorTag,
+      isSponsored,
+      photo,
+      auctionOrder,
       errors,
       warnings,
       rawIndex: index,
@@ -433,12 +543,16 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
 export function generateSampleExcelTemplate(): void {
   const sampleData = [
     {
+      'Auction Order': 1,
       'Player Name': 'Aarav Patel',
       'Primary Skill': 'Batsman',
-      'Description': 'Captain in regional cup, aggressive powerplay opener',
+      'Role in Team': 'Captain',
+      'Grade': 'A+',
+      'Base Price': 7000,
+      'Sponsor': 'Red Bull',
+      'Photo URL': 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+      'Description': 'Franchise Captain, explosive top-order powerplay hitter',
       'Age': 26,
-      'Grade': 'A',
-      'Base Price': 5000,
       'Matches': 75,
       'Runs': 2850,
       'Average': 42.5,
@@ -455,12 +569,16 @@ export function generateSampleExcelTemplate(): void {
       'Notes': 'Flat: B-102',
     },
     {
+      'Auction Order': 2,
       'Player Name': 'Jasdeep Singh',
       'Primary Skill': 'Bowler',
-      'Description': 'Leading wicket taker in district trials, express pace',
+      'Role in Team': 'Vice Captain',
+      'Grade': 'A',
+      'Base Price': 5000,
+      'Sponsor': '',
+      'Photo URL': '',
+      'Description': 'Vice Captain, frontline strike pacer with deadly yorkers',
       'Age': 24,
-      'Grade': 'B',
-      'Base Price': 3000,
       'Matches': 48,
       'Runs': 110,
       'Average': 9.0,
@@ -477,34 +595,42 @@ export function generateSampleExcelTemplate(): void {
       'Notes': 'Flat: E-22',
     },
     {
+      'Auction Order': 3,
       'Player Name': 'Kunal Verma',
-      'Primary Skill': 'All-rounder',
-      'Description': 'Tournament MVP, middle overs spin & reliable middle-order bat',
+      'Primary Skill': 'Bowler',
+      'Role in Team': 'Player',
+      'Grade': 'B',
+      'Base Price': 3000,
+      'Sponsor': '',
+      'Photo URL': '',
+      'Description': 'Consistent leg-spinner and crafty variation specialist',
       'Age': 28,
-      'Grade': 'A',
-      'Base Price': 6000,
-      'Matches': 82,
-      'Runs': 1950,
-      'Average': 33.6,
-      'Strike Rate': 144.0,
-      'Highest Score': 79,
-      'Fifties': 11,
+      'Matches': 52,
+      'Runs': 350,
+      'Average': 18.0,
+      'Strike Rate': 120.0,
+      'Highest Score': 45,
+      'Fifties': 0,
       'Hundreds': 0,
-      'Wickets': 85,
-      'Bowling Average': 23.8,
-      'Economy': 6.9,
+      'Wickets': 48,
+      'Bowling Average': 24.2,
+      'Economy': 7.4,
       'Best Bowling': '4/20',
-      'Catches': 40,
+      'Catches': 20,
       'Stumpings': 0,
       'Notes': 'Flat: G-202',
     },
     {
+      'Auction Order': 4,
       'Player Name': 'Rohan Deshmukh',
       'Primary Skill': 'Wicketkeeper',
+      'Role in Team': 'Player',
+      'Grade': 'C',
+      'Base Price': 1000,
+      'Sponsor': '',
+      'Photo URL': '',
       'Description': 'Sharp reflexes behind stumps, quick glovework and finisher',
       'Age': 23,
-      'Grade': 'C',
-      'Base Price': 1500,
       'Matches': 30,
       'Runs': 640,
       'Average': 28.5,

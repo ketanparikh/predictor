@@ -35,9 +35,10 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
   const squadPlayers = allPlayers.filter(p => team.squad.includes(p.id));
   const batsmen = squadPlayers.filter(p => p.role === 'Batsman');
   const bowlers = squadPlayers.filter(p => p.role === 'Bowler');
-  const allRounders = squadPlayers.filter(p => p.role === 'All-rounder');
   const wicketkeepers = squadPlayers.filter(p => p.role === 'Wicketkeeper');
+  const sponsoredPlayer = squadPlayers.find(p => p.isSponsored || (p.sponsorTag && p.sponsorTag.trim()));
 
+  const gradeAPlusCount = squadPlayers.filter(p => p.grade === 'A+').length;
   const gradeACount = squadPlayers.filter(p => p.grade === 'A').length;
   const gradeBCount = squadPlayers.filter(p => p.grade === 'B').length;
   const gradeCCount = squadPlayers.filter(p => p.grade === 'C').length;
@@ -217,21 +218,24 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Squad Role Balance Bar (Cap 3 Batsmen/WK, 3 Bowlers, 3 All-rounders) */}
+          {/* Squad Balance & Roles */}
           <div className="p-3.5 rounded-xl bg-slate-950/40 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2 font-mono text-slate-400">
               <Users className="w-4 h-4 text-amber-400" />
-              <span>ROSTER CAP LIMITS (9 SLOTS):</span>
+              <span>SQUAD COMPOSITION:</span>
             </div>
-            <div className="flex items-center gap-4 font-mono font-bold">
-              <span className={(batsmen.length + wicketkeepers.length) >= 3 ? 'text-rose-400' : 'text-rose-300'}>
-                🏏 Batsmen/WK: {batsmen.length + wicketkeepers.length}/3
+            <div className="flex items-center gap-3 font-mono font-bold">
+              <span className="text-rose-300">
+                🏏 Batsmen: {batsmen.length}
               </span>
-              <span className={bowlers.length >= 3 ? 'text-indigo-400' : 'text-indigo-300'}>
-                🎯 Bowlers: {bowlers.length}/3
+              <span className="text-indigo-300">
+                🎯 Bowlers: {bowlers.length}
               </span>
-              <span className={allRounders.length >= 3 ? 'text-purple-400' : 'text-purple-300'}>
-                ⚡ All-Rounders: {allRounders.length}/3
+              <span className="text-amber-300">
+                🧤 WKs: {wicketkeepers.length}
+              </span>
+              <span className={sponsoredPlayer ? 'text-emerald-400' : 'text-slate-500'}>
+                🏷️ Sponsor: {sponsoredPlayer ? (sponsoredPlayer.sponsorTag || 'Sponsored') : 'None (Max 1)'}
               </span>
             </div>
           </div>
@@ -273,10 +277,25 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
                     {squadPlayers.map(p => (
                       <tr key={p.id} className="hover:bg-slate-800/50">
                         <td className="p-3 font-semibold text-white flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-300">
-                            {p.name.slice(0, 1)}
+                          <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 overflow-hidden">
+                            {p.photo ? (
+                              <img src={p.photo} alt={p.name} className="w-full h-full object-cover" />
+                            ) : (
+                              p.name.slice(0, 1)
+                            )}
                           </div>
-                          <span>{p.name}</span>
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span>{p.name}</span>
+                              {p.isCaptain && <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">👑 Captain</span>}
+                              {p.isViceCaptain && <span className="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono font-bold">⭐ VC</span>}
+                              {(p.isSponsored || p.sponsorTag) && (
+                                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono">
+                                  🏷️ {p.sponsorTag || 'Sponsored'}
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </td>
                         <td className="p-3"><RoleBadge role={p.role} size="sm" /></td>
                         <td className="p-3"><GradeBadge grade={p.grade} size="sm" /></td>

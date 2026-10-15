@@ -333,8 +333,8 @@ export const SettingsPage: React.FC = () => {
               <div className="relative">
                 <input
                   type="number"
-                  min="100"
-                  step="500"
+                  min="0"
+                  step="100"
                   value={gradeAPlusBasePrice}
                   onChange={e => setGradeAPlusBasePrice(Number(e.target.value))}
                   className="w-full px-3 py-2 bg-slate-900 border border-purple-500/40 rounded-lg text-purple-300 font-bold text-sm focus:outline-none focus:border-purple-400"
@@ -356,8 +356,8 @@ export const SettingsPage: React.FC = () => {
               <div className="relative">
                 <input
                   type="number"
-                  min="100"
-                  step="500"
+                  min="0"
+                  step="100"
                   value={gradeABasePrice}
                   onChange={e => setGradeABasePrice(Number(e.target.value))}
                   className="w-full px-3 py-2 bg-slate-900 border border-amber-500/40 rounded-lg text-amber-400 font-bold text-sm focus:outline-none focus:border-amber-400"
@@ -379,8 +379,8 @@ export const SettingsPage: React.FC = () => {
               <div className="relative">
                 <input
                   type="number"
-                  min="100"
-                  step="500"
+                  min="0"
+                  step="100"
                   value={gradeBBasePrice}
                   onChange={e => setGradeBBasePrice(Number(e.target.value))}
                   className="w-full px-3 py-2 bg-slate-900 border border-blue-500/40 rounded-lg text-blue-400 font-bold text-sm focus:outline-none focus:border-blue-400"
@@ -402,8 +402,8 @@ export const SettingsPage: React.FC = () => {
               <div className="relative">
                 <input
                   type="number"
-                  min="100"
-                  step="500"
+                  min="0"
+                  step="100"
                   value={gradeCBasePrice}
                   onChange={e => setGradeCBasePrice(Number(e.target.value))}
                   className="w-full px-3 py-2 bg-slate-900 border border-emerald-500/40 rounded-lg text-emerald-400 font-bold text-sm focus:outline-none focus:border-emerald-400"

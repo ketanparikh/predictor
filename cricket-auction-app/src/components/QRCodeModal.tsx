@@ -22,14 +22,19 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
 
   // Dynamic live Cloudflare tunnel URL (auto-detects current domain or queries /api/tunnel-url)
   const [worldwideUrl, setWorldwideUrl] = useState<string>(() => {
-    if (typeof window !== 'undefined' && window.location.hostname.includes('trycloudflare.com')) {
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('trycloudflare.com') || window.location.hostname.includes('.loca.lt') || window.location.hostname.includes('.ngrok'))) {
       return window.location.origin;
     }
-    return 'https://health-massive-mechanism-speed.trycloudflare.com';
+    return '';
   });
 
-  // Mode: 'worldwide' | 'wifi' | 'localhost'
-  const [connectionMode, setConnectionMode] = useState<'worldwide' | 'wifi' | 'localhost'>('worldwide');
+  // Default connection mode: Default to 'wifi' for instant local network / hotspot scanning
+  const [connectionMode, setConnectionMode] = useState<'worldwide' | 'wifi' | 'localhost'>(() => {
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('trycloudflare.com') || window.location.hostname.includes('.loca.lt') || window.location.hostname.includes('.ngrok'))) {
+      return 'worldwide';
+    }
+    return 'wifi';
+  });
 
   const [customHost, setCustomHost] = useState(() => {
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !window.location.hostname.includes('trycloudflare.com')) {
@@ -37,7 +42,12 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
     }
     return '192.168.29.153';
   });
-  const [customPort, setCustomPort] = useState('5173');
+  const [customPort, setCustomPort] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.port) {
+      return window.location.port;
+    }
+    return '5173';
+  });
 
   // Auto-fetch latest active tunnel from server
   const fetchActiveTunnel = useCallback(() => {
@@ -67,11 +77,13 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
   }, [isOpen, fetchActiveTunnel]);
 
   // Compute active base URL based on mode
-  let activeOrigin = worldwideUrl;
+  let activeOrigin = `http://${customHost}:${customPort}`;
   if (connectionMode === 'wifi') {
     activeOrigin = `http://${customHost}:${customPort}`;
   } else if (connectionMode === 'localhost') {
     activeOrigin = `http://localhost:${customPort}`;
+  } else if (connectionMode === 'worldwide') {
+    activeOrigin = worldwideUrl || `http://${customHost}:${customPort}`;
   }
 
   const spectatorUrl = `${activeOrigin}/#spectator`;
@@ -157,19 +169,6 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
               <div className="inline-flex rounded-xl bg-slate-900 p-1 border border-slate-800 text-[11px] font-mono">
                 <button
                   type="button"
-                  onClick={() => setConnectionMode('worldwide')}
-                  className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                    connectionMode === 'worldwide'
-                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold shadow'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Globe className="w-3.5 h-3.5" />
-                  <span>Worldwide (No Wi-Fi)</span>
-                </button>
-
-                <button
-                  type="button"
                   onClick={() => setConnectionMode('wifi')}
                   className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
                     connectionMode === 'wifi'
@@ -178,7 +177,20 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
                   }`}
                 >
                   <Wifi className="w-3.5 h-3.5" />
-                  <span>Same Wi-Fi</span>
+                  <span>Same Wi-Fi / Hotspot</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setConnectionMode('worldwide')}
+                  className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                    connectionMode === 'worldwide'
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold shadow'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Internet / Tunnel</span>
                 </button>
 
                 <button
@@ -204,7 +216,7 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
                       type="text"
                       value={worldwideUrl}
                       onChange={e => setWorldwideUrl(e.target.value.trim())}
-                      placeholder="https://xxx.trycloudflare.com"
+                      placeholder="https://xxx.trycloudflare.com or public URL"
                       className="w-full pl-8 pr-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
@@ -219,7 +231,7 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
                   </button>
                 </div>
                 <p className="text-[11px] text-slate-400">
-                  Anyone in the world on mobile data (4G/5G) or remote networks can scan or open this link to watch live.
+                  Allows anyone around the world on mobile data (4G/5G) or outside the hall to view the live auction.
                 </p>
               </div>
             )}
@@ -245,9 +257,11 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
                     className="w-20 px-2 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-mono text-slate-300 text-center focus:outline-none focus:border-emerald-500"
                   />
                 </div>
-                <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                  <span className="text-emerald-400 font-bold">✓</span>
-                  <span>Phones must be connected to the same Wi-Fi router.</span>
+                <div className="text-[11px] text-slate-400 flex items-start gap-1.5 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                  <span className="text-emerald-400 font-bold mt-0.5">✓</span>
+                  <span>
+                    Ensure mobile phone is connected to the <strong className="text-emerald-300">same Wi-Fi router</strong> or your laptop's <strong className="text-emerald-300">Mobile Hotspot</strong>. Anyone in the hall can scan and follow live bids instantly!
+                  </span>
                 </div>
               </div>
             )}

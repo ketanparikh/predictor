@@ -1,0 +1,970 @@
+{
+  "tournamentId": 870046,
+  "name": "JCPL Kids",
+  "city": "Pune",
+  "fromDate": "2024-01-12",
+  "toDate": "2024-01-14",
+  "ground": "Trooferz, PAN Card Club Road",
+  "overall": {
+    "Matches": "3",
+    "Innings": "6",
+    "Runs": "280",
+    "Wickets": "12",
+    "Balls": "213",
+    "Extras": "37",
+    "Fours": "17",
+    "Sixes": "16",
+    "50's": "0",
+    "100's": "0",
+    "50+ Partnership": "2",
+    "100+ Partnership": "0",
+    "Maidens": "0",
+    "Dot balls": "109",
+    "Catches": "4",
+    "Stumpings": "0",
+    "BDRY%": "58.57",
+    "BDRY Freq.": "6.45",
+    "DB Freq.": "1.95",
+    "DB%": "51.17"
+  },
+  "teams": [
+    {
+      "teamId": 5893628,
+      "name": "Jade Thunderz",
+      "logo": "https://media.cricheroes.in/default/teamintital/JT.png",
+      "captainId": 26539385
+    },
+    {
+      "teamId": 5893561,
+      "name": "Jade Warriors",
+      "logo": "https://media.cricheroes.in/default/teamintital/JW.png",
+      "captainId": 26539078
+    }
+  ],
+  "matches": [
+    {
+      "matchId": 9301291,
+      "date": "2024-01-13T06:14:42.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Rd",
+      "teamA": "Jade Warriors",
+      "teamAScore": "69/1",
+      "teamB": "Jade Thunderz",
+      "teamBScore": "43/3",
+      "winner": "Jade Warriors",
+      "winBy": "26 runs",
+      "result": "Jade Warriors won by 26 runs",
+      "playerOfTheMatch": {
+        "playerId": 26539273,
+        "name": "Ridhaan",
+        "team": "Jade Warriors"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26539273,
+        "name": "Ridhaan",
+        "team": "Jade Warriors"
+      },
+      "bestBowler": {
+        "playerId": 26539413,
+        "name": "Krushhna Jade",
+        "team": "Jade Thunderz"
+      }
+    },
+    {
+      "matchId": 9341395,
+      "date": "2024-01-14T12:11:55.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Thunderz",
+      "teamAScore": "33/2",
+      "teamB": "Jade Warriors",
+      "teamBScore": "34/1",
+      "winner": "Jade Warriors",
+      "winBy": "5 wickets",
+      "result": "Jade Warriors won by 5 wickets",
+      "playerOfTheMatch": {
+        "playerId": 26539273,
+        "name": "Ridhaan",
+        "team": "Jade Warriors"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26542500,
+        "name": "Malhar Dehadrai",
+        "team": "Jade Warriors"
+      },
+      "bestBowler": {
+        "playerId": 26539273,
+        "name": "Ridhaan",
+        "team": "Jade Warriors"
+      }
+    },
+    {
+      "matchId": 9341386,
+      "date": "2024-01-14T14:45:09.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Thunderz",
+      "teamAScore": "66/1",
+      "teamB": "Jade Warriors",
+      "teamBScore": "35/4",
+      "winner": "Jade Thunderz",
+      "winBy": "31 runs",
+      "result": "Jade Thunderz won by 31 runs",
+      "playerOfTheMatch": {
+        "playerId": 26539385,
+        "name": "Siddhesh  (c)",
+        "team": "Jade Thunderz"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26539385,
+        "name": "Siddhesh  (c)",
+        "team": "Jade Thunderz"
+      },
+      "bestBowler": {
+        "playerId": 26539385,
+        "name": "Siddhesh  (c)",
+        "team": "Jade Thunderz"
+      }
+    }
+  ],
+  "players": [
+    {
+      "playerId": 26539704,
+      "name": "Aarjav Bora",
+      "team": "Jade Thunderz",
+      "matches": 3,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 26,
+        "best": "",
+        "economy": 26.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26543017,
+      "name": "Arjun Ganesh",
+      "team": "Jade Warriors",
+      "matches": 3,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 2,
+        "best": "1/2",
+        "economy": null,
+        "avg": 2.0,
+        "sr": 0.0,
+        "dots": 1,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26541693,
+      "name": "Arjun Pathak",
+      "team": "Jade Warriors",
+      "matches": 3,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 1,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 45,
+        "best": "",
+        "economy": 15.0,
+        "avg": null,
+        "sr": null,
+        "dots": 6,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 17178654,
+      "name": "krishnendu ashwin",
+      "team": "Jade Thunderz",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 26,
+        "balls": 26,
+        "highScore": "16",
+        "avg": 13.0,
+        "sr": 100.0,
+        "fours": 3,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 10,
+        "best": "1/2",
+        "economy": 3.33,
+        "avg": 3.33,
+        "sr": 6.0,
+        "dots": 14,
+        "wides": 0,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539413,
+      "name": "Krushhna Jade",
+      "team": "Jade Thunderz",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 2,
+        "balls": 9,
+        "highScore": "1",
+        "avg": 1.0,
+        "sr": 22.22,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 17,
+        "best": "",
+        "economy": 5.67,
+        "avg": null,
+        "sr": null,
+        "dots": 8,
+        "wides": 5,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26541271,
+      "name": "Kunj Somani",
+      "team": "Jade Warriors",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 6,
+        "balls": 8,
+        "highScore": "5*",
+        "avg": 6.0,
+        "sr": 75.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 14,
+        "best": "1/7",
+        "economy": 4.67,
+        "avg": 14.0,
+        "sr": 18.0,
+        "dots": 9,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26542500,
+      "name": "Malhar Dehadrai",
+      "team": "Jade Warriors",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 40,
+        "balls": 36,
+        "highScore": "22",
+        "avg": 13.33,
+        "sr": 111.11,
+        "fours": 4,
+        "sixes": 3,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 14,
+        "best": "",
+        "economy": 4.67,
+        "avg": null,
+        "sr": null,
+        "dots": 10,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26540768,
+      "name": "Reyansh",
+      "team": "Jade Thunderz",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 1,
+        "balls": 4,
+        "highScore": "1*",
+        "avg": 1.0,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 14,
+        "best": "",
+        "economy": 7.0,
+        "avg": null,
+        "sr": null,
+        "dots": 6,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539273,
+      "name": "Ridhaan",
+      "team": "Jade Warriors",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 40,
+        "balls": 22,
+        "highScore": "40*",
+        "avg": 40.0,
+        "sr": 181.82,
+        "fours": 1,
+        "sixes": 5,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 10,
+        "best": "1/3",
+        "economy": 5.0,
+        "avg": 10.0,
+        "sr": 12.0,
+        "dots": 8,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26649925,
+      "name": "Rihaan Hegde",
+      "team": "Jade Warriors",
+      "matches": 1,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 1,
+        "balls": 2,
+        "highScore": "1*",
+        "avg": null,
+        "sr": 50.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 19,
+        "best": "",
+        "economy": 19.0,
+        "avg": null,
+        "sr": null,
+        "dots": 1,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 17245443,
+      "name": "Sharvin",
+      "team": "Jade Thunderz",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 20,
+        "balls": 17,
+        "highScore": "15",
+        "avg": 10.0,
+        "sr": 117.65,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 28,
+        "best": "",
+        "economy": 14.0,
+        "avg": null,
+        "sr": null,
+        "dots": 5,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539078,
+      "name": "Shreeyansh  (c)",
+      "team": "Jade Warriors",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 25,
+        "balls": 30,
+        "highScore": "20*",
+        "avg": 12.5,
+        "sr": 83.33,
+        "fours": 2,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 14,
+        "best": "1/2",
+        "economy": 4.67,
+        "avg": 14.0,
+        "sr": 18.0,
+        "dots": 11,
+        "wides": 2,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539385,
+      "name": "Siddhesh  (c)",
+      "team": "Jade Thunderz",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 49,
+        "balls": 40,
+        "highScore": "35",
+        "avg": 24.5,
+        "sr": 122.5,
+        "fours": 3,
+        "sixes": 4,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 14,
+        "best": "1/1",
+        "economy": 4.67,
+        "avg": 14.0,
+        "sr": 18.0,
+        "dots": 12,
+        "wides": 1,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539472,
+      "name": "Tejwardhan",
+      "team": "Jade Thunderz",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 8,
+        "balls": 8,
+        "highScore": "6*",
+        "avg": 8.0,
+        "sr": 100.0,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 21,
+        "best": "1/2",
+        "economy": 10.5,
+        "avg": 21.0,
+        "sr": 12.0,
+        "dots": 5,
+        "wides": 1,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539317,
+      "name": "Vihaan P",
+      "team": "Jade Warriors",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 6,
+        "balls": 14,
+        "highScore": "4*",
+        "avg": null,
+        "sr": 42.86,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 24,
+        "best": "",
+        "economy": 12.0,
+        "avg": null,
+        "sr": null,
+        "dots": 6,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26543418,
+      "name": "Vihaan Soni",
+      "team": "Jade Thunderz",
+      "matches": 3,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 19,
+        "balls": 7,
+        "highScore": "19*",
+        "avg": null,
+        "sr": 271.43,
+        "fours": 3,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 8,
+        "best": "",
+        "economy": 8.0,
+        "avg": null,
+        "sr": null,
+        "dots": 5,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    }
+  ],
+  "mvp": [
+    {
+      "playerId": 26539385,
+      "name": "Siddhesh  (c)",
+      "team": "Jade Thunderz",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 1,
+      "mvpRank": 1,
+      "mvpTotal": 7.77,
+      "mvpBatting": 4.917,
+      "mvpBowling": 1.893,
+      "mvpFielding": 0.96,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 17178654,
+      "name": "krishnendu ashwin",
+      "team": "Jade Thunderz",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 2,
+      "mvpTotal": 6.939,
+      "mvpBatting": 2.638,
+      "mvpBowling": 4.301,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26539273,
+      "name": "Ridhaan",
+      "team": "Jade Warriors",
+      "playerOfTheMatch": 2,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 1,
+      "mvpRank": 3,
+      "mvpTotal": 6.163,
+      "mvpBatting": 4.014,
+      "mvpBowling": 1.429,
+      "mvpFielding": 0.72,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26539078,
+      "name": "Shreeyansh  (c)",
+      "team": "Jade Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 4,
+      "mvpTotal": 4.895,
+      "mvpBatting": 2.5,
+      "mvpBowling": 1.795,
+      "mvpFielding": 0.6,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26542500,
+      "name": "Malhar Dehadrai",
+      "team": "Jade Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 5,
+      "mvpTotal": 4.432,
+      "mvpBatting": 4.084,
+      "mvpBowling": 0.348,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26541271,
+      "name": "Kunj Somani",
+      "team": "Jade Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 6,
+      "mvpTotal": 3.005,
+      "mvpBatting": 0.6,
+      "mvpBowling": 1.685,
+      "mvpFielding": 0.72,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26543418,
+      "name": "Vihaan Soni",
+      "team": "Jade Thunderz",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 7,
+      "mvpTotal": 2.379,
+      "mvpBatting": 2.093,
+      "mvpBowling": 0.046,
+      "mvpFielding": 0.24,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 17245443,
+      "name": "Sharvin",
+      "team": "Jade Thunderz",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 8,
+      "mvpTotal": 2.295,
+      "mvpBatting": 2.125,
+      "mvpBowling": -0.07,
+      "mvpFielding": 0.24,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26539472,
+      "name": "Tejwardhan",
+      "team": "Jade Thunderz",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 9,
+      "mvpTotal": 1.977,
+      "mvpBatting": 0.832,
+      "mvpBowling": 1.145,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26543017,
+      "name": "Arjun Ganesh",
+      "team": "Jade Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 10,
+      "mvpTotal": 1.152,
+      "mvpBatting": 0.0,
+      "mvpBowling": 1.152,
+      "mvpFielding": 0.0,
+      "mvpMatches": 1
+    },
+    {
+      "playerId": 26539317,
+      "name": "Vihaan P",
+      "team": "Jade Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 11,
+      "mvpTotal": 0.591,
+      "mvpBatting": 0.6,
+      "mvpBowling": -0.009,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26541693,
+      "name": "Arjun Pathak",
+      "team": "Jade Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 12,
+      "mvpTotal": 0.47,
+      "mvpBatting": 0.0,
+      "mvpBowling": -0.13,
+      "mvpFielding": 0.6,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26539413,
+      "name": "Krushhna Jade",
+      "team": "Jade Thunderz",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 13,
+      "mvpTotal": 0.377,
+      "mvpBatting": 0.2,
+      "mvpBowling": 0.177,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26540768,
+      "name": "Reyansh",
+      "team": "Jade Thunderz",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 14,
+      "mvpTotal": 0.191,
+      "mvpBatting": 0.1,
+      "mvpBowling": 0.091,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26649925,
+      "name": "Rihaan Hegde",
+      "team": "Jade Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 15,
+      "mvpTotal": 0.054,
+      "mvpBatting": 0.1,
+      "mvpBowling": -0.046,
+      "mvpFielding": 0.0,
+      "mvpMatches": 1
+    },
+    {
+      "playerId": 26539704,
+      "name": "Aarjav Bora",
+      "team": "Jade Thunderz",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 16,
+      "mvpTotal": -0.035,
+      "mvpBatting": 0.0,
+      "mvpBowling": -0.035,
+      "mvpFielding": 0.0,
+      "mvpMatches": 1
+    }
+  ],
+  "awards": []
+}

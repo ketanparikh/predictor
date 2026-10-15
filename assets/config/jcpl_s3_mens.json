@@ -1,0 +1,6207 @@
+{
+  "tournamentId": 1786023,
+  "name": "JCPL 2026 Men",
+  "city": "Pune",
+  "fromDate": "2026-01-08",
+  "toDate": "2026-01-18",
+  "ground": "Trooferz, PAN Card Club Road",
+  "overall": {
+    "Matches": "33",
+    "Innings": "66",
+    "Runs": "3656",
+    "Wickets": "284",
+    "Balls": "2865",
+    "Extras": "371",
+    "Fours": "112",
+    "Sixes": "288",
+    "50's": "3",
+    "100's": "0",
+    "50+ Partnership": "10",
+    "100+ Partnership": "1",
+    "Maidens": "8",
+    "Dot balls": "1383",
+    "Catches": "82",
+    "Stumpings": "12",
+    "BDRY%": "59.52",
+    "BDRY Freq.": "7.16",
+    "DB Freq.": "2.07",
+    "DB%": "48.27"
+  },
+  "teams": [
+    {
+      "teamId": 11947539,
+      "name": "Dalnex Dominators",
+      "logo": "https://media.cricheroes.in/default/teamintital/DD.png",
+      "captainId": 19488839
+    },
+    {
+      "teamId": 11947542,
+      "name": "Fiery Sun Warriors",
+      "logo": "https://media.cricheroes.in/default/teamintital/FS.png",
+      "captainId": 26535639
+    },
+    {
+      "teamId": 11947590,
+      "name": "Inergy Strikers",
+      "logo": "https://media.cricheroes.in/default/teamintital/IS.png",
+      "captainId": 16751496
+    },
+    {
+      "teamId": 11946496,
+      "name": "Jade 4 Lions",
+      "logo": "https://media.cricheroes.in/default/teamintital/J.png",
+      "captainId": 26538317
+    },
+    {
+      "teamId": 11947557,
+      "name": "Mango Yorkers",
+      "logo": "https://media.cricheroes.in/default/teamintital/MY.png",
+      "captainId": 18842243
+    },
+    {
+      "teamId": 11946431,
+      "name": "Pictonions",
+      "logo": "https://media.cricheroes.in/default/teamintital/PI.png",
+      "captainId": 26536759
+    },
+    {
+      "teamId": 11947544,
+      "name": "SBCC Titans",
+      "logo": "https://media.cricheroes.in/default/teamintital/ST.png",
+      "captainId": 4747261
+    },
+    {
+      "teamId": 11947567,
+      "name": "Team Housewise",
+      "logo": "https://media.cricheroes.in/default/teamintital/TH.png",
+      "captainId": 2543231
+    },
+    {
+      "teamId": 11951952,
+      "name": "Team Mentomap",
+      "logo": "https://media.cricheroes.in/default/teamintital/TM.png",
+      "captainId": 9999504
+    },
+    {
+      "teamId": 11947584,
+      "name": "Team Powerpoint",
+      "logo": "https://media.cricheroes.in/default/teamintital/TP.png",
+      "captainId": 34779447
+    },
+    {
+      "teamId": 11947534,
+      "name": "Triphobo Trail Blazers",
+      "logo": "https://media.cricheroes.in/default/teamintital/TT.png",
+      "captainId": 26537557
+    },
+    {
+      "teamId": 11947524,
+      "name": "Yogic Dhurandars",
+      "logo": "https://media.cricheroes.in/default/teamintital/YD.png",
+      "captainId": 26535523
+    }
+  ],
+  "matches": [
+    {
+      "matchId": 21450730,
+      "date": "2026-01-10T02:12:57.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Triphobo Trail Blazers",
+      "teamAScore": "46/7",
+      "teamB": "Yogic Dhurandars",
+      "teamBScore": "50/5",
+      "winner": "Yogic Dhurandars",
+      "winBy": "2 wickets",
+      "result": "Yogic Dhurandars won by 2 wickets",
+      "playerOfTheMatch": {
+        "playerId": 26535523,
+        "name": "Kiran Jagtap  (c)",
+        "team": "Yogic Dhurandars"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 16908817,
+        "name": "Suraj Desai",
+        "team": "Yogic Dhurandars"
+      },
+      "bestBowler": {
+        "playerId": 24419687,
+        "name": "Anu Poduval",
+        "team": "Triphobo Trail Blazers"
+      }
+    },
+    {
+      "matchId": 21450791,
+      "date": "2026-01-10T03:18:14.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Dalnex Dominators",
+      "teamAScore": "51/5",
+      "teamB": "Fiery Sun Warriors",
+      "teamBScore": "45/7",
+      "winner": "Dalnex Dominators",
+      "winBy": "6 runs",
+      "result": "Dalnex Dominators won by 6 runs",
+      "playerOfTheMatch": {
+        "playerId": 34755560,
+        "name": "Vivek Vichare",
+        "team": "Dalnex Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 8016271,
+        "name": "Rajdeep C.  (wk)",
+        "team": "Fiery Sun Warriors"
+      },
+      "bestBowler": {
+        "playerId": 2532316,
+        "name": "Aayush Asawa",
+        "team": "Fiery Sun Warriors"
+      }
+    },
+    {
+      "matchId": 21451983,
+      "date": "2026-01-10T04:22:14.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Housewise",
+      "teamAScore": "87/2",
+      "teamB": "Mango Yorkers",
+      "teamBScore": "40/7",
+      "winner": "Team Housewise",
+      "winBy": "47 runs",
+      "result": "Team Housewise won by 47 runs",
+      "playerOfTheMatch": {
+        "playerId": 2543231,
+        "name": "Amol Pawar  (c)",
+        "team": "Team Housewise"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 2543231,
+        "name": "Amol Pawar  (c)",
+        "team": "Team Housewise"
+      },
+      "bestBowler": {
+        "playerId": 22769462,
+        "name": "chetan Sharma",
+        "team": "Team Housewise"
+      }
+    },
+    {
+      "matchId": 21450897,
+      "date": "2026-01-10T05:25:21.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Powerpoint",
+      "teamAScore": "61/4",
+      "teamB": "Pictonions",
+      "teamBScore": "48/5",
+      "winner": "Team Powerpoint",
+      "winBy": "13 runs",
+      "result": "Team Powerpoint won by 13 runs",
+      "playerOfTheMatch": {
+        "playerId": 45992913,
+        "name": "Sunny Jaisinghani",
+        "team": "Team Powerpoint"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 34862603,
+        "name": "Bhushan Patkar",
+        "team": "Pictonions"
+      },
+      "bestBowler": {
+        "playerId": 26537089,
+        "name": "Sudeep Somani",
+        "team": "Pictonions"
+      }
+    },
+    {
+      "matchId": 21450992,
+      "date": "2026-01-10T11:10:26.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Triphobo Trail Blazers",
+      "teamAScore": "66/3",
+      "teamB": "Fiery Sun Warriors",
+      "teamBScore": "53/4",
+      "winner": "Triphobo Trail Blazers",
+      "winBy": "13 runs",
+      "result": "Triphobo Trail Blazers won by 13 runs",
+      "playerOfTheMatch": {
+        "playerId": 46000207,
+        "name": "Sourabh Gupta",
+        "team": "Triphobo Trail Blazers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46000207,
+        "name": "Sourabh Gupta",
+        "team": "Triphobo Trail Blazers"
+      },
+      "bestBowler": {
+        "playerId": 45999127,
+        "name": "Kaustubh Moharil",
+        "team": "Triphobo Trail Blazers"
+      }
+    },
+    {
+      "matchId": 21451030,
+      "date": "2026-01-10T12:12:14.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Dalnex Dominators",
+      "teamAScore": "75/4",
+      "teamB": "Yogic Dhurandars",
+      "teamBScore": "55/5",
+      "winner": "Dalnex Dominators",
+      "winBy": "20 runs",
+      "result": "Dalnex Dominators won by 20 runs",
+      "playerOfTheMatch": {
+        "playerId": 46025564,
+        "name": "Gaurav Kad",
+        "team": "Dalnex Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 19488839,
+        "name": "Dhruv Jhalani  (c)",
+        "team": "Dalnex Dominators"
+      },
+      "bestBowler": {
+        "playerId": 4314892,
+        "name": "Vikas Goyal",
+        "team": "Yogic Dhurandars"
+      }
+    },
+    {
+      "matchId": 21451061,
+      "date": "2026-01-10T13:13:59.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade 4 Lions",
+      "teamAScore": "78/5",
+      "teamB": "Inergy Strikers",
+      "teamBScore": "79/4",
+      "winner": "Inergy Strikers",
+      "winBy": "3 wickets",
+      "result": "Inergy Strikers won by 3 wickets",
+      "playerOfTheMatch": {
+        "playerId": 46073102,
+        "name": "Abhishek Shikarwar",
+        "team": "Inergy Strikers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46073102,
+        "name": "Abhishek Shikarwar",
+        "team": "Inergy Strikers"
+      },
+      "bestBowler": {
+        "playerId": 36380945,
+        "name": "SULTAAN",
+        "team": "Jade 4 Lions"
+      }
+    },
+    {
+      "matchId": 21452073,
+      "date": "2026-01-10T14:19:24.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Powerpoint",
+      "teamAScore": "84/3",
+      "teamB": "Mango Yorkers",
+      "teamBScore": "48/4",
+      "winner": "Team Powerpoint",
+      "winBy": "36 runs",
+      "result": "Team Powerpoint won by 36 runs",
+      "playerOfTheMatch": {
+        "playerId": 45992913,
+        "name": "Sunny Jaisinghani",
+        "team": "Team Powerpoint"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 45992913,
+        "name": "Sunny Jaisinghani",
+        "team": "Team Powerpoint"
+      },
+      "bestBowler": {
+        "playerId": 15917,
+        "name": "Manish Singh",
+        "team": "Team Powerpoint"
+      }
+    },
+    {
+      "matchId": 21451170,
+      "date": "2026-01-10T15:18:02.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Housewise",
+      "teamAScore": "102/1",
+      "teamB": "Pictonions",
+      "teamBScore": "73/6",
+      "winner": "Team Housewise",
+      "winBy": "29 runs",
+      "result": "Team Housewise won by 29 runs",
+      "playerOfTheMatch": {
+        "playerId": 2543231,
+        "name": "Amol Pawar  (c)",
+        "team": "Team Housewise"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 2543231,
+        "name": "Amol Pawar  (c)",
+        "team": "Team Housewise"
+      },
+      "bestBowler": {
+        "playerId": 34862604,
+        "name": "Pankaj Guglani",
+        "team": "Team Housewise"
+      }
+    },
+    {
+      "matchId": 21451189,
+      "date": "2026-01-10T16:28:19.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "SBCC Titans",
+      "teamAScore": "80/4",
+      "teamB": "Team Mentomap",
+      "teamBScore": "52/7",
+      "winner": "SBCC Titans",
+      "winBy": "28 runs",
+      "result": "SBCC Titans won by 28 runs",
+      "playerOfTheMatch": {
+        "playerId": 34780077,
+        "name": "Nikhil Owalekar",
+        "team": "SBCC Titans"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 34780077,
+        "name": "Nikhil Owalekar",
+        "team": "SBCC Titans"
+      },
+      "bestBowler": {
+        "playerId": 26537228,
+        "name": "Ved Prakash",
+        "team": "SBCC Titans"
+      }
+    },
+    {
+      "matchId": 21451319,
+      "date": "2026-01-11T02:09:14.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Powerpoint",
+      "teamAScore": "86/4",
+      "teamB": "Inergy Strikers",
+      "teamBScore": "48/7",
+      "winner": "Team Powerpoint",
+      "winBy": "38 runs",
+      "result": "Team Powerpoint won by 38 runs",
+      "playerOfTheMatch": {
+        "playerId": 34621053,
+        "name": "Dipal Panchal",
+        "team": "Team Powerpoint"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26537554,
+        "name": "Aarav  (wk)",
+        "team": "Team Powerpoint"
+      },
+      "bestBowler": {
+        "playerId": 46073107,
+        "name": "Swapnil",
+        "team": "Inergy Strikers"
+      }
+    },
+    {
+      "matchId": 21451935,
+      "date": "2026-01-11T03:15:42.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade 4 Lions",
+      "teamAScore": "76/6",
+      "teamB": "Mango Yorkers",
+      "teamBScore": "57/5",
+      "winner": "Jade 4 Lions",
+      "winBy": "19 runs",
+      "result": "Jade 4 Lions won by 19 runs",
+      "playerOfTheMatch": {
+        "playerId": 26538317,
+        "name": "Avi  (c)",
+        "team": "Jade 4 Lions"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26538317,
+        "name": "Avi  (c)",
+        "team": "Jade 4 Lions"
+      },
+      "bestBowler": {
+        "playerId": 26539273,
+        "name": "Ridhaan",
+        "team": "Jade 4 Lions"
+      }
+    },
+    {
+      "matchId": 21451384,
+      "date": "2026-01-11T04:34:09.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "SBCC Titans",
+      "teamAScore": "40/6",
+      "teamB": "Dalnex Dominators",
+      "teamBScore": "41/1",
+      "winner": "Dalnex Dominators",
+      "winBy": "6 wickets",
+      "result": "Dalnex Dominators won by 6 wickets",
+      "playerOfTheMatch": {
+        "playerId": 35462111,
+        "name": "Ketan Parikh",
+        "team": "Dalnex Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46009313,
+        "name": "Vicky Jade",
+        "team": "Dalnex Dominators"
+      },
+      "bestBowler": {
+        "playerId": 35462111,
+        "name": "Ketan Parikh",
+        "team": "Dalnex Dominators"
+      }
+    },
+    {
+      "matchId": 21451416,
+      "date": "2026-01-11T05:18:14.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Mentomap",
+      "teamAScore": "62/5",
+      "teamB": "Yogic Dhurandars",
+      "teamBScore": "63/1",
+      "winner": "Yogic Dhurandars",
+      "winBy": "6 wickets",
+      "result": "Yogic Dhurandars won by 6 wickets",
+      "playerOfTheMatch": {
+        "playerId": 35263090,
+        "name": "Riaan mathur",
+        "team": "Yogic Dhurandars"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 1754095,
+        "name": "Nilesh Behede",
+        "team": "Team Mentomap"
+      },
+      "bestBowler": {
+        "playerId": 35263090,
+        "name": "Riaan mathur",
+        "team": "Yogic Dhurandars"
+      }
+    },
+    {
+      "matchId": 21451482,
+      "date": "2026-01-11T10:42:19.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Inergy Strikers",
+      "teamAScore": "35/7",
+      "teamB": "Team Housewise",
+      "teamBScore": "36/1",
+      "winner": "Team Housewise",
+      "winBy": "6 wickets",
+      "result": "Team Housewise won by 6 wickets",
+      "playerOfTheMatch": {
+        "playerId": 20979518,
+        "name": "Prasad Sir  (wk)",
+        "team": "Team Housewise"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 20979518,
+        "name": "Prasad Sir  (wk)",
+        "team": "Team Housewise"
+      },
+      "bestBowler": {
+        "playerId": 2543231,
+        "name": "Amol Pawar  (c)",
+        "team": "Team Housewise"
+      }
+    },
+    {
+      "matchId": 21451868,
+      "date": "2026-01-11T11:38:39.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Mango Yorkers",
+      "teamAScore": "75/1",
+      "teamB": "Pictonions",
+      "teamBScore": "66/4",
+      "winner": "Mango Yorkers",
+      "winBy": "9 runs",
+      "result": "Mango Yorkers won by 9 runs",
+      "playerOfTheMatch": {
+        "playerId": 18842243,
+        "name": "Vedant Rathi  (c)",
+        "team": "Mango Yorkers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 18842243,
+        "name": "Vedant Rathi  (c)",
+        "team": "Mango Yorkers"
+      },
+      "bestBowler": {
+        "playerId": 423614,
+        "name": "Rajeev Chempath",
+        "team": "Mango Yorkers"
+      }
+    },
+    {
+      "matchId": 21451682,
+      "date": "2026-01-11T12:35:51.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "SBCC Titans",
+      "teamAScore": "66/4",
+      "teamB": "Triphobo Trail Blazers",
+      "teamBScore": "70/1",
+      "winner": "Triphobo Trail Blazers",
+      "winBy": "6 wickets",
+      "result": "Triphobo Trail Blazers won by 6 wickets",
+      "playerOfTheMatch": {
+        "playerId": 26537558,
+        "name": "Tanmay",
+        "team": "Triphobo Trail Blazers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26537558,
+        "name": "Tanmay",
+        "team": "Triphobo Trail Blazers"
+      },
+      "bestBowler": {
+        "playerId": 34781085,
+        "name": "Varun Sahoo",
+        "team": "Triphobo Trail Blazers"
+      }
+    },
+    {
+      "matchId": 21451708,
+      "date": "2026-01-11T13:30:00.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Mentomap",
+      "teamAScore": "24/7",
+      "teamB": "Dalnex Dominators",
+      "teamBScore": "28/0",
+      "winner": "Dalnex Dominators",
+      "winBy": "7 wickets",
+      "result": "Dalnex Dominators won by 7 wickets",
+      "playerOfTheMatch": {
+        "playerId": 46009313,
+        "name": "Vicky Jade",
+        "team": "Dalnex Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 34862602,
+        "name": "HRishi Jade JCPL  (wk)",
+        "team": "Dalnex Dominators"
+      },
+      "bestBowler": {
+        "playerId": 4402685,
+        "name": "Anthony Michael",
+        "team": "Dalnex Dominators"
+      }
+    },
+    {
+      "matchId": 21451790,
+      "date": "2026-01-11T14:30:00.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Powerpoint",
+      "teamAScore": "40/7",
+      "teamB": "Jade 4 Lions",
+      "teamBScore": "45/0",
+      "winner": "Jade 4 Lions",
+      "winBy": "7 wickets",
+      "result": "Jade 4 Lions won by 7 wickets",
+      "playerOfTheMatch": {
+        "playerId": 2192569,
+        "name": "Mandar Dehadrai  (wk)",
+        "team": "Jade 4 Lions"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 2192569,
+        "name": "Mandar Dehadrai  (wk)",
+        "team": "Jade 4 Lions"
+      },
+      "bestBowler": {
+        "playerId": 10928180,
+        "name": "Rahul Raj Singh",
+        "team": "Jade 4 Lions"
+      }
+    },
+    {
+      "matchId": 21663237,
+      "date": "2026-01-16T15:57:00.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "SBCC Titans",
+      "teamAScore": "49/7",
+      "teamB": "Fiery Sun Warriors",
+      "teamBScore": "50/3",
+      "winner": "Fiery Sun Warriors",
+      "winBy": "4 wickets",
+      "result": "Fiery Sun Warriors won by 4 wickets",
+      "playerOfTheMatch": {
+        "playerId": 8016271,
+        "name": "Rajdeep C.  (wk)",
+        "team": "Fiery Sun Warriors"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 8016271,
+        "name": "Rajdeep C.  (wk)",
+        "team": "Fiery Sun Warriors"
+      },
+      "bestBowler": {
+        "playerId": 4747261,
+        "name": "Dinesh M  (c)",
+        "team": "SBCC Titans"
+      }
+    },
+    {
+      "matchId": 21663741,
+      "date": "2026-01-17T01:55:05.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Housewise",
+      "teamAScore": "66/4",
+      "teamB": "Jade 4 Lions",
+      "teamBScore": "48/6",
+      "winner": "Team Housewise",
+      "winBy": "18 runs (One player shot)",
+      "result": "Team Housewise won by 18 runs (One player shot)",
+      "playerOfTheMatch": {
+        "playerId": 2543231,
+        "name": "Amol Pawar  (c)",
+        "team": "Team Housewise"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 2543231,
+        "name": "Amol Pawar  (c)",
+        "team": "Team Housewise"
+      },
+      "bestBowler": {
+        "playerId": 26539273,
+        "name": "Ridhaan",
+        "team": "Jade 4 Lions"
+      }
+    },
+    {
+      "matchId": 21451815,
+      "date": "2026-01-17T03:08:39.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Yogic Dhurandars",
+      "teamAScore": "58/5",
+      "teamB": "Fiery Sun Warriors",
+      "teamBScore": "48/7",
+      "winner": "Yogic Dhurandars",
+      "winBy": "10 runs",
+      "result": "Yogic Dhurandars won by 10 runs",
+      "playerOfTheMatch": {
+        "playerId": 33565514,
+        "name": "Paras",
+        "team": "Yogic Dhurandars"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 8016271,
+        "name": "Rajdeep C.  (wk)",
+        "team": "Fiery Sun Warriors"
+      },
+      "bestBowler": {
+        "playerId": 33565514,
+        "name": "Paras",
+        "team": "Yogic Dhurandars"
+      }
+    },
+    {
+      "matchId": 21663847,
+      "date": "2026-01-17T04:20:10.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Triphobo Trail Blazers",
+      "teamAScore": "64/5",
+      "teamB": "Team Mentomap",
+      "teamBScore": "39/6",
+      "winner": "Triphobo Trail Blazers",
+      "winBy": "25 runs (1 player shot)",
+      "result": "Triphobo Trail Blazers won by 25 runs (1 player shot)",
+      "playerOfTheMatch": {
+        "playerId": 34781085,
+        "name": "Varun Sahoo",
+        "team": "Triphobo Trail Blazers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 34781085,
+        "name": "Varun Sahoo",
+        "team": "Triphobo Trail Blazers"
+      },
+      "bestBowler": {
+        "playerId": 34781085,
+        "name": "Varun Sahoo",
+        "team": "Triphobo Trail Blazers"
+      }
+    },
+    {
+      "matchId": 21664065,
+      "date": "2026-01-17T05:23:10.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Pictonions",
+      "teamAScore": "64/7",
+      "teamB": "Inergy Strikers",
+      "teamBScore": "65/2",
+      "winner": "Inergy Strikers",
+      "winBy": "5 wickets",
+      "result": "Inergy Strikers won by 5 wickets",
+      "playerOfTheMatch": {
+        "playerId": 46072763,
+        "name": "Ashish Jade",
+        "team": "Inergy Strikers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 16751496,
+        "name": "Amit Gupta  (c)",
+        "team": "Inergy Strikers"
+      },
+      "bestBowler": {
+        "playerId": 46072763,
+        "name": "Ashish Jade",
+        "team": "Inergy Strikers"
+      }
+    },
+    {
+      "matchId": 21664841,
+      "date": "2026-01-17T10:51:19.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Yogic Dhurandars",
+      "teamAScore": "67/2",
+      "teamB": "SBCC Titans",
+      "teamBScore": "45/6",
+      "winner": "Yogic Dhurandars",
+      "winBy": "22 runs",
+      "result": "Yogic Dhurandars won by 22 runs",
+      "playerOfTheMatch": {
+        "playerId": 16908817,
+        "name": "Suraj Desai",
+        "team": "Yogic Dhurandars"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 16908817,
+        "name": "Suraj Desai",
+        "team": "Yogic Dhurandars"
+      },
+      "bestBowler": {
+        "playerId": 35263090,
+        "name": "Riaan mathur",
+        "team": "Yogic Dhurandars"
+      }
+    },
+    {
+      "matchId": 21664866,
+      "date": "2026-01-17T11:52:17.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Housewise",
+      "teamAScore": "89/2",
+      "teamB": "Team Powerpoint",
+      "teamBScore": "38/7",
+      "winner": "Team Housewise",
+      "winBy": "51 runs",
+      "result": "Team Housewise won by 51 runs",
+      "playerOfTheMatch": {
+        "playerId": 20979518,
+        "name": "Prasad Sir  (wk)",
+        "team": "Team Housewise"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 20979518,
+        "name": "Prasad Sir  (wk)",
+        "team": "Team Housewise"
+      },
+      "bestBowler": {
+        "playerId": 34862604,
+        "name": "Pankaj Guglani",
+        "team": "Team Housewise"
+      }
+    },
+    {
+      "matchId": 21664892,
+      "date": "2026-01-17T12:55:01.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Mentomap",
+      "teamAScore": "27/6",
+      "teamB": "Fiery Sun Warriors",
+      "teamBScore": "30/0",
+      "winner": "Fiery Sun Warriors",
+      "winBy": "7 wickets",
+      "result": "Fiery Sun Warriors won by 7 wickets",
+      "playerOfTheMatch": {
+        "playerId": 4161625,
+        "name": "Gurmeet Kalsi",
+        "team": "Fiery Sun Warriors"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 8016271,
+        "name": "Rajdeep C.  (wk)",
+        "team": "Fiery Sun Warriors"
+      },
+      "bestBowler": {
+        "playerId": 7615670,
+        "name": "Rahul Varma",
+        "team": "Fiery Sun Warriors"
+      }
+    },
+    {
+      "matchId": 21664941,
+      "date": "2026-01-17T13:39:13.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Mango Yorkers",
+      "teamAScore": "31/3",
+      "teamB": "Inergy Strikers",
+      "teamBScore": "32/0",
+      "winner": "Inergy Strikers",
+      "winBy": "7 wickets",
+      "result": "Inergy Strikers won by 7 wickets",
+      "playerOfTheMatch": {
+        "playerId": 46073107,
+        "name": "Swapnil",
+        "team": "Inergy Strikers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46073102,
+        "name": "Abhishek Shikarwar",
+        "team": "Inergy Strikers"
+      },
+      "bestBowler": {
+        "playerId": 46073107,
+        "name": "Swapnil",
+        "team": "Inergy Strikers"
+      }
+    },
+    {
+      "matchId": 21665031,
+      "date": "2026-01-17T15:31:56.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Dalnex Dominators",
+      "teamAScore": "68/1",
+      "teamB": "Triphobo Trail Blazers",
+      "teamBScore": "10/7",
+      "winner": "Dalnex Dominators",
+      "winBy": "58 runs",
+      "result": "Dalnex Dominators won by 58 runs",
+      "playerOfTheMatch": {
+        "playerId": 34755560,
+        "name": "Vivek Vichare",
+        "team": "Dalnex Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 19488839,
+        "name": "Dhruv Jhalani  (c)",
+        "team": "Dalnex Dominators"
+      },
+      "bestBowler": {
+        "playerId": 34755560,
+        "name": "Vivek Vichare",
+        "team": "Dalnex Dominators"
+      }
+    },
+    {
+      "matchId": 21665075,
+      "date": "2026-01-17T16:41:26.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Pictonions",
+      "teamAScore": "26/6",
+      "teamB": "Jade 4 Lions",
+      "teamBScore": "31/3",
+      "winner": "Jade 4 Lions",
+      "winBy": "4 wickets",
+      "result": "Jade 4 Lions won by 4 wickets",
+      "playerOfTheMatch": {
+        "playerId": 26538317,
+        "name": "Avi  (c)",
+        "team": "Jade 4 Lions"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 10928180,
+        "name": "Rahul Raj Singh",
+        "team": "Jade 4 Lions"
+      },
+      "bestBowler": {
+        "playerId": 26538317,
+        "name": "Avi  (c)",
+        "team": "Jade 4 Lions"
+      }
+    },
+    {
+      "matchId": 21740184,
+      "date": "2026-01-18T05:20:01.000Z",
+      "round": "Semi Final",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Team Housewise",
+      "teamAScore": "66/5",
+      "teamB": "Yogic Dhurandars",
+      "teamBScore": "58/4",
+      "winner": "Team Housewise",
+      "winBy": "8 runs",
+      "result": "Team Housewise won by 8 runs",
+      "playerOfTheMatch": {
+        "playerId": 34862604,
+        "name": "Pankaj Guglani",
+        "team": "Team Housewise"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 33565514,
+        "name": "Paras",
+        "team": "Yogic Dhurandars"
+      },
+      "bestBowler": {
+        "playerId": 34862604,
+        "name": "Pankaj Guglani",
+        "team": "Team Housewise"
+      }
+    },
+    {
+      "matchId": 21746076,
+      "date": "2026-01-18T06:44:45.000Z",
+      "round": "Semi Final",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Dalnex Dominators",
+      "teamAScore": "111/2",
+      "teamB": "Jade 4 Lions",
+      "teamBScore": "60/6",
+      "winner": "Dalnex Dominators",
+      "winBy": "51 runs",
+      "result": "Dalnex Dominators won by 51 runs",
+      "playerOfTheMatch": {
+        "playerId": 19488839,
+        "name": "Dhruv Jhalani  (c)",
+        "team": "Dalnex Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46009313,
+        "name": "Vicky Jade",
+        "team": "Dalnex Dominators"
+      },
+      "bestBowler": {
+        "playerId": 19488839,
+        "name": "Dhruv Jhalani  (c)",
+        "team": "Dalnex Dominators"
+      }
+    },
+    {
+      "matchId": 21770705,
+      "date": "2026-01-18T15:07:00.000Z",
+      "round": "Final",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Dalnex Dominators",
+      "teamAScore": "44/7",
+      "teamB": "Team Housewise",
+      "teamBScore": "41/6",
+      "winner": "Dalnex Dominators",
+      "winBy": "3 runs",
+      "result": "Dalnex Dominators won by 3 runs",
+      "playerOfTheMatch": {
+        "playerId": 19488839,
+        "name": "Dhruv Jhalani  (c)",
+        "team": "Dalnex Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 19488839,
+        "name": "Dhruv Jhalani  (c)",
+        "team": "Dalnex Dominators"
+      },
+      "bestBowler": {
+        "playerId": 45969718,
+        "name": "Pushkar B",
+        "team": "Team Housewise"
+      }
+    }
+  ],
+  "players": [
+    {
+      "playerId": 26537554,
+      "name": "Aarav  (wk)",
+      "team": "Team Powerpoint",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 45,
+        "balls": 23,
+        "highScore": "36*",
+        "avg": 22.5,
+        "sr": 195.65,
+        "fours": 2,
+        "sixes": 5,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 26,
+        "best": "1/6",
+        "economy": 6.5,
+        "avg": 26.0,
+        "sr": 24.0,
+        "dots": 11,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 14601322,
+      "name": "Aaryan Gaikwad",
+      "team": "Mango Yorkers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 2,
+        "balls": 10,
+        "highScore": "2*",
+        "avg": 1.0,
+        "sr": 20.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 29,
+        "best": "1/3",
+        "economy": 7.25,
+        "avg": 14.5,
+        "sr": 12.0,
+        "dots": 7,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 2532316,
+      "name": "Aayush Asawa",
+      "team": "Fiery Sun Warriors",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 9,
+        "balls": 16,
+        "highScore": "5*",
+        "avg": 4.5,
+        "sr": 56.25,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "10.0",
+        "maidens": 1,
+        "wickets": 3,
+        "runs": 52,
+        "best": "2/6",
+        "economy": 5.2,
+        "avg": 17.33,
+        "sr": 20.0,
+        "dots": 35,
+        "wides": 8,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46073102,
+      "name": "Abhishek Shikarwar",
+      "team": "Inergy Strikers",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 74,
+        "balls": 51,
+        "highScore": "34",
+        "avg": 18.5,
+        "sr": 145.1,
+        "fours": 2,
+        "sixes": 8,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 27,
+        "best": "",
+        "economy": 6.75,
+        "avg": null,
+        "sr": null,
+        "dots": 7,
+        "wides": 5,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537490,
+      "name": "Aditya Joshi",
+      "team": "Team Mentomap",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 2,
+        "runs": 13,
+        "balls": 25,
+        "highScore": "5*",
+        "avg": 4.33,
+        "sr": 52.0,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "10.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 59,
+        "best": "1/7",
+        "economy": 5.9,
+        "avg": 29.5,
+        "sr": 30.0,
+        "dots": 23,
+        "wides": 5,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46021062,
+      "name": "Aditya Shah",
+      "team": "Team Powerpoint",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 40,
+        "balls": 51,
+        "highScore": "17",
+        "avg": 8.0,
+        "sr": 78.43,
+        "fours": 2,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 11,
+        "best": "2/2",
+        "economy": 5.5,
+        "avg": 5.5,
+        "sr": 6.0,
+        "dots": 12,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26538318,
+      "name": "Ajit",
+      "team": "Jade 4 Lions",
+      "matches": 6,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 15,
+        "balls": 12,
+        "highScore": "12*",
+        "avg": 7.5,
+        "sr": 125.0,
+        "fours": 0,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 6,
+        "overs": "10.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 88,
+        "best": "1/10",
+        "economy": 8.8,
+        "avg": 29.33,
+        "sr": 20.0,
+        "dots": 17,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537267,
+      "name": "Akhil Madan",
+      "team": "Team Mentomap",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 3,
+        "balls": 11,
+        "highScore": "3",
+        "avg": 0.75,
+        "sr": 27.27,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 3
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 24,
+        "best": "1/13",
+        "economy": 8.0,
+        "avg": 24.0,
+        "sr": 18.0,
+        "dots": 10,
+        "wides": 4,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46101823,
+      "name": "Akshay Pillai",
+      "team": "Team Powerpoint",
+      "matches": 1,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 5,
+        "balls": 6,
+        "highScore": "5",
+        "avg": 5.0,
+        "sr": 83.33,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 24,
+        "best": "",
+        "economy": 8.0,
+        "avg": null,
+        "sr": null,
+        "dots": 3,
+        "wides": 1,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535639,
+      "name": "Akshay Pore  (c)",
+      "team": "Fiery Sun Warriors",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 2,
+        "runs": 46,
+        "balls": 43,
+        "highScore": "28*",
+        "avg": 15.33,
+        "sr": 106.98,
+        "fours": 2,
+        "sixes": 4,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 28,
+        "best": "1/1",
+        "economy": 5.6,
+        "avg": 14.0,
+        "sr": 15.0,
+        "dots": 12,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34780613,
+      "name": "Akshay Wardhane",
+      "team": "SBCC Titans",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 46,
+        "balls": 46,
+        "highScore": "14",
+        "avg": 11.5,
+        "sr": 100.0,
+        "fours": 3,
+        "sixes": 3,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 16751496,
+      "name": "Amit Gupta  (c)",
+      "team": "Inergy Strikers",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 2,
+        "runs": 90,
+        "balls": 67,
+        "highScore": "44*",
+        "avg": 30.0,
+        "sr": 134.33,
+        "fours": 3,
+        "sixes": 9,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "8.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 32,
+        "best": "1/4",
+        "economy": 4.0,
+        "avg": 16.0,
+        "sr": 24.0,
+        "dots": 19,
+        "wides": 7,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 2543231,
+      "name": "Amol Pawar  (c)",
+      "team": "Team Housewise",
+      "matches": 7,
+      "batting": {
+        "innings": 6,
+        "notOut": 3,
+        "runs": 207,
+        "balls": 101,
+        "highScore": "65*",
+        "avg": 69.0,
+        "sr": 204.95,
+        "fours": 7,
+        "sixes": 24,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 7,
+        "overs": "7.0",
+        "maidens": 1,
+        "wickets": 5,
+        "runs": 28,
+        "best": "2/6",
+        "economy": 4.0,
+        "avg": 5.6,
+        "sr": 8.4,
+        "dots": 26,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 8,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34341952,
+      "name": "Amul Shah",
+      "team": "Pictonions",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 18,
+        "balls": 23,
+        "highScore": "9",
+        "avg": 9.0,
+        "sr": 78.26,
+        "fours": 2,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 39,
+        "best": "",
+        "economy": 13.0,
+        "avg": null,
+        "sr": null,
+        "dots": 6,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45933694,
+      "name": "Ankit Goyal",
+      "team": "Team Housewise",
+      "matches": 7,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 8,
+        "balls": 3,
+        "highScore": "7*",
+        "avg": null,
+        "sr": 266.67,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 7,
+        "overs": "12.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 76,
+        "best": "1/7",
+        "economy": 6.33,
+        "avg": 19.0,
+        "sr": 18.0,
+        "dots": 40,
+        "wides": 8,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 4402685,
+      "name": "Anthony Michael",
+      "team": "Dalnex Dominators",
+      "matches": 7,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 6,
+        "balls": 9,
+        "highScore": "4*",
+        "avg": 6.0,
+        "sr": 66.67,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 6,
+        "overs": "11.0",
+        "maidens": 1,
+        "wickets": 6,
+        "runs": 55,
+        "best": "2/3",
+        "economy": 5.0,
+        "avg": 9.17,
+        "sr": 11.0,
+        "dots": 43,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 6,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 24419687,
+      "name": "Anu Poduval",
+      "team": "Triphobo Trail Blazers",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 3,
+        "runs": 3,
+        "balls": 5,
+        "highScore": "1*",
+        "avg": 3.0,
+        "sr": 60.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "12.0",
+        "maidens": 0,
+        "wickets": 6,
+        "runs": 68,
+        "best": "3/3",
+        "economy": 5.67,
+        "avg": 11.33,
+        "sr": 12.0,
+        "dots": 32,
+        "wides": 6,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 6228730,
+      "name": "Ashish Ahuja",
+      "team": "Team Housewise",
+      "matches": 7,
+      "batting": {
+        "innings": 6,
+        "notOut": 1,
+        "runs": 36,
+        "balls": 36,
+        "highScore": "18",
+        "avg": 7.2,
+        "sr": 100.0,
+        "fours": 2,
+        "sixes": 2,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46072763,
+      "name": "Ashish Jade",
+      "team": "Inergy Strikers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 22,
+        "balls": 16,
+        "highScore": "12*",
+        "avg": 11.0,
+        "sr": 137.5,
+        "fours": 3,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "11.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 53,
+        "best": "3/12",
+        "economy": 4.82,
+        "avg": 17.67,
+        "sr": 22.0,
+        "dots": 24,
+        "wides": 7,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45997383,
+      "name": "Aurobindo ",
+      "team": "Mango Yorkers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 1,
+        "balls": 5,
+        "highScore": "1",
+        "avg": 0.33,
+        "sr": 20.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 38,
+        "best": "",
+        "economy": 9.5,
+        "avg": null,
+        "sr": null,
+        "dots": 6,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26538317,
+      "name": "Avi  (c)",
+      "team": "Jade 4 Lions",
+      "matches": 6,
+      "batting": {
+        "innings": 6,
+        "notOut": 2,
+        "runs": 98,
+        "balls": 88,
+        "highScore": "40",
+        "avg": 24.5,
+        "sr": 111.36,
+        "fours": 5,
+        "sixes": 6,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 45,
+        "best": "4/2",
+        "economy": 9.0,
+        "avg": 11.25,
+        "sr": 7.5,
+        "dots": 12,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34862603,
+      "name": "Bhushan Patkar",
+      "team": "Pictonions",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 100,
+        "balls": 73,
+        "highScore": "26",
+        "avg": 20.0,
+        "sr": 136.99,
+        "fours": 3,
+        "sixes": 12,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 22,
+        "best": "",
+        "economy": 7.33,
+        "avg": null,
+        "sr": null,
+        "dots": 6,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 22769462,
+      "name": "chetan Sharma",
+      "team": "Team Housewise",
+      "matches": 7,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 25,
+        "balls": 21,
+        "highScore": "11*",
+        "avg": 25.0,
+        "sr": 119.05,
+        "fours": 0,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 6,
+        "overs": "8.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 85,
+        "best": "2/8",
+        "economy": 10.63,
+        "avg": 21.25,
+        "sr": 12.0,
+        "dots": 24,
+        "wides": 9,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 3,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46008619,
+      "name": "D Mukund",
+      "team": "Team Housewise",
+      "matches": 7,
+      "batting": {
+        "innings": 6,
+        "notOut": 1,
+        "runs": 34,
+        "balls": 42,
+        "highScore": "14",
+        "avg": 6.8,
+        "sr": 80.95,
+        "fours": 1,
+        "sixes": 3,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 6,
+        "best": "",
+        "economy": 6.0,
+        "avg": null,
+        "sr": null,
+        "dots": 5,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 19488839,
+      "name": "Dhruv Jhalani  (c)",
+      "team": "Dalnex Dominators",
+      "matches": 7,
+      "batting": {
+        "innings": 5,
+        "notOut": 2,
+        "runs": 109,
+        "balls": 73,
+        "highScore": "31*",
+        "avg": 36.33,
+        "sr": 149.32,
+        "fours": 4,
+        "sixes": 10,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "4.0",
+        "maidens": 1,
+        "wickets": 4,
+        "runs": 9,
+        "best": "2/3",
+        "economy": 2.25,
+        "avg": 2.25,
+        "sr": 6.0,
+        "dots": 15,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 4747261,
+      "name": "Dinesh M  (c)",
+      "team": "SBCC Titans",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 12,
+        "balls": 18,
+        "highScore": "9",
+        "avg": 2.4,
+        "sr": 66.67,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 26,
+        "best": "1/2",
+        "economy": 8.67,
+        "avg": 26.0,
+        "sr": 18.0,
+        "dots": 8,
+        "wides": 3,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34621053,
+      "name": "Dipal Panchal",
+      "team": "Team Powerpoint",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 3,
+        "runs": 70,
+        "balls": 40,
+        "highScore": "31*",
+        "avg": 35.0,
+        "sr": 175.0,
+        "fours": 2,
+        "sixes": 8,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "8.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 57,
+        "best": "1/7",
+        "economy": 7.13,
+        "avg": 57.0,
+        "sr": 48.0,
+        "dots": 23,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 9999504,
+      "name": "Ganesh  (c)",
+      "team": "Team Mentomap",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 31,
+        "balls": 42,
+        "highScore": "13",
+        "avg": 6.2,
+        "sr": 73.81,
+        "fours": 2,
+        "sixes": 1,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 33,
+        "best": "1/10",
+        "economy": 8.25,
+        "avg": 33.0,
+        "sr": 24.0,
+        "dots": 5,
+        "wides": 3,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46025564,
+      "name": "Gaurav Kad",
+      "team": "Dalnex Dominators",
+      "matches": 7,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 24,
+        "balls": 19,
+        "highScore": "23*",
+        "avg": 12.0,
+        "sr": 126.32,
+        "fours": 0,
+        "sixes": 3,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 7,
+        "overs": "13.5",
+        "maidens": 0,
+        "wickets": 6,
+        "runs": 51,
+        "best": "2/4",
+        "economy": 3.69,
+        "avg": 8.5,
+        "sr": 13.83,
+        "dots": 52,
+        "wides": 9,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 4161625,
+      "name": "Gurmeet Kalsi",
+      "team": "Fiery Sun Warriors",
+      "matches": 5,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 6,
+        "balls": 14,
+        "highScore": "3*",
+        "avg": null,
+        "sr": 42.86,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "8.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 61,
+        "best": "2/13",
+        "economy": 7.63,
+        "avg": 20.33,
+        "sr": 16.0,
+        "dots": 26,
+        "wides": 8,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 3,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537807,
+      "name": "Harpreet Singh",
+      "team": "Inergy Strikers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 5,
+        "balls": 11,
+        "highScore": "3",
+        "avg": 2.5,
+        "sr": 45.45,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 35,
+        "best": "1/13",
+        "economy": 8.75,
+        "avg": 35.0,
+        "sr": 24.0,
+        "dots": 4,
+        "wides": 12,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34862602,
+      "name": "HRishi Jade JCPL  (wk)",
+      "team": "Dalnex Dominators",
+      "matches": 7,
+      "batting": {
+        "innings": 7,
+        "notOut": 2,
+        "runs": 66,
+        "balls": 48,
+        "highScore": "23",
+        "avg": 13.2,
+        "sr": 137.5,
+        "fours": 3,
+        "sixes": 6,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46020732,
+      "name": "Jade Hemant Singhal",
+      "team": "Yogic Dhurandars",
+      "matches": 6,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 58,
+        "balls": 48,
+        "highScore": "21",
+        "avg": 11.6,
+        "sr": 120.83,
+        "fours": 0,
+        "sixes": 7,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34862605,
+      "name": "Jade Vikasv JCPL",
+      "team": "Team Mentomap",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 13,
+        "balls": 22,
+        "highScore": "10",
+        "avg": 4.33,
+        "sr": 59.09,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 14150407,
+      "name": "Jitu Rathi",
+      "team": "Team Mentomap",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 7,
+        "balls": 20,
+        "highScore": "5",
+        "avg": 1.4,
+        "sr": 35.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 3
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 22,
+        "best": "",
+        "economy": 22.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 11635308,
+      "name": "Kabir Vaidya",
+      "team": "Jade 4 Lions",
+      "matches": 6,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 7,
+        "balls": 20,
+        "highScore": "4",
+        "avg": 1.4,
+        "sr": 35.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 39,
+        "best": "",
+        "economy": 39.0,
+        "avg": null,
+        "sr": null,
+        "dots": 3,
+        "wides": 0,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 3,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45999127,
+      "name": "Kaustubh Moharil",
+      "team": "Triphobo Trail Blazers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 6,
+        "balls": 23,
+        "highScore": "3",
+        "avg": 2.0,
+        "sr": 26.09,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 34,
+        "best": "1/5",
+        "economy": 17.0,
+        "avg": 34.0,
+        "sr": 12.0,
+        "dots": 4,
+        "wides": 2,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35462111,
+      "name": "Ketan Parikh",
+      "team": "Dalnex Dominators",
+      "matches": 7,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 1,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 7,
+        "overs": "12.1",
+        "maidens": 0,
+        "wickets": 5,
+        "runs": 81,
+        "best": "2/5",
+        "economy": 6.66,
+        "avg": 16.2,
+        "sr": 14.6,
+        "dots": 38,
+        "wides": 9,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 3,
+        "runOuts": 4,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535523,
+      "name": "Kiran Jagtap  (c)",
+      "team": "Yogic Dhurandars",
+      "matches": 6,
+      "batting": {
+        "innings": 6,
+        "notOut": 3,
+        "runs": 67,
+        "balls": 66,
+        "highScore": "15*",
+        "avg": 22.33,
+        "sr": 101.52,
+        "fours": 3,
+        "sixes": 3,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 44,
+        "best": "2/7",
+        "economy": 6.29,
+        "avg": 11.0,
+        "sr": 10.5,
+        "dots": 19,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26536811,
+      "name": "Kunal Kukreja",
+      "team": "Inergy Strikers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 16,
+        "balls": 17,
+        "highScore": "14*",
+        "avg": 8.0,
+        "sr": 94.12,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 48,
+        "best": "",
+        "economy": 6.86,
+        "avg": null,
+        "sr": null,
+        "dots": 7,
+        "wides": 2,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26541271,
+      "name": "Kunj Somani",
+      "team": "Inergy Strikers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 2,
+        "balls": 10,
+        "highScore": "2",
+        "avg": 1.0,
+        "sr": 20.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 22,
+        "best": "1/9",
+        "economy": 5.5,
+        "avg": 11.0,
+        "sr": 12.0,
+        "dots": 11,
+        "wides": 7,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 19479998,
+      "name": "Lakshya Jhalani",
+      "team": "Inergy Strikers",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 0,
+        "runs": 14,
+        "balls": 19,
+        "highScore": "8",
+        "avg": 3.5,
+        "sr": 73.68,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 13,
+        "best": "",
+        "economy": 6.5,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26536759,
+      "name": "Mahesh A Kulkarni  (c)",
+      "team": "Pictonions",
+      "matches": 5,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "0*",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 43,
+        "best": "",
+        "economy": 14.33,
+        "avg": null,
+        "sr": null,
+        "dots": 4,
+        "wides": 3,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 2192569,
+      "name": "Mandar Dehadrai  (wk)",
+      "team": "Jade 4 Lions",
+      "matches": 6,
+      "batting": {
+        "innings": 6,
+        "notOut": 1,
+        "runs": 119,
+        "balls": 84,
+        "highScore": "29",
+        "avg": 23.8,
+        "sr": 141.67,
+        "fours": 5,
+        "sixes": 11,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 6,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 15917,
+      "name": "Manish Singh",
+      "team": "Team Powerpoint",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 8,
+        "balls": 18,
+        "highScore": "4",
+        "avg": 1.6,
+        "sr": 44.44,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "6.0",
+        "maidens": 1,
+        "wickets": 1,
+        "runs": 28,
+        "best": "1/0",
+        "economy": 4.67,
+        "avg": 28.0,
+        "sr": 36.0,
+        "dots": 17,
+        "wides": 2,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 3,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34779796,
+      "name": "Mohit Agarwal",
+      "team": "Team Powerpoint",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 21,
+        "balls": 27,
+        "highScore": "9*",
+        "avg": 5.25,
+        "sr": 77.78,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45951069,
+      "name": "Neeraj Varma",
+      "team": "Pictonions",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 10,
+        "balls": 25,
+        "highScore": "5",
+        "avg": 2.5,
+        "sr": 40.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "10.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 57,
+        "best": "",
+        "economy": 5.7,
+        "avg": null,
+        "sr": null,
+        "dots": 29,
+        "wides": 10,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34780077,
+      "name": "Nikhil Owalekar",
+      "team": "SBCC Titans",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 96,
+        "balls": 80,
+        "highScore": "51",
+        "avg": 24.0,
+        "sr": 120.0,
+        "fours": 3,
+        "sixes": 9,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 14,
+        "best": "1/4",
+        "economy": 7.0,
+        "avg": 7.0,
+        "sr": 6.0,
+        "dots": 5,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 3,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 1754095,
+      "name": "Nilesh Behede",
+      "team": "Team Mentomap",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 79,
+        "balls": 55,
+        "highScore": "44*",
+        "avg": 79.0,
+        "sr": 143.64,
+        "fours": 2,
+        "sixes": 9,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 41,
+        "best": "1/22",
+        "economy": 5.86,
+        "avg": 41.0,
+        "sr": 42.0,
+        "dots": 11,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34779416,
+      "name": "Nishant Patil",
+      "team": "SBCC Titans",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 0,
+        "runs": 13,
+        "balls": 20,
+        "highScore": "6",
+        "avg": 3.25,
+        "sr": 65.0,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 65,
+        "best": "1/9",
+        "economy": 9.29,
+        "avg": 65.0,
+        "sr": 42.0,
+        "dots": 16,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 468045,
+      "name": "Nitin Verma",
+      "team": "Pictonions",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 18,
+        "balls": 20,
+        "highScore": "10",
+        "avg": 4.5,
+        "sr": 90.0,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 13,
+        "best": "1/13",
+        "economy": null,
+        "avg": 13.0,
+        "sr": 0.0,
+        "dots": 2,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34862604,
+      "name": "Pankaj Guglani",
+      "team": "Team Housewise",
+      "matches": 7,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 2,
+        "balls": 6,
+        "highScore": "2",
+        "avg": 1.0,
+        "sr": 33.33,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 7,
+        "overs": "14.0",
+        "maidens": 0,
+        "wickets": 13,
+        "runs": 72,
+        "best": "3/9",
+        "economy": 5.14,
+        "avg": 5.54,
+        "sr": 6.46,
+        "dots": 46,
+        "wides": 13,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 33565514,
+      "name": "Paras",
+      "team": "Yogic Dhurandars",
+      "matches": 6,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 27,
+        "balls": 16,
+        "highScore": "19*",
+        "avg": 13.5,
+        "sr": 168.75,
+        "fours": 1,
+        "sixes": 3,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 6,
+        "overs": "14.0",
+        "maidens": 0,
+        "wickets": 6,
+        "runs": 81,
+        "best": "2/3",
+        "economy": 5.79,
+        "avg": 13.5,
+        "sr": 14.0,
+        "dots": 37,
+        "wides": 6,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 5,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 20979518,
+      "name": "Prasad Sir  (wk)",
+      "team": "Team Housewise",
+      "matches": 7,
+      "batting": {
+        "innings": 7,
+        "notOut": 3,
+        "runs": 136,
+        "balls": 105,
+        "highScore": "41*",
+        "avg": 34.0,
+        "sr": 129.52,
+        "fours": 4,
+        "sixes": 13,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 0,
+        "best": "1/0",
+        "economy": null,
+        "avg": 0.0,
+        "sr": 0.0,
+        "dots": 1,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45922437,
+      "name": "Prithviraj Chavan",
+      "team": "Mango Yorkers",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 75,
+        "balls": 62,
+        "highScore": "27*",
+        "avg": 25.0,
+        "sr": 120.97,
+        "fours": 1,
+        "sixes": 7,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 31,
+        "best": "2/9",
+        "economy": 7.75,
+        "avg": 15.5,
+        "sr": 12.0,
+        "dots": 7,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45969718,
+      "name": "Pushkar B",
+      "team": "Team Housewise",
+      "matches": 7,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 5,
+        "balls": 4,
+        "highScore": "5",
+        "avg": 5.0,
+        "sr": 125.0,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 7,
+        "overs": "9.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 69,
+        "best": "2/7",
+        "economy": 7.67,
+        "avg": 23.0,
+        "sr": 18.0,
+        "dots": 22,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 3,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 23379,
+      "name": "Rahul Agrawal",
+      "team": "Triphobo Trail Blazers",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 65,
+        "balls": 57,
+        "highScore": "24",
+        "avg": 16.25,
+        "sr": 114.04,
+        "fours": 1,
+        "sixes": 6,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 10928180,
+      "name": "Rahul Raj Singh",
+      "team": "Jade 4 Lions",
+      "matches": 6,
+      "batting": {
+        "innings": 5,
+        "notOut": 2,
+        "runs": 38,
+        "balls": 25,
+        "highScore": "12*",
+        "avg": 12.67,
+        "sr": 152.0,
+        "fours": 1,
+        "sixes": 4,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 6,
+        "overs": "12.5",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 73,
+        "best": "2/5",
+        "economy": 5.69,
+        "avg": 18.25,
+        "sr": 19.25,
+        "dots": 31,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 7615670,
+      "name": "Rahul Varma",
+      "team": "Fiery Sun Warriors",
+      "matches": 5,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 7,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "10.0",
+        "maidens": 0,
+        "wickets": 5,
+        "runs": 78,
+        "best": "2/8",
+        "economy": 7.8,
+        "avg": 15.6,
+        "sr": 12.0,
+        "dots": 23,
+        "wides": 9,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 22139379,
+      "name": "Rajat Dua",
+      "team": "Fiery Sun Warriors",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 0,
+        "runs": 13,
+        "balls": 21,
+        "highScore": "7",
+        "avg": 3.25,
+        "sr": 61.9,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 8016271,
+      "name": "Rajdeep C.  (wk)",
+      "team": "Fiery Sun Warriors",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 2,
+        "runs": 122,
+        "balls": 70,
+        "highScore": "36",
+        "avg": 40.67,
+        "sr": 174.29,
+        "fours": 4,
+        "sixes": 15,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 15,
+        "best": "1/11",
+        "economy": 7.5,
+        "avg": 15.0,
+        "sr": 12.0,
+        "dots": 5,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 423614,
+      "name": "Rajeev Chempath",
+      "team": "Mango Yorkers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 26,
+        "balls": 20,
+        "highScore": "16*",
+        "avg": 13.0,
+        "sr": 130.0,
+        "fours": 2,
+        "sixes": 2,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "8.0",
+        "maidens": 1,
+        "wickets": 2,
+        "runs": 24,
+        "best": "2/8",
+        "economy": 3.0,
+        "avg": 12.0,
+        "sr": 24.0,
+        "dots": 29,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537492,
+      "name": "Rajesh",
+      "team": "Dalnex Dominators",
+      "matches": 7,
+      "batting": {
+        "innings": 5,
+        "notOut": 3,
+        "runs": 16,
+        "balls": 22,
+        "highScore": "8*",
+        "avg": 8.0,
+        "sr": 72.73,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 2,
+        "best": "1/2",
+        "economy": 2.0,
+        "avg": 2.0,
+        "sr": 6.0,
+        "dots": 5,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46090840,
+      "name": "Rakesh Vekariya",
+      "team": "Team Mentomap",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 15,
+        "balls": 17,
+        "highScore": "7",
+        "avg": 3.0,
+        "sr": 88.24,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "9.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 49,
+        "best": "1/3",
+        "economy": 5.44,
+        "avg": 24.5,
+        "sr": 27.0,
+        "dots": 18,
+        "wides": 7,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 5113915,
+      "name": "Ravindra Waghmare",
+      "team": "Triphobo Trail Blazers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 5,
+        "balls": 8,
+        "highScore": "5*",
+        "avg": 2.5,
+        "sr": 62.5,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "11.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 59,
+        "best": "1/7",
+        "economy": 5.36,
+        "avg": 59.0,
+        "sr": 66.0,
+        "dots": 20,
+        "wides": 3,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35263090,
+      "name": "Riaan mathur",
+      "team": "Yogic Dhurandars",
+      "matches": 6,
+      "batting": {
+        "innings": 4,
+        "notOut": 4,
+        "runs": 11,
+        "balls": 13,
+        "highScore": "6*",
+        "avg": null,
+        "sr": 84.62,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 6,
+        "overs": "14.0",
+        "maidens": 0,
+        "wickets": 8,
+        "runs": 85,
+        "best": "3/7",
+        "economy": 6.07,
+        "avg": 10.63,
+        "sr": 10.5,
+        "dots": 37,
+        "wides": 5,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 4,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539273,
+      "name": "Ridhaan",
+      "team": "Jade 4 Lions",
+      "matches": 9,
+      "batting": {
+        "innings": 6,
+        "notOut": 5,
+        "runs": 17,
+        "balls": 21,
+        "highScore": "11*",
+        "avg": 17.0,
+        "sr": 80.95,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 8,
+        "overs": "13.0",
+        "maidens": 0,
+        "wickets": 5,
+        "runs": 109,
+        "best": "2/17",
+        "economy": 8.38,
+        "avg": 21.8,
+        "sr": 15.6,
+        "dots": 28,
+        "wides": 10,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34779059,
+      "name": "Sachin Jain Jade",
+      "team": "SBCC Titans",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 48,
+        "balls": 42,
+        "highScore": "21",
+        "avg": 9.6,
+        "sr": 114.29,
+        "fours": 0,
+        "sixes": 6,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 35,
+        "best": "1/7",
+        "economy": 11.67,
+        "avg": 35.0,
+        "sr": 18.0,
+        "dots": 8,
+        "wides": 1,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 2850142,
+      "name": "Sachin Lulla",
+      "team": "Jade 4 Lions",
+      "matches": 6,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 2,
+        "balls": 9,
+        "highScore": "1",
+        "avg": 0.4,
+        "sr": 22.22,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 3
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45950998,
+      "name": "Sachin Rajgire",
+      "team": "Pictonions",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 42,
+        "balls": 24,
+        "highScore": "34*",
+        "avg": 14.0,
+        "sr": 175.0,
+        "fours": 1,
+        "sixes": 5,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45950999,
+      "name": "Sachin Raole Jade D131",
+      "team": "Pictonions",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 9,
+        "balls": 6,
+        "highScore": "7*",
+        "avg": null,
+        "sr": 150.0,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26564445,
+      "name": "Sagar",
+      "team": "Yogic Dhurandars",
+      "matches": 6,
+      "batting": {
+        "innings": 6,
+        "notOut": 1,
+        "runs": 19,
+        "balls": 33,
+        "highScore": "8",
+        "avg": 3.8,
+        "sr": 57.58,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34779788,
+      "name": "Saikiran Mandava",
+      "team": "SBCC Titans",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 3,
+        "runs": 19,
+        "balls": 21,
+        "highScore": "16*",
+        "avg": 9.5,
+        "sr": 90.48,
+        "fours": 0,
+        "sixes": 2,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 21,
+        "best": "1/2",
+        "economy": 4.2,
+        "avg": 10.5,
+        "sr": 15.0,
+        "dots": 15,
+        "wides": 3,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537557,
+      "name": "Saket",
+      "team": "Jade 4 Lions",
+      "matches": 6,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 0,
+        "balls": 7,
+        "highScore": "0*",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 6,
+        "overs": "13.0",
+        "maidens": 1,
+        "wickets": 2,
+        "runs": 83,
+        "best": "1/15",
+        "economy": 6.38,
+        "avg": 41.5,
+        "sr": 39.0,
+        "dots": 31,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 29521905,
+      "name": "Shyam Sunder Jade Cricket",
+      "team": "SBCC Titans",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 1,
+        "balls": 6,
+        "highScore": "1*",
+        "avg": 0.5,
+        "sr": 16.67,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 23,
+        "best": "1/5",
+        "economy": 11.5,
+        "avg": 11.5,
+        "sr": 6.0,
+        "dots": 7,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34779447,
+      "name": "Siddharth Pednekar (c)",
+      "team": "Team Powerpoint",
+      "matches": 5,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 0,
+        "balls": 1,
+        "highScore": "0*",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "8.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 72,
+        "best": "",
+        "economy": 9.0,
+        "avg": null,
+        "sr": null,
+        "dots": 19,
+        "wides": 7,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46000207,
+      "name": "Sourabh Gupta",
+      "team": "Triphobo Trail Blazers",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 2,
+        "runs": 50,
+        "balls": 52,
+        "highScore": "33*",
+        "avg": 16.67,
+        "sr": 96.15,
+        "fours": 2,
+        "sixes": 4,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45917028,
+      "name": "Sourabh Khanna Jade",
+      "team": "Fiery Sun Warriors",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 0,
+        "runs": 4,
+        "balls": 13,
+        "highScore": "3",
+        "avg": 1.0,
+        "sr": 30.77,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537089,
+      "name": "Sudeep Somani",
+      "team": "Pictonions",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 0,
+        "runs": 5,
+        "balls": 14,
+        "highScore": "2",
+        "avg": 1.25,
+        "sr": 35.71,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "8.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 86,
+        "best": "1/3",
+        "economy": 10.75,
+        "avg": 86.0,
+        "sr": 48.0,
+        "dots": 10,
+        "wides": 3,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537567,
+      "name": "Sujal Narayan Mudliar",
+      "team": "Fiery Sun Warriors",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 3,
+        "balls": 12,
+        "highScore": "2",
+        "avg": 1.0,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 17,
+        "best": "1/13",
+        "economy": 8.5,
+        "avg": 8.5,
+        "sr": 6.0,
+        "dots": 7,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 36380945,
+      "name": "SULTAAN",
+      "team": "Jade 4 Lions",
+      "matches": 6,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 8,
+        "balls": 25,
+        "highScore": "3",
+        "avg": 2.67,
+        "sr": 32.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 6,
+        "overs": "12.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 90,
+        "best": "1/1",
+        "economy": 7.5,
+        "avg": 22.5,
+        "sr": 18.0,
+        "dots": 34,
+        "wides": 10,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 21873418,
+      "name": "Sunil",
+      "team": "Team Powerpoint",
+      "matches": 5,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 4,
+        "balls": 11,
+        "highScore": "3*",
+        "avg": 4.0,
+        "sr": 36.36,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 18,
+        "best": "1/3",
+        "economy": 3.6,
+        "avg": 9.0,
+        "sr": 15.0,
+        "dots": 14,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45992913,
+      "name": "Sunny Jaisinghani",
+      "team": "Team Powerpoint",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 88,
+        "balls": 51,
+        "highScore": "44",
+        "avg": 22.0,
+        "sr": 172.55,
+        "fours": 1,
+        "sixes": 9,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 42,
+        "best": "1/21",
+        "economy": 10.5,
+        "avg": 42.0,
+        "sr": 24.0,
+        "dots": 11,
+        "wides": 6,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 3,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 16908817,
+      "name": "Suraj Desai",
+      "team": "Yogic Dhurandars",
+      "matches": 6,
+      "batting": {
+        "innings": 6,
+        "notOut": 1,
+        "runs": 134,
+        "balls": 106,
+        "highScore": "45",
+        "avg": 26.8,
+        "sr": 126.42,
+        "fours": 5,
+        "sixes": 12,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 20,
+        "best": "",
+        "economy": 20.0,
+        "avg": null,
+        "sr": null,
+        "dots": 1,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46073107,
+      "name": "Swapnil",
+      "team": "Inergy Strikers",
+      "matches": 5,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 10,
+        "balls": 13,
+        "highScore": "6*",
+        "avg": 10.0,
+        "sr": 76.92,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "11.0",
+        "maidens": 0,
+        "wickets": 6,
+        "runs": 64,
+        "best": "2/4",
+        "economy": 5.82,
+        "avg": 10.67,
+        "sr": 11.0,
+        "dots": 31,
+        "wides": 7,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537558,
+      "name": "Tanmay",
+      "team": "Triphobo Trail Blazers",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 61,
+        "balls": 36,
+        "highScore": "46",
+        "avg": 12.2,
+        "sr": 169.44,
+        "fours": 2,
+        "sixes": 7,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26538324,
+      "name": "Tarun",
+      "team": "Yogic Dhurandars",
+      "matches": 6,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 1,
+        "balls": 6,
+        "highScore": "1",
+        "avg": 0.5,
+        "sr": 16.67,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 40,
+        "best": "1/7",
+        "economy": 8.0,
+        "avg": 40.0,
+        "sr": 30.0,
+        "dots": 9,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 10910435,
+      "name": "Varun",
+      "team": "Jade 4 Lions",
+      "matches": 5,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 19,
+        "balls": 15,
+        "highScore": "17",
+        "avg": 9.5,
+        "sr": 126.67,
+        "fours": 3,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34781085,
+      "name": "Varun Sahoo",
+      "team": "Triphobo Trail Blazers",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 38,
+        "balls": 24,
+        "highScore": "23*",
+        "avg": 12.67,
+        "sr": 158.33,
+        "fours": 0,
+        "sixes": 5,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "10.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 54,
+        "best": "2/10",
+        "economy": 5.4,
+        "avg": 18.0,
+        "sr": 20.0,
+        "dots": 26,
+        "wides": 3,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537228,
+      "name": "Ved Prakash",
+      "team": "SBCC Titans",
+      "matches": 5,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 12,
+        "balls": 8,
+        "highScore": "6*",
+        "avg": 12.0,
+        "sr": 150.0,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 96,
+        "best": "2/18",
+        "economy": 13.71,
+        "avg": 32.0,
+        "sr": 14.0,
+        "dots": 22,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 18842243,
+      "name": "Vedant Rathi  (c)",
+      "team": "Mango Yorkers",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 2,
+        "runs": 81,
+        "balls": 90,
+        "highScore": "44*",
+        "avg": 27.0,
+        "sr": 90.0,
+        "fours": 0,
+        "sixes": 10,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 66,
+        "best": "1/16",
+        "economy": 9.43,
+        "avg": 66.0,
+        "sr": 42.0,
+        "dots": 12,
+        "wides": 2,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46009313,
+      "name": "Vicky Jade",
+      "team": "Dalnex Dominators",
+      "matches": 7,
+      "batting": {
+        "innings": 7,
+        "notOut": 2,
+        "runs": 143,
+        "balls": 96,
+        "highScore": "49",
+        "avg": 28.6,
+        "sr": 148.96,
+        "fours": 8,
+        "sixes": 12,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26648211,
+      "name": "Vikas Gaikwad",
+      "team": "Team Mentomap",
+      "matches": 5,
+      "batting": {
+        "innings": 5,
+        "notOut": 0,
+        "runs": 18,
+        "balls": 26,
+        "highScore": "12",
+        "avg": 3.6,
+        "sr": 69.23,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 37,
+        "best": "",
+        "economy": 7.4,
+        "avg": null,
+        "sr": null,
+        "dots": 7,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 4314892,
+      "name": "Vikas Goyal",
+      "team": "Yogic Dhurandars",
+      "matches": 6,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 6,
+        "overs": "14.0",
+        "maidens": 0,
+        "wickets": 7,
+        "runs": 72,
+        "best": "2/19",
+        "economy": 5.14,
+        "avg": 10.29,
+        "sr": 12.0,
+        "dots": 41,
+        "wides": 8,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 2570861,
+      "name": "Vikram",
+      "team": "Mango Yorkers",
+      "matches": 5,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 3,
+        "balls": 12,
+        "highScore": "1",
+        "avg": 1.0,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "9.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 61,
+        "best": "1/17",
+        "economy": 6.78,
+        "avg": 61.0,
+        "sr": 54.0,
+        "dots": 14,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535410,
+      "name": "Vinay Korlepara",
+      "team": "Pictonions",
+      "matches": 5,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 20,
+        "balls": 27,
+        "highScore": "10*",
+        "avg": 6.67,
+        "sr": 74.07,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "9.0",
+        "maidens": 1,
+        "wickets": 5,
+        "runs": 54,
+        "best": "1/18",
+        "economy": 6.0,
+        "avg": 10.8,
+        "sr": 10.8,
+        "dots": 31,
+        "wides": 3,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34783157,
+      "name": "Vivek Shende",
+      "team": "Pictonions",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 27,
+        "balls": 19,
+        "highScore": "25",
+        "avg": 9.0,
+        "sr": 142.11,
+        "fours": 0,
+        "sixes": 4,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 19,
+        "best": "",
+        "economy": 19.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34755560,
+      "name": "Vivek Vichare",
+      "team": "Dalnex Dominators",
+      "matches": 7,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 20,
+        "balls": 19,
+        "highScore": "11*",
+        "avg": 20.0,
+        "sr": 105.26,
+        "fours": 2,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 7,
+        "overs": "11.0",
+        "maidens": 0,
+        "wickets": 7,
+        "runs": 77,
+        "best": "3/1",
+        "economy": 7.0,
+        "avg": 11.0,
+        "sr": 9.43,
+        "dots": 37,
+        "wides": 5,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    }
+  ],
+  "mvp": [
+    {
+      "playerId": 2543231,
+      "name": "Amol Pawar  (c)",
+      "team": "Team Housewise",
+      "playerOfTheMatch": 3,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 3,
+      "bestBowler": 1,
+      "mvpRank": 1,
+      "mvpTotal": 33.475,
+      "mvpBatting": 21.05,
+      "mvpBowling": 6.999,
+      "mvpFielding": 5.426,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 34862604,
+      "name": "Pankaj Guglani",
+      "team": "Team Housewise",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 3,
+      "mvpRank": 2,
+      "mvpTotal": 20.865,
+      "mvpBatting": 0.2,
+      "mvpBowling": 18.565,
+      "mvpFielding": 2.1,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 19488839,
+      "name": "Dhruv Jhalani  (c)",
+      "team": "Dalnex Dominators",
+      "playerOfTheMatch": 2,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 3,
+      "bestBowler": 1,
+      "mvpRank": 3,
+      "mvpTotal": 20.175,
+      "mvpBatting": 10.958,
+      "mvpBowling": 5.633,
+      "mvpFielding": 3.584,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 20979518,
+      "name": "Prasad Sir  (wk)",
+      "team": "Team Housewise",
+      "playerOfTheMatch": 2,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 2,
+      "bestBowler": 0,
+      "mvpRank": 4,
+      "mvpTotal": 19.448,
+      "mvpBatting": 13.658,
+      "mvpBowling": 1.12,
+      "mvpFielding": 4.67,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 35263090,
+      "name": "Riaan mathur",
+      "team": "Yogic Dhurandars",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 2,
+      "mvpRank": 5,
+      "mvpTotal": 17.258,
+      "mvpBatting": 1.131,
+      "mvpBowling": 11.189,
+      "mvpFielding": 4.938,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 8016271,
+      "name": "Rajdeep C.  (wk)",
+      "team": "Fiery Sun Warriors",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 4,
+      "bestBowler": 0,
+      "mvpRank": 6,
+      "mvpTotal": 17.205,
+      "mvpBatting": 12.781,
+      "mvpBowling": 1.232,
+      "mvpFielding": 3.192,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 2192569,
+      "name": "Mandar Dehadrai  (wk)",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 7,
+      "mvpTotal": 16.389,
+      "mvpBatting": 11.993,
+      "mvpBowling": 0.112,
+      "mvpFielding": 4.284,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 46009313,
+      "name": "Vicky Jade",
+      "team": "Dalnex Dominators",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 2,
+      "bestBowler": 0,
+      "mvpRank": 8,
+      "mvpTotal": 15.889,
+      "mvpBatting": 14.489,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.4,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 26538317,
+      "name": "Avi  (c)",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 2,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 1,
+      "mvpRank": 9,
+      "mvpTotal": 15.679,
+      "mvpBatting": 9.842,
+      "mvpBowling": 5.277,
+      "mvpFielding": 0.56,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 34862603,
+      "name": "Bhushan Patkar",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 10,
+      "mvpTotal": 13.849,
+      "mvpBatting": 10.176,
+      "mvpBowling": 0.313,
+      "mvpFielding": 3.36,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 16908817,
+      "name": "Suraj Desai",
+      "team": "Yogic Dhurandars",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 2,
+      "bestBowler": 0,
+      "mvpRank": 11,
+      "mvpTotal": 13.54,
+      "mvpBatting": 13.577,
+      "mvpBowling": -0.037,
+      "mvpFielding": 0.0,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 33565514,
+      "name": "Paras",
+      "team": "Yogic Dhurandars",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 1,
+      "mvpRank": 12,
+      "mvpTotal": 13.478,
+      "mvpBatting": 2.844,
+      "mvpBowling": 7.828,
+      "mvpFielding": 2.806,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 34780077,
+      "name": "Nikhil Owalekar",
+      "team": "SBCC Titans",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 13,
+      "mvpTotal": 13.373,
+      "mvpBatting": 9.669,
+      "mvpBowling": 2.62,
+      "mvpFielding": 1.084,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 16751496,
+      "name": "Amit Gupta  (c)",
+      "team": "Inergy Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 14,
+      "mvpTotal": 13.031,
+      "mvpBatting": 9.092,
+      "mvpBowling": 3.239,
+      "mvpFielding": 0.7,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26535523,
+      "name": "Kiran Jagtap  (c)",
+      "team": "Yogic Dhurandars",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 15,
+      "mvpTotal": 12.876,
+      "mvpBatting": 6.812,
+      "mvpBowling": 4.794,
+      "mvpFielding": 1.27,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 46025564,
+      "name": "Gaurav Kad",
+      "team": "Dalnex Dominators",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 16,
+      "mvpTotal": 12.618,
+      "mvpBatting": 2.424,
+      "mvpBowling": 8.542,
+      "mvpFielding": 1.652,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 46073107,
+      "name": "Swapnil",
+      "team": "Inergy Strikers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 2,
+      "mvpRank": 17,
+      "mvpTotal": 12.101,
+      "mvpBatting": 1.0,
+      "mvpBowling": 8.113,
+      "mvpFielding": 2.988,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 45992913,
+      "name": "Sunny Jaisinghani",
+      "team": "Team Powerpoint",
+      "playerOfTheMatch": 2,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 18,
+      "mvpTotal": 12.031,
+      "mvpBatting": 9.08,
+      "mvpBowling": 1.251,
+      "mvpFielding": 1.7,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 4402685,
+      "name": "Anthony Michael",
+      "team": "Dalnex Dominators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 19,
+      "mvpTotal": 11.996,
+      "mvpBatting": 0.6,
+      "mvpBowling": 8.688,
+      "mvpFielding": 2.708,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 35462111,
+      "name": "Ketan Parikh",
+      "team": "Dalnex Dominators",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 20,
+      "mvpTotal": 11.256,
+      "mvpBatting": 0.0,
+      "mvpBowling": 6.234,
+      "mvpFielding": 5.022,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 34755560,
+      "name": "Vivek Vichare",
+      "team": "Dalnex Dominators",
+      "playerOfTheMatch": 2,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 21,
+      "mvpTotal": 11.064,
+      "mvpBatting": 2.042,
+      "mvpBowling": 8.462,
+      "mvpFielding": 0.56,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 34621053,
+      "name": "Dipal Panchal",
+      "team": "Team Powerpoint",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 22,
+      "mvpTotal": 10.966,
+      "mvpBatting": 7.216,
+      "mvpBowling": 1.79,
+      "mvpFielding": 1.96,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 45922437,
+      "name": "Prithviraj Chavan",
+      "team": "Mango Yorkers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 23,
+      "mvpTotal": 10.777,
+      "mvpBatting": 7.567,
+      "mvpBowling": 2.65,
+      "mvpFielding": 0.56,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26539273,
+      "name": "Ridhaan",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 2,
+      "mvpRank": 24,
+      "mvpTotal": 10.414,
+      "mvpBatting": 1.7,
+      "mvpBowling": 7.034,
+      "mvpFielding": 1.68,
+      "mvpMatches": 8
+    },
+    {
+      "playerId": 46020732,
+      "name": "Jade Hemant Singhal",
+      "team": "Yogic Dhurandars",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 25,
+      "mvpTotal": 10.384,
+      "mvpBatting": 5.848,
+      "mvpBowling": 0.0,
+      "mvpFielding": 4.536,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 22769462,
+      "name": "chetan Sharma",
+      "team": "Team Housewise",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 26,
+      "mvpTotal": 10.365,
+      "mvpBatting": 2.545,
+      "mvpBowling": 4.6,
+      "mvpFielding": 3.22,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 34862602,
+      "name": "HRishi Jade JCPL  (wk)",
+      "team": "Dalnex Dominators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 27,
+      "mvpTotal": 10.294,
+      "mvpBatting": 6.624,
+      "mvpBowling": 0.0,
+      "mvpFielding": 3.67,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 423614,
+      "name": "Rajeev Chempath",
+      "team": "Mango Yorkers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 28,
+      "mvpTotal": 10.27,
+      "mvpBatting": 2.7,
+      "mvpBowling": 4.666,
+      "mvpFielding": 2.904,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 18842243,
+      "name": "Vedant Rathi  (c)",
+      "team": "Mango Yorkers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 29,
+      "mvpTotal": 10.155,
+      "mvpBatting": 8.253,
+      "mvpBowling": 1.482,
+      "mvpFielding": 0.42,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 10928180,
+      "name": "Rahul Raj Singh",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 1,
+      "mvpRank": 30,
+      "mvpTotal": 10.13,
+      "mvpBatting": 4.388,
+      "mvpBowling": 4.938,
+      "mvpFielding": 0.804,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 26535410,
+      "name": "Vinay Korlepara",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 31,
+      "mvpTotal": 10.063,
+      "mvpBatting": 2.032,
+      "mvpBowling": 8.031,
+      "mvpFielding": 0.0,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26537554,
+      "name": "Aarav  (wk)",
+      "team": "Team Powerpoint",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 32,
+      "mvpTotal": 9.84,
+      "mvpBatting": 4.626,
+      "mvpBowling": 1.424,
+      "mvpFielding": 3.79,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 1754095,
+      "name": "Nilesh Behede",
+      "team": "Team Mentomap",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 33,
+      "mvpTotal": 9.834,
+      "mvpBatting": 8.051,
+      "mvpBowling": 1.559,
+      "mvpFielding": 0.224,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 24419687,
+      "name": "Anu Poduval",
+      "team": "Triphobo Trail Blazers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 34,
+      "mvpTotal": 9.627,
+      "mvpBatting": 0.3,
+      "mvpBowling": 8.487,
+      "mvpFielding": 0.84,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 4314892,
+      "name": "Vikas Goyal",
+      "team": "Yogic Dhurandars",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 35,
+      "mvpTotal": 9.18,
+      "mvpBatting": 0.0,
+      "mvpBowling": 8.956,
+      "mvpFielding": 0.224,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 34781085,
+      "name": "Varun Sahoo",
+      "team": "Triphobo Trail Blazers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 2,
+      "mvpRank": 36,
+      "mvpTotal": 9.043,
+      "mvpBatting": 4.027,
+      "mvpBowling": 4.316,
+      "mvpFielding": 0.7,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 23379,
+      "name": "Rahul Agrawal",
+      "team": "Triphobo Trail Blazers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 37,
+      "mvpTotal": 8.602,
+      "mvpBatting": 6.502,
+      "mvpBowling": 0.0,
+      "mvpFielding": 2.1,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 2532316,
+      "name": "Aayush Asawa",
+      "team": "Fiery Sun Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 38,
+      "mvpTotal": 8.165,
+      "mvpBatting": 0.9,
+      "mvpBowling": 5.305,
+      "mvpFielding": 1.96,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 4161625,
+      "name": "Gurmeet Kalsi",
+      "team": "Fiery Sun Warriors",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 39,
+      "mvpTotal": 7.689,
+      "mvpBatting": 0.6,
+      "mvpBowling": 3.785,
+      "mvpFielding": 3.304,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 36380945,
+      "name": "SULTAAN",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 40,
+      "mvpTotal": 7.614,
+      "mvpBatting": 0.8,
+      "mvpBowling": 6.254,
+      "mvpFielding": 0.56,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 26538318,
+      "name": "Ajit",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 40,
+      "mvpTotal": 7.614,
+      "mvpBatting": 1.536,
+      "mvpBowling": 3.874,
+      "mvpFielding": 2.204,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 7615670,
+      "name": "Rahul Varma",
+      "team": "Fiery Sun Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 41,
+      "mvpTotal": 7.55,
+      "mvpBatting": 0.0,
+      "mvpBowling": 6.542,
+      "mvpFielding": 1.008,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 45933694,
+      "name": "Ankit Goyal",
+      "team": "Team Housewise",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 42,
+      "mvpTotal": 7.47,
+      "mvpBatting": 0.973,
+      "mvpBowling": 5.377,
+      "mvpFielding": 1.12,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 46073102,
+      "name": "Abhishek Shikarwar",
+      "team": "Inergy Strikers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 2,
+      "bestBowler": 0,
+      "mvpRank": 43,
+      "mvpTotal": 7.447,
+      "mvpBatting": 7.456,
+      "mvpBowling": -0.009,
+      "mvpFielding": 0.0,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 46072763,
+      "name": "Ashish Jade",
+      "team": "Inergy Strikers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 44,
+      "mvpTotal": 7.295,
+      "mvpBatting": 2.224,
+      "mvpBowling": 4.511,
+      "mvpFielding": 0.56,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 46090840,
+      "name": "Rakesh Vekariya",
+      "team": "Team Mentomap",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 45,
+      "mvpTotal": 7.283,
+      "mvpBatting": 1.582,
+      "mvpBowling": 3.181,
+      "mvpFielding": 2.52,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46021062,
+      "name": "Aditya Shah",
+      "team": "Team Powerpoint",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 46,
+      "mvpTotal": 7.282,
+      "mvpBatting": 4.004,
+      "mvpBowling": 2.718,
+      "mvpFielding": 0.56,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26535639,
+      "name": "Akshay Pore  (c)",
+      "team": "Fiery Sun Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 47,
+      "mvpTotal": 7.166,
+      "mvpBatting": 4.675,
+      "mvpBowling": 2.491,
+      "mvpFielding": 0.0,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 34780613,
+      "name": "Akshay Wardhane",
+      "team": "SBCC Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 48,
+      "mvpTotal": 7.127,
+      "mvpBatting": 4.663,
+      "mvpBowling": 0.0,
+      "mvpFielding": 2.464,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46000207,
+      "name": "Sourabh Gupta",
+      "team": "Triphobo Trail Blazers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 49,
+      "mvpTotal": 6.848,
+      "mvpBatting": 5.0,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.848,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 45969718,
+      "name": "Pushkar B",
+      "team": "Team Housewise",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 50,
+      "mvpTotal": 6.709,
+      "mvpBatting": 0.519,
+      "mvpBowling": 4.062,
+      "mvpFielding": 2.128,
+      "mvpMatches": 7
+    },
+    {
+      "playerId": 34779059,
+      "name": "Sachin Jain Jade",
+      "team": "SBCC Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 51,
+      "mvpTotal": 6.538,
+      "mvpBatting": 4.867,
+      "mvpBowling": 1.391,
+      "mvpFielding": 0.28,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26537558,
+      "name": "Tanmay",
+      "team": "Triphobo Trail Blazers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 52,
+      "mvpTotal": 6.457,
+      "mvpBatting": 6.177,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 15917,
+      "name": "Manish Singh",
+      "team": "Team Powerpoint",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 53,
+      "mvpTotal": 5.95,
+      "mvpBatting": 0.8,
+      "mvpBowling": 2.238,
+      "mvpFielding": 2.912,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26536811,
+      "name": "Kunal Kukreja",
+      "team": "Inergy Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 54,
+      "mvpTotal": 5.924,
+      "mvpBatting": 1.6,
+      "mvpBowling": -0.156,
+      "mvpFielding": 4.48,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 34779788,
+      "name": "Saikiran Mandava",
+      "team": "SBCC Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 55,
+      "mvpTotal": 5.867,
+      "mvpBatting": 1.906,
+      "mvpBowling": 3.681,
+      "mvpFielding": 0.28,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26537228,
+      "name": "Ved Prakash",
+      "team": "SBCC Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 56,
+      "mvpTotal": 5.066,
+      "mvpBatting": 1.256,
+      "mvpBowling": 3.436,
+      "mvpFielding": 0.374,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 45950998,
+      "name": "Sachin Rajgire",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 57,
+      "mvpTotal": 4.691,
+      "mvpBatting": 4.411,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26537490,
+      "name": "Aditya Joshi",
+      "team": "Team Mentomap",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 58,
+      "mvpTotal": 4.668,
+      "mvpBatting": 1.3,
+      "mvpBowling": 3.088,
+      "mvpFielding": 0.28,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26537557,
+      "name": "Saket",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 59,
+      "mvpTotal": 4.638,
+      "mvpBatting": 0.0,
+      "mvpBowling": 3.798,
+      "mvpFielding": 0.84,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 9999504,
+      "name": "Ganesh  (c)",
+      "team": "Team Mentomap",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 60,
+      "mvpTotal": 4.63,
+      "mvpBatting": 3.142,
+      "mvpBowling": 0.928,
+      "mvpFielding": 0.56,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 46008619,
+      "name": "D Mukund",
+      "team": "Team Housewise",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 61,
+      "mvpTotal": 4.475,
+      "mvpBatting": 3.493,
+      "mvpBowling": 0.122,
+      "mvpFielding": 0.86,
+      "mvpMatches": 6
+    },
+    {
+      "playerId": 26541271,
+      "name": "Kunj Somani",
+      "team": "Inergy Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 62,
+      "mvpTotal": 4.453,
+      "mvpBatting": 0.2,
+      "mvpBowling": 2.993,
+      "mvpFielding": 1.26,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 6228730,
+      "name": "Ashish Ahuja",
+      "team": "Team Housewise",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 63,
+      "mvpTotal": 4.439,
+      "mvpBatting": 3.645,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.794,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 468045,
+      "name": "Nitin Verma",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 64,
+      "mvpTotal": 4.228,
+      "mvpBatting": 1.875,
+      "mvpBowling": 1.373,
+      "mvpFielding": 0.98,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 34783157,
+      "name": "Vivek Shende",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 65,
+      "mvpTotal": 4.19,
+      "mvpBatting": 2.829,
+      "mvpBowling": -0.039,
+      "mvpFielding": 1.4,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 4747261,
+      "name": "Dinesh M  (c)",
+      "team": "SBCC Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 66,
+      "mvpTotal": 4.107,
+      "mvpBatting": 1.2,
+      "mvpBowling": 1.749,
+      "mvpFielding": 1.158,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 21873418,
+      "name": "Sunil",
+      "team": "Team Powerpoint",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 67,
+      "mvpTotal": 3.921,
+      "mvpBatting": 0.4,
+      "mvpBowling": 3.241,
+      "mvpFielding": 0.28,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26537567,
+      "name": "Sujal Narayan Mudliar",
+      "team": "Fiery Sun Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 68,
+      "mvpTotal": 3.485,
+      "mvpBatting": 0.3,
+      "mvpBowling": 2.065,
+      "mvpFielding": 1.12,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 34779416,
+      "name": "Nishant Patil",
+      "team": "SBCC Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 69,
+      "mvpTotal": 3.185,
+      "mvpBatting": 1.354,
+      "mvpBowling": 1.401,
+      "mvpFielding": 0.43,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26564445,
+      "name": "Sagar",
+      "team": "Yogic Dhurandars",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 70,
+      "mvpTotal": 3.16,
+      "mvpBatting": 1.9,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.26,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 14601322,
+      "name": "Aaryan Gaikwad",
+      "team": "Mango Yorkers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 71,
+      "mvpTotal": 3.136,
+      "mvpBatting": 0.2,
+      "mvpBowling": 2.936,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 10910435,
+      "name": "Varun",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 72,
+      "mvpTotal": 3.036,
+      "mvpBatting": 1.906,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.13,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 45999127,
+      "name": "Kaustubh Moharil",
+      "team": "Triphobo Trail Blazers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 73,
+      "mvpTotal": 3.018,
+      "mvpBatting": 0.6,
+      "mvpBowling": 1.438,
+      "mvpFielding": 0.98,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 29521905,
+      "name": "Shyam Sunder Jade Cricket",
+      "team": "SBCC Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 74,
+      "mvpTotal": 2.972,
+      "mvpBatting": 0.1,
+      "mvpBowling": 2.872,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 34341952,
+      "name": "Amul Shah",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 75,
+      "mvpTotal": 2.931,
+      "mvpBatting": 1.804,
+      "mvpBowling": 0.427,
+      "mvpFielding": 0.7,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 5113915,
+      "name": "Ravindra Waghmare",
+      "team": "Triphobo Trail Blazers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 76,
+      "mvpTotal": 2.776,
+      "mvpBatting": 0.5,
+      "mvpBowling": 1.202,
+      "mvpFielding": 1.074,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26537492,
+      "name": "Rajesh",
+      "team": "Dalnex Dominators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 77,
+      "mvpTotal": 2.67,
+      "mvpBatting": 1.605,
+      "mvpBowling": 1.065,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26537089,
+      "name": "Sudeep Somani",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 78,
+      "mvpTotal": 2.301,
+      "mvpBatting": 0.5,
+      "mvpBowling": 1.521,
+      "mvpFielding": 0.28,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 45951069,
+      "name": "Neeraj Varma",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 79,
+      "mvpTotal": 2.126,
+      "mvpBatting": 1.0,
+      "mvpBowling": 0.566,
+      "mvpFielding": 0.56,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 34779796,
+      "name": "Mohit Agarwal",
+      "team": "Team Powerpoint",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 80,
+      "mvpTotal": 2.1,
+      "mvpBatting": 2.1,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 26537807,
+      "name": "Harpreet Singh",
+      "team": "Inergy Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 81,
+      "mvpTotal": 1.934,
+      "mvpBatting": 0.5,
+      "mvpBowling": 1.434,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 2570861,
+      "name": "Vikram",
+      "team": "Mango Yorkers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 82,
+      "mvpTotal": 1.928,
+      "mvpBatting": 0.3,
+      "mvpBowling": 1.628,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 11635308,
+      "name": "Kabir Vaidya",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 83,
+      "mvpTotal": 1.888,
+      "mvpBatting": 0.7,
+      "mvpBowling": -0.082,
+      "mvpFielding": 1.27,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 46101823,
+      "name": "Akshay Pillai",
+      "team": "Team Powerpoint",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 84,
+      "mvpTotal": 1.826,
+      "mvpBatting": 0.5,
+      "mvpBowling": -0.074,
+      "mvpFielding": 1.4,
+      "mvpMatches": 1
+    },
+    {
+      "playerId": 26537267,
+      "name": "Akhil Madan",
+      "team": "Team Mentomap",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 85,
+      "mvpTotal": 1.734,
+      "mvpBatting": 0.3,
+      "mvpBowling": 1.434,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 19479998,
+      "name": "Lakshya Jhalani",
+      "team": "Inergy Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 86,
+      "mvpTotal": 1.641,
+      "mvpBatting": 1.421,
+      "mvpBowling": -0.06,
+      "mvpFielding": 0.28,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26648211,
+      "name": "Vikas Gaikwad",
+      "team": "Team Mentomap",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 87,
+      "mvpTotal": 1.624,
+      "mvpBatting": 1.8,
+      "mvpBowling": -0.176,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 34862605,
+      "name": "Jade Vikasv JCPL",
+      "team": "Team Mentomap",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 88,
+      "mvpTotal": 1.58,
+      "mvpBatting": 1.3,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 22139379,
+      "name": "Rajat Dua",
+      "team": "Fiery Sun Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 88,
+      "mvpTotal": 1.58,
+      "mvpBatting": 1.3,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26538324,
+      "name": "Tarun",
+      "team": "Yogic Dhurandars",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 89,
+      "mvpTotal": 1.541,
+      "mvpBatting": 0.1,
+      "mvpBowling": 1.441,
+      "mvpFielding": 0.0,
+      "mvpMatches": 5
+    },
+    {
+      "playerId": 45950999,
+      "name": "Sachin Raole Jade D131",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 90,
+      "mvpTotal": 0.973,
+      "mvpBatting": 0.973,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 14150407,
+      "name": "Jitu Rathi",
+      "team": "Team Mentomap",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 91,
+      "mvpTotal": 0.664,
+      "mvpBatting": 0.7,
+      "mvpBowling": -0.036,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 45917028,
+      "name": "Sourabh Khanna Jade",
+      "team": "Fiery Sun Warriors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 92,
+      "mvpTotal": 0.4,
+      "mvpBatting": 0.4,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 2850142,
+      "name": "Sachin Lulla",
+      "team": "Jade 4 Lions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 93,
+      "mvpTotal": 0.2,
+      "mvpBatting": 0.2,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 45997383,
+      "name": "Aurobindo ",
+      "team": "Mango Yorkers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 94,
+      "mvpTotal": 0.136,
+      "mvpBatting": 0.1,
+      "mvpBowling": 0.036,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 34779447,
+      "name": "Siddharth Pednekar (c)",
+      "team": "Team Powerpoint",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 95,
+      "mvpTotal": -0.046,
+      "mvpBatting": 0.0,
+      "mvpBowling": -0.046,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26536759,
+      "name": "Mahesh A Kulkarni  (c)",
+      "team": "Pictonions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 96,
+      "mvpTotal": -0.089,
+      "mvpBatting": 0.0,
+      "mvpBowling": -0.089,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    }
+  ],
+  "awards": [
+    {
+      "type": "ORANGE_CAP",
+      "label": "Orange Cap (Most Runs)",
+      "playerId": 2543231,
+      "playerName": "Amol Pawar",
+      "team": "Team Housewise"
+    },
+    {
+      "type": "PURPLE_CAP",
+      "label": "Purple Cap (Most Wickets)",
+      "playerId": 34862604,
+      "playerName": "Pankaj Guglani",
+      "team": "Team Housewise"
+    },
+    {
+      "type": "MOST_FOURS",
+      "label": "Most 4s In Tournament",
+      "playerId": 46009313,
+      "playerName": "Vicky Jade",
+      "team": "Dalnex Dominators"
+    },
+    {
+      "type": "MOST_SIXES",
+      "label": "Most 6s In Tournament",
+      "playerId": 2543231,
+      "playerName": "Amol Pawar",
+      "team": "Team Housewise"
+    },
+    {
+      "type": "MOST_CATCHES",
+      "label": "Most catches & caught behind",
+      "playerId": 20979518,
+      "playerName": "Prasad Sir",
+      "team": "Team Housewise"
+    },
+    {
+      "type": "MOST_DOTS_BOWLED",
+      "label": "Most Dots Bowled",
+      "playerId": 46025564,
+      "playerName": "Gaurav Kad",
+      "team": "Dalnex Dominators"
+    }
+  ]
+}

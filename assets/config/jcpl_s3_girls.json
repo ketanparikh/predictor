@@ -1,0 +1,895 @@
+{
+  "tournamentId": 1786340,
+  "name": "JCPL 2026 Girls",
+  "city": "Pune",
+  "fromDate": "2026-01-15",
+  "toDate": "2026-01-18",
+  "ground": "Trooferz, PAN Card Club Road",
+  "overall": {
+    "Matches": "4",
+    "Innings": "8",
+    "Runs": "220",
+    "Wickets": "34",
+    "Balls": "286",
+    "Extras": "68",
+    "Fours": "3",
+    "Sixes": "7",
+    "50's": "0",
+    "100's": "0",
+    "50+ Partnership": "0",
+    "100+ Partnership": "0",
+    "Maidens": "3",
+    "Dot balls": "187",
+    "Catches": "6",
+    "Stumpings": "0",
+    "BDRY%": "24.55",
+    "BDRY Freq.": "28.60",
+    "DB Freq.": "1.53",
+    "DB%": "65.38"
+  },
+  "teams": [
+    {
+      "teamId": 11948188,
+      "name": "Sapphire Strikers",
+      "logo": "https://media.cricheroes.in/default/teamintital/SS.png",
+      "captainId": 45916292
+    },
+    {
+      "teamId": 11948177,
+      "name": "Scarlet Sirens",
+      "logo": "https://media.cricheroes.in/default/teamintital/SS.png",
+      "captainId": 46187161
+    }
+  ],
+  "matches": [
+    {
+      "matchId": 21663110,
+      "date": "2026-01-16T13:58:23.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Scarlet Sirens",
+      "teamAScore": "35/5",
+      "teamB": "Sapphire Strikers",
+      "teamBScore": "36/2",
+      "winner": "Sapphire Strikers",
+      "winBy": "4 wickets",
+      "result": "Sapphire Strikers won by 4 wickets",
+      "playerOfTheMatch": {
+        "playerId": 46443022,
+        "name": "Aarvi Behede",
+        "team": "Sapphire Strikers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46393832,
+        "name": "Swara",
+        "team": "Sapphire Strikers"
+      },
+      "bestBowler": {
+        "playerId": 46443022,
+        "name": "Aarvi Behede",
+        "team": "Sapphire Strikers"
+      }
+    },
+    {
+      "matchId": 21673699,
+      "date": "2026-01-18T04:09:12.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Sapphire Strikers",
+      "teamAScore": "45/6",
+      "teamB": "Scarlet Sirens",
+      "teamBScore": "45/5",
+      "winner": "",
+      "winBy": "Tie",
+      "result": "Tie",
+      "playerOfTheMatch": {
+        "playerId": 46391313,
+        "name": "Gauri Kulkarni",
+        "team": "Scarlet Sirens"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46393832,
+        "name": "Swara",
+        "team": "Sapphire Strikers"
+      },
+      "bestBowler": {
+        "playerId": 46391313,
+        "name": "Gauri Kulkarni",
+        "team": "Scarlet Sirens"
+      }
+    },
+    {
+      "matchId": 21673723,
+      "date": "2026-01-18T11:48:10.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Scarlet Sirens",
+      "teamAScore": "25/7",
+      "teamB": "Sapphire Strikers",
+      "teamBScore": "20/7",
+      "winner": "Scarlet Sirens",
+      "winBy": "5 runs",
+      "result": "Scarlet Sirens won by 5 runs",
+      "playerOfTheMatch": {
+        "playerId": 46187161,
+        "name": "Srisha Vengurlekar  (c)",
+        "team": "Scarlet Sirens"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46391267,
+        "name": "Aarna Dubey",
+        "team": "Scarlet Sirens"
+      },
+      "bestBowler": {
+        "playerId": 46187161,
+        "name": "Srisha Vengurlekar  (c)",
+        "team": "Scarlet Sirens"
+      }
+    },
+    {
+      "matchId": 21766846,
+      "date": "2026-01-18T12:55:32.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Sapphire Strikers",
+      "teamAScore": "12/1",
+      "teamB": "Scarlet Sirens",
+      "teamBScore": "2/1",
+      "winner": "Sapphire Strikers",
+      "winBy": "10 runs",
+      "result": "Sapphire Strikers won by 10 runs",
+      "playerOfTheMatch": {
+        "playerId": 46393561,
+        "name": "Trisha",
+        "team": "Sapphire Strikers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 45916292,
+        "name": "Khushi Dulhani  (c)",
+        "team": "Sapphire Strikers"
+      },
+      "bestBowler": {
+        "playerId": 46187161,
+        "name": "Srisha Vengurlekar  (c)",
+        "team": "Scarlet Sirens"
+      }
+    }
+  ],
+  "players": [
+    {
+      "playerId": 46391267,
+      "name": "Aarna Dubey",
+      "team": "Scarlet Sirens",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 0,
+        "runs": 13,
+        "balls": 23,
+        "highScore": "8",
+        "avg": 3.25,
+        "sr": 56.52,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "6.0",
+        "maidens": 1,
+        "wickets": 3,
+        "runs": 27,
+        "best": "2/5",
+        "economy": 4.5,
+        "avg": 9.0,
+        "sr": 12.0,
+        "dots": 28,
+        "wides": 6,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46443022,
+      "name": "Aarvi Behede",
+      "team": "Sapphire Strikers",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 24,
+        "balls": 44,
+        "highScore": "12",
+        "avg": 12.0,
+        "sr": 54.55,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 1,
+        "wickets": 4,
+        "runs": 10,
+        "best": "2/2",
+        "economy": 3.33,
+        "avg": 2.5,
+        "sr": 4.5,
+        "dots": 13,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46391313,
+      "name": "Gauri Kulkarni",
+      "team": "Scarlet Sirens",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 2,
+        "balls": 14,
+        "highScore": "1",
+        "avg": 0.67,
+        "sr": 14.29,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 6,
+        "best": "3/3",
+        "economy": 3.0,
+        "avg": 1.5,
+        "sr": 3.0,
+        "dots": 13,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45916292,
+      "name": "Khushi Dulhani  (c)",
+      "team": "Sapphire Strikers",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 7,
+        "balls": 11,
+        "highScore": "5*",
+        "avg": 3.5,
+        "sr": 63.64,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 15,
+        "best": "1/6",
+        "economy": 3.0,
+        "avg": 15.0,
+        "sr": 30.0,
+        "dots": 22,
+        "wides": 4,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46443000,
+      "name": "Riana Sahoo",
+      "team": "Sapphire Strikers",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 4,
+        "balls": 5,
+        "highScore": "3*",
+        "avg": 4.0,
+        "sr": 80.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 40,
+        "best": "1/8",
+        "economy": 8.0,
+        "avg": 13.33,
+        "sr": 10.0,
+        "dots": 20,
+        "wides": 9,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46391156,
+      "name": "Shweta Singhal Jade E",
+      "team": "Scarlet Sirens",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 25,
+        "balls": 31,
+        "highScore": "13",
+        "avg": 8.33,
+        "sr": 80.65,
+        "fours": 0,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 27,
+        "best": "",
+        "economy": 9.0,
+        "avg": null,
+        "sr": null,
+        "dots": 8,
+        "wides": 4,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46443378,
+      "name": "Siddhie Khanna",
+      "team": "Scarlet Sirens",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 7,
+        "balls": 21,
+        "highScore": "3*",
+        "avg": 7.0,
+        "sr": 33.33,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 27,
+        "best": "2/10",
+        "economy": 5.4,
+        "avg": 9.0,
+        "sr": 10.0,
+        "dots": 15,
+        "wides": 9,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46187161,
+      "name": "Srisha Vengurlekar  (c)",
+      "team": "Scarlet Sirens",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 10,
+        "balls": 14,
+        "highScore": "10*",
+        "avg": 5.0,
+        "sr": 71.43,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "6.0",
+        "maidens": 1,
+        "wickets": 4,
+        "runs": 26,
+        "best": "2/2",
+        "economy": 4.33,
+        "avg": 6.5,
+        "sr": 9.0,
+        "dots": 23,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35215713,
+      "name": "Sushama Gaikwad",
+      "team": "Scarlet Sirens",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 6,
+        "balls": 19,
+        "highScore": "6",
+        "avg": 2.0,
+        "sr": 31.58,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46393832,
+      "name": "Swara",
+      "team": "Sapphire Strikers",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 0,
+        "runs": 37,
+        "balls": 40,
+        "highScore": "19",
+        "avg": 9.25,
+        "sr": 92.5,
+        "fours": 1,
+        "sixes": 3,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 16,
+        "best": "",
+        "economy": 5.33,
+        "avg": null,
+        "sr": null,
+        "dots": 10,
+        "wides": 3,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46391159,
+      "name": "Tanisha Kaur Arora",
+      "team": "Scarlet Sirens",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 10,
+        "balls": 36,
+        "highScore": "4",
+        "avg": 5.0,
+        "sr": 27.78,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46393271,
+      "name": "Tanvi Korlepara",
+      "team": "Sapphire Strikers",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 5,
+        "balls": 29,
+        "highScore": "5",
+        "avg": 2.5,
+        "sr": 17.24,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 18,
+        "best": "1/4",
+        "economy": 2.57,
+        "avg": 6.0,
+        "sr": 14.0,
+        "dots": 32,
+        "wides": 3,
+        "noBalls": 5
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46393561,
+      "name": "Trisha",
+      "team": "Sapphire Strikers",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 8,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 3
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 8,
+        "best": "",
+        "economy": 8.0,
+        "avg": null,
+        "sr": null,
+        "dots": 3,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46393481,
+      "name": "Vivanya",
+      "team": "Sapphire Strikers",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 2,
+        "balls": 9,
+        "highScore": "1*",
+        "avg": 1.0,
+        "sr": 22.22,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    }
+  ],
+  "mvp": [
+    {
+      "playerId": 46187161,
+      "name": "Srisha Vengurlekar  (c)",
+      "team": "Scarlet Sirens",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 2,
+      "mvpRank": 1,
+      "mvpTotal": 8.795,
+      "mvpBatting": 1.042,
+      "mvpBowling": 6.539,
+      "mvpFielding": 1.214,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46443022,
+      "name": "Aarvi Behede",
+      "team": "Sapphire Strikers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 2,
+      "mvpTotal": 8.084,
+      "mvpBatting": 2.4,
+      "mvpBowling": 5.254,
+      "mvpFielding": 0.43,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46391267,
+      "name": "Aarna Dubey",
+      "team": "Scarlet Sirens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 3,
+      "mvpTotal": 7.596,
+      "mvpBatting": 1.322,
+      "mvpBowling": 4.734,
+      "mvpFielding": 1.54,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46391313,
+      "name": "Gauri Kulkarni",
+      "team": "Scarlet Sirens",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 4,
+      "mvpTotal": 6.672,
+      "mvpBatting": 0.2,
+      "mvpBowling": 5.772,
+      "mvpFielding": 0.7,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46393271,
+      "name": "Tanvi Korlepara",
+      "team": "Sapphire Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 5,
+      "mvpTotal": 6.508,
+      "mvpBatting": 0.5,
+      "mvpBowling": 4.328,
+      "mvpFielding": 1.68,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46443000,
+      "name": "Riana Sahoo",
+      "team": "Sapphire Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 6,
+      "mvpTotal": 4.446,
+      "mvpBatting": 0.403,
+      "mvpBowling": 3.483,
+      "mvpFielding": 0.56,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46443378,
+      "name": "Siddhie Khanna",
+      "team": "Scarlet Sirens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 7,
+      "mvpTotal": 3.93,
+      "mvpBatting": 0.7,
+      "mvpBowling": 3.23,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46393832,
+      "name": "Swara",
+      "team": "Sapphire Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 2,
+      "bestBowler": 0,
+      "mvpRank": 8,
+      "mvpTotal": 3.711,
+      "mvpBatting": 3.749,
+      "mvpBowling": -0.038,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46391156,
+      "name": "Shweta Singhal Jade E",
+      "team": "Scarlet Sirens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 9,
+      "mvpTotal": 2.757,
+      "mvpBatting": 2.553,
+      "mvpBowling": -0.132,
+      "mvpFielding": 0.336,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 45916292,
+      "name": "Khushi Dulhani  (c)",
+      "team": "Sapphire Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 10,
+      "mvpTotal": 2.367,
+      "mvpBatting": 0.7,
+      "mvpBowling": 1.667,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46391159,
+      "name": "Tanisha Kaur Arora",
+      "team": "Scarlet Sirens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 11,
+      "mvpTotal": 1.374,
+      "mvpBatting": 1.0,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.374,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46393561,
+      "name": "Trisha",
+      "team": "Sapphire Strikers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 12,
+      "mvpTotal": 1.144,
+      "mvpBatting": 0.0,
+      "mvpBowling": -0.056,
+      "mvpFielding": 1.2,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 35215713,
+      "name": "Sushama Gaikwad",
+      "team": "Scarlet Sirens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 13,
+      "mvpTotal": 0.88,
+      "mvpBatting": 0.6,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 46393481,
+      "name": "Vivanya",
+      "team": "Sapphire Strikers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 14,
+      "mvpTotal": 0.2,
+      "mvpBatting": 0.2,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    }
+  ],
+  "awards": []
+}

@@ -765,7 +765,7 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
                 <Shield className="w-4 h-4 text-amber-400" />
-                <span>10 Franchise Bidding Pads</span>
+                <span>{teams.length} Franchise Bidding Pads</span>
               </h3>
               <span className="text-[10px] text-slate-400 font-mono">
                 +{rules.minBidIncrement} pts auto-increment

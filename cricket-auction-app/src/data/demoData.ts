@@ -187,6 +187,36 @@ export const initialTeams: Team[] = [
     squad: [],
     wishlist: [],
   },
+  {
+    id: 'team-11',
+    name: 'Pune Warriors Prime',
+    shortName: 'PWP',
+    logo: '⚔️',
+    color: '#6366f1', // Indigo
+    secondaryColor: '#4f46e5',
+    owner: 'Sahara Sports Venture',
+    captain: 'Ajinkya Rao',
+    startingBudget: 50000,
+    remainingBudget: 50000,
+    totalSpent: 0,
+    squad: [],
+    wishlist: [],
+  },
+  {
+    id: 'team-12',
+    name: 'Ahmedabad Aces',
+    shortName: 'AA',
+    logo: '🎯',
+    color: '#10b981', // Emerald
+    secondaryColor: '#059669',
+    owner: 'Torrent Sports Group',
+    captain: 'Hardik Rana',
+    startingBudget: 50000,
+    remainingBudget: 50000,
+    totalSpent: 0,
+    squad: [],
+    wishlist: [],
+  },
 ];
 
 export const initialPlayers: Player[] = [

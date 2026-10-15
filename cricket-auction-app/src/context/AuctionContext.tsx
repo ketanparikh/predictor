@@ -67,6 +67,17 @@ interface AuctionContextType {
   importPlayers: (parsedRows: ParsedPlayerRow[], replaceExisting?: boolean) => void;
 
   // Team Management
+  addTeam: (teamData: {
+    name: string;
+    shortName: string;
+    logo?: string;
+    color?: string;
+    secondaryColor?: string;
+    owner?: string;
+    captain?: string;
+    startingBudget?: number;
+  }) => Team;
+  removeTeam: (teamId: string) => { success: boolean; message: string };
   updateTeam: (team: Team) => void;
   updateTeamName: (teamId: string, name: string, shortName?: string) => void;
   updateAllTeams: (teamsList: Team[]) => void;
@@ -334,7 +345,18 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
     window.addEventListener('hashchange', handleHashChange);
 
-    // 3. Server-Sent Events (SSE) for instant cross-device broadcast (< 15ms latency)
+    // 3. Instant cross-tab storage listener (Zero latency on same device/browser)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (checkIsSpectatorOrProjector()) {
+        try {
+          const stored = loadStoredState();
+          applyIncomingState(stored);
+        } catch {}
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    // 4. Server-Sent Events (SSE) for instant cross-device broadcast (< 15ms latency)
     let es: EventSource | null = null;
     const connectSSE = () => {
       try {
@@ -356,15 +378,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
     connectSSE();
 
-    // 4. Fallback heartbeat polling for spectator & projector every 1.5 seconds
+    // 5. Fallback heartbeat polling for spectator & projector every 1 second
     const interval = setInterval(() => {
       if (checkIsSpectatorOrProjector()) {
         fetchLatestServerState();
       }
-    }, 1500);
+    }, 1000);
 
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('storage', handleStorageChange);
       if (es) es.close();
       clearInterval(interval);
     };
@@ -1089,6 +1112,96 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   }, [players.length]);
 
+  // ADD NEW TEAM
+  const addTeam = useCallback((teamData: {
+    name: string;
+    shortName: string;
+    logo?: string;
+    color?: string;
+    secondaryColor?: string;
+    owner?: string;
+    captain?: string;
+    startingBudget?: number;
+  }): Team => {
+    const budget = teamData.startingBudget !== undefined && !isNaN(teamData.startingBudget) && teamData.startingBudget > 0
+      ? teamData.startingBudget
+      : (rules.startingBudget || 50000);
+    const newTeamId = `team-${Date.now()}`;
+    const newTeam: Team = {
+      id: newTeamId,
+      name: teamData.name.trim(),
+      shortName: (teamData.shortName || teamData.name.slice(0, 3)).trim().toUpperCase(),
+      logo: teamData.logo || '🏏',
+      color: teamData.color || '#3b82f6',
+      secondaryColor: teamData.secondaryColor || '#1d4ed8',
+      owner: teamData.owner?.trim() || 'Franchise Owner',
+      captain: teamData.captain?.trim() || '',
+      startingBudget: budget,
+      remainingBudget: budget,
+      totalSpent: 0,
+      squad: [],
+      wishlist: [],
+    };
+
+    setTeams(prev => {
+      const updated = [...prev, newTeam];
+      saveStoredState({ teams: updated });
+      return updated;
+    });
+
+    return newTeam;
+  }, [rules.startingBudget]);
+
+  // REMOVE TEAM (With minimum 12 teams validation for Mens tournament)
+  const removeTeam = useCallback((teamId: string): { success: boolean; message: string } => {
+    let result = { success: false, message: '' };
+
+    setTeams(prev => {
+      if (prev.length <= 12) {
+        result = {
+          success: false,
+          message: 'Tournament Rule: A minimum of 12 teams is required for the tournament.'
+        };
+        return prev;
+      }
+
+      const teamToRemove = prev.find(t => t.id === teamId);
+      if (!teamToRemove) {
+        result = { success: false, message: 'Team not found.' };
+        return prev;
+      }
+
+      // Reset any players that belonged to this team back to 'upcoming'
+      setPlayers(pPrev => pPrev.map(p => {
+        if (p.teamId === teamId || teamToRemove.squad.includes(p.id)) {
+          return {
+            ...p,
+            status: 'upcoming',
+            teamId: null,
+            soldPrice: null,
+          };
+        }
+        return p;
+      }));
+
+      // Remove transactions involving this team
+      setTransactions(tPrev => tPrev.filter(tx => tx.teamId !== teamId));
+
+      // Reset active bidder if it was this team
+      setCurrentBidderId(bId => (bId === teamId ? null : bId));
+
+      const updated = prev.filter(t => t.id !== teamId);
+      saveStoredState({ teams: updated });
+      result = {
+        success: true,
+        message: `Successfully removed ${teamToRemove.name}. Squad players have been returned to the auction pool.`
+      };
+      return updated;
+    });
+
+    return result;
+  }, []);
+
   // UPDATE TEAM
   const updateTeam = useCallback((updatedTeam: Team) => {
     setTeams(prev => prev.map(t => t.id === updatedTeam.id ? updatedTeam : t));
@@ -1311,6 +1424,8 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         deleteAllPlayers,
         restoreDeletedPlayers,
         importPlayers,
+        addTeam,
+        removeTeam,
         updateTeam,
         updateTeamName,
         updateAllTeams,

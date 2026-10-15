@@ -108,8 +108,35 @@ export const loadStoredState = (): AppStoredState => {
       localStorage.setItem(STORAGE_KEYS.PLAYERS, JSON.stringify(loadedPlayers));
     }
 
+    let loadedTeams: Team[] = rawTeams ? JSON.parse(rawTeams) : initialTeams;
+    // For Mens tournament, ensure a minimum of 12 teams
+    if (loadedTeams.length < 12) {
+      const existingIds = new Set(loadedTeams.map(t => t.id));
+      const toAdd = initialTeams.filter(t => !existingIds.has(t.id));
+      loadedTeams = [...loadedTeams, ...toAdd];
+      while (loadedTeams.length < 12) {
+        const idx = loadedTeams.length + 1;
+        loadedTeams.push({
+          id: `team-${idx}`,
+          name: `Franchise Team ${idx}`,
+          shortName: `FT${idx}`,
+          logo: '🏏',
+          color: '#3b82f6',
+          secondaryColor: '#1d4ed8',
+          owner: 'Franchise Group',
+          captain: `Captain ${idx}`,
+          startingBudget: loadedRules.startingBudget || 50000,
+          remainingBudget: loadedRules.startingBudget || 50000,
+          totalSpent: 0,
+          squad: [],
+          wishlist: [],
+        });
+      }
+      localStorage.setItem(STORAGE_KEYS.TEAMS, JSON.stringify(loadedTeams));
+    }
+
     return {
-      teams: rawTeams ? JSON.parse(rawTeams) : initialTeams,
+      teams: loadedTeams,
       players: loadedPlayers,
       transactions: rawTransactions ? JSON.parse(rawTransactions) : [],
       rules: loadedRules,

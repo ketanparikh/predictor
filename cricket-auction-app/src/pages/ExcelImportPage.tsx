@@ -49,7 +49,7 @@ interface SavedExcelSession {
   fileName: string;
   activePreset: PresetType;
   genderFilter: 'all' | 'Male' | 'Female';
-  ageGroupFilter: 'all' | 'Above 14' | 'Below 14';
+  ageGroupFilter: 'all' | 'Above 15' | '15 and Below';
   roleFilter: 'all' | PlayerRole;
   gradeFilter: GradeFilterType;
 }
@@ -64,12 +64,12 @@ function getStoredExcelSession(): SavedExcelSession | null {
 
 type PresetType =
   | 'all'
-  | 'males_above_14'
+  | 'males_above_15'
   | 'females'
-  | 'below_14'
-  | 'males_below_14'
-  | 'females_above_14'
-  | 'females_below_14'
+  | '15_and_below'
+  | 'males_15_and_below'
+  | 'females_above_15'
+  | 'females_15_and_below'
   | 'custom';
 
 export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPlayers }) => {
@@ -93,7 +93,7 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
   // Filter states
   const [activePreset, setActivePreset] = useState<PresetType>(initialExcelSession?.activePreset || 'all');
   const [genderFilter, setGenderFilter] = useState<'all' | 'Male' | 'Female'>(initialExcelSession?.genderFilter || 'all');
-  const [ageGroupFilter, setAgeGroupFilter] = useState<'all' | 'Above 14' | 'Below 14'>(initialExcelSession?.ageGroupFilter || 'all');
+  const [ageGroupFilter, setAgeGroupFilter] = useState<'all' | 'Above 15' | '15 and Below'>(initialExcelSession?.ageGroupFilter || 'all');
   const [roleFilter, setRoleFilter] = useState<'all' | PlayerRole>(initialExcelSession?.roleFilter || 'all');
   const [gradeFilter, setGradeFilter] = useState<GradeFilterType>(initialExcelSession?.gradeFilter || 'all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -187,18 +187,18 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
   const applyPreset = (preset: PresetType) => {
     setActivePreset(preset);
     let newGender: 'all' | 'Male' | 'Female' = 'all';
-    let newAge: 'all' | 'Above 14' | 'Below 14' = 'all';
+    let newAge: 'all' | 'Above 15' | '15 and Below' = 'all';
 
     if (preset === 'all') {
       newGender = 'all';
       newAge = 'all';
       setSelectedIndices(new Set(parsedRows.map(r => r.rawIndex)));
-    } else if (preset === 'males_above_14') {
+    } else if (preset === 'males_above_15') {
       newGender = 'Male';
-      newAge = 'Above 14';
+      newAge = 'Above 15';
       const matches = parsedRows.filter(r =>
         (r.gender || 'Male') === 'Male' &&
-        (r.ageCategory || (r.age <= 14 ? 'Below 14' : 'Above 14')) === 'Above 14'
+        (r.ageCategory || (r.age <= 15 ? '15 and Below' : 'Above 15')) === 'Above 15'
       );
       setSelectedIndices(new Set(matches.map(r => r.rawIndex)));
     } else if (preset === 'females') {
@@ -206,35 +206,35 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
       newAge = 'all';
       const matches = parsedRows.filter(r => r.gender === 'Female');
       setSelectedIndices(new Set(matches.map(r => r.rawIndex)));
-    } else if (preset === 'below_14') {
+    } else if (preset === '15_and_below') {
       newGender = 'all';
-      newAge = 'Below 14';
+      newAge = '15 and Below';
       const matches = parsedRows.filter(r =>
-        (r.ageCategory || (r.age <= 14 ? 'Below 14' : 'Above 14')) === 'Below 14'
+        (r.ageCategory || (r.age <= 15 ? '15 and Below' : 'Above 15')) === '15 and Below'
       );
       setSelectedIndices(new Set(matches.map(r => r.rawIndex)));
-    } else if (preset === 'males_below_14') {
+    } else if (preset === 'males_15_and_below') {
       newGender = 'Male';
-      newAge = 'Below 14';
+      newAge = '15 and Below';
       const matches = parsedRows.filter(r =>
         (r.gender || 'Male') === 'Male' &&
-        (r.ageCategory || (r.age <= 14 ? 'Below 14' : 'Above 14')) === 'Below 14'
+        (r.ageCategory || (r.age <= 15 ? '15 and Below' : 'Above 15')) === '15 and Below'
       );
       setSelectedIndices(new Set(matches.map(r => r.rawIndex)));
-    } else if (preset === 'females_above_14') {
+    } else if (preset === 'females_above_15') {
       newGender = 'Female';
-      newAge = 'Above 14';
+      newAge = 'Above 15';
       const matches = parsedRows.filter(r =>
         r.gender === 'Female' &&
-        (r.ageCategory || (r.age <= 14 ? 'Below 14' : 'Above 14')) === 'Above 14'
+        (r.ageCategory || (r.age <= 15 ? '15 and Below' : 'Above 15')) === 'Above 15'
       );
       setSelectedIndices(new Set(matches.map(r => r.rawIndex)));
-    } else if (preset === 'females_below_14') {
+    } else if (preset === 'females_15_and_below') {
       newGender = 'Female';
-      newAge = 'Below 14';
+      newAge = '15 and Below';
       const matches = parsedRows.filter(r =>
         r.gender === 'Female' &&
-        (r.ageCategory || (r.age <= 14 ? 'Below 14' : 'Above 14')) === 'Below 14'
+        (r.ageCategory || (r.age <= 15 ? '15 and Below' : 'Above 15')) === '15 and Below'
       );
       setSelectedIndices(new Set(matches.map(r => r.rawIndex)));
     }
@@ -247,38 +247,38 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
   const counts = useMemo(() => {
     let males = 0;
     let females = 0;
-    let above14 = 0;
-    let below14 = 0;
-    let malesAbove14 = 0;
-    let malesBelow14 = 0;
-    let femalesAbove14 = 0;
-    let femalesBelow14 = 0;
+    let above15 = 0;
+    let below15 = 0;
+    let malesAbove15 = 0;
+    let malesBelow15 = 0;
+    let femalesAbove15 = 0;
+    let femalesBelow15 = 0;
 
     parsedRows.forEach(r => {
       const g = r.gender || 'Male';
-      const a = r.ageCategory || (r.age <= 14 ? 'Below 14' : 'Above 14');
+      const a = r.ageCategory || (r.age <= 15 ? '15 and Below' : 'Above 15');
 
       if (g === 'Male') males++;
       if (g === 'Female') females++;
-      if (a === 'Above 14') above14++;
-      if (a === 'Below 14') below14++;
+      if (a === 'Above 15') above15++;
+      if (a === '15 and Below') below15++;
 
-      if (g === 'Male' && a === 'Above 14') malesAbove14++;
-      if (g === 'Male' && a === 'Below 14') malesBelow14++;
-      if (g === 'Female' && a === 'Above 14') femalesAbove14++;
-      if (g === 'Female' && a === 'Below 14') femalesBelow14++;
+      if (g === 'Male' && a === 'Above 15') malesAbove15++;
+      if (g === 'Male' && a === '15 and Below') malesBelow15++;
+      if (g === 'Female' && a === 'Above 15') femalesAbove15++;
+      if (g === 'Female' && a === '15 and Below') femalesBelow15++;
     });
 
     return {
       all: parsedRows.length,
       males,
       females,
-      above14,
-      below14,
-      malesAbove14,
-      malesBelow14,
-      femalesAbove14,
-      femalesBelow14,
+      above15,
+      below15,
+      malesAbove15,
+      malesBelow15,
+      femalesAbove15,
+      femalesBelow15,
     };
   }, [parsedRows]);
 
@@ -286,7 +286,7 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
   const filteredRows = useMemo(() => {
     return parsedRows.filter(row => {
       const effectiveGender = row.gender || 'Male';
-      const effectiveAge = row.ageCategory || (row.age <= 14 ? 'Below 14' : 'Above 14');
+      const effectiveAge = row.ageCategory || (row.age <= 15 ? '15 and Below' : 'Above 15');
 
       if (genderFilter !== 'all' && effectiveGender !== genderFilter) return false;
       if (ageGroupFilter !== 'all' && effectiveAge !== ageGroupFilter) return false;
@@ -614,11 +614,11 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2.5">
-              {/* Preset 1: Males Above 14 */}
+              {/* Preset 1: Males Above 15 */}
               <button
-                onClick={() => applyPreset('males_above_14')}
+                onClick={() => applyPreset('males_above_15')}
                 className={`p-3 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
-                  activePreset === 'males_above_14'
+                  activePreset === 'males_above_15'
                     ? 'bg-sky-500/20 border-sky-500 text-white shadow-lg shadow-sky-500/10 ring-1 ring-sky-500'
                     : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
                 }`}
@@ -626,11 +626,11 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                 <div className="flex items-center justify-between gap-1">
                   <span className="text-base">🏏</span>
                   <span className="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 text-xs font-black font-mono border border-sky-500/30">
-                    {counts.malesAbove14}
+                    {counts.malesAbove15}
                   </span>
                 </div>
                 <div className="mt-2">
-                  <div className="text-xs font-black text-sky-400 leading-tight">Men (Above 14)</div>
+                  <div className="text-xs font-black text-sky-400 leading-tight">Men (Above 15)</div>
                   <div className="text-[10px] text-slate-400 mt-0.5">Senior Male</div>
                 </div>
               </button>
@@ -656,11 +656,11 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                 </div>
               </button>
 
-              {/* Preset 3: Below 14 Juniors */}
+              {/* Preset 3: 15 & Below Juniors */}
               <button
-                onClick={() => applyPreset('below_14')}
+                onClick={() => applyPreset('15_and_below')}
                 className={`p-3 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
-                  activePreset === 'below_14'
+                  activePreset === '15_and_below'
                     ? 'bg-emerald-500/20 border-emerald-500 text-white shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500'
                     : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
                 }`}
@@ -668,20 +668,20 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                 <div className="flex items-center justify-between gap-1">
                   <span className="text-base">🧒</span>
                   <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black font-mono border border-emerald-500/30">
-                    {counts.below14}
+                    {counts.below15}
                   </span>
                 </div>
                 <div className="mt-2">
-                  <div className="text-xs font-black text-emerald-400 leading-tight">Below 14 (Juniors)</div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">Under-14</div>
+                  <div className="text-xs font-black text-emerald-400 leading-tight">15 & Below (Juniors)</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">Junior Players</div>
                 </div>
               </button>
 
-              {/* Preset 4: Boys Below 14 */}
+              {/* Preset 4: Boys 15 & Below */}
               <button
-                onClick={() => applyPreset('males_below_14')}
+                onClick={() => applyPreset('males_15_and_below')}
                 className={`p-3 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
-                  activePreset === 'males_below_14'
+                  activePreset === 'males_15_and_below'
                     ? 'bg-cyan-500/20 border-cyan-500 text-white shadow-lg shadow-cyan-500/10 ring-1 ring-cyan-500'
                     : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
                 }`}
@@ -689,20 +689,20 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                 <div className="flex items-center justify-between gap-1">
                   <span className="text-base">👦</span>
                   <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-black font-mono border border-cyan-500/30">
-                    {counts.malesBelow14}
+                    {counts.malesBelow15}
                   </span>
                 </div>
                 <div className="mt-2">
                   <div className="text-xs font-black text-cyan-400 leading-tight">Junior Boys</div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">Boys U-14</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">Boys 15 & Below</div>
                 </div>
               </button>
 
-              {/* Preset 5: Women Above 14 */}
+              {/* Preset 5: Women Above 15 */}
               <button
-                onClick={() => applyPreset('females_above_14')}
+                onClick={() => applyPreset('females_above_15')}
                 className={`p-3 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
-                  activePreset === 'females_above_14'
+                  activePreset === 'females_above_15'
                     ? 'bg-purple-500/20 border-purple-500 text-white shadow-lg shadow-purple-500/10 ring-1 ring-purple-500'
                     : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
                 }`}
@@ -710,20 +710,20 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                 <div className="flex items-center justify-between gap-1">
                   <span className="text-base">🌸</span>
                   <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-xs font-black font-mono border border-purple-500/30">
-                    {counts.femalesAbove14}
+                    {counts.femalesAbove15}
                   </span>
                 </div>
                 <div className="mt-2">
-                  <div className="text-xs font-black text-purple-400 leading-tight">Women (Above 14)</div>
+                  <div className="text-xs font-black text-purple-400 leading-tight">Women (Above 15)</div>
                   <div className="text-[10px] text-slate-400 mt-0.5">Senior Women</div>
                 </div>
               </button>
 
-              {/* Preset 6: Girls Below 14 */}
+              {/* Preset 6: Girls 15 & Below */}
               <button
-                onClick={() => applyPreset('females_below_14')}
+                onClick={() => applyPreset('females_15_and_below')}
                 className={`p-3 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
-                  activePreset === 'females_below_14'
+                  activePreset === 'females_15_and_below'
                     ? 'bg-rose-500/20 border-rose-500 text-white shadow-lg shadow-rose-500/10 ring-1 ring-rose-500'
                     : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
                 }`}
@@ -731,12 +731,12 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                 <div className="flex items-center justify-between gap-1">
                   <span className="text-base">👧</span>
                   <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-xs font-black font-mono border border-rose-500/30">
-                    {counts.femalesBelow14}
+                    {counts.femalesBelow15}
                   </span>
                 </div>
                 <div className="mt-2">
                   <div className="text-xs font-black text-rose-400 leading-tight">Junior Girls</div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">Girls U-14</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">Girls 15 & Below</div>
                 </div>
               </button>
 
@@ -796,7 +796,7 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                 >
                   <option value="all">All Grades</option>
                   <option value="A+">👑 Grade A+ (Captains / Marquee)</option>
-                  <option value="A">⭐ Grade A (Key Players / VC)</option>
+                  <option value="A">⭐ Grade A (Elite)</option>
                   <option value="B">⚡ Grade B (Core Squad)</option>
                   <option value="C">🌱 Grade C (Developing)</option>
                   <option value="Captains">👑 Captains Only</option>
@@ -834,8 +834,8 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                   className="px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 font-bold focus:outline-none focus:border-amber-500"
                 >
                   <option value="all">All Age Groups ({counts.all})</option>
-                  <option value="Above 14">Above 14 ({counts.above14})</option>
-                  <option value="Below 14">Below 14 ({counts.below14})</option>
+                  <option value="Above 15">Above 15 ({counts.above15})</option>
+                  <option value="15 and Below">15 and Below ({counts.below15})</option>
                 </select>
               </div>
 
@@ -1174,20 +1174,20 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                         {/* Age Group */}
                         <td className="p-3">
                           <select
-                            value={row.ageCategory || (row.age <= 14 ? 'Below 14' : 'Above 14')}
+                            value={row.ageCategory || (row.age <= 15 ? '15 and Below' : 'Above 15')}
                             onChange={e => {
                               const cat = e.target.value;
                               handleUpdateRowField(row.rawIndex, 'ageCategory', cat);
-                              handleUpdateRowField(row.rawIndex, 'age', cat === 'Below 14' ? 13 : 20);
+                              handleUpdateRowField(row.rawIndex, 'age', cat === '15 and Below' ? 14 : 20);
                             }}
                             className={`px-2 py-1 bg-slate-950 border rounded text-xs font-bold ${
-                              (row.ageCategory || '').includes('Below') || row.age <= 14
+                              (row.ageCategory || '').includes('Below') || row.age <= 15
                                 ? 'border-cyan-500/50 text-cyan-300'
                                 : 'border-slate-800 text-slate-300'
                             }`}
                           >
-                            <option value="Above 14">Above 14</option>
-                            <option value="Below 14">Below 14</option>
+                            <option value="Above 15">Above 15</option>
+                            <option value="15 and Below">15 and Below</option>
                           </select>
                         </td>
 
@@ -1216,6 +1216,14 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                                 const newGrade = e.target.value as PlayerGrade;
                                 handleUpdateRowField(row.rawIndex, 'grade', newGrade);
                                 handleUpdateRowField(row.rawIndex, 'gradeReason', 'Manually adjusted');
+                                // Vice Captain MUST be Grade A
+                                if (newGrade !== 'A' && row.isViceCaptain) {
+                                  handleUpdateRowField(row.rawIndex, 'isViceCaptain', false);
+                                }
+                                // Captain MUST be Grade A+
+                                if (newGrade !== 'A+' && row.isCaptain) {
+                                  handleUpdateRowField(row.rawIndex, 'isCaptain', false);
+                                }
                                 const newBp =
                                   newGrade === 'A+'
                                     ? gradeBasePrices.gradeAPlus || 7000

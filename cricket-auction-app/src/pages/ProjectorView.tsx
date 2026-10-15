@@ -99,6 +99,16 @@ export const ProjectorView: React.FC<ProjectorViewProps> = ({ onClose }) => {
                   <div className="flex items-center gap-2.5">
                     <GradeBadge grade={currentPlayer.grade} size="lg" />
                     <RoleBadge role={currentPlayer.role} size="lg" />
+                    {currentPlayer.isCaptain && (
+                      <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 font-bold text-sm border border-amber-500/40 flex items-center gap-1.5 shadow-sm">
+                        👑 Captain
+                      </span>
+                    )}
+                    {currentPlayer.isViceCaptain && (
+                      <span className="px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 font-bold text-sm border border-sky-500/40 flex items-center gap-1.5 shadow-sm">
+                        ⭐ Vice Captain
+                      </span>
+                    )}
                   </div>
                   <div className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 font-mono text-xs font-bold text-slate-300">
                     LOT #{currentPlayer.auctionOrder || 1}
@@ -120,11 +130,11 @@ export const ProjectorView: React.FC<ProjectorViewProps> = ({ onClose }) => {
                     </h2>
                     <div className="flex flex-wrap items-center gap-2.5 text-base sm:text-lg text-slate-400 font-mono mt-1">
                       <span className={`px-2.5 py-1 rounded-xl text-sm font-bold ${
-                        (currentPlayer.ageCategory || '').includes('Below') || currentPlayer.age <= 14
+                        (currentPlayer.ageCategory || '').includes('Below') || currentPlayer.age <= 15
                           ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                           : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
                       }`}>
-                        {currentPlayer.ageCategory || (currentPlayer.age <= 14 ? 'Below 14' : 'Above 14')}
+                        {currentPlayer.ageCategory || (currentPlayer.age <= 15 ? '15 and Below' : 'Above 15')}
                       </span>
                       {currentPlayer.gender && (
                         <span className={`px-2.5 py-1 rounded-xl text-sm font-bold ${

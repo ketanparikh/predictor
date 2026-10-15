@@ -309,7 +309,7 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
           >
             <option value="all">All Grades (A+, A, B, C)</option>
             <option value="A+">👑 Grade A+ (Marquee / Captain)</option>
-            <option value="A">⭐ Grade A (Elite / Vice Captain)</option>
+            <option value="A">⭐ Grade A (Elite)</option>
             <option value="B">⚡ Grade B (Regular)</option>
             <option value="C">🌱 Grade C (Emerging)</option>
             <option value="captains">👑 Captains Only</option>

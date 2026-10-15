@@ -185,7 +185,7 @@ export function buildParsedPlayer(
     id: 'temp',
     name,
     age,
-    ageCategory: age <= 14 ? 'Below 14' : 'Above 14',
+    ageCategory: age <= 15 ? '15 and Below' : 'Above 15',
     gender: 'Male',
     experience,
     role,
@@ -204,7 +204,7 @@ export function buildParsedPlayer(
   const playerObj: Omit<Player, 'id' | 'status'> = {
     name,
     age,
-    ageCategory: age <= 14 ? 'Below 14' : 'Above 14',
+    ageCategory: age <= 15 ? '15 and Below' : 'Above 15',
     gender: 'Male',
     experience,
     role,

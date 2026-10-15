@@ -34,7 +34,7 @@ export interface Player {
   id: string;
   name: string;
   age: number;
-  ageCategory?: string; // e.g. "Below 14" | "Above 14"
+  ageCategory?: string; // e.g. "15 and Below" | "Above 15"
   gender?: string; // e.g. "Male" | "Female"
   dob?: string;
   photo?: string;

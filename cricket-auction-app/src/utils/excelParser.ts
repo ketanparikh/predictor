@@ -6,7 +6,7 @@ import { Player, PlayerGrade, PlayerRole, BattingStyle, BowlingStyle, Team, Auct
 export interface ParsedPlayerRow {
   name: string;
   age: number;
-  ageCategory?: string; // e.g. "Below 14" | "Above 14"
+  ageCategory?: string; // e.g. "15 and Below" | "Above 15"
   gender?: string; // e.g. "Male" | "Female"
   experience: number;
   role: PlayerRole;
@@ -265,28 +265,28 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
       errors.push('Player Name is required.');
     }
 
-    // Age & Age Category parsing (handles "Between 10 to 14", "Greater Than 14", "Above 14", "Below 14", or raw numbers)
+    // Age & Age Category parsing (handles "Between 10 to 15", "Greater Than 15", "Above 15", "15 and Below", "Below 15", or raw numbers)
     const ageVal = findVal(['age', 'player age', 'age group', 'age category']);
     let rawAge = 22;
-    let ageCategory = 'Above 14';
+    let ageCategory = 'Above 15';
 
     if (typeof ageVal === 'number' && !isNaN(ageVal) && ageVal > 0) {
       rawAge = Math.round(ageVal);
-      ageCategory = rawAge <= 14 ? 'Below 14' : 'Above 14';
+      ageCategory = rawAge <= 15 ? '15 and Below' : 'Above 15';
     } else if (typeof ageVal === 'string' && ageVal.trim() !== '') {
       const lowerAge = ageVal.toLowerCase();
-      if ((lowerAge.includes('10') && lowerAge.includes('14')) || lowerAge.includes('below') || lowerAge.includes('less') || lowerAge.includes('under') || lowerAge.includes('<')) {
-        rawAge = 13;
-        ageCategory = 'Below 14';
-      } else if (lowerAge.includes('greater') || lowerAge.includes('>') || lowerAge.includes('above') || lowerAge.includes('15') || lowerAge.includes('14')) {
+      if ((lowerAge.includes('10') && (lowerAge.includes('15') || lowerAge.includes('14'))) || lowerAge.includes('below') || lowerAge.includes('less') || lowerAge.includes('under') || lowerAge.includes('<=') || lowerAge.includes('<')) {
+        rawAge = 14;
+        ageCategory = '15 and Below';
+      } else if (lowerAge.includes('greater') || lowerAge.includes('>') || lowerAge.includes('above') || lowerAge.includes('16') || lowerAge.includes('15')) {
         const num = parseFloat(lowerAge.replace(/[^\d.]/g, ''));
-        rawAge = !isNaN(num) && num > 14 ? num : 20;
-        ageCategory = 'Above 14';
+        rawAge = !isNaN(num) && num > 15 ? num : 20;
+        ageCategory = 'Above 15';
       } else {
         const num = parseFloat(ageVal.replace(/[^\d.]/g, ''));
         if (!isNaN(num) && num > 0) {
           rawAge = Math.round(num);
-          ageCategory = rawAge <= 14 ? 'Below 14' : 'Above 14';
+          ageCategory = rawAge <= 15 ? '15 and Below' : 'Above 15';
         }
       }
     }

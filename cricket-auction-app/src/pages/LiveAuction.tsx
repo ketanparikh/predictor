@@ -437,11 +437,11 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                     </h1>
                     <div className="text-xs text-slate-400 mt-1 font-mono flex flex-wrap items-center gap-2">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
-                        (currentPlayer.ageCategory || '').includes('Below') || currentPlayer.age <= 14
+                        (currentPlayer.ageCategory || '').includes('Below') || currentPlayer.age <= 15
                           ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                           : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
                       }`}>
-                        {currentPlayer.ageCategory || (currentPlayer.age <= 14 ? 'Below 14' : 'Above 14')}
+                        {currentPlayer.ageCategory || (currentPlayer.age <= 15 ? '15 and Below' : 'Above 15')}
                       </span>
                       {currentPlayer.gender && (
                         <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${

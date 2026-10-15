@@ -25,7 +25,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
 
   const [name, setName] = useState('');
   const [age, setAge] = useState(24);
-  const [ageCategory, setAgeCategory] = useState<string>('Above 14');
+  const [ageCategory, setAgeCategory] = useState<string>('Above 15');
   const [gender, setGender] = useState<string>('Male');
   const [experience, setExperience] = useState(4);
   const [role, setRole] = useState<PlayerRole>('Batsman');
@@ -65,7 +65,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
     if (playerToEdit) {
       setName(playerToEdit.name || '');
       setAge(playerToEdit.age || 24);
-      setAgeCategory(playerToEdit.ageCategory || (playerToEdit.age && playerToEdit.age <= 14 ? 'Below 14' : 'Above 14'));
+      setAgeCategory(playerToEdit.ageCategory || (playerToEdit.age && playerToEdit.age <= 15 ? '15 and Below' : 'Above 15'));
       setGender(playerToEdit.gender || 'Male');
       setExperience(playerToEdit.experience || 4);
       setRole((playerToEdit.role as string) === 'All-rounder' ? 'Batsman' : playerToEdit.role || 'Batsman');
@@ -393,12 +393,12 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 onChange={e => {
                   const cat = e.target.value;
                   setAgeCategory(cat);
-                  setAge(cat === 'Below 14' ? 13 : 20);
+                  setAge(cat === '15 and Below' ? 14 : 20);
                 }}
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-cyan-300 font-bold text-sm focus:outline-none focus:border-amber-500"
               >
-                <option value="Above 14">Above 14</option>
-                <option value="Below 14">Below 14</option>
+                <option value="Above 15">Above 15</option>
+                <option value="15 and Below">15 and Below</option>
               </select>
             </div>
 
@@ -446,6 +446,12 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 onChange={e => {
                   const newGrade = e.target.value as PlayerGrade;
                   setGrade(newGrade);
+                  if (newGrade !== 'A' && isViceCaptain) {
+                    setIsViceCaptain(false); // Vice Captain has to be an A grade player
+                  }
+                  if (newGrade !== 'A+' && isCaptain) {
+                    setIsCaptain(false);
+                  }
                   const newPrice =
                     newGrade === 'A+'
                       ? gradeBasePrices.gradeAPlus || 7000
@@ -459,7 +465,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500 font-bold"
               >
                 <option value="A+">👑 Grade A+ (Marquee / Captain - {gradeBasePrices.gradeAPlus || 7000} pts)</option>
-                <option value="A">⭐ Grade A (Elite / Vice Captain - {gradeBasePrices.gradeA} pts)</option>
+                <option value="A">⭐ Grade A (Elite - {gradeBasePrices.gradeA} pts)</option>
                 <option value="B">⚡ Grade B (Core - {gradeBasePrices.gradeB} pts)</option>
                 <option value="C">🌱 Grade C (Emerging - {gradeBasePrices.gradeC} pts)</option>
               </select>

@@ -138,11 +138,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
             </h3>
             <div className="text-xs text-slate-400 flex flex-wrap items-center gap-1.5 mt-0.5 font-mono">
               <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                (player.ageCategory || '').includes('Below') || player.age <= 14
+                (player.ageCategory || '').includes('Below') || player.age <= 15
                   ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                   : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
               }`}>
-                {player.ageCategory || (player.age <= 14 ? 'Below 14' : 'Above 14')}
+                {player.ageCategory || (player.age <= 15 ? '15 and Below' : 'Above 15')}
               </span>
               {player.gender && (
                 <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${

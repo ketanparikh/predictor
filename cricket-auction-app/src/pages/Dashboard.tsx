@@ -16,6 +16,7 @@ import {
   History,
   FileSpreadsheet,
   Tv,
+  Crown,
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -93,32 +94,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Primary Key Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Points Spent */}
-        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-md flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono font-semibold uppercase">Total Points Spent</span>
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30">
-              <Coins className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black font-mono text-white">
-              {totalSpent.toLocaleString()} <span className="text-xs text-slate-400 font-normal">pts</span>
-            </div>
-            <div className="text-xs text-slate-400 mt-1 font-mono flex items-center gap-1.5">
-              <span>Remaining:</span>
-              <span className="text-emerald-400 font-semibold">{totalRemainingBudget.toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="w-full bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
-            <div
-              style={{ width: `${totalStartingBudget > 0 ? (totalSpent / totalStartingBudget) * 100 : 0}%` }}
-              className="bg-amber-500 h-full"
-            />
-          </div>
-        </div>
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Players Sold */}
         <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-md flex flex-col justify-between">
           <div className="flex items-center justify-between text-slate-400">
@@ -132,37 +108,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
               {soldPlayers.length} <span className="text-xs text-slate-400 font-normal">/ {totalPlayers}</span>
             </div>
             <div className="text-xs text-slate-400 mt-1 font-mono">
-              {totalPlayers > 0 ? Math.round((soldPlayers.length / totalPlayers) * 100) : 0}% of tournament pool sold
+              {totalPlayers > 0 ? Math.round((soldPlayers.length / totalPlayers) * 100) : 0}% of tournament pool sold ({unsoldPlayers.length} unsold)
             </div>
           </div>
           <div className="w-full bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
             <div
               style={{ width: `${totalPlayers > 0 ? (soldPlayers.length / totalPlayers) * 100 : 0}%` }}
               className="bg-emerald-500 h-full"
-            />
-          </div>
-        </div>
-
-        {/* Players Remaining */}
-        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-md flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono font-semibold uppercase">Auction Pool Remaining</span>
-            <div className="p-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/30">
-              <Gavel className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black font-mono text-sky-400">
-              {upcomingPlayers.length} <span className="text-xs text-slate-400 font-normal">available</span>
-            </div>
-            <div className="text-xs text-rose-400 mt-1 font-mono">
-              {unsoldPlayers.length} currently marked unsold
-            </div>
-          </div>
-          <div className="w-full bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
-            <div
-              style={{ width: `${totalPlayers > 0 ? (upcomingPlayers.length / totalPlayers) * 100 : 0}%` }}
-              className="bg-sky-500 h-full"
             />
           </div>
         </div>
@@ -268,8 +220,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
                             {team.shortName}
                           </span>
                         </div>
-                        <div className="text-xs text-slate-400 font-mono">
-                          Squad: <span className="text-white font-semibold">{team.squad.length} players</span>
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 font-mono mt-0.5">
+                          <span>Squad: <span className="text-white font-semibold">{team.squad.length} players</span></span>
+                          {(team.captain || players.find(p => (p.teamId === team.id || p.captainOfTeamId === team.id) && p.isCaptain)) && (
+                            <>
+                              <span>•</span>
+                              <span className="text-amber-400 font-sans font-medium flex items-center gap-1">
+                                <Crown className="w-3 h-3 text-amber-400" />
+                                {team.captain || players.find(p => (p.teamId === team.id || p.captainOfTeamId === team.id) && p.isCaptain)?.name}
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -300,63 +261,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
 
-        {/* Right Col: Next Upcoming Players & Top Sales */}
+        {/* Right Col: Top Sales & Tools */}
         <div className="space-y-6">
-          {/* Upcoming Lots Queue */}
-          <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Gavel className="w-4 h-4 text-sky-400" />
-                <h3 className="font-bold text-white text-sm">Next in Auction Block</h3>
-              </div>
-              <button
-                onClick={() => onNavigate('players')}
-                className="text-xs text-sky-400 hover:text-sky-300 font-semibold"
-              >
-                All Players
-              </button>
-            </div>
-
-            {nextInLinePlayers.length === 0 ? (
-              <div className="p-6 rounded-xl bg-slate-950/40 border border-dashed border-slate-800 text-center text-xs text-slate-500">
-                All players have been auctioned! Check the Unsold tab or Final Results.
-              </div>
-            ) : (
-              <div className="space-y-2.5">
-                {nextInLinePlayers.map((player, idx) => (
-                  <div
-                    key={player.id}
-                    className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-2"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-mono flex items-center justify-center font-bold">
-                        {idx + 1}
-                      </span>
-                      <div className="min-w-0">
-                        <div className="font-bold text-white text-xs truncate">{player.name}</div>
-                        <div className="text-[11px] text-slate-400 flex items-center gap-1.5 font-mono">
-                          <span>{player.role}</span>
-                          <span>•</span>
-                          <span className="text-amber-400">{player.basePrice.toLocaleString()} pts</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        onStartAuction(player);
-                        onNavigate('live_auction');
-                      }}
-                      className="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all shadow flex items-center gap-1 flex-shrink-0"
-                    >
-                      <Gavel className="w-3 h-3" />
-                      Bid
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
           {/* Marquee Purchases Ticker */}
           <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800">

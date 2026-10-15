@@ -1,6 +1,6 @@
 import React from 'react';
 import { PlayerGrade } from '../types/auction';
-import { Award, Shield, Zap } from 'lucide-react';
+import { Award, Shield, Zap, Crown } from 'lucide-react';
 
 interface GradeBadgeProps {
   grade: PlayerGrade;
@@ -16,6 +16,11 @@ export const GradeBadge: React.FC<GradeBadgeProps> = ({ grade, size = 'md', show
   };
 
   const gradeStyles = {
+    'A+': {
+      bg: 'bg-gradient-to-r from-amber-400/25 via-fuchsia-500/25 to-purple-500/25 border-amber-400/70 text-amber-200 shadow-[0_0_15px_rgba(251,191,36,0.35)] font-black',
+      icon: Crown,
+      text: 'Grade A+ (Captain)',
+    },
     A: {
       bg: 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border-amber-500/50 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.25)]',
       icon: Award,

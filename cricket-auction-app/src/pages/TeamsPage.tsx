@@ -99,8 +99,8 @@ export const TeamsPage: React.FC = () => {
           const percentSpent = (team.totalSpent / team.startingBudget) * 100;
           const batsmenCount = squadPlayers.filter(p => p.role === 'Batsman').length;
           const bowlersCount = squadPlayers.filter(p => p.role === 'Bowler').length;
-          const allRoundersCount = squadPlayers.filter(p => p.role === 'All-rounder').length;
           const wkCount = squadPlayers.filter(p => p.role === 'Wicketkeeper').length;
+          const sponsoredPlayer = squadPlayers.find(p => p.isSponsored || (p.sponsorTag && p.sponsorTag.trim()));
 
           return (
             <div
@@ -130,12 +130,14 @@ export const TeamsPage: React.FC = () => {
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
-                      <div className="text-xs text-slate-400 font-mono mt-0.5 flex items-center gap-1.5">
+                      <div className="text-xs text-slate-400 font-mono mt-0.5 flex items-center gap-1.5 flex-wrap">
                         <span className="text-amber-400 font-bold bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 text-[10px]">
                           {team.shortName}
                         </span>
                         <span>•</span>
-                        <span className="truncate max-w-[140px]">{team.captain || 'Captain TBD'}</span>
+                        <span className="text-amber-300 font-semibold flex items-center gap-1">
+                          👑 {team.captain || 'Captain TBD'}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -169,48 +171,26 @@ export const TeamsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Role Balance Counters (Cap 3 Batsmen/WK, 3 Bowlers, 3 All-rounders) */}
-                <div className="mt-3 grid grid-cols-3 gap-1.5 text-center text-xs font-mono">
-                  <div
-                    className={`p-2 rounded-lg border ${
-                      batsmenCount + wkCount >= 3
-                        ? 'bg-rose-500/15 border-rose-500/40 text-rose-300'
-                        : 'bg-slate-950 border-slate-800/80 text-slate-300'
-                    }`}
-                  >
-                    <div className="text-[10px] text-slate-400">BAT/WK</div>
-                    <div className="font-bold text-sm mt-0.5">
-                      {batsmenCount + wkCount} / 3
-                      {batsmenCount + wkCount >= 3 && <span className="text-[9px] block text-rose-400 font-sans font-bold">FULL</span>}
-                    </div>
+                {/* Role Balance Counters & Sponsor Tag */}
+                <div className="mt-3 grid grid-cols-4 gap-1.5 text-center text-xs font-mono">
+                  <div className="p-2 rounded-lg border bg-slate-950 border-slate-800/80 text-rose-300">
+                    <div className="text-[10px] text-slate-400">BAT</div>
+                    <div className="font-bold text-sm mt-0.5">{batsmenCount}</div>
                   </div>
 
-                  <div
-                    className={`p-2 rounded-lg border ${
-                      bowlersCount >= 3
-                        ? 'bg-indigo-500/15 border-indigo-500/40 text-indigo-300'
-                        : 'bg-slate-950 border-slate-800/80 text-slate-300'
-                    }`}
-                  >
+                  <div className="p-2 rounded-lg border bg-slate-950 border-slate-800/80 text-indigo-300">
                     <div className="text-[10px] text-slate-400">BOWL</div>
-                    <div className="font-bold text-sm mt-0.5">
-                      {bowlersCount} / 3
-                      {bowlersCount >= 3 && <span className="text-[9px] block text-indigo-400 font-sans font-bold">FULL</span>}
-                    </div>
+                    <div className="font-bold text-sm mt-0.5">{bowlersCount}</div>
                   </div>
 
-                  <div
-                    className={`p-2 rounded-lg border ${
-                      allRoundersCount >= 3
-                        ? 'bg-purple-500/15 border-purple-500/40 text-purple-300'
-                        : 'bg-slate-950 border-slate-800/80 text-slate-300'
-                    }`}
-                  >
-                    <div className="text-[10px] text-slate-400">ALL-ROUND</div>
-                    <div className="font-bold text-sm mt-0.5">
-                      {allRoundersCount} / 3
-                      {allRoundersCount >= 3 && <span className="text-[9px] block text-purple-400 font-sans font-bold">FULL</span>}
-                    </div>
+                  <div className="p-2 rounded-lg border bg-slate-950 border-slate-800/80 text-amber-300">
+                    <div className="text-[10px] text-slate-400">WK</div>
+                    <div className="font-bold text-sm mt-0.5">{wkCount}</div>
+                  </div>
+
+                  <div className={`p-2 rounded-lg border ${sponsoredPlayer ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' : 'bg-slate-950 border-slate-800/80 text-slate-500'}`}>
+                    <div className="text-[10px]">SPONSOR</div>
+                    <div className="font-bold text-sm mt-0.5">{sponsoredPlayer ? '1/1' : '0/1'}</div>
                   </div>
                 </div>
               </div>

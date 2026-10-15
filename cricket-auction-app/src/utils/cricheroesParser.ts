@@ -86,19 +86,19 @@ export function buildParsedPlayer(
   rawStatement?: string,
   cricheroesId?: string | number
 ): CricHeroesParsedResult {
-  // 1. Role Normalization
+  // 1. Role Normalization (Only Batsman, Bowler, Wicketkeeper)
   let role: PlayerRole = 'Batsman';
   const roleLower = (rawRole || '').toLowerCase();
   if (roleLower.includes('keeper') || roleLower.includes('wk') || roleLower.includes('wicket')) {
     role = 'Wicketkeeper';
-  } else if (roleLower.includes('all') || (wickets >= 10 && runs >= 150)) {
-    role = 'All-rounder';
   } else if (roleLower.includes('bowl') || (wickets >= 15 && runs < 150)) {
     role = 'Bowler';
   } else if (roleLower.includes('bat') || roleLower.includes('batter') || roleLower.includes('batsman')) {
     role = 'Batsman';
+  } else if (roleLower.includes('all') || (wickets >= 10 && runs >= 150)) {
+    role = wickets >= 20 ? 'Bowler' : 'Batsman';
   } else if (wickets > runs / 30 && wickets >= 5) {
-    role = 'All-rounder';
+    role = 'Bowler';
   }
 
   // 2. Batting Style
@@ -328,7 +328,7 @@ export function parseCricHeroesTextSnippet(text: string): CricHeroesParsedResult
   if (roleMatch) {
     roleStr = roleMatch[1].trim();
   } else {
-    if (clean.toLowerCase().includes('all-rounder') || clean.toLowerCase().includes('all rounder')) roleStr = 'All-rounder';
+    if (clean.toLowerCase().includes('all-rounder') || clean.toLowerCase().includes('all rounder')) roleStr = 'Bowler';
     else if (clean.toLowerCase().includes('wicketkeeper') || clean.toLowerCase().includes('wicket keeper')) roleStr = 'Wicketkeeper';
     else if (clean.toLowerCase().includes('bowler')) roleStr = 'Bowler';
     else if (clean.toLowerCase().includes('batsman')) roleStr = 'Batsman';
@@ -384,7 +384,7 @@ export const CRICHEROES_PRESETS: CricHeroesParsedResult[] = [
       name: 'Mohit Sharma (Live CricHeroes)',
       age: 28,
       experience: 7,
-      role: 'All-rounder',
+      role: 'Bowler',
       battingStyle: 'Left-hand bat',
       bowlingStyle: 'Left-arm medium',
       grade: 'B',

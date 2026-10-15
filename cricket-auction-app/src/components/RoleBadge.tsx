@@ -24,11 +24,6 @@ export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, size = 'md' }) => {
       icon: '🎯',
       text: 'Bowler',
     },
-    'All-rounder': {
-      bg: 'bg-purple-500/15 text-purple-300 border-purple-500/40',
-      icon: '⚡',
-      text: 'All-Rounder',
-    },
     'Wicketkeeper': {
       bg: 'bg-amber-500/15 text-amber-300 border-amber-500/40',
       icon: '🧤',

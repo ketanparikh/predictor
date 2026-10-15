@@ -1,5 +1,5 @@
-export type PlayerRole = 'Batsman' | 'Bowler' | 'All-rounder' | 'Wicketkeeper';
-export type PlayerGrade = 'A' | 'B' | 'C';
+export type PlayerRole = 'Batsman' | 'Bowler' | 'Wicketkeeper';
+export type PlayerGrade = 'A+' | 'A' | 'B' | 'C';
 export type BattingStyle = 'Right-hand bat' | 'Left-hand bat';
 export type BowlingStyle = 
   | 'Right-arm fast' 
@@ -53,6 +53,11 @@ export interface Player {
   soldPrice?: number | null;
   auctionOrder?: number;
   isOverseas?: boolean;
+  isCaptain?: boolean;
+  isViceCaptain?: boolean;
+  captainOfTeamId?: string;
+  sponsorTag?: string;
+  isSponsored?: boolean;
 }
 
 export interface Team {
@@ -64,6 +69,7 @@ export interface Team {
   secondaryColor?: string;
   owner?: string;
   captain?: string;
+  captainPlayerId?: string;
   startingBudget: number;
   remainingBudget: number;
   totalSpent: number;
@@ -99,20 +105,18 @@ export interface AuctionTransaction {
 export interface SquadRules {
   minSquadSize: number;
   maxSquadSize: number;
-  maxBatsmen: number;
-  maxBowlers: number;
-  maxAllRounders: number;
-  maxGradeA: number;
-  maxGradeB: number;
-  maxGradeC: number;
-  minBatsmen: number;
-  minBowlers: number;
-  minAllRounders: number;
-  minWicketkeepers: number;
+  maxGradeAPlus?: number;
+  maxGradeA?: number;
+  maxGradeB?: number;
+  maxGradeC?: number;
+  minBatsmen?: number;
+  minBowlers?: number;
+  minWicketkeepers?: number;
   maxOverseas?: number;
 }
 
 export interface GradeBasePrices {
+  gradeAPlus: number;
   gradeA: number;
   gradeB: number;
   gradeC: number;

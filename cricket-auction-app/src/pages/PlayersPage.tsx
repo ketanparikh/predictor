@@ -76,7 +76,18 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
           p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           p.role.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesRole = roleFilter === 'all' || p.role === roleFilter;
-        const matchesGrade = gradeFilter === 'all' || p.grade === gradeFilter;
+        let matchesGrade = true;
+        if (gradeFilter !== 'all') {
+          if (gradeFilter === 'captains') {
+            matchesGrade = Boolean(p.isCaptain);
+          } else if (gradeFilter === 'vice_captains') {
+            matchesGrade = Boolean(p.isViceCaptain);
+          } else if (gradeFilter === 'sponsored') {
+            matchesGrade = Boolean(p.isSponsored || p.sponsorTag?.trim());
+          } else {
+            matchesGrade = p.grade === gradeFilter;
+          }
+        }
         const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
 
         return matchesSearch && matchesRole && matchesGrade && matchesStatus;
@@ -89,7 +100,7 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
         if (sortBy === 'avg_desc') return b.stats.average - a.stats.average;
         if (sortBy === 'sr_desc') return b.stats.strikeRate - a.stats.strikeRate;
         if (sortBy === 'grade') {
-          const gradeOrder: Record<PlayerGrade, number> = { A: 1, B: 2, C: 3 };
+          const gradeOrder: Record<PlayerGrade, number> = { 'A+': 0, 'A': 1, 'B': 2, 'C': 3 };
           return gradeOrder[a.grade] - gradeOrder[b.grade];
         }
         return (a.auctionOrder || 0) - (b.auctionOrder || 0);
@@ -285,7 +296,6 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
             <option value="all">All Roles</option>
             <option value="Batsman">🏏 Batsman</option>
             <option value="Bowler">🎯 Bowler</option>
-            <option value="All-rounder">⚡ All-rounder</option>
             <option value="Wicketkeeper">🧤 Wicketkeeper</option>
           </select>
         </div>
@@ -297,10 +307,14 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
             onChange={e => setGradeFilter(e.target.value)}
             className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-amber-500 font-medium"
           >
-            <option value="all">All Grades (A, B, C)</option>
-            <option value="A">💎 Grade A (Elite)</option>
-            <option value="B">⭐ Grade B (Regular)</option>
+            <option value="all">All Grades (A+, A, B, C)</option>
+            <option value="A+">👑 Grade A+ (Marquee / Captain)</option>
+            <option value="A">⭐ Grade A (Elite / Vice Captain)</option>
+            <option value="B">⚡ Grade B (Regular)</option>
             <option value="C">🌱 Grade C (Emerging)</option>
+            <option value="captains">👑 Captains Only</option>
+            <option value="vice_captains">⭐ Vice Captains Only</option>
+            <option value="sponsored">🏷️ Sponsored Players Only</option>
           </select>
         </div>
 

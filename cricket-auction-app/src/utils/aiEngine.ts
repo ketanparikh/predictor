@@ -59,8 +59,6 @@ export function calculatePlayerRating(player: Partial<Player>): number {
     composite = battingScore * 0.85 + (experience * 2) + Math.min(stats.catches, 30) * 0.5;
   } else if (role === 'Bowler') {
     composite = bowlingScore * 0.85 + (experience * 2) + Math.min(stats.catches, 30) * 0.5;
-  } else if (role === 'All-rounder') {
-    composite = (battingScore * 0.5) + (bowlingScore * 0.5) + (experience * 2.5);
   } else if (role === 'Wicketkeeper') {
     const keepingScore = Math.min(((stats.catches + (stats.stumpings || 0) * 2) / 40) * 25, 25);
     composite = (battingScore * 0.7) + keepingScore + (experience * 2);
@@ -141,7 +139,7 @@ export function generateTournamentAIAdvice(teams: Team[], players: Player[]): {
   const remainingA = remainingPlayers.filter(p => p.grade === 'A').length;
   const remainingBowlers = remainingPlayers.filter(p => p.role === 'Bowler').length;
   const remainingBatsmen = remainingPlayers.filter(p => p.role === 'Batsman').length;
-  const remainingAllRounders = remainingPlayers.filter(p => p.role === 'All-rounder').length;
+  const remainingKeepers = remainingPlayers.filter(p => p.role === 'Wicketkeeper').length;
 
   const marketInsights: string[] = [];
 
@@ -165,19 +163,17 @@ export function generateTournamentAIAdvice(teams: Team[], players: Player[]): {
     const squadPlayers = players.filter(p => team.squad.includes(p.id));
     const batsCount = squadPlayers.filter(p => p.role === 'Batsman').length;
     const bowlCount = squadPlayers.filter(p => p.role === 'Bowler').length;
-    const arCount = squadPlayers.filter(p => p.role === 'All-rounder').length;
     const wkCount = squadPlayers.filter(p => p.role === 'Wicketkeeper').length;
 
     const urgentNeeds: string[] = [];
     const recommendations: string[] = [];
 
-    const totalBatsAndWk = batsCount + wkCount;
-    if (totalBatsAndWk < 3) urgentNeeds.push(`Need ${3 - totalBatsAndWk} more Batsmen/WK (Cap: 3)`);
-    if (bowlCount < 3) urgentNeeds.push(`Need ${3 - bowlCount} more Bowlers (Cap: 3)`);
-    if (arCount < 3) urgentNeeds.push(`Need ${3 - arCount} more All-Rounders (Cap: 3)`);
+    if (wkCount === 0) urgentNeeds.push('Need at least 1 designated Wicketkeeper');
+    if (bowlCount < 2) urgentNeeds.push(`Need ${2 - bowlCount} more strike Bowlers`);
+    if (batsCount < 2) urgentNeeds.push(`Need ${2 - batsCount} more Batsmen`);
 
     if (squadPlayers.length >= 9) {
-      recommendations.push('Full 9-player squad roster complete! (3 Batsmen, 3 Bowlers, 3 All-Rounders).');
+      recommendations.push(`Full squad roster complete! (${squadPlayers.length} players acquired).`);
     }
 
     const spentPercent = (team.totalSpent / team.startingBudget) * 100;

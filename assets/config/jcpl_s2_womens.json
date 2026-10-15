@@ -1,0 +1,1989 @@
+{
+  "tournamentId": 1254427,
+  "name": "JCPL 2 Women",
+  "city": "Pune",
+  "fromDate": "2025-01-09",
+  "toDate": "2025-01-12",
+  "ground": "Force Playing Fields",
+  "overall": {
+    "Matches": "7",
+    "Innings": "14",
+    "Runs": "432",
+    "Wickets": "52",
+    "Balls": "583",
+    "Extras": "144",
+    "Fours": "7",
+    "Sixes": "2",
+    "50's": "0",
+    "100's": "0",
+    "50+ Partnership": "0",
+    "100+ Partnership": "0",
+    "Maidens": "2",
+    "Dot balls": "333",
+    "Catches": "9",
+    "Stumpings": "1",
+    "BDRY%": "9.26",
+    "BDRY Freq.": "64.78",
+    "DB Freq.": "1.75",
+    "DB%": "57.12"
+  },
+  "teams": [
+    {
+      "teamId": 8542358,
+      "name": "Jade Cardinals",
+      "logo": "https://media.cricheroes.in/default/teamintital/JC.png",
+      "captainId": 35211916
+    },
+    {
+      "teamId": 8542384,
+      "name": "Jade Eagles",
+      "logo": "https://media.cricheroes.in/default/teamintital/JE.png",
+      "captainId": 35212042
+    },
+    {
+      "teamId": 8542394,
+      "name": "Jade Phoenix",
+      "logo": "https://media.cricheroes.in/default/teamintital/JP.png",
+      "captainId": 21354906
+    },
+    {
+      "teamId": 8542386,
+      "name": "Jade Skyhawks",
+      "logo": "https://media.cricheroes.in/default/teamintital/JS.png",
+      "captainId": 35212071
+    }
+  ],
+  "matches": [
+    {
+      "matchId": 14540552,
+      "date": "2025-01-10T14:43:40.000Z",
+      "round": "League Matches",
+      "ground": "Force Playing Fields",
+      "teamA": "Jade Skyhawks",
+      "teamAScore": "29/6",
+      "teamB": "Jade Phoenix",
+      "teamBScore": "32/1",
+      "winner": "Jade Phoenix",
+      "winBy": "6 wickets",
+      "result": "Jade Phoenix won by 6 wickets",
+      "playerOfTheMatch": {
+        "playerId": 21354906,
+        "name": "Akshita Singh  (c)",
+        "team": "Jade Phoenix"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26541938,
+        "name": "Khushboo Behede (Jade C181)",
+        "team": "Jade Phoenix"
+      },
+      "bestBowler": {
+        "playerId": 21354906,
+        "name": "Akshita Singh  (c)",
+        "team": "Jade Phoenix"
+      }
+    },
+    {
+      "matchId": 14541584,
+      "date": "2025-01-10T15:28:23.000Z",
+      "round": "League Matches",
+      "ground": "Force Playing Fields",
+      "teamA": "Jade Eagles",
+      "teamAScore": "30/7 & 1/0",
+      "teamB": "Jade Cardinals",
+      "teamBScore": "30/2 & 1/0",
+      "winner": "",
+      "winBy": "Tie",
+      "result": "Tie",
+      "playerOfTheMatch": {
+        "playerId": 35225840,
+        "name": "Trupti Khanna",
+        "team": "Jade Cardinals"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 35211916,
+        "name": "Archita  (c)",
+        "team": "Jade Cardinals"
+      },
+      "bestBowler": {
+        "playerId": 35213004,
+        "name": "Archana Lakhani  (wk)",
+        "team": "Jade Cardinals"
+      }
+    },
+    {
+      "matchId": 14549039,
+      "date": "2025-01-11T02:44:22.000Z",
+      "round": "League Matches",
+      "ground": "Force Playing Fields",
+      "teamA": "Jade Skyhawks",
+      "teamAScore": "36/4",
+      "teamB": "Jade Cardinals",
+      "teamBScore": "39/0",
+      "winner": "Jade Cardinals",
+      "winBy": "7 wickets",
+      "result": "Jade Cardinals won by 7 wickets",
+      "playerOfTheMatch": {
+        "playerId": 10003150,
+        "name": "Priya Narayanan",
+        "team": "Jade Cardinals"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 10003150,
+        "name": "Priya Narayanan",
+        "team": "Jade Cardinals"
+      },
+      "bestBowler": {
+        "playerId": 35233653,
+        "name": "Megha Tagalpallewar",
+        "team": "Jade Cardinals"
+      }
+    },
+    {
+      "matchId": 14552705,
+      "date": "2025-01-11T04:39:10.000Z",
+      "round": "League Matches",
+      "ground": "Force Playing Fields",
+      "teamA": "Jade Eagles",
+      "teamAScore": "28/3",
+      "teamB": "Jade Phoenix",
+      "teamBScore": "21/8",
+      "winner": "Jade Eagles",
+      "winBy": "7 runs",
+      "result": "Jade Eagles won by 7 runs",
+      "playerOfTheMatch": {
+        "playerId": 35212042,
+        "name": "Yoshita  (c)",
+        "team": "Jade Eagles"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 35417390,
+        "name": "Neha Vairagade",
+        "team": "Jade Phoenix"
+      },
+      "bestBowler": {
+        "playerId": 35212042,
+        "name": "Yoshita  (c)",
+        "team": "Jade Eagles"
+      }
+    },
+    {
+      "matchId": 14564876,
+      "date": "2025-01-11T10:56:49.000Z",
+      "round": "League Matches",
+      "ground": "Force Playing Fields",
+      "teamA": "Jade Skyhawks",
+      "teamAScore": "29/3",
+      "teamB": "Jade Eagles",
+      "teamBScore": "30/2",
+      "winner": "Jade Eagles",
+      "winBy": "6 wickets",
+      "result": "Jade Eagles won by 6 wickets",
+      "playerOfTheMatch": {
+        "playerId": 17432331,
+        "name": "Tulsi Parikh",
+        "team": "Jade Eagles"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 35212042,
+        "name": "Yoshita  (c)",
+        "team": "Jade Eagles"
+      },
+      "bestBowler": {
+        "playerId": 17432331,
+        "name": "Tulsi Parikh",
+        "team": "Jade Eagles"
+      }
+    },
+    {
+      "matchId": 14566348,
+      "date": "2025-01-11T11:50:21.000Z",
+      "round": "League Matches",
+      "ground": "Force Playing Fields",
+      "teamA": "Jade Phoenix",
+      "teamAScore": "33/5",
+      "teamB": "Jade Cardinals",
+      "teamBScore": "34/3",
+      "winner": "Jade Cardinals",
+      "winBy": "4 wickets",
+      "result": "Jade Cardinals won by 4 wickets",
+      "playerOfTheMatch": {
+        "playerId": 35233653,
+        "name": "Megha Tagalpallewar",
+        "team": "Jade Cardinals"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 35212869,
+        "name": "Sharwari Patil",
+        "team": "Jade Phoenix"
+      },
+      "bestBowler": {
+        "playerId": 35354053,
+        "name": "Shreya suthar",
+        "team": "Jade Phoenix"
+      }
+    },
+    {
+      "matchId": 14593523,
+      "date": "2025-01-12T10:28:53.000Z",
+      "round": "Final",
+      "ground": "Force Playing Fields",
+      "teamA": "Jade Cardinals",
+      "teamAScore": "30/6",
+      "teamB": "Jade Eagles",
+      "teamBScore": "31/2",
+      "winner": "Jade Eagles",
+      "winBy": "6 wickets",
+      "result": "Jade Eagles won by 6 wickets",
+      "playerOfTheMatch": {
+        "playerId": 17432331,
+        "name": "Tulsi Parikh",
+        "team": "Jade Eagles"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 35542057,
+        "name": "Pritti Kulkarni",
+        "team": "Jade Eagles"
+      },
+      "bestBowler": {
+        "playerId": 17432331,
+        "name": "Tulsi Parikh",
+        "team": "Jade Eagles"
+      }
+    }
+  ],
+  "players": [
+    {
+      "playerId": 26542025,
+      "name": "Abhijna Hegde",
+      "team": "Jade Skyhawks",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 6,
+        "balls": 16,
+        "highScore": "4",
+        "avg": 3.0,
+        "sr": 37.5,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 21354906,
+      "name": "Akshita Singh  (c)",
+      "team": "Jade Phoenix",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 8,
+        "balls": 18,
+        "highScore": "4*",
+        "avg": 8.0,
+        "sr": 44.44,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 1,
+        "wickets": 3,
+        "runs": 10,
+        "best": "2/1",
+        "economy": 2.0,
+        "avg": 3.33,
+        "sr": 10.0,
+        "dots": 22,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35311189,
+      "name": "Amita Jain",
+      "team": "Jade Eagles",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 2,
+        "balls": 2,
+        "highScore": "1*",
+        "avg": 2.0,
+        "sr": 100.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35222307,
+      "name": "Anita Joshi",
+      "team": "Jade Phoenix",
+      "matches": 3,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 1,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 8,
+        "best": "1/6",
+        "economy": 4.0,
+        "avg": 8.0,
+        "sr": 12.0,
+        "dots": 8,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35213004,
+      "name": "Archana Lakhani  (wk)",
+      "team": "Jade Cardinals",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 3,
+        "balls": 7,
+        "highScore": "3*",
+        "avg": null,
+        "sr": 42.86,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "6.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 25,
+        "best": "2/9",
+        "economy": 4.17,
+        "avg": 8.33,
+        "sr": 12.0,
+        "dots": 17,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35211916,
+      "name": "Archita  (c)",
+      "team": "Jade Cardinals",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 21,
+        "balls": 39,
+        "highScore": "11*",
+        "avg": 21.0,
+        "sr": 53.85,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 10,
+        "best": "",
+        "economy": 10.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35311043,
+      "name": "Asha Pramod",
+      "team": "Jade Eagles",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 1,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35233255,
+      "name": "Deepti Hemnani",
+      "team": "Jade Cardinals",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 2,
+        "balls": 8,
+        "highScore": "1*",
+        "avg": null,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35541325,
+      "name": "Divija",
+      "team": "Jade Skyhawks",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 13,
+        "balls": 25,
+        "highScore": "8",
+        "avg": 6.5,
+        "sr": 52.0,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 14,
+        "best": "",
+        "economy": 14.0,
+        "avg": null,
+        "sr": null,
+        "dots": 3,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35219002,
+      "name": "Dr Pallavi Jadhao",
+      "team": "Jade Skyhawks",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 14,
+        "balls": 31,
+        "highScore": "9*",
+        "avg": null,
+        "sr": 45.16,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 26,
+        "best": "1/4",
+        "economy": 5.2,
+        "avg": 26.0,
+        "sr": 30.0,
+        "dots": 16,
+        "wides": 8,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26541938,
+      "name": "Khushboo Behede (Jade C181)",
+      "team": "Jade Phoenix",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 16,
+        "balls": 20,
+        "highScore": "15*",
+        "avg": 8.0,
+        "sr": 80.0,
+        "fours": 2,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "6.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 29,
+        "best": "1/7",
+        "economy": 4.83,
+        "avg": 14.5,
+        "sr": 18.0,
+        "dots": 22,
+        "wides": 10,
+        "noBalls": 4
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35599166,
+      "name": "Kirti",
+      "team": "Jade Phoenix",
+      "matches": 2,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "0*",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35233653,
+      "name": "Megha Tagalpallewar",
+      "team": "Jade Cardinals",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 3,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 5,
+        "overs": "9.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 30,
+        "best": "1/6",
+        "economy": 3.33,
+        "avg": 7.5,
+        "sr": 13.5,
+        "dots": 30,
+        "wides": 7,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26541877,
+      "name": "Neha Mittal Reyansh Dhruv",
+      "team": "Jade Skyhawks",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 6,
+        "balls": 22,
+        "highScore": "6*",
+        "avg": 6.0,
+        "sr": 27.27,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 4,
+        "best": "",
+        "economy": 4.0,
+        "avg": null,
+        "sr": null,
+        "dots": 3,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35417390,
+      "name": "Neha Vairagade",
+      "team": "Jade Phoenix",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 9,
+        "balls": 14,
+        "highScore": "5",
+        "avg": 4.5,
+        "sr": 64.29,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35311001,
+      "name": "NISHA KAD",
+      "team": "Jade Eagles",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 3,
+        "balls": 27,
+        "highScore": "3",
+        "avg": 1.5,
+        "sr": 11.11,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 23,
+        "best": "1/5",
+        "economy": 4.6,
+        "avg": 11.5,
+        "sr": 15.0,
+        "dots": 14,
+        "wides": 7,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26541916,
+      "name": "PRADNYA KULKARNI",
+      "team": "Jade Eagles",
+      "matches": 4,
+      "batting": {
+        "innings": 5,
+        "notOut": 3,
+        "runs": 17,
+        "balls": 40,
+        "highScore": "8*",
+        "avg": 8.5,
+        "sr": 42.5,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "6.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 29,
+        "best": "1/0",
+        "economy": 4.83,
+        "avg": 29.0,
+        "sr": 36.0,
+        "dots": 22,
+        "wides": 12,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35212071,
+      "name": "Prajakta  (c)",
+      "team": "Jade Skyhawks",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 8,
+        "balls": 20,
+        "highScore": "4",
+        "avg": 2.67,
+        "sr": 40.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26541662,
+      "name": "Praneetha Korlepara",
+      "team": "Jade Phoenix",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 4,
+        "balls": 15,
+        "highScore": "4",
+        "avg": 2.0,
+        "sr": 26.67,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 18,
+        "best": "1/5",
+        "economy": 6.0,
+        "avg": 18.0,
+        "sr": 18.0,
+        "dots": 9,
+        "wides": 6,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35542057,
+      "name": "Pritti Kulkarni",
+      "team": "Jade Eagles",
+      "matches": 4,
+      "batting": {
+        "innings": 5,
+        "notOut": 1,
+        "runs": 31,
+        "balls": 48,
+        "highScore": "18",
+        "avg": 7.75,
+        "sr": 64.58,
+        "fours": 0,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 12,
+        "best": "1/4",
+        "economy": 4.0,
+        "avg": 12.0,
+        "sr": 18.0,
+        "dots": 10,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35215538,
+      "name": "Priya Hora",
+      "team": "Jade Cardinals",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 15,
+        "balls": 39,
+        "highScore": "9*",
+        "avg": 5.0,
+        "sr": 38.46,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 13,
+        "best": "",
+        "economy": 4.33,
+        "avg": null,
+        "sr": null,
+        "dots": 10,
+        "wides": 3,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 10003150,
+      "name": "Priya Narayanan",
+      "team": "Jade Cardinals",
+      "matches": 4,
+      "batting": {
+        "innings": 5,
+        "notOut": 2,
+        "runs": 25,
+        "balls": 33,
+        "highScore": "20*",
+        "avg": 8.33,
+        "sr": 75.76,
+        "fours": 3,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "8.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 34,
+        "best": "1/12",
+        "economy": 4.25,
+        "avg": 34.0,
+        "sr": 48.0,
+        "dots": 27,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35219001,
+      "name": "Renu Rai",
+      "team": "Jade Skyhawks",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 10,
+        "balls": 25,
+        "highScore": "6",
+        "avg": 5.0,
+        "sr": 40.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 38,
+        "best": "1/7",
+        "economy": 9.5,
+        "avg": 19.0,
+        "sr": 12.0,
+        "dots": 8,
+        "wides": 9,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35212869,
+      "name": "Sharwari Patil",
+      "team": "Jade Phoenix",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 18,
+        "balls": 26,
+        "highScore": "10",
+        "avg": 6.0,
+        "sr": 69.23,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 14957778,
+      "name": "Shishir Pahade",
+      "team": "Jade Eagles",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 1,
+        "balls": 1,
+        "highScore": "1*",
+        "avg": null,
+        "sr": 100.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 1,
+        "best": "",
+        "economy": 1.0,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35354053,
+      "name": "Shreya suthar",
+      "team": "Jade Phoenix",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 6,
+        "balls": 14,
+        "highScore": "4",
+        "avg": 3.0,
+        "sr": 42.86,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "6.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 26,
+        "best": "1/7",
+        "economy": 4.33,
+        "avg": 13.0,
+        "sr": 18.0,
+        "dots": 26,
+        "wides": 8,
+        "noBalls": 8
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35218262,
+      "name": "Shubhada Katdare",
+      "team": "Jade Skyhawks",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 2,
+        "balls": 6,
+        "highScore": "2",
+        "avg": 2.0,
+        "sr": 33.33,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 6,
+        "best": "",
+        "economy": 6.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35212757,
+      "name": "Sneha Vengurlekar",
+      "team": "Jade Phoenix",
+      "matches": 3,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 2,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35218183,
+      "name": "Soundarya Kad",
+      "team": "Jade Skyhawks",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 3,
+        "balls": 8,
+        "highScore": "3",
+        "avg": 1.5,
+        "sr": 37.5,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 13,
+        "best": "",
+        "economy": 13.0,
+        "avg": null,
+        "sr": null,
+        "dots": 4,
+        "wides": 7,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35215713,
+      "name": "Sushama Gaikwad",
+      "team": "Jade Cardinals",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 1,
+        "balls": 6,
+        "highScore": "1*",
+        "avg": 1.0,
+        "sr": 16.67,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 19,
+        "best": "1/4",
+        "economy": 3.8,
+        "avg": 4.75,
+        "sr": 7.5,
+        "dots": 15,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35225840,
+      "name": "Trupti Khanna",
+      "team": "Jade Cardinals",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 22,
+        "balls": 42,
+        "highScore": "8*",
+        "avg": 11.0,
+        "sr": 52.38,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 17432331,
+      "name": "Tulsi Parikh",
+      "team": "Jade Eagles",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 6,
+        "balls": 14,
+        "highScore": "3*",
+        "avg": 2.0,
+        "sr": 42.86,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 1,
+        "wickets": 6,
+        "runs": 19,
+        "best": "3/4",
+        "economy": 2.71,
+        "avg": 3.17,
+        "sr": 7.0,
+        "dots": 30,
+        "wides": 5,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35311130,
+      "name": "Vijaya Lakshmi",
+      "team": "Jade Eagles",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 2,
+        "balls": 8,
+        "highScore": "2",
+        "avg": 2.0,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 5,
+        "best": "",
+        "economy": 5.0,
+        "avg": null,
+        "sr": null,
+        "dots": 3,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35212042,
+      "name": "Yoshita  (c)",
+      "team": "Jade Eagles",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 16,
+        "balls": 37,
+        "highScore": "7*",
+        "avg": 8.0,
+        "sr": 43.24,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 22,
+        "best": "3/6",
+        "economy": 3.14,
+        "avg": 5.5,
+        "sr": 10.5,
+        "dots": 30,
+        "wides": 8,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    }
+  ],
+  "mvp": [
+    {
+      "playerId": 17432331,
+      "name": "Tulsi Parikh",
+      "team": "Jade Eagles",
+      "playerOfTheMatch": 2,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 2,
+      "mvpRank": 1,
+      "mvpTotal": 11.799,
+      "mvpBatting": 0.61,
+      "mvpBowling": 9.789,
+      "mvpFielding": 1.4,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35233653,
+      "name": "Megha Tagalpallewar",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 2,
+      "mvpTotal": 8.655,
+      "mvpBatting": 0.0,
+      "mvpBowling": 5.855,
+      "mvpFielding": 2.8,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35212042,
+      "name": "Yoshita  (c)",
+      "team": "Jade Eagles",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 1,
+      "mvpRank": 3,
+      "mvpTotal": 8.247,
+      "mvpBatting": 1.6,
+      "mvpBowling": 6.367,
+      "mvpFielding": 0.28,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 21354906,
+      "name": "Akshita Singh  (c)",
+      "team": "Jade Phoenix",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 4,
+      "mvpTotal": 8.215,
+      "mvpBatting": 0.8,
+      "mvpBowling": 5.455,
+      "mvpFielding": 1.96,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35215713,
+      "name": "Sushama Gaikwad",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 5,
+      "mvpTotal": 7.361,
+      "mvpBatting": 0.1,
+      "mvpBowling": 5.861,
+      "mvpFielding": 1.4,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26541938,
+      "name": "Khushboo Behede (Jade C181)",
+      "team": "Jade Phoenix",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 6,
+      "mvpTotal": 7.322,
+      "mvpBatting": 1.6,
+      "mvpBowling": 2.922,
+      "mvpFielding": 2.8,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35311001,
+      "name": "NISHA KAD",
+      "team": "Jade Eagles",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 7,
+      "mvpTotal": 6.396,
+      "mvpBatting": 0.3,
+      "mvpBowling": 2.736,
+      "mvpFielding": 3.36,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35542057,
+      "name": "Pritti Kulkarni",
+      "team": "Jade Eagles",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 8,
+      "mvpTotal": 6.265,
+      "mvpBatting": 3.167,
+      "mvpBowling": 1.418,
+      "mvpFielding": 1.68,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 10003150,
+      "name": "Priya Narayanan",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 9,
+      "mvpTotal": 4.538,
+      "mvpBatting": 2.521,
+      "mvpBowling": 1.457,
+      "mvpFielding": 0.56,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35213004,
+      "name": "Archana Lakhani  (wk)",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 10,
+      "mvpTotal": 4.449,
+      "mvpBatting": 0.3,
+      "mvpBowling": 3.701,
+      "mvpFielding": 0.448,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35225840,
+      "name": "Trupti Khanna",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 11,
+      "mvpTotal": 4.164,
+      "mvpBatting": 2.204,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.96,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35219001,
+      "name": "Renu Rai",
+      "team": "Jade Skyhawks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 12,
+      "mvpTotal": 3.756,
+      "mvpBatting": 1.0,
+      "mvpBowling": 2.756,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35354053,
+      "name": "Shreya suthar",
+      "team": "Jade Phoenix",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 13,
+      "mvpTotal": 3.437,
+      "mvpBatting": 0.6,
+      "mvpBowling": 2.837,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35219002,
+      "name": "Dr Pallavi Jadhao",
+      "team": "Jade Skyhawks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 14,
+      "mvpTotal": 3.15,
+      "mvpBatting": 1.4,
+      "mvpBowling": 1.75,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26541916,
+      "name": "PRADNYA KULKARNI",
+      "team": "Jade Eagles",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 15,
+      "mvpTotal": 2.822,
+      "mvpBatting": 1.606,
+      "mvpBowling": 1.216,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35233255,
+      "name": "Deepti Hemnani",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 16,
+      "mvpTotal": 2.62,
+      "mvpBatting": 0.1,
+      "mvpBowling": 0.0,
+      "mvpFielding": 2.52,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35212869,
+      "name": "Sharwari Patil",
+      "team": "Jade Phoenix",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 17,
+      "mvpTotal": 2.083,
+      "mvpBatting": 1.803,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35211916,
+      "name": "Archita  (c)",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 18,
+      "mvpTotal": 2.065,
+      "mvpBatting": 2.1,
+      "mvpBowling": -0.035,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26541662,
+      "name": "Praneetha Korlepara",
+      "team": "Jade Phoenix",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 19,
+      "mvpTotal": 1.792,
+      "mvpBatting": 0.4,
+      "mvpBowling": 1.392,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35215538,
+      "name": "Priya Hora",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 20,
+      "mvpTotal": 1.682,
+      "mvpBatting": 1.5,
+      "mvpBowling": 0.182,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35311189,
+      "name": "Amita Jain",
+      "team": "Jade Eagles",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 21,
+      "mvpTotal": 1.611,
+      "mvpBatting": 0.211,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.4,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35222307,
+      "name": "Anita Joshi",
+      "team": "Jade Phoenix",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 22,
+      "mvpTotal": 1.492,
+      "mvpBatting": 0.0,
+      "mvpBowling": 1.492,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 35541325,
+      "name": "Divija",
+      "team": "Jade Skyhawks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 23,
+      "mvpTotal": 1.339,
+      "mvpBatting": 1.31,
+      "mvpBowling": 0.029,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35417390,
+      "name": "Neha Vairagade",
+      "team": "Jade Phoenix",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 24,
+      "mvpTotal": 0.911,
+      "mvpBatting": 0.911,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 35212071,
+      "name": "Prajakta  (c)",
+      "team": "Jade Skyhawks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 25,
+      "mvpTotal": 0.8,
+      "mvpBatting": 0.8,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26541877,
+      "name": "Neha Mittal Reyansh Dhruv",
+      "team": "Jade Skyhawks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 26,
+      "mvpTotal": 0.742,
+      "mvpBatting": 0.6,
+      "mvpBowling": 0.142,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26542025,
+      "name": "Abhijna Hegde",
+      "team": "Jade Skyhawks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 27,
+      "mvpTotal": 0.6,
+      "mvpBatting": 0.6,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 35218262,
+      "name": "Shubhada Katdare",
+      "team": "Jade Skyhawks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 28,
+      "mvpTotal": 0.286,
+      "mvpBatting": 0.2,
+      "mvpBowling": 0.086,
+      "mvpFielding": 0.0,
+      "mvpMatches": 1
+    },
+    {
+      "playerId": 35218183,
+      "name": "Soundarya Kad",
+      "team": "Jade Skyhawks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 29,
+      "mvpTotal": 0.217,
+      "mvpBatting": 0.3,
+      "mvpBowling": -0.083,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 35311130,
+      "name": "Vijaya Lakshmi",
+      "team": "Jade Eagles",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 30,
+      "mvpTotal": 0.142,
+      "mvpBatting": 0.2,
+      "mvpBowling": -0.058,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 14957778,
+      "name": "Shishir Pahade",
+      "team": "Jade Eagles",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 31,
+      "mvpTotal": 0.105,
+      "mvpBatting": 0.105,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 1
+    }
+  ],
+  "awards": []
+}

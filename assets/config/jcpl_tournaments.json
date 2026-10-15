@@ -1,0 +1,78 @@
+{
+  "seasons": [
+    {
+      "id": "1",
+      "label": "Season 1",
+      "year": "2024",
+      "subtitle": "Pune · January 2024",
+      "categories": [
+        {
+          "id": "mens",
+          "label": "Mens",
+          "asset": "assets/config/jcpl_s1_mens.json"
+        },
+        {
+          "id": "womens",
+          "label": "Womens",
+          "asset": "assets/config/jcpl_s1_womens.json"
+        },
+        {
+          "id": "boys",
+          "label": "Boys",
+          "asset": "assets/config/jcpl_s1_boys.json"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "label": "Season 2",
+      "year": "2025",
+      "subtitle": "Pune · January 2025",
+      "categories": [
+        {
+          "id": "mens",
+          "label": "Mens",
+          "asset": "assets/config/jcpl_s2_mens.json"
+        },
+        {
+          "id": "womens",
+          "label": "Womens",
+          "asset": "assets/config/jcpl_s2_womens.json"
+        },
+        {
+          "id": "boys",
+          "label": "Boys",
+          "asset": "assets/config/jcpl_s2_boys.json"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "label": "Season 3",
+      "year": "2026",
+      "subtitle": "Pune · January 2026",
+      "categories": [
+        {
+          "id": "mens",
+          "label": "Mens",
+          "asset": "assets/config/jcpl_s3_mens.json"
+        },
+        {
+          "id": "womens",
+          "label": "Womens",
+          "asset": "assets/config/jcpl_s3_womens.json"
+        },
+        {
+          "id": "boys",
+          "label": "Boys",
+          "asset": "assets/config/jcpl_s3_boys.json"
+        },
+        {
+          "id": "girls",
+          "label": "Girls",
+          "asset": "assets/config/jcpl_s3_girls.json"
+        }
+      ]
+    }
+  ]
+}

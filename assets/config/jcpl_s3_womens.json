@@ -1,0 +1,1765 @@
+{
+  "tournamentId": 1786245,
+  "name": "JCPL 2026 Women",
+  "city": "Pune",
+  "fromDate": "2026-01-15",
+  "toDate": "2026-01-18",
+  "ground": "Trooferz, PAN Card Club Road",
+  "overall": {
+    "Matches": "7",
+    "Innings": "14",
+    "Runs": "586",
+    "Wickets": "42",
+    "Balls": "590",
+    "Extras": "97",
+    "Fours": "30",
+    "Sixes": "16",
+    "50's": "0",
+    "100's": "0",
+    "50+ Partnership": "0",
+    "100+ Partnership": "0",
+    "Maidens": "0",
+    "Dot balls": "282",
+    "Catches": "11",
+    "Stumpings": "0",
+    "BDRY%": "36.86",
+    "BDRY Freq.": "12.83",
+    "DB Freq.": "2.09",
+    "DB%": "47.80"
+  },
+  "teams": [
+    {
+      "teamId": 11947732,
+      "name": "Jade Cardinals",
+      "logo": "https://media.cricheroes.in/default/teamintital/JC.png",
+      "captainId": 10003150
+    },
+    {
+      "teamId": 11947708,
+      "name": "Jade Unicorns",
+      "logo": "https://media.cricheroes.in/default/teamintital/JU.png",
+      "captainId": 26541938
+    },
+    {
+      "teamId": 11947673,
+      "name": "Sapphire Titans",
+      "logo": "https://media.cricheroes.in/default/teamintital/ST.png",
+      "captainId": 34767176
+    },
+    {
+      "teamId": 11947723,
+      "name": "Strike Queens",
+      "logo": "https://media.cricheroes.in/default/teamintital/SQ.png",
+      "captainId": 35212042
+    }
+  ],
+  "matches": [
+    {
+      "matchId": 21663268,
+      "date": "2026-01-16T17:02:03.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Strike Queens",
+      "teamAScore": "34/6",
+      "teamB": "Sapphire Titans",
+      "teamBScore": "35/1",
+      "winner": "Sapphire Titans",
+      "winBy": "5 wickets",
+      "result": "Sapphire Titans won by 5 wickets",
+      "playerOfTheMatch": {
+        "playerId": 34767176,
+        "name": "Pallavi Vichare  (c)",
+        "team": "Sapphire Titans"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 34767176,
+        "name": "Pallavi Vichare  (c)",
+        "team": "Sapphire Titans"
+      },
+      "bestBowler": {
+        "playerId": 35617127,
+        "name": "Shubhangi Patkar",
+        "team": "Sapphire Titans"
+      }
+    },
+    {
+      "matchId": 21663321,
+      "date": "2026-01-16T17:04:03.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Cardinals",
+      "teamAScore": "46/4",
+      "teamB": "Jade Unicorns",
+      "teamBScore": "47/2",
+      "winner": "Jade Unicorns",
+      "winBy": "4 wickets",
+      "result": "Jade Unicorns won by 4 wickets",
+      "playerOfTheMatch": {
+        "playerId": 45975646,
+        "name": "Avani Pawar Jade",
+        "team": "Jade Unicorns"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 45975646,
+        "name": "Avani Pawar Jade",
+        "team": "Jade Unicorns"
+      },
+      "bestBowler": {
+        "playerId": 26541938,
+        "name": "Khushboo Behede (Jade C181)  (c)",
+        "team": "Jade Unicorns"
+      }
+    },
+    {
+      "matchId": 21669461,
+      "date": "2026-01-17T14:34:50.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Cardinals",
+      "teamAScore": "45/1",
+      "teamB": "Sapphire Titans",
+      "teamBScore": "46/1",
+      "winner": "Sapphire Titans",
+      "winBy": "5 wickets",
+      "result": "Sapphire Titans won by 5 wickets",
+      "playerOfTheMatch": {
+        "playerId": 46085332,
+        "name": "Kanika Mutreja",
+        "team": "Sapphire Titans"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46085332,
+        "name": "Kanika Mutreja",
+        "team": "Sapphire Titans"
+      },
+      "bestBowler": {
+        "playerId": 46056339,
+        "name": "Manika Goel",
+        "team": "Sapphire Titans"
+      }
+    },
+    {
+      "matchId": 21664982,
+      "date": "2026-01-17T14:34:52.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Strike Queens",
+      "teamAScore": "33/4",
+      "teamB": "Jade Unicorns",
+      "teamBScore": "34/1",
+      "winner": "Jade Unicorns",
+      "winBy": "5 wickets",
+      "result": "Jade Unicorns won by 5 wickets",
+      "playerOfTheMatch": {
+        "playerId": 35218183,
+        "name": "Soundarya Kad",
+        "team": "Jade Unicorns"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 45975646,
+        "name": "Avani Pawar Jade",
+        "team": "Jade Unicorns"
+      },
+      "bestBowler": {
+        "playerId": 35212042,
+        "name": "Yoshita  (c)",
+        "team": "Strike Queens"
+      }
+    },
+    {
+      "matchId": 21670659,
+      "date": "2026-01-18T03:03:17.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Cardinals",
+      "teamAScore": "48/4",
+      "teamB": "Strike Queens",
+      "teamBScore": "51/1",
+      "winner": "Strike Queens",
+      "winBy": "5 wickets",
+      "result": "Strike Queens won by 5 wickets",
+      "playerOfTheMatch": {
+        "playerId": 26535245,
+        "name": "Himali Kharkar",
+        "team": "Strike Queens"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26535245,
+        "name": "Himali Kharkar",
+        "team": "Strike Queens"
+      },
+      "bestBowler": {
+        "playerId": 35571274,
+        "name": "Vaishali Patil",
+        "team": "Strike Queens"
+      }
+    },
+    {
+      "matchId": 21670638,
+      "date": "2026-01-18T03:05:12.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Unicorns",
+      "teamAScore": "39/6",
+      "teamB": "Sapphire Titans",
+      "teamBScore": "42/3",
+      "winner": "Sapphire Titans",
+      "winBy": "3 wickets",
+      "result": "Sapphire Titans won by 3 wickets",
+      "playerOfTheMatch": {
+        "playerId": 34767176,
+        "name": "Pallavi Vichare  (c)",
+        "team": "Sapphire Titans"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46085332,
+        "name": "Kanika Mutreja",
+        "team": "Sapphire Titans"
+      },
+      "bestBowler": {
+        "playerId": 26541938,
+        "name": "Khushboo Behede (Jade C181)  (c)",
+        "team": "Jade Unicorns"
+      }
+    },
+    {
+      "matchId": 21768827,
+      "date": "2026-01-18T14:08:42.000Z",
+      "round": "Final",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Unicorns",
+      "teamAScore": "42/6",
+      "teamB": "Sapphire Titans",
+      "teamBScore": "44/2",
+      "winner": "Sapphire Titans",
+      "winBy": "4 wickets",
+      "result": "Sapphire Titans won by 4 wickets",
+      "playerOfTheMatch": {
+        "playerId": 34767176,
+        "name": "Pallavi Vichare  (c)",
+        "team": "Sapphire Titans"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 46085332,
+        "name": "Kanika Mutreja",
+        "team": "Sapphire Titans"
+      },
+      "bestBowler": {
+        "playerId": 46009311,
+        "name": "Suvarna Dubey",
+        "team": "Sapphire Titans"
+      }
+    }
+  ],
+  "players": [
+    {
+      "playerId": 45948440,
+      "name": "Adv Medha Pawar Jade",
+      "team": "Jade Cardinals",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 7,
+        "balls": 10,
+        "highScore": "4*",
+        "avg": null,
+        "sr": 70.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 46,
+        "best": "1/18",
+        "economy": 11.5,
+        "avg": 46.0,
+        "sr": 24.0,
+        "dots": 15,
+        "wides": 8,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46405963,
+      "name": "Amruta Charpe",
+      "team": "Strike Queens",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 21,
+        "balls": 40,
+        "highScore": "8",
+        "avg": 7.0,
+        "sr": 52.5,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45975646,
+      "name": "Avani Pawar Jade",
+      "team": "Jade Unicorns",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 62,
+        "balls": 69,
+        "highScore": "22*",
+        "avg": 20.67,
+        "sr": 89.86,
+        "fours": 5,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 9,
+        "best": "1/9",
+        "economy": 9.0,
+        "avg": 9.0,
+        "sr": 6.0,
+        "dots": 3,
+        "wides": 4,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535245,
+      "name": "Himali Kharkar",
+      "team": "Strike Queens",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 46,
+        "balls": 31,
+        "highScore": "36*",
+        "avg": 46.0,
+        "sr": 148.39,
+        "fours": 4,
+        "sixes": 3,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 22,
+        "best": "",
+        "economy": 5.5,
+        "avg": null,
+        "sr": null,
+        "dots": 16,
+        "wides": 5,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 16760603,
+      "name": "Jagjot Kaur",
+      "team": "Jade Cardinals",
+      "matches": 3,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 1,
+        "balls": 2,
+        "highScore": "1",
+        "avg": 1.0,
+        "sr": 50.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 15,
+        "best": "",
+        "economy": 7.5,
+        "avg": null,
+        "sr": null,
+        "dots": 5,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46085332,
+      "name": "Kanika Mutreja",
+      "team": "Sapphire Titans",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 68,
+        "balls": 61,
+        "highScore": "23*",
+        "avg": 34.0,
+        "sr": 111.48,
+        "fours": 9,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26541938,
+      "name": "Khushboo Behede (Jade C181)  (c)",
+      "team": "Jade Unicorns",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 14,
+        "balls": 14,
+        "highScore": "8*",
+        "avg": 7.0,
+        "sr": 100.0,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 30,
+        "best": "1/2",
+        "economy": 4.29,
+        "avg": 10.0,
+        "sr": 14.0,
+        "dots": 20,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46056339,
+      "name": "Manika Goel",
+      "team": "Sapphire Titans",
+      "matches": 4,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 30,
+        "best": "1/2",
+        "economy": 6.0,
+        "avg": 15.0,
+        "sr": 15.0,
+        "dots": 14,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45934007,
+      "name": "Manisha Anant Thube",
+      "team": "Jade Cardinals",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 14,
+        "balls": 25,
+        "highScore": "8",
+        "avg": 4.67,
+        "sr": 56.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 15,
+        "best": "",
+        "economy": 15.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35311001,
+      "name": "NISHA KAD",
+      "team": "Jade Cardinals",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 5,
+        "balls": 7,
+        "highScore": "4*",
+        "avg": null,
+        "sr": 71.43,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 46,
+        "best": "1/12",
+        "economy": 11.5,
+        "avg": 46.0,
+        "sr": 24.0,
+        "dots": 5,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 34767176,
+      "name": "Pallavi Vichare  (c)",
+      "team": "Sapphire Titans",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 3,
+        "runs": 46,
+        "balls": 24,
+        "highScore": "24*",
+        "avg": 46.0,
+        "sr": 191.67,
+        "fours": 3,
+        "sixes": 4,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 17,
+        "best": "2/1",
+        "economy": 4.25,
+        "avg": 5.67,
+        "sr": 8.0,
+        "dots": 11,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 3,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26541916,
+      "name": "PRADNYA KULKARNI",
+      "team": "Jade Unicorns",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 5,
+        "balls": 12,
+        "highScore": "3*",
+        "avg": null,
+        "sr": 41.67,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 41,
+        "best": "1/7",
+        "economy": 5.86,
+        "avg": 20.5,
+        "sr": 21.0,
+        "dots": 21,
+        "wides": 3,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45975649,
+      "name": "Prarthana Wagh Jade",
+      "team": "Jade Unicorns",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 22,
+        "balls": 32,
+        "highScore": "9",
+        "avg": 7.33,
+        "sr": 68.75,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35215538,
+      "name": "Priya Hora",
+      "team": "Strike Queens",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 3,
+        "balls": 12,
+        "highScore": "3*",
+        "avg": 3.0,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 30,
+        "best": "1/10",
+        "economy": 6.0,
+        "avg": 15.0,
+        "sr": 15.0,
+        "dots": 14,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 10003150,
+      "name": "Priya Narayanan  (c)",
+      "team": "Jade Cardinals",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 34,
+        "balls": 40,
+        "highScore": "17*",
+        "avg": 17.0,
+        "sr": 85.0,
+        "fours": 1,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 14,
+        "best": "1/9",
+        "economy": 3.5,
+        "avg": 14.0,
+        "sr": 24.0,
+        "dots": 15,
+        "wides": 3,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46004111,
+      "name": "Priyanka Murkute",
+      "team": "Sapphire Titans",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 10,
+        "balls": 25,
+        "highScore": "5*",
+        "avg": 5.0,
+        "sr": 40.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 30,
+        "best": "1/9",
+        "economy": 6.0,
+        "avg": 15.0,
+        "sr": 15.0,
+        "dots": 14,
+        "wides": 9,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35603771,
+      "name": "Rashmi Amritkar",
+      "team": "Jade Unicorns",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 13,
+        "balls": 16,
+        "highScore": "7",
+        "avg": 4.33,
+        "sr": 81.25,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 21,
+        "best": "1/18",
+        "economy": 7.0,
+        "avg": 21.0,
+        "sr": 18.0,
+        "dots": 6,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46027041,
+      "name": "Reena Singh",
+      "team": "Strike Queens",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 1,
+        "balls": 4,
+        "highScore": "1",
+        "avg": 0.5,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35219001,
+      "name": "Renu Rai",
+      "team": "Jade Cardinals",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 22,
+        "balls": 16,
+        "highScore": "11",
+        "avg": 11.0,
+        "sr": 137.5,
+        "fours": 1,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 8,
+        "best": "",
+        "economy": 8.0,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45975647,
+      "name": "Rupal Jade",
+      "team": "Jade Unicorns",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 15,
+        "balls": 37,
+        "highScore": "9*",
+        "avg": 5.0,
+        "sr": 40.54,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 11,
+        "best": "",
+        "economy": 5.5,
+        "avg": null,
+        "sr": null,
+        "dots": 8,
+        "wides": 0,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35218262,
+      "name": "shubhada katdare",
+      "team": "Strike Queens",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 2,
+        "balls": 6,
+        "highScore": "2",
+        "avg": 1.0,
+        "sr": 33.33,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 13,
+        "best": "1/13",
+        "economy": 6.5,
+        "avg": 13.0,
+        "sr": 12.0,
+        "dots": 4,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35617127,
+      "name": "Shubhangi Patkar",
+      "team": "Sapphire Titans",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 11,
+        "balls": 11,
+        "highScore": "11*",
+        "avg": null,
+        "sr": 100.0,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 25,
+        "best": "2/6",
+        "economy": 3.57,
+        "avg": 8.33,
+        "sr": 14.0,
+        "dots": 21,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35218183,
+      "name": "Soundarya Kad",
+      "team": "Jade Unicorns",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 1,
+        "balls": 5,
+        "highScore": "1",
+        "avg": 0.5,
+        "sr": 20.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "8.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 53,
+        "best": "1/7",
+        "economy": 6.63,
+        "avg": 26.5,
+        "sr": 24.0,
+        "dots": 25,
+        "wides": 9,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46009311,
+      "name": "Suvarna Dubey",
+      "team": "Sapphire Titans",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 11,
+        "balls": 15,
+        "highScore": "8*",
+        "avg": 11.0,
+        "sr": 73.33,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 22,
+        "best": "1/1",
+        "economy": 5.5,
+        "avg": 11.0,
+        "sr": 12.0,
+        "dots": 14,
+        "wides": 6,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35225840,
+      "name": "Trupti Khanna",
+      "team": "Jade Cardinals",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 26,
+        "balls": 48,
+        "highScore": "13*",
+        "avg": 13.0,
+        "sr": 54.17,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 17432331,
+      "name": "Tulsi Parikh",
+      "team": "Sapphire Titans",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 1,
+        "balls": 4,
+        "highScore": "1",
+        "avg": 1.0,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 36,
+        "best": "1/9",
+        "economy": 5.14,
+        "avg": 18.0,
+        "sr": 21.0,
+        "dots": 29,
+        "wides": 5,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35571274,
+      "name": "Vaishali Patil",
+      "team": "Strike Queens",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 5,
+        "balls": 16,
+        "highScore": "4",
+        "avg": 5.0,
+        "sr": 31.25,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 29,
+        "best": "1/10",
+        "economy": 9.67,
+        "avg": 29.0,
+        "sr": 18.0,
+        "dots": 5,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35212042,
+      "name": "Yoshita  (c)",
+      "team": "Strike Queens",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 23,
+        "balls": 23,
+        "highScore": "13*",
+        "avg": 23.0,
+        "sr": 100.0,
+        "fours": 4,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 23,
+        "best": "1/1",
+        "economy": 5.75,
+        "avg": 23.0,
+        "sr": 24.0,
+        "dots": 15,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    }
+  ],
+  "mvp": [
+    {
+      "playerId": 34767176,
+      "name": "Pallavi Vichare  (c)",
+      "team": "Sapphire Titans",
+      "playerOfTheMatch": 3,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 1,
+      "mvpTotal": 12.243,
+      "mvpBatting": 4.922,
+      "mvpBowling": 3.847,
+      "mvpFielding": 3.474,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 45975646,
+      "name": "Avani Pawar Jade",
+      "team": "Jade Unicorns",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 2,
+      "bestBowler": 0,
+      "mvpRank": 2,
+      "mvpTotal": 9.003,
+      "mvpBatting": 6.254,
+      "mvpBowling": 1.349,
+      "mvpFielding": 1.4,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46085332,
+      "name": "Kanika Mutreja",
+      "team": "Sapphire Titans",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 3,
+      "bestBowler": 0,
+      "mvpRank": 3,
+      "mvpTotal": 8.219,
+      "mvpBatting": 6.819,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.4,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26541938,
+      "name": "Khushboo Behede (Jade C181)  (c)",
+      "team": "Jade Unicorns",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 2,
+      "mvpRank": 4,
+      "mvpTotal": 7.677,
+      "mvpBatting": 1.435,
+      "mvpBowling": 4.618,
+      "mvpFielding": 1.624,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26535245,
+      "name": "Himali Kharkar",
+      "team": "Strike Queens",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 5,
+      "mvpTotal": 6.481,
+      "mvpBatting": 4.732,
+      "mvpBowling": 0.339,
+      "mvpFielding": 1.41,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35617127,
+      "name": "Shubhangi Patkar",
+      "team": "Sapphire Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 6,
+      "mvpTotal": 5.857,
+      "mvpBatting": 1.1,
+      "mvpBowling": 4.383,
+      "mvpFielding": 0.374,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 10003150,
+      "name": "Priya Narayanan  (c)",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 7,
+      "mvpTotal": 5.558,
+      "mvpBatting": 3.43,
+      "mvpBowling": 2.128,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35212042,
+      "name": "Yoshita  (c)",
+      "team": "Strike Queens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 8,
+      "mvpTotal": 4.279,
+      "mvpBatting": 2.379,
+      "mvpBowling": 1.9,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26541916,
+      "name": "PRADNYA KULKARNI",
+      "team": "Jade Unicorns",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 9,
+      "mvpTotal": 4.164,
+      "mvpBatting": 0.5,
+      "mvpBowling": 2.674,
+      "mvpFielding": 0.99,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46004111,
+      "name": "Priyanka Murkute",
+      "team": "Sapphire Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 10,
+      "mvpTotal": 4.074,
+      "mvpBatting": 1.0,
+      "mvpBowling": 2.794,
+      "mvpFielding": 0.28,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46009311,
+      "name": "Suvarna Dubey",
+      "team": "Sapphire Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 11,
+      "mvpTotal": 3.771,
+      "mvpBatting": 1.1,
+      "mvpBowling": 2.671,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35218183,
+      "name": "Soundarya Kad",
+      "team": "Jade Unicorns",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 12,
+      "mvpTotal": 3.426,
+      "mvpBatting": 0.1,
+      "mvpBowling": 2.896,
+      "mvpFielding": 0.43,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35311001,
+      "name": "NISHA KAD",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 13,
+      "mvpTotal": 3.299,
+      "mvpBatting": 0.5,
+      "mvpBowling": 1.399,
+      "mvpFielding": 1.4,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35215538,
+      "name": "Priya Hora",
+      "team": "Strike Queens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 14,
+      "mvpTotal": 3.133,
+      "mvpBatting": 0.3,
+      "mvpBowling": 2.833,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 45975649,
+      "name": "Prarthana Wagh Jade",
+      "team": "Jade Unicorns",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 15,
+      "mvpTotal": 2.92,
+      "mvpBatting": 2.21,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.71,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35225840,
+      "name": "Trupti Khanna",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 16,
+      "mvpTotal": 2.88,
+      "mvpBatting": 2.6,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46056339,
+      "name": "Manika Goel",
+      "team": "Sapphire Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 17,
+      "mvpTotal": 2.855,
+      "mvpBatting": 0.0,
+      "mvpBowling": 2.855,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35603771,
+      "name": "Rashmi Amritkar",
+      "team": "Jade Unicorns",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 18,
+      "mvpTotal": 2.767,
+      "mvpBatting": 1.313,
+      "mvpBowling": 1.454,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 17432331,
+      "name": "Tulsi Parikh",
+      "team": "Sapphire Titans",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 19,
+      "mvpTotal": 2.737,
+      "mvpBatting": 0.1,
+      "mvpBowling": 2.357,
+      "mvpFielding": 0.28,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35571274,
+      "name": "Vaishali Patil",
+      "team": "Strike Queens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 20,
+      "mvpTotal": 2.51,
+      "mvpBatting": 0.5,
+      "mvpBowling": 1.31,
+      "mvpFielding": 0.7,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35219001,
+      "name": "Renu Rai",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 21,
+      "mvpTotal": 2.384,
+      "mvpBatting": 2.289,
+      "mvpBowling": 0.095,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 45948440,
+      "name": "Adv Medha Pawar Jade",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 22,
+      "mvpTotal": 2.187,
+      "mvpBatting": 0.7,
+      "mvpBowling": 1.487,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46405963,
+      "name": "Amruta Charpe",
+      "team": "Strike Queens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 23,
+      "mvpTotal": 2.1,
+      "mvpBatting": 2.1,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 45975647,
+      "name": "Rupal Jade",
+      "team": "Jade Unicorns",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 24,
+      "mvpTotal": 1.707,
+      "mvpBatting": 1.5,
+      "mvpBowling": 0.207,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35218262,
+      "name": "shubhada katdare",
+      "team": "Strike Queens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 25,
+      "mvpTotal": 1.47,
+      "mvpBatting": 0.2,
+      "mvpBowling": 1.046,
+      "mvpFielding": 0.224,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 45934007,
+      "name": "Manisha Anant Thube",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 26,
+      "mvpTotal": 1.294,
+      "mvpBatting": 1.4,
+      "mvpBowling": -0.106,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 16760603,
+      "name": "Jagjot Kaur",
+      "team": "Jade Cardinals",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 27,
+      "mvpTotal": 0.136,
+      "mvpBatting": 0.1,
+      "mvpBowling": 0.036,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 46027041,
+      "name": "Reena Singh",
+      "team": "Strike Queens",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 28,
+      "mvpTotal": 0.1,
+      "mvpBatting": 0.1,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 1
+    }
+  ],
+  "awards": [
+    {
+      "type": "ORANGE_CAP",
+      "label": "Orange Cap (Most Runs)",
+      "playerId": 46085332,
+      "playerName": "Kanika Mutreja",
+      "team": "Sapphire Titans"
+    },
+    {
+      "type": "PURPLE_CAP",
+      "label": "Purple Cap (Most Wickets)",
+      "playerId": 35617127,
+      "playerName": "Shubhangi Patkar",
+      "team": "Sapphire Titans"
+    },
+    {
+      "type": "MOST_FOURS",
+      "label": "Most 4s In Tournament",
+      "playerId": 46085332,
+      "playerName": "Kanika Mutreja",
+      "team": "Sapphire Titans"
+    },
+    {
+      "type": "MOST_SIXES",
+      "label": "Most 6s In Tournament",
+      "playerId": 34767176,
+      "playerName": "Pallavi Vichare",
+      "team": "Sapphire Titans"
+    },
+    {
+      "type": "MOST_CATCHES",
+      "label": "Most catches & caught behind",
+      "playerId": 26541916,
+      "playerName": "PRADNYA KULKARNI",
+      "team": "Jade Unicorns"
+    },
+    {
+      "type": "MOST_DOTS_BOWLED",
+      "label": "Most Dots Bowled",
+      "playerId": 17432331,
+      "playerName": "Tulsi Parikh",
+      "team": "Sapphire Titans"
+    }
+  ]
+}

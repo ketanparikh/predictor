@@ -1,0 +1,1765 @@
+{
+  "tournamentId": 1786286,
+  "name": "JCPL 2026 Boys",
+  "city": "Pune",
+  "fromDate": "2026-01-15",
+  "toDate": "2026-01-18",
+  "ground": "Trooferz, PAN Card Club Road",
+  "overall": {
+    "Matches": "7",
+    "Innings": "14",
+    "Runs": "761",
+    "Wickets": "53",
+    "Balls": "587",
+    "Extras": "114",
+    "Fours": "23",
+    "Sixes": "65",
+    "50's": "1",
+    "100's": "0",
+    "50+ Partnership": "2",
+    "100+ Partnership": "0",
+    "Maidens": "2",
+    "Dot balls": "342",
+    "Catches": "13",
+    "Stumpings": "1",
+    "BDRY%": "63.34",
+    "BDRY Freq.": "6.67",
+    "DB Freq.": "1.72",
+    "DB%": "58.26"
+  },
+  "teams": [
+    {
+      "teamId": 11948129,
+      "name": "Phantom legions",
+      "logo": "https://media.cricheroes.in/default/teamintital/P.png",
+      "captainId": 35540300
+    },
+    {
+      "teamId": 11948118,
+      "name": "Jade Dominators",
+      "logo": "https://media.cricheroes.in/default/teamintital/JD.png",
+      "captainId": 26539078
+    },
+    {
+      "teamId": 11948078,
+      "name": "Jade Infernos",
+      "logo": "https://media.cricheroes.in/default/teamintital/JI.png",
+      "captainId": 29245657
+    },
+    {
+      "teamId": 11948124,
+      "name": "Jade Red Dragons",
+      "logo": "https://media.cricheroes.in/default/teamintital/JR.png",
+      "captainId": 26539472
+    }
+  ],
+  "matches": [
+    {
+      "matchId": 21663174,
+      "date": "2026-01-16T14:48:00.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Infernos",
+      "teamAScore": "82/3",
+      "teamB": "Jade Red Dragons",
+      "teamBScore": "86/4",
+      "winner": "Jade Red Dragons",
+      "winBy": "2 wickets",
+      "result": "Jade Red Dragons won by 2 wickets",
+      "playerOfTheMatch": {
+        "playerId": 26539472,
+        "name": "Tejwardhan  (c)",
+        "team": "Jade Red Dragons"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26539472,
+        "name": "Tejwardhan  (c)",
+        "team": "Jade Red Dragons"
+      },
+      "bestBowler": {
+        "playerId": 46007480,
+        "name": "Sharan Panchal",
+        "team": "Jade Red Dragons"
+      }
+    },
+    {
+      "matchId": 21669224,
+      "date": "2026-01-16T14:52:58.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": " Phantom legions",
+      "teamAScore": "35/6",
+      "teamB": "Jade Dominators",
+      "teamBScore": "34/4",
+      "winner": " Phantom legions",
+      "winBy": "1 run",
+      "result": " Phantom legions won by 1 run",
+      "playerOfTheMatch": {
+        "playerId": 26539413,
+        "name": "Krushhna  D",
+        "team": "Phantom legions"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 17245443,
+        "name": "Sharvin",
+        "team": "Jade Dominators"
+      },
+      "bestBowler": {
+        "playerId": 26539413,
+        "name": "Krushhna  D",
+        "team": "Phantom legions"
+      }
+    },
+    {
+      "matchId": 21669364,
+      "date": "2026-01-17T09:50:39.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Infernos",
+      "teamAScore": "44/6",
+      "teamB": " Phantom legions",
+      "teamBScore": "48/3",
+      "winner": " Phantom legions",
+      "winBy": "3 wickets",
+      "result": " Phantom legions won by 3 wickets",
+      "playerOfTheMatch": {
+        "playerId": 35540300,
+        "name": "Hridhaan Parikh  (c)",
+        "team": "Phantom legions"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 20480206,
+        "name": "Darsh Bhagat",
+        "team": "Jade Infernos"
+      },
+      "bestBowler": {
+        "playerId": 46004256,
+        "name": "Vihaan Vichare",
+        "team": "Jade Infernos"
+      }
+    },
+    {
+      "matchId": 21664797,
+      "date": "2026-01-17T09:51:10.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Red Dragons",
+      "teamAScore": "65/6",
+      "teamB": "Jade Dominators",
+      "teamBScore": "66/1",
+      "winner": "Jade Dominators",
+      "winBy": "5 wickets",
+      "result": "Jade Dominators won by 5 wickets",
+      "playerOfTheMatch": {
+        "playerId": 26539078,
+        "name": "Shreeyansh  (c)",
+        "team": "Jade Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26539078,
+        "name": "Shreeyansh  (c)",
+        "team": "Jade Dominators"
+      },
+      "bestBowler": {
+        "playerId": 35569349,
+        "name": "Reyansh Agrawal",
+        "team": "Jade Dominators"
+      }
+    },
+    {
+      "matchId": 21670568,
+      "date": "2026-01-18T02:02:41.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": " Phantom legions",
+      "teamAScore": "72/1",
+      "teamB": "Jade Red Dragons",
+      "teamBScore": "68/3",
+      "winner": " Phantom legions",
+      "winBy": "4 runs",
+      "result": " Phantom legions won by 4 runs",
+      "playerOfTheMatch": {
+        "playerId": 35540300,
+        "name": "Hridhaan Parikh  (c)",
+        "team": "Phantom legions"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26539472,
+        "name": "Tejwardhan  (c)",
+        "team": "Jade Red Dragons"
+      },
+      "bestBowler": {
+        "playerId": 46176259,
+        "name": "Aarav Kumar",
+        "team": "Phantom legions"
+      }
+    },
+    {
+      "matchId": 21670477,
+      "date": "2026-01-18T02:03:40.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Infernos",
+      "teamAScore": "45/7",
+      "teamB": "Jade Dominators",
+      "teamBScore": "47/1",
+      "winner": "Jade Dominators",
+      "winBy": "5 wickets",
+      "result": "Jade Dominators won by 5 wickets",
+      "playerOfTheMatch": {
+        "playerId": 30952853,
+        "name": "Vedant Chaudhari",
+        "team": "Jade Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 30952853,
+        "name": "Vedant Chaudhari",
+        "team": "Jade Dominators"
+      },
+      "bestBowler": {
+        "playerId": 17245443,
+        "name": "Sharvin",
+        "team": "Jade Dominators"
+      }
+    },
+    {
+      "matchId": 21767500,
+      "date": "2026-01-18T13:21:01.000Z",
+      "round": "Final",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": " Phantom legions",
+      "teamAScore": "34/5",
+      "teamB": "Jade Dominators",
+      "teamBScore": "35/3",
+      "winner": "Jade Dominators",
+      "winBy": "3 wickets",
+      "result": "Jade Dominators won by 3 wickets",
+      "playerOfTheMatch": {
+        "playerId": 35569349,
+        "name": "Reyansh Agrawal",
+        "team": "Jade Dominators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 45932846,
+        "name": "Aaryan Joshi",
+        "team": "Jade Dominators"
+      },
+      "bestBowler": {
+        "playerId": 35569349,
+        "name": "Reyansh Agrawal",
+        "team": "Jade Dominators"
+      }
+    }
+  ],
+  "players": [
+    {
+      "playerId": 46176259,
+      "name": "Aarav Kumar",
+      "team": "Phantom legions",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 4,
+        "balls": 11,
+        "highScore": "3",
+        "avg": 4.0,
+        "sr": 36.36,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 5,
+        "runs": 61,
+        "best": "2/24",
+        "economy": 8.71,
+        "avg": 12.2,
+        "sr": 8.4,
+        "dots": 22,
+        "wides": 9,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45932846,
+      "name": "Aaryan Joshi",
+      "team": "Jade Dominators",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 31,
+        "balls": 33,
+        "highScore": "12",
+        "avg": 15.5,
+        "sr": 93.94,
+        "fours": 1,
+        "sixes": 4,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 4,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26543017,
+      "name": "Arjun Ganesh",
+      "team": "Jade Red Dragons",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 4,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 26,
+        "best": "",
+        "economy": 13.0,
+        "avg": null,
+        "sr": null,
+        "dots": 6,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26650544,
+      "name": "Arnav Shinde",
+      "team": "Jade Dominators",
+      "matches": 4,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 44,
+        "best": "1/9",
+        "economy": 11.0,
+        "avg": 14.67,
+        "sr": 8.0,
+        "dots": 13,
+        "wides": 7,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 20480206,
+      "name": "Darsh Bhagat",
+      "team": "Jade Infernos",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 71,
+        "balls": 49,
+        "highScore": "43",
+        "avg": 23.67,
+        "sr": 144.9,
+        "fours": 3,
+        "sixes": 7,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 20,
+        "best": "",
+        "economy": 20.0,
+        "avg": null,
+        "sr": null,
+        "dots": 1,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35540300,
+      "name": "Hridhaan Parikh  (c)",
+      "team": "Phantom legions",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 74,
+        "balls": 52,
+        "highScore": "40*",
+        "avg": 24.67,
+        "sr": 142.31,
+        "fours": 4,
+        "sixes": 8,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 15,
+        "best": "1/4",
+        "economy": 3.75,
+        "avg": 7.5,
+        "sr": 12.0,
+        "dots": 16,
+        "wides": 2,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539413,
+      "name": "Krushhna  D",
+      "team": "Phantom legions",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 2,
+        "balls": 7,
+        "highScore": "1*",
+        "avg": 2.0,
+        "sr": 28.57,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 6,
+        "runs": 45,
+        "best": "2/6",
+        "economy": 6.43,
+        "avg": 7.5,
+        "sr": 7.0,
+        "dots": 22,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46446080,
+      "name": "Luv Bahirwani  (wk)",
+      "team": "Phantom legions",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 0,
+        "balls": 4,
+        "highScore": "0*",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26542500,
+      "name": "Malhar Dehadrai",
+      "team": "Jade Red Dragons",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 27,
+        "balls": 46,
+        "highScore": "13",
+        "avg": 9.0,
+        "sr": 58.7,
+        "fours": 0,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 13,
+        "best": "",
+        "economy": 4.33,
+        "avg": null,
+        "sr": null,
+        "dots": 14,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 39185884,
+      "name": "Manit Bathiya",
+      "team": "Jade Dominators",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 0,
+        "balls": 1,
+        "highScore": "0*",
+        "avg": null,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "6.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 44,
+        "best": "1/3",
+        "economy": 7.33,
+        "avg": 14.67,
+        "sr": 12.0,
+        "dots": 22,
+        "wides": 5,
+        "noBalls": 4
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46446117,
+      "name": "Naksh Verma",
+      "team": "Phantom legions",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 40,
+        "balls": 48,
+        "highScore": "14*",
+        "avg": 13.33,
+        "sr": 83.33,
+        "fours": 0,
+        "sixes": 5,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 20,
+        "best": "",
+        "economy": 6.67,
+        "avg": null,
+        "sr": null,
+        "dots": 8,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35569349,
+      "name": "Reyansh Agrawal",
+      "team": "Jade Dominators",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 12,
+        "balls": 27,
+        "highScore": "11*",
+        "avg": 12.0,
+        "sr": 44.44,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "4.0",
+        "maidens": 1,
+        "wickets": 4,
+        "runs": 13,
+        "best": "2/0",
+        "economy": 3.25,
+        "avg": 3.25,
+        "sr": 6.0,
+        "dots": 18,
+        "wides": 2,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45944349,
+      "name": "Reyansh Jadhao",
+      "team": "Jade Infernos",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 18,
+        "balls": 20,
+        "highScore": "12",
+        "avg": 9.0,
+        "sr": 90.0,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 25,
+        "best": "",
+        "economy": 12.5,
+        "avg": null,
+        "sr": null,
+        "dots": 6,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 45948314,
+      "name": "Reyansh Jaisinghani",
+      "team": "Jade Red Dragons",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 5,
+        "balls": 7,
+        "highScore": "3",
+        "avg": 5.0,
+        "sr": 71.43,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 69,
+        "best": "1/23",
+        "economy": 13.8,
+        "avg": 69.0,
+        "sr": 30.0,
+        "dots": 13,
+        "wides": 3,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 14536036,
+      "name": "Reyansh Parikh",
+      "team": "Jade Infernos",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 19,
+        "balls": 19,
+        "highScore": "18",
+        "avg": 9.5,
+        "sr": 100.0,
+        "fours": 3,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 31,
+        "best": "1/10",
+        "economy": 6.2,
+        "avg": 31.0,
+        "sr": 30.0,
+        "dots": 20,
+        "wides": 3,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35282441,
+      "name": "Riaan mathur",
+      "team": "Jade Infernos",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 1,
+        "balls": 7,
+        "highScore": "1",
+        "avg": 0.5,
+        "sr": 14.29,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 57,
+        "best": "1/11",
+        "economy": 19.0,
+        "avg": 28.5,
+        "sr": 9.0,
+        "dots": 5,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46007480,
+      "name": "Sharan Panchal",
+      "team": "Jade Red Dragons",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 21,
+        "balls": 16,
+        "highScore": "12",
+        "avg": 10.5,
+        "sr": 131.25,
+        "fours": 0,
+        "sixes": 3,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 24,
+        "best": "2/9",
+        "economy": 12.0,
+        "avg": 12.0,
+        "sr": 6.0,
+        "dots": 6,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 17245443,
+      "name": "Sharvin",
+      "team": "Jade Dominators",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 15,
+        "balls": 12,
+        "highScore": "14",
+        "avg": 15.0,
+        "sr": 125.0,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "7.0",
+        "maidens": 0,
+        "wickets": 5,
+        "runs": 53,
+        "best": "3/14",
+        "economy": 7.57,
+        "avg": 10.6,
+        "sr": 8.4,
+        "dots": 20,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46002592,
+      "name": "Shaunak Vichare",
+      "team": "Jade Red Dragons",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 12,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 24,
+        "best": "",
+        "economy": 8.0,
+        "avg": null,
+        "sr": null,
+        "dots": 11,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46438771,
+      "name": "Shaurya M",
+      "team": "Phantom legions",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 7,
+        "balls": 11,
+        "highScore": "4*",
+        "avg": 3.5,
+        "sr": 63.64,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "8.0",
+        "maidens": 1,
+        "wickets": 0,
+        "runs": 40,
+        "best": "",
+        "economy": 5.0,
+        "avg": null,
+        "sr": null,
+        "dots": 39,
+        "wides": 13,
+        "noBalls": 6
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539078,
+      "name": "Shreeyansh  (c)",
+      "team": "Jade Dominators",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 53,
+        "balls": 51,
+        "highScore": "36*",
+        "avg": 26.5,
+        "sr": 103.92,
+        "fours": 5,
+        "sixes": 3,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 19,
+        "best": "2/5",
+        "economy": 4.75,
+        "avg": 9.5,
+        "sr": 12.0,
+        "dots": 15,
+        "wides": 7,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46165365,
+      "name": "Suhaan Chandwani",
+      "team": "Jade Red Dragons",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 12,
+        "balls": 13,
+        "highScore": "10*",
+        "avg": 12.0,
+        "sr": 92.31,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 44,
+        "best": "1/18",
+        "economy": 11.0,
+        "avg": 44.0,
+        "sr": 24.0,
+        "dots": 11,
+        "wides": 5,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 29245657,
+      "name": "Swarnim S Chavan  (c)",
+      "team": "Jade Infernos",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 33,
+        "balls": 26,
+        "highScore": "30",
+        "avg": 11.0,
+        "sr": 126.92,
+        "fours": 1,
+        "sixes": 4,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 4,
+        "best": "1/1",
+        "economy": 2.0,
+        "avg": 4.0,
+        "sr": 12.0,
+        "dots": 9,
+        "wides": 0,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26539472,
+      "name": "Tejwardhan  (c)",
+      "team": "Jade Red Dragons",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 124,
+        "balls": 57,
+        "highScore": "58*",
+        "avg": 62.0,
+        "sr": 217.54,
+        "fours": 2,
+        "sixes": 17,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 20,
+        "best": "",
+        "economy": 6.67,
+        "avg": null,
+        "sr": null,
+        "dots": 13,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 30952853,
+      "name": "Vedant Chaudhari",
+      "team": "Jade Dominators",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 43,
+        "balls": 32,
+        "highScore": "28*",
+        "avg": 14.33,
+        "sr": 134.38,
+        "fours": 1,
+        "sixes": 6,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 6,
+        "best": "2/2",
+        "economy": 3.0,
+        "avg": 1.5,
+        "sr": 3.0,
+        "dots": 11,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 35259613,
+      "name": "Vihaan Poduval",
+      "team": "Jade Infernos",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 2,
+        "balls": 12,
+        "highScore": "2",
+        "avg": 0.67,
+        "sr": 16.67,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 15,
+        "best": "",
+        "economy": 15.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 1,
+        "noBalls": 4
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 44477471,
+      "name": "Vihaan Soni",
+      "team": "Phantom legions",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 1,
+        "runs": 29,
+        "balls": 31,
+        "highScore": "10",
+        "avg": 9.67,
+        "sr": 93.55,
+        "fours": 1,
+        "sixes": 3,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 46004256,
+      "name": "Vihaan Vichare",
+      "team": "Jade Infernos",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 4,
+        "balls": 7,
+        "highScore": "4*",
+        "avg": 4.0,
+        "sr": 57.14,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 29,
+        "best": "2/9",
+        "economy": 7.25,
+        "avg": 14.5,
+        "sr": 12.0,
+        "dots": 19,
+        "wides": 2,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    }
+  ],
+  "mvp": [
+    {
+      "playerId": 26539472,
+      "name": "Tejwardhan  (c)",
+      "team": "Jade Red Dragons",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 2,
+      "bestBowler": 0,
+      "mvpRank": 1,
+      "mvpTotal": 14.975,
+      "mvpBatting": 12.909,
+      "mvpBowling": 1.636,
+      "mvpFielding": 0.43,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 30952853,
+      "name": "Vedant Chaudhari",
+      "team": "Jade Dominators",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 2,
+      "mvpTotal": 12.648,
+      "mvpBatting": 4.877,
+      "mvpBowling": 5.475,
+      "mvpFielding": 2.296,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35540300,
+      "name": "Hridhaan Parikh  (c)",
+      "team": "Phantom legions",
+      "playerOfTheMatch": 2,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 3,
+      "mvpTotal": 11.129,
+      "mvpBatting": 7.538,
+      "mvpBowling": 3.591,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26539078,
+      "name": "Shreeyansh  (c)",
+      "team": "Jade Dominators",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 4,
+      "mvpTotal": 9.604,
+      "mvpBatting": 5.3,
+      "mvpBowling": 2.4,
+      "mvpFielding": 1.904,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46176259,
+      "name": "Aarav Kumar",
+      "team": "Phantom legions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 5,
+      "mvpTotal": 8.226,
+      "mvpBatting": 0.403,
+      "mvpBowling": 6.703,
+      "mvpFielding": 1.12,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 17245443,
+      "name": "Sharvin",
+      "team": "Jade Dominators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 1,
+      "mvpRank": 6,
+      "mvpTotal": 7.884,
+      "mvpBatting": 1.589,
+      "mvpBowling": 6.295,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26539413,
+      "name": "Krushhna  D",
+      "team": "Phantom legions",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 7,
+      "mvpTotal": 7.883,
+      "mvpBatting": 0.2,
+      "mvpBowling": 7.683,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 35569349,
+      "name": "Reyansh Agrawal",
+      "team": "Jade Dominators",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 2,
+      "mvpRank": 8,
+      "mvpTotal": 7.384,
+      "mvpBatting": 1.2,
+      "mvpBowling": 6.184,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 20480206,
+      "name": "Darsh Bhagat",
+      "team": "Jade Infernos",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 9,
+      "mvpTotal": 7.168,
+      "mvpBatting": 7.211,
+      "mvpBowling": -0.043,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 29245657,
+      "name": "Swarnim S Chavan  (c)",
+      "team": "Jade Infernos",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 10,
+      "mvpTotal": 6.626,
+      "mvpBatting": 3.3,
+      "mvpBowling": 2.206,
+      "mvpFielding": 1.12,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 46007480,
+      "name": "Sharan Panchal",
+      "team": "Jade Red Dragons",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 11,
+      "mvpTotal": 5.051,
+      "mvpBatting": 2.217,
+      "mvpBowling": 2.834,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46004256,
+      "name": "Vihaan Vichare",
+      "team": "Jade Infernos",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 12,
+      "mvpTotal": 5.009,
+      "mvpBatting": 0.4,
+      "mvpBowling": 2.835,
+      "mvpFielding": 1.774,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 39185884,
+      "name": "Manit Bathiya",
+      "team": "Jade Dominators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 13,
+      "mvpTotal": 4.755,
+      "mvpBatting": 0.0,
+      "mvpBowling": 3.635,
+      "mvpFielding": 1.12,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 45932846,
+      "name": "Aaryan Joshi",
+      "team": "Jade Dominators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 14,
+      "mvpTotal": 4.567,
+      "mvpBatting": 3.259,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.308,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 44477471,
+      "name": "Vihaan Soni",
+      "team": "Phantom legions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 15,
+      "mvpTotal": 4.541,
+      "mvpBatting": 2.991,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.55,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 46446117,
+      "name": "Naksh Verma",
+      "team": "Phantom legions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 16,
+      "mvpTotal": 4.151,
+      "mvpBatting": 4.017,
+      "mvpBowling": 0.134,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26650544,
+      "name": "Arnav Shinde",
+      "team": "Jade Dominators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 17,
+      "mvpTotal": 4.006,
+      "mvpBatting": 0.0,
+      "mvpBowling": 4.006,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26542500,
+      "name": "Malhar Dehadrai",
+      "team": "Jade Red Dragons",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 18,
+      "mvpTotal": 3.706,
+      "mvpBatting": 2.7,
+      "mvpBowling": 1.006,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 14536036,
+      "name": "Reyansh Parikh",
+      "team": "Jade Infernos",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 19,
+      "mvpTotal": 3.698,
+      "mvpBatting": 1.925,
+      "mvpBowling": 1.773,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 35282441,
+      "name": "Riaan mathur",
+      "team": "Jade Infernos",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 20,
+      "mvpTotal": 2.763,
+      "mvpBatting": 0.1,
+      "mvpBowling": 2.663,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46165365,
+      "name": "Suhaan Chandwani",
+      "team": "Jade Red Dragons",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 21,
+      "mvpTotal": 2.649,
+      "mvpBatting": 1.204,
+      "mvpBowling": 1.445,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46438771,
+      "name": "Shaurya M",
+      "team": "Phantom legions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 22,
+      "mvpTotal": 2.352,
+      "mvpBatting": 0.7,
+      "mvpBowling": 0.998,
+      "mvpFielding": 0.654,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 45944349,
+      "name": "Reyansh Jadhao",
+      "team": "Jade Infernos",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 23,
+      "mvpTotal": 1.952,
+      "mvpBatting": 1.884,
+      "mvpBowling": 0.068,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 45948314,
+      "name": "Reyansh Jaisinghani",
+      "team": "Jade Red Dragons",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 24,
+      "mvpTotal": 1.724,
+      "mvpBatting": 0.5,
+      "mvpBowling": 1.224,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46446080,
+      "name": "Luv Bahirwani  (wk)",
+      "team": "Phantom legions",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 25,
+      "mvpTotal": 0.728,
+      "mvpBatting": 0.0,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.728,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 46002592,
+      "name": "Shaunak Vichare",
+      "team": "Jade Red Dragons",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 26,
+      "mvpTotal": 0.202,
+      "mvpBatting": 0.0,
+      "mvpBowling": 0.202,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 35259613,
+      "name": "Vihaan Poduval",
+      "team": "Jade Infernos",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 27,
+      "mvpTotal": 0.143,
+      "mvpBatting": 0.2,
+      "mvpBowling": -0.057,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26543017,
+      "name": "Arjun Ganesh",
+      "team": "Jade Red Dragons",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 28,
+      "mvpTotal": 0.132,
+      "mvpBatting": 0.0,
+      "mvpBowling": 0.132,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    }
+  ],
+  "awards": [
+    {
+      "type": "ORANGE_CAP",
+      "label": "Orange Cap (Most Runs)",
+      "playerId": 26539472,
+      "playerName": "Tejwardhan",
+      "team": "Jade Red Dragons"
+    },
+    {
+      "type": "PURPLE_CAP",
+      "label": "Purple Cap (Most Wickets)",
+      "playerId": 26539413,
+      "playerName": "Krushhna  D",
+      "team": "Phantom legions"
+    },
+    {
+      "type": "MOST_FOURS",
+      "label": "Most 4s In Tournament",
+      "playerId": 26539078,
+      "playerName": "Shreeyansh",
+      "team": "Jade Dominators"
+    },
+    {
+      "type": "MOST_SIXES",
+      "label": "Most 6s In Tournament",
+      "playerId": 26539472,
+      "playerName": "Tejwardhan",
+      "team": "Jade Red Dragons"
+    },
+    {
+      "type": "MOST_CATCHES",
+      "label": "Most catches & caught behind",
+      "playerId": 30952853,
+      "playerName": "Vedant Chaudhari",
+      "team": "Jade Dominators"
+    },
+    {
+      "type": "MOST_DOTS_BOWLED",
+      "label": "Most Dots Bowled",
+      "playerId": 46438771,
+      "playerName": "Shaurya M",
+      "team": "Phantom legions"
+    }
+  ]
+}

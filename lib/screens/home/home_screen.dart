@@ -4,6 +4,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/game_provider.dart';
 import '../auth/login_screen.dart';
 import 'jcpl_home_tab.dart';
+import 'stats_tab.dart';
 import '../admin/outcome_admin_screen.dart';
 import '../../widgets/coming_soon_view.dart';
 import '../../theme/app_theme.dart';
@@ -12,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import '../../models/tournament.dart';
+import '../../utils/app_reload.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -71,6 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return 'Schedule';
       case 4:
         return 'Game';
+      case 5:
+        return 'Stats';
       default:
         return 'JCPL-4';
     }
@@ -88,6 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return Icons.calendar_month;
       case 4:
         return Icons.sports_esports;
+      case 5:
+        return Icons.bar_chart;
       default:
         return Icons.home;
     }
@@ -544,6 +550,8 @@ class _HomeScreenState extends State<HomeScreen> {
           message: 'Predictor, Bracket, and Fantasy will open for JCPL-4 soon.',
           icon: Icons.sports_esports,
         );
+      case 5:
+        return const StatsTab();
       default:
         return JcplHomeTab(onNavigateToTab: _onItemTapped);
     }
@@ -615,6 +623,32 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
+          Tooltip(
+            message: 'Refresh to latest version',
+            child: Container(
+              margin: const EdgeInsets.only(right: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: Icon(
+                  Icons.refresh,
+                  color: Colors.white,
+                  size: isMobile ? 20 : 24,
+                ),
+                onPressed: () async {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Loading the latest version...'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  await reloadLatestDeployment();
+                },
+              ),
+            ),
+          ),
           // Debug: Show admin status (temporary)
           if (adminProvider.loading)
             const Padding(
@@ -1140,6 +1174,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.sports_esports_outlined),
             selectedIcon: Icon(Icons.sports_esports),
             label: 'Game',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bar_chart_outlined),
+            selectedIcon: Icon(Icons.bar_chart),
+            label: 'Stats',
           ),
         ],
       ),

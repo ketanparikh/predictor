@@ -1,0 +1,3381 @@
+{
+  "tournamentId": 869494,
+  "name": "JCPL Men",
+  "city": "Pune",
+  "fromDate": "2024-01-12",
+  "toDate": "2024-01-14",
+  "ground": "Trooferz, PAN Card Club Road",
+  "overall": {
+    "Matches": "9",
+    "Innings": "18",
+    "Runs": "710",
+    "Wickets": "87",
+    "Balls": "853",
+    "Extras": "142",
+    "Fours": "12",
+    "Sixes": "23",
+    "50's": "0",
+    "100's": "0",
+    "50+ Partnership": "0",
+    "100+ Partnership": "0",
+    "Maidens": "2",
+    "Dot balls": "452",
+    "Catches": "25",
+    "Stumpings": "9",
+    "BDRY%": "26.20",
+    "BDRY Freq.": "24.37",
+    "DB Freq.": "1.89",
+    "DB%": "52.99"
+  },
+  "teams": [
+    {
+      "teamId": 5893230,
+      "name": "Game Changers",
+      "logo": "https://media.cricheroes.in/default/teamintital/GC.png",
+      "captainId": 24419687
+    },
+    {
+      "teamId": 5893177,
+      "name": "Jade Challengers",
+      "logo": "https://media.cricheroes.in/default/teamintital/JC.png",
+      "captainId": 4161625
+    },
+    {
+      "teamId": 5892701,
+      "name": "Jade Gladiators",
+      "logo": "https://media.cricheroes.in/default/teamintital/JG.png",
+      "captainId": 9999504
+    },
+    {
+      "teamId": 5892788,
+      "name": "Jade Panthers",
+      "logo": "https://media.cricheroes.in/default/teamintital/JP.png",
+      "captainId": 26535410
+    },
+    {
+      "teamId": 5892806,
+      "name": "Jade Raptors",
+      "logo": "https://media.cricheroes.in/team_logo/1705114251093_eF54SBiF48qR.jpg",
+      "captainId": 2192569
+    },
+    {
+      "teamId": 5893340,
+      "name": "Sharks",
+      "logo": "https://media.cricheroes.in/default/teamintital/SH.png",
+      "captainId": 26538317
+    }
+  ],
+  "matches": [
+    {
+      "matchId": 9296339,
+      "date": "2024-01-13T03:21:09.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Panthers",
+      "teamAScore": "64/7",
+      "teamB": "Game Changers",
+      "teamBScore": "56/5",
+      "winner": "Jade Panthers",
+      "winBy": "8 runs",
+      "result": "Jade Panthers won by 8 runs",
+      "playerOfTheMatch": {
+        "playerId": 6643451,
+        "name": "Sharinya G",
+        "team": "Jade Panthers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 1754095,
+        "name": "Nilesh Behede",
+        "team": "Jade Game Changers"
+      },
+      "bestBowler": {
+        "playerId": 6643451,
+        "name": "Sharinya G",
+        "team": "Jade Panthers"
+      }
+    },
+    {
+      "matchId": 9296350,
+      "date": "2024-01-13T04:58:40.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Challengers",
+      "teamAScore": "31/7",
+      "teamB": "Jade Gladiators",
+      "teamBScore": "32/2",
+      "winner": "Jade Gladiators",
+      "winBy": "6 wickets",
+      "result": "Jade Gladiators won by 6 wickets",
+      "playerOfTheMatch": {
+        "playerId": 2602781,
+        "name": "Kabir Vaidya",
+        "team": "Jade Gladiators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 2602781,
+        "name": "Kabir Vaidya",
+        "team": "Jade Gladiators"
+      },
+      "bestBowler": {
+        "playerId": 26537089,
+        "name": "Sudeep Somani",
+        "team": "Jade Gladiators"
+      }
+    },
+    {
+      "matchId": 9302578,
+      "date": "2024-01-13T06:55:02.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Panthers",
+      "teamAScore": "34/9",
+      "teamB": "Sharks",
+      "teamBScore": "35/3",
+      "winner": "Sharks",
+      "winBy": "6 wickets",
+      "result": "Sharks won by 6 wickets",
+      "playerOfTheMatch": {
+        "playerId": 26538324,
+        "name": "Tarun",
+        "team": "Jade Sharks"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 14957778,
+        "name": "Shishir Pahade",
+        "team": "Jade Panthers"
+      },
+      "bestBowler": {
+        "playerId": 19488839,
+        "name": "Dhruv Jhalani",
+        "team": "Jade Sharks"
+      }
+    },
+    {
+      "matchId": 9304430,
+      "date": "2024-01-13T08:06:07.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Raptors",
+      "teamAScore": "35/5",
+      "teamB": "Jade Gladiators",
+      "teamBScore": "28/7",
+      "winner": "Jade Raptors",
+      "winBy": "7 runs",
+      "result": "Jade Raptors won by 7 runs",
+      "playerOfTheMatch": {
+        "playerId": 26536811,
+        "name": "Kunal Kukreja",
+        "team": "Jade Raptors"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 1417374,
+        "name": "Divit Khanna",
+        "team": "Jade Raptors"
+      },
+      "bestBowler": {
+        "playerId": 1417374,
+        "name": "Divit Khanna",
+        "team": "Jade Raptors"
+      }
+    },
+    {
+      "matchId": 9321016,
+      "date": "2024-01-14T02:59:53.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Game Changers",
+      "teamAScore": "52/3",
+      "teamB": "Jade Sharks",
+      "teamBScore": "39/3",
+      "winner": "Jade Game Changers",
+      "winBy": "13 runs",
+      "result": "Jade Game Changers won by 13 runs",
+      "playerOfTheMatch": {
+        "playerId": 26537558,
+        "name": "Tanmay",
+        "team": "Jade Game Changers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26537558,
+        "name": "Tanmay",
+        "team": "Jade Game Changers"
+      },
+      "bestBowler": {
+        "playerId": 26538317,
+        "name": "Avi  (c)",
+        "team": "Jade Sharks"
+      }
+    },
+    {
+      "matchId": 9323644,
+      "date": "2024-01-14T04:19:02.000Z",
+      "round": "League Matches",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Challengers",
+      "teamAScore": "28/6",
+      "teamB": "Jade Raptors",
+      "teamBScore": "29/6",
+      "winner": "Jade Raptors",
+      "winBy": "3 wickets",
+      "result": "Jade Raptors won by 3 wickets",
+      "playerOfTheMatch": {
+        "playerId": 1417374,
+        "name": "Divit Khanna",
+        "team": "Jade Raptors"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26537490,
+        "name": "Aditya Joshi",
+        "team": "Jade Raptors"
+      },
+      "bestBowler": {
+        "playerId": 18279102,
+        "name": "Ayush jain",
+        "team": "Jade Challengers"
+      }
+    },
+    {
+      "matchId": 9340027,
+      "date": "2024-01-14T11:13:32.000Z",
+      "round": "Semi Final",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Raptors",
+      "teamAScore": "30/6",
+      "teamB": "Jade Game Changers",
+      "teamBScore": "31/1",
+      "winner": "Jade Game Changers",
+      "winBy": "8 wickets",
+      "result": "Jade Game Changers won by 8 wickets",
+      "playerOfTheMatch": {
+        "playerId": 26537557,
+        "name": "Saket",
+        "team": "Jade Game Changers"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 26537558,
+        "name": "Tanmay",
+        "team": "Jade Game Changers"
+      },
+      "bestBowler": {
+        "playerId": 26537557,
+        "name": "Saket",
+        "team": "Jade Game Changers"
+      }
+    },
+    {
+      "matchId": 9342797,
+      "date": "2024-01-14T13:38:06.000Z",
+      "round": "Semi Final",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Panthers",
+      "teamAScore": "41/5",
+      "teamB": "Jade Gladiators",
+      "teamBScore": "46/1",
+      "winner": "Jade Gladiators",
+      "winBy": "8 wickets",
+      "result": "Jade Gladiators won by 8 wickets",
+      "playerOfTheMatch": {
+        "playerId": 1415762,
+        "name": "Rehet Kalsi",
+        "team": "Jade Gladiators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 1415762,
+        "name": "Rehet Kalsi",
+        "team": "Jade Gladiators"
+      },
+      "bestBowler": {
+        "playerId": 1415762,
+        "name": "Rehet Kalsi",
+        "team": "Jade Gladiators"
+      }
+    },
+    {
+      "matchId": 9344576,
+      "date": "2024-01-14T15:38:00.000Z",
+      "round": "Final",
+      "ground": "Trooferz, PAN Card Club Road",
+      "teamA": "Jade Gladiators",
+      "teamAScore": "49/3",
+      "teamB": "Jade Game Changers",
+      "teamBScore": "50/8",
+      "winner": "Jade Game Changers",
+      "winBy": "1 wicket",
+      "result": "Jade Game Changers won by 1 wicket",
+      "playerOfTheMatch": {
+        "playerId": 26537089,
+        "name": "Sudeep Somani",
+        "team": "Jade Gladiators"
+      },
+      "fighterOfTheMatch": null,
+      "bestBatter": {
+        "playerId": 9999504,
+        "name": "Ganesh  (c & wk)",
+        "team": "Jade Gladiators"
+      },
+      "bestBowler": {
+        "playerId": 26537089,
+        "name": "Sudeep Somani",
+        "team": "Jade Gladiators"
+      }
+    }
+  ],
+  "players": [
+    {
+      "playerId": 26537554,
+      "name": "Aarav",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 0,
+        "runs": 14,
+        "balls": 32,
+        "highScore": "8",
+        "avg": 3.5,
+        "sr": 43.75,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 3,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26564614,
+      "name": "Aaryan Deokar",
+      "team": "Jade Raptors",
+      "matches": 2,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 7,
+        "best": "1/7",
+        "economy": 7.0,
+        "avg": 7.0,
+        "sr": 6.0,
+        "dots": 2,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 12944166,
+      "name": "Abhi Raundal",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 6,
+        "balls": 11,
+        "highScore": "6",
+        "avg": 3.0,
+        "sr": 54.55,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 29,
+        "best": "",
+        "economy": 9.67,
+        "avg": null,
+        "sr": null,
+        "dots": 5,
+        "wides": 6,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537490,
+      "name": "Aditya Joshi",
+      "team": "Jade Raptors",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 22,
+        "balls": 32,
+        "highScore": "12",
+        "avg": 11.0,
+        "sr": 68.75,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 27,
+        "best": "1/10",
+        "economy": 5.4,
+        "avg": 13.5,
+        "sr": 15.0,
+        "dots": 14,
+        "wides": 3,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26538318,
+      "name": "Ajit",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 4,
+        "best": "",
+        "economy": 4.0,
+        "avg": null,
+        "sr": null,
+        "dots": 4,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537267,
+      "name": "Akhil Madan",
+      "team": "Jade Challengers",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 11,
+        "balls": 18,
+        "highScore": "9",
+        "avg": 5.5,
+        "sr": 61.11,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535639,
+      "name": "Akshay Pore",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 28,
+        "balls": 26,
+        "highScore": "14",
+        "avg": 14.0,
+        "sr": 107.69,
+        "fours": 1,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 13,
+        "best": "",
+        "economy": 4.33,
+        "avg": null,
+        "sr": null,
+        "dots": 10,
+        "wides": 3,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 587226,
+      "name": "Anish Bansal",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 9,
+        "balls": 11,
+        "highScore": "8",
+        "avg": 4.5,
+        "sr": 81.82,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "6.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 20,
+        "best": "",
+        "economy": 3.33,
+        "avg": null,
+        "sr": null,
+        "dots": 12,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 24419687,
+      "name": "Anu Poduval  (c)",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 4,
+        "balls": 6,
+        "highScore": "3",
+        "avg": 2.0,
+        "sr": 66.67,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "8.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 40,
+        "best": "1/3",
+        "economy": 5.0,
+        "avg": 13.33,
+        "sr": 16.0,
+        "dots": 18,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 24372516,
+      "name": "Ashwin L",
+      "team": "Jade Challengers",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "0*",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 11,
+        "best": "",
+        "economy": 11.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26538317,
+      "name": "Avi  (c)",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 9,
+        "balls": 15,
+        "highScore": "7*",
+        "avg": null,
+        "sr": 60.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "6.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 17,
+        "best": "2/9",
+        "economy": 2.83,
+        "avg": 8.5,
+        "sr": 18.0,
+        "dots": 10,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 18279102,
+      "name": "Ayush jain",
+      "team": "Jade Challengers",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 4,
+        "balls": 7,
+        "highScore": "3",
+        "avg": 2.0,
+        "sr": 57.14,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 17,
+        "best": "3/9",
+        "economy": 4.25,
+        "avg": 4.25,
+        "sr": 6.0,
+        "dots": 15,
+        "wides": 3,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535638,
+      "name": "Capt Prakash Shekhar Hegde",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 7,
+        "balls": 15,
+        "highScore": "4",
+        "avg": 3.5,
+        "sr": 46.67,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 4253019,
+      "name": "Daanesh Suvarnaa",
+      "team": "Jade Raptors",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 3,
+        "balls": 9,
+        "highScore": "3*",
+        "avg": 1.5,
+        "sr": 33.33,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 6,
+        "best": "",
+        "economy": 6.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 19488839,
+      "name": "Dhruv Jhalani",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 15,
+        "balls": 27,
+        "highScore": "15",
+        "avg": 7.5,
+        "sr": 55.56,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 13,
+        "best": "2/1",
+        "economy": 2.6,
+        "avg": 4.33,
+        "sr": 10.0,
+        "dots": 16,
+        "wides": 6,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26536794,
+      "name": "Divit Khanna",
+      "team": "Jade Raptors",
+      "matches": 1,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 1417374,
+      "name": "Divit Khanna",
+      "team": "Jade Raptors",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 17,
+        "balls": 33,
+        "highScore": "10*",
+        "avg": 8.5,
+        "sr": 51.52,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 10,
+        "best": "2/4",
+        "economy": 5.0,
+        "avg": 3.33,
+        "sr": 4.0,
+        "dots": 7,
+        "wides": 2,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 6508472,
+      "name": "Dr Mangesh Mekha",
+      "team": "Jade Challengers",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 6,
+        "balls": 13,
+        "highScore": "4",
+        "avg": 3.0,
+        "sr": 46.15,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 9999504,
+      "name": "Ganesh  (c & wk)",
+      "team": "Jade Gladiators",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 37,
+        "balls": 51,
+        "highScore": "19*",
+        "avg": 18.5,
+        "sr": 72.55,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 22,
+        "best": "1/3",
+        "economy": 7.33,
+        "avg": 11.0,
+        "sr": 9.0,
+        "dots": 14,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 3,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26557810,
+      "name": "Ganesh Kalaskar",
+      "team": "Jade Raptors",
+      "matches": 2,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 1,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 4161625,
+      "name": "Gurmeet Kalsi  (c & wk)",
+      "team": "Jade Challengers",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 10,
+        "balls": 11,
+        "highScore": "7",
+        "avg": 5.0,
+        "sr": 90.91,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 4,
+        "best": "",
+        "economy": 4.0,
+        "avg": null,
+        "sr": null,
+        "dots": 3,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537807,
+      "name": "Harpreet Singh",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 14150407,
+      "name": "Jitu Rathi",
+      "team": "Jade Challengers",
+      "matches": 2,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 2602781,
+      "name": "Kabir Vaidya",
+      "team": "Jade Gladiators",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 12,
+        "balls": 20,
+        "highScore": "10",
+        "avg": 4.0,
+        "sr": 60.0,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "9.0",
+        "maidens": 0,
+        "wickets": 4,
+        "runs": 51,
+        "best": "2/8",
+        "economy": 5.67,
+        "avg": 12.75,
+        "sr": 13.5,
+        "dots": 22,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 17452857,
+      "name": "Kamath V",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "0*",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 4,
+        "best": "1/4",
+        "economy": 4.0,
+        "avg": 4.0,
+        "sr": 6.0,
+        "dots": 3,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535523,
+      "name": "Kiran Jagtap",
+      "team": "Jade Gladiators",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 3,
+        "balls": 9,
+        "highScore": "3",
+        "avg": 3.0,
+        "sr": 33.33,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 25144268,
+      "name": "Kumar Ranjan",
+      "team": "Jade Gladiators",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 1,
+        "highScore": "0",
+        "avg": 0.0,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 13,
+        "best": "1/3",
+        "economy": 6.5,
+        "avg": 6.5,
+        "sr": 6.0,
+        "dots": 5,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26536811,
+      "name": "Kunal Kukreja",
+      "team": "Jade Raptors",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 6,
+        "balls": 13,
+        "highScore": "5",
+        "avg": 3.0,
+        "sr": 46.15,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 22,
+        "best": "2/6",
+        "economy": 4.4,
+        "avg": 7.33,
+        "sr": 10.0,
+        "dots": 15,
+        "wides": 1,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 19479998,
+      "name": "Lakshya Jhalani",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 9,
+        "balls": 6,
+        "highScore": "8*",
+        "avg": 9.0,
+        "sr": 150.0,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26536759,
+      "name": "Mahesh A Kulkarni",
+      "team": "Jade Raptors",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 2,
+        "balls": 9,
+        "highScore": "2*",
+        "avg": 1.0,
+        "sr": 22.22,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "4.0",
+        "maidens": 1,
+        "wickets": 1,
+        "runs": 11,
+        "best": "1/2",
+        "economy": 2.75,
+        "avg": 11.0,
+        "sr": 24.0,
+        "dots": 22,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 2,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26538322,
+      "name": "Mandar",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 20,
+        "best": "1/14",
+        "economy": 6.67,
+        "avg": 20.0,
+        "sr": 18.0,
+        "dots": 4,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 2192569,
+      "name": "Mandar Dehadrai  (c)",
+      "team": "Jade Raptors",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 10,
+        "balls": 17,
+        "highScore": "7",
+        "avg": 5.0,
+        "sr": 58.82,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537266,
+      "name": "Neenv Ghosh",
+      "team": "Jade Gladiators",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 0,
+        "balls": 3,
+        "highScore": "0*",
+        "avg": null,
+        "sr": 0.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 1754095,
+      "name": "Nilesh Behede",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 52,
+        "balls": 56,
+        "highScore": "22*",
+        "avg": 26.0,
+        "sr": 92.86,
+        "fours": 3,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "10.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 38,
+        "best": "1/10",
+        "economy": 3.8,
+        "avg": 38.0,
+        "sr": 60.0,
+        "dots": 25,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535640,
+      "name": "Omkar Anantrao",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 14,
+        "balls": 14,
+        "highScore": "10*",
+        "avg": 7.0,
+        "sr": 100.0,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "2.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 19,
+        "best": "1/4",
+        "economy": 9.5,
+        "avg": 19.0,
+        "sr": 12.0,
+        "dots": 6,
+        "wides": 8,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 20979518,
+      "name": "Prasad Sir",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 19,
+        "balls": 31,
+        "highScore": "15",
+        "avg": 9.5,
+        "sr": 61.29,
+        "fours": 1,
+        "sixes": 1,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535180,
+      "name": "Pravin Muley",
+      "team": "Jade Gladiators",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 9,
+        "balls": 10,
+        "highScore": "7*",
+        "avg": 9.0,
+        "sr": 90.0,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 3,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26536796,
+      "name": "Rahul Khanna",
+      "team": "Jade Raptors",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 1,
+        "balls": 8,
+        "highScore": "1",
+        "avg": 1.0,
+        "sr": 12.5,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 4,
+        "best": "",
+        "economy": 4.0,
+        "avg": null,
+        "sr": null,
+        "dots": 4,
+        "wides": 2,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 423614,
+      "name": "Rajeev Chempath",
+      "team": "Jade Gladiators",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 28,
+        "balls": 43,
+        "highScore": "17",
+        "avg": 14.0,
+        "sr": 65.12,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "4.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 13,
+        "best": "",
+        "economy": 3.25,
+        "avg": null,
+        "sr": null,
+        "dots": 16,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537492,
+      "name": "Rajesh",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 2,
+        "runs": 8,
+        "balls": 18,
+        "highScore": "8*",
+        "avg": null,
+        "sr": 44.44,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 15,
+        "best": "1/15",
+        "economy": 15.0,
+        "avg": 15.0,
+        "sr": 6.0,
+        "dots": 1,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 1415762,
+      "name": "Rehet Kalsi",
+      "team": "Jade Gladiators",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 2,
+        "runs": 20,
+        "balls": 11,
+        "highScore": "13*",
+        "avg": 20.0,
+        "sr": 181.82,
+        "fours": 1,
+        "sixes": 2,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "8.0",
+        "maidens": 1,
+        "wickets": 2,
+        "runs": 28,
+        "best": "1/2",
+        "economy": 3.5,
+        "avg": 14.0,
+        "sr": 24.0,
+        "dots": 30,
+        "wides": 6,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 14536036,
+      "name": "Reyansh Parikh",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 6,
+        "balls": 15,
+        "highScore": "3",
+        "avg": 2.0,
+        "sr": 40.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "9.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 34,
+        "best": "1/9",
+        "economy": 3.78,
+        "avg": 34.0,
+        "sr": 54.0,
+        "dots": 27,
+        "wides": 4,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26564445,
+      "name": "Sagar",
+      "team": "Jade Raptors",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 8,
+        "balls": 21,
+        "highScore": "4",
+        "avg": 2.67,
+        "sr": 38.1,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537557,
+      "name": "Saket",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 3,
+        "balls": 9,
+        "highScore": "2",
+        "avg": 1.5,
+        "sr": 33.33,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "10.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 25,
+        "best": "2/3",
+        "economy": 2.5,
+        "avg": 8.33,
+        "sr": 20.0,
+        "dots": 27,
+        "wides": 4,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535176,
+      "name": "Sandeep Desai",
+      "team": "Jade Gladiators",
+      "matches": 4,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 7,
+        "balls": 8,
+        "highScore": "7*",
+        "avg": null,
+        "sr": 87.5,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 3,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 24137357,
+      "name": "Sanil Nadkarni",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 1,
+        "notOut": 0,
+        "runs": 2,
+        "balls": 11,
+        "highScore": "2",
+        "avg": 2.0,
+        "sr": 18.18,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537507,
+      "name": "Satish",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 3,
+        "balls": 5,
+        "highScore": "3",
+        "avg": 1.5,
+        "sr": 60.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 6643451,
+      "name": "Sharinya G",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 23,
+        "balls": 46,
+        "highScore": "11",
+        "avg": 7.67,
+        "sr": 50.0,
+        "fours": 1,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "6.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 20,
+        "best": "1/4",
+        "economy": 3.33,
+        "avg": 10.0,
+        "sr": 18.0,
+        "dots": 18,
+        "wides": 1,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537320,
+      "name": "Shashank Nalbilwar",
+      "team": "Jade Challengers",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 1,
+        "runs": 3,
+        "balls": 12,
+        "highScore": "2*",
+        "avg": 3.0,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 5,
+        "best": "",
+        "economy": 5.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 1,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 14957778,
+      "name": "Shishir Pahade",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 13,
+        "balls": 7,
+        "highScore": "13",
+        "avg": 4.33,
+        "sr": 185.71,
+        "fours": 0,
+        "sixes": 2,
+        "ducks": 2
+      },
+      "bowling": {
+        "innings": 1,
+        "overs": "1.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 4,
+        "best": "",
+        "economy": 4.0,
+        "avg": null,
+        "sr": null,
+        "dots": 2,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537089,
+      "name": "Sudeep Somani",
+      "team": "Jade Gladiators",
+      "matches": 4,
+      "batting": {
+        "innings": 3,
+        "notOut": 1,
+        "runs": 11,
+        "balls": 32,
+        "highScore": "8*",
+        "avg": 5.5,
+        "sr": 34.38,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 4,
+        "overs": "6.0",
+        "maidens": 0,
+        "wickets": 6,
+        "runs": 27,
+        "best": "3/15",
+        "economy": 4.5,
+        "avg": 4.5,
+        "sr": 6.0,
+        "dots": 22,
+        "wides": 3,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537567,
+      "name": "Sujal Narayan Mudliar",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 7,
+        "balls": 13,
+        "highScore": "5",
+        "avg": 3.5,
+        "sr": 53.85,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537558,
+      "name": "Tanmay",
+      "team": "Jade Game Changers",
+      "matches": 4,
+      "batting": {
+        "innings": 4,
+        "notOut": 2,
+        "runs": 52,
+        "balls": 42,
+        "highScore": "25*",
+        "avg": 26.0,
+        "sr": 123.81,
+        "fours": 2,
+        "sixes": 5,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 26,
+        "best": "1/11",
+        "economy": 5.2,
+        "avg": 26.0,
+        "sr": 30.0,
+        "dots": 8,
+        "wides": 8,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26538324,
+      "name": "Tarun",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 1,
+        "notOut": 1,
+        "runs": 1,
+        "balls": 2,
+        "highScore": "1*",
+        "avg": null,
+        "sr": 50.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 12,
+        "best": "1/1",
+        "economy": 4.0,
+        "avg": 12.0,
+        "sr": 18.0,
+        "dots": 8,
+        "wides": 2,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 2,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 12756784,
+      "name": "Vardhaman Bora",
+      "team": "Jade Sharks",
+      "matches": 2,
+      "batting": {
+        "innings": 0,
+        "notOut": 0,
+        "runs": 0,
+        "balls": 0,
+        "highScore": "",
+        "avg": null,
+        "sr": null,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26537228,
+      "name": "Ved Prakash",
+      "team": "Jade Challengers",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 7,
+        "balls": 17,
+        "highScore": "4",
+        "avg": 3.5,
+        "sr": 41.18,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 3,
+        "runs": 9,
+        "best": "2/6",
+        "economy": 3.0,
+        "avg": 3.0,
+        "sr": 6.0,
+        "dots": 12,
+        "wides": 0,
+        "noBalls": 2
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 18842243,
+      "name": "Vedant Rathi",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 2,
+        "balls": 9,
+        "highScore": "1",
+        "avg": 1.0,
+        "sr": 22.22,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "5.0",
+        "maidens": 0,
+        "wickets": 1,
+        "runs": 27,
+        "best": "1/6",
+        "economy": 5.4,
+        "avg": 27.0,
+        "sr": 30.0,
+        "dots": 17,
+        "wides": 6,
+        "noBalls": 3
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 4314892,
+      "name": "Vikas Goyal",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 1,
+        "balls": 4,
+        "highScore": "1",
+        "avg": 0.5,
+        "sr": 25.0,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 3,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 2,
+        "runs": 25,
+        "best": "1/4",
+        "economy": 8.33,
+        "avg": 12.5,
+        "sr": 9.0,
+        "dots": 12,
+        "wides": 5,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 1,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 2570861,
+      "name": "Vikram",
+      "team": "Jade Challengers",
+      "matches": 2,
+      "batting": {
+        "innings": 2,
+        "notOut": 0,
+        "runs": 7,
+        "balls": 21,
+        "highScore": "6",
+        "avg": 3.5,
+        "sr": 33.33,
+        "fours": 0,
+        "sixes": 0,
+        "ducks": 0
+      },
+      "bowling": {
+        "innings": 2,
+        "overs": "3.0",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 15,
+        "best": "",
+        "economy": 5.0,
+        "avg": null,
+        "sr": null,
+        "dots": 10,
+        "wides": 4,
+        "noBalls": 1
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 0,
+        "stumpings": 0
+      }
+    },
+    {
+      "playerId": 26535410,
+      "name": "Vinay Korlepara  (c)",
+      "team": "Jade Panthers",
+      "matches": 3,
+      "batting": {
+        "innings": 3,
+        "notOut": 0,
+        "runs": 17,
+        "balls": 20,
+        "highScore": "12",
+        "avg": 5.67,
+        "sr": 85.0,
+        "fours": 0,
+        "sixes": 1,
+        "ducks": 1
+      },
+      "bowling": {
+        "innings": 0,
+        "overs": "",
+        "maidens": 0,
+        "wickets": 0,
+        "runs": 0,
+        "best": "",
+        "economy": null,
+        "avg": null,
+        "sr": null,
+        "dots": 0,
+        "wides": 0,
+        "noBalls": 0
+      },
+      "fielding": {
+        "catches": 0,
+        "runOuts": 1,
+        "stumpings": 0
+      }
+    }
+  ],
+  "mvp": [
+    {
+      "playerId": 9999504,
+      "name": "Ganesh  (c & wk)",
+      "team": "Jade Gladiators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 1,
+      "mvpTotal": 12.75,
+      "mvpBatting": 3.725,
+      "mvpBowling": 2.893,
+      "mvpFielding": 6.132,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26537089,
+      "name": "Sudeep Somani",
+      "team": "Jade Gladiators",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 2,
+      "mvpRank": 2,
+      "mvpTotal": 10.248,
+      "mvpBatting": 1.1,
+      "mvpBowling": 8.868,
+      "mvpFielding": 0.28,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 1754095,
+      "name": "Nilesh Behede",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 3,
+      "mvpTotal": 10.145,
+      "mvpBatting": 5.332,
+      "mvpBowling": 1.285,
+      "mvpFielding": 3.528,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 2602781,
+      "name": "Kabir Vaidya",
+      "team": "Jade Gladiators",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 4,
+      "mvpTotal": 7.943,
+      "mvpBatting": 1.21,
+      "mvpBowling": 4.409,
+      "mvpFielding": 2.324,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 1415762,
+      "name": "Rehet Kalsi",
+      "team": "Jade Gladiators",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 1,
+      "mvpRank": 5,
+      "mvpTotal": 7.71,
+      "mvpBatting": 2.27,
+      "mvpBowling": 3.76,
+      "mvpFielding": 1.68,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 19488839,
+      "name": "Dhruv Jhalani",
+      "team": "Jade Sharks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 6,
+      "mvpTotal": 7.527,
+      "mvpBatting": 1.5,
+      "mvpBowling": 3.507,
+      "mvpFielding": 2.52,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 1417374,
+      "name": "Divit Khanna",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 1,
+      "mvpRank": 7,
+      "mvpTotal": 7.463,
+      "mvpBatting": 1.7,
+      "mvpBowling": 4.083,
+      "mvpFielding": 1.68,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26537558,
+      "name": "Tanmay",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 2,
+      "bestBowler": 0,
+      "mvpRank": 8,
+      "mvpTotal": 7.278,
+      "mvpBatting": 5.318,
+      "mvpBowling": 1.4,
+      "mvpFielding": 0.56,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 6643451,
+      "name": "Sharinya G",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 9,
+      "mvpTotal": 6.422,
+      "mvpBatting": 2.3,
+      "mvpBowling": 3.282,
+      "mvpFielding": 0.84,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26537557,
+      "name": "Saket",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 10,
+      "mvpTotal": 6.317,
+      "mvpBatting": 0.3,
+      "mvpBowling": 4.757,
+      "mvpFielding": 1.26,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 18279102,
+      "name": "Ayush jain",
+      "team": "Jade Challengers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 11,
+      "mvpTotal": 6.256,
+      "mvpBatting": 0.401,
+      "mvpBowling": 5.855,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26536811,
+      "name": "Kunal Kukreja",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 12,
+      "mvpTotal": 6.038,
+      "mvpBatting": 0.6,
+      "mvpBowling": 4.038,
+      "mvpFielding": 1.4,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26538317,
+      "name": "Avi  (c)",
+      "team": "Jade Sharks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 1,
+      "mvpRank": 13,
+      "mvpTotal": 5.305,
+      "mvpBatting": 0.904,
+      "mvpBowling": 3.001,
+      "mvpFielding": 1.4,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26537228,
+      "name": "Ved Prakash",
+      "team": "Jade Challengers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 14,
+      "mvpTotal": 5.15,
+      "mvpBatting": 0.7,
+      "mvpBowling": 4.45,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26537490,
+      "name": "Aditya Joshi",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 15,
+      "mvpTotal": 5.012,
+      "mvpBatting": 2.212,
+      "mvpBowling": 2.8,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26537554,
+      "name": "Aarav",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 16,
+      "mvpTotal": 4.9,
+      "mvpBatting": 1.4,
+      "mvpBowling": 0.0,
+      "mvpFielding": 3.5,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26538324,
+      "name": "Tarun",
+      "team": "Jade Sharks",
+      "playerOfTheMatch": 1,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 17,
+      "mvpTotal": 4.873,
+      "mvpBatting": 0.1,
+      "mvpBowling": 1.693,
+      "mvpFielding": 3.08,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 24419687,
+      "name": "Anu Poduval  (c)",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 18,
+      "mvpTotal": 4.697,
+      "mvpBatting": 0.401,
+      "mvpBowling": 4.296,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26535639,
+      "name": "Akshay Pore",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 19,
+      "mvpTotal": 4.532,
+      "mvpBatting": 2.838,
+      "mvpBowling": 0.294,
+      "mvpFielding": 1.4,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 423614,
+      "name": "Rajeev Chempath",
+      "team": "Jade Gladiators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 20,
+      "mvpTotal": 4.469,
+      "mvpBatting": 2.8,
+      "mvpBowling": 0.269,
+      "mvpFielding": 1.4,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 4314892,
+      "name": "Vikas Goyal",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 21,
+      "mvpTotal": 3.384,
+      "mvpBatting": 0.1,
+      "mvpBowling": 3.004,
+      "mvpFielding": 0.28,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26535410,
+      "name": "Vinay Korlepara  (c)",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 22,
+      "mvpTotal": 3.124,
+      "mvpBatting": 1.724,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.4,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 4161625,
+      "name": "Gurmeet Kalsi  (c & wk)",
+      "team": "Jade Challengers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 23,
+      "mvpTotal": 2.923,
+      "mvpBatting": 1.065,
+      "mvpBowling": 0.094,
+      "mvpFielding": 1.764,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26537492,
+      "name": "Rajesh",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 24,
+      "mvpTotal": 2.866,
+      "mvpBatting": 0.8,
+      "mvpBowling": 1.366,
+      "mvpFielding": 0.7,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26535180,
+      "name": "Pravin Muley",
+      "team": "Jade Gladiators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 25,
+      "mvpTotal": 2.836,
+      "mvpBatting": 0.932,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.904,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 25144268,
+      "name": "Kumar Ranjan",
+      "team": "Jade Gladiators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 26,
+      "mvpTotal": 2.794,
+      "mvpBatting": 0.0,
+      "mvpBowling": 2.794,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26536759,
+      "name": "Mahesh A Kulkarni",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 27,
+      "mvpTotal": 2.713,
+      "mvpBatting": 0.208,
+      "mvpBowling": 1.945,
+      "mvpFielding": 0.56,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26535640,
+      "name": "Omkar Anantrao",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 28,
+      "mvpTotal": 2.653,
+      "mvpBatting": 1.445,
+      "mvpBowling": 1.208,
+      "mvpFielding": 0.0,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 2192569,
+      "name": "Mandar Dehadrai  (c)",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 29,
+      "mvpTotal": 2.411,
+      "mvpBatting": 1.011,
+      "mvpBowling": 0.0,
+      "mvpFielding": 1.4,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 20979518,
+      "name": "Prasad Sir",
+      "team": "Jade Sharks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 30,
+      "mvpTotal": 2.348,
+      "mvpBatting": 1.9,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.448,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 18842243,
+      "name": "Vedant Rathi",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 31,
+      "mvpTotal": 2.295,
+      "mvpBatting": 0.2,
+      "mvpBowling": 1.535,
+      "mvpFielding": 0.56,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 14536036,
+      "name": "Reyansh Parikh",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 32,
+      "mvpTotal": 2.095,
+      "mvpBatting": 0.6,
+      "mvpBowling": 1.495,
+      "mvpFielding": 0.0,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 17452857,
+      "name": "Kamath V",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 33,
+      "mvpTotal": 2.088,
+      "mvpBatting": 0.0,
+      "mvpBowling": 0.968,
+      "mvpFielding": 1.12,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26564614,
+      "name": "Aaryan Deokar",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 34,
+      "mvpTotal": 1.92,
+      "mvpBatting": 0.0,
+      "mvpBowling": 1.36,
+      "mvpFielding": 0.56,
+      "mvpMatches": 1
+    },
+    {
+      "playerId": 26537267,
+      "name": "Akhil Madan",
+      "team": "Jade Challengers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 35,
+      "mvpTotal": 1.819,
+      "mvpBatting": 1.119,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.7,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 14957778,
+      "name": "Shishir Pahade",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 1,
+      "bestBowler": 0,
+      "mvpRank": 36,
+      "mvpTotal": 1.69,
+      "mvpBatting": 1.578,
+      "mvpBowling": 0.112,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26535176,
+      "name": "Sandeep Desai",
+      "team": "Jade Gladiators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 37,
+      "mvpTotal": 1.551,
+      "mvpBatting": 0.728,
+      "mvpBowling": -0.017,
+      "mvpFielding": 0.84,
+      "mvpMatches": 4
+    },
+    {
+      "playerId": 26538322,
+      "name": "Mandar",
+      "team": "Jade Sharks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 38,
+      "mvpTotal": 1.463,
+      "mvpBatting": 0.0,
+      "mvpBowling": 1.463,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 587226,
+      "name": "Anish Bansal",
+      "team": "Jade Sharks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 39,
+      "mvpTotal": 1.26,
+      "mvpBatting": 0.941,
+      "mvpBowling": 0.039,
+      "mvpFielding": 0.28,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26564445,
+      "name": "Sagar",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 40,
+      "mvpTotal": 1.08,
+      "mvpBatting": 0.8,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 26537507,
+      "name": "Satish",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 41,
+      "mvpTotal": 1.0,
+      "mvpBatting": 0.3,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.7,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 19479998,
+      "name": "Lakshya Jhalani",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 42,
+      "mvpTotal": 0.986,
+      "mvpBatting": 0.986,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26535638,
+      "name": "Capt Prakash Shekhar Hegde",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 43,
+      "mvpTotal": 0.98,
+      "mvpBatting": 0.7,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 4253019,
+      "name": "Daanesh Suvarnaa",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 44,
+      "mvpTotal": 0.813,
+      "mvpBatting": 0.3,
+      "mvpBowling": -0.047,
+      "mvpFielding": 0.56,
+      "mvpMatches": 3
+    },
+    {
+      "playerId": 2570861,
+      "name": "Vikram",
+      "team": "Jade Challengers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 45,
+      "mvpTotal": 0.72,
+      "mvpBatting": 0.7,
+      "mvpBowling": 0.02,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 12944166,
+      "name": "Abhi Raundal",
+      "team": "Jade Panthers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 46,
+      "mvpTotal": 0.714,
+      "mvpBatting": 0.6,
+      "mvpBowling": -0.11,
+      "mvpFielding": 0.224,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26537567,
+      "name": "Sujal Narayan Mudliar",
+      "team": "Jade Game Changers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 47,
+      "mvpTotal": 0.7,
+      "mvpBatting": 0.7,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 6508472,
+      "name": "Dr Mangesh Mekha",
+      "team": "Jade Challengers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 48,
+      "mvpTotal": 0.6,
+      "mvpBatting": 0.6,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 24372516,
+      "name": "Ashwin L",
+      "team": "Jade Challengers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 49,
+      "mvpTotal": 0.521,
+      "mvpBatting": 0.0,
+      "mvpBowling": -0.039,
+      "mvpFielding": 0.56,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26537320,
+      "name": "Shashank Nalbilwar",
+      "team": "Jade Challengers",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 50,
+      "mvpTotal": 0.424,
+      "mvpBatting": 0.339,
+      "mvpBowling": 0.085,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    },
+    {
+      "playerId": 26535523,
+      "name": "Kiran Jagtap",
+      "team": "Jade Gladiators",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 51,
+      "mvpTotal": 0.3,
+      "mvpBatting": 0.3,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 1
+    },
+    {
+      "playerId": 26536794,
+      "name": "Divit Khanna",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 52,
+      "mvpTotal": 0.28,
+      "mvpBatting": 0.0,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.28,
+      "mvpMatches": 1
+    },
+    {
+      "playerId": 24137357,
+      "name": "Sanil Nadkarni",
+      "team": "Jade Sharks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 53,
+      "mvpTotal": 0.2,
+      "mvpBatting": 0.2,
+      "mvpBowling": 0.0,
+      "mvpFielding": 0.0,
+      "mvpMatches": 1
+    },
+    {
+      "playerId": 26538318,
+      "name": "Ajit",
+      "team": "Jade Sharks",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 54,
+      "mvpTotal": 0.085,
+      "mvpBatting": 0.0,
+      "mvpBowling": 0.085,
+      "mvpFielding": 0.0,
+      "mvpMatches": 1
+    },
+    {
+      "playerId": 26536796,
+      "name": "Rahul Khanna",
+      "team": "Jade Raptors",
+      "playerOfTheMatch": 0,
+      "fighterOfTheMatch": 0,
+      "bestBatter": 0,
+      "bestBowler": 0,
+      "mvpRank": 55,
+      "mvpTotal": 0.03,
+      "mvpBatting": 0.1,
+      "mvpBowling": -0.07,
+      "mvpFielding": 0.0,
+      "mvpMatches": 2
+    }
+  ],
+  "awards": []
+}

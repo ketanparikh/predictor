@@ -126,6 +126,7 @@ const AppContent: React.FC = () => {
                   onNavigate={setCurrentTab}
                   onStartAuction={handleStartAuction}
                   onOpenProjector={handleOpenProjector}
+                  onOpenQRCode={() => setIsQRCodeModalOpen(true)}
                 />
               )}
 

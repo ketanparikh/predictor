@@ -21,18 +21,21 @@ import {
   Plus,
   Trash2,
   CheckCircle2,
+  QrCode,
 } from 'lucide-react';
 
 interface DashboardProps {
   onNavigate: (tab: ActiveNavTab) => void;
   onStartAuction: (player: Player) => void;
   onOpenProjector: () => void;
+  onOpenQRCode?: () => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
   onNavigate,
   onStartAuction,
   onOpenProjector,
+  onOpenQRCode,
 }) => {
   const { tournament, teams, players, transactions, currentPlayer, currentBid, currentBidder, removeTeam } = useAuction();
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
@@ -122,6 +125,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <Tv className="w-4 h-4 text-cyan-400" />
               <span>Launch Big Screen</span>
             </button>
+
+            {onOpenQRCode && (
+              <button
+                onClick={onOpenQRCode}
+                className="px-4 py-3 rounded-xl bg-cyan-950/40 hover:bg-cyan-900/50 border border-cyan-500/40 text-cyan-300 font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer shadow-sm shadow-cyan-500/10"
+              >
+                <QrCode className="w-4 h-4 text-cyan-400" />
+                <span>Spectator QR & Link</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -191,7 +204,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
               <h3 className="text-xl font-extrabold text-white mt-1">{currentPlayer.name}</h3>
               <p className="text-xs text-slate-400 font-mono">
-                {currentPlayer.age} yrs • {currentPlayer.experience} yrs exp • Base Price: {currentPlayer.basePrice.toLocaleString()} pts
+                Category: <span className="text-slate-200">{currentPlayer.category || currentPlayer.ageCategory || 'Regular'}</span> • Base Price: <span className="text-amber-400 font-bold">{currentPlayer.basePrice.toLocaleString()} pts</span>
               </p>
             </div>
           </div>

@@ -556,59 +556,6 @@ export const SettingsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Section 5: Grade-Based Maximum Bidding Limits by Player Category (Requirement Part 2.9) */}
-        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
-              <Layers className="w-4 h-4 text-orange-400" />
-              <span>Grade-Based Maximum Bidding Limits by Player Category</span>
-            </h2>
-            <span className="text-[11px] text-orange-400 font-mono bg-orange-500/10 border border-orange-500/30 px-2.5 py-1 rounded-md">
-              Enforced during Live Auction & Direct Sells
-            </span>
-          </div>
-
-          <p className="text-xs text-slate-400">
-            Configure the maximum allowable bid cap for each combination of player grade and category. If a franchise tries to bid higher than this limit, the system will automatically block the bid and notify the auctioneer.
-          </p>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
-                <tr>
-                  <th className="py-2.5 px-3 font-bold font-sans">Category</th>
-                  <th className="py-2.5 px-3 font-bold text-center text-purple-300">Grade A+ (Max Cap ₹)</th>
-                  <th className="py-2.5 px-3 font-bold text-center text-orange-300">Grade A (Max Cap ₹)</th>
-                  <th className="py-2.5 px-3 font-bold text-center text-blue-300">Grade B (Max Cap ₹)</th>
-                  <th className="py-2.5 px-3 font-bold text-center text-emerald-300">Grade C (Max Cap ₹)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60 font-sans">
-                {['Mens', 'Boys', 'Womens', 'Girls'].map((category) => (
-                  <tr key={category} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-2.5 px-3 font-bold text-white text-xs">
-                      {category}
-                    </td>
-
-                    {(['A+', 'A', 'B', 'C'] as PlayerGrade[]).map((grade) => (
-                      <td key={grade} className="py-2 px-2 text-center">
-                        <input
-                          type="number"
-                          step="any"
-                          min="0"
-                          value={getCellMaxBid(grade, category)}
-                          onChange={(e) => updateMaxBidCell(grade, category, Number(e.target.value) || 0)}
-                          className="w-28 px-2.5 py-1.5 bg-slate-950 border border-slate-700/80 rounded-lg text-xs font-mono text-white text-right focus:outline-none focus:border-orange-500"
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
         {/* Save Changes Button */}
         <div className="flex justify-end">
           <button

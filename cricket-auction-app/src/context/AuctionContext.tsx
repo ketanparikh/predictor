@@ -685,13 +685,10 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     logAndPersistSave('auto', 'Updated custom player auction ordering');
   }, [logAndPersistSave]);
 
-  const getGradeCategoryMaxBid = useCallback((player: Player): number | null => {
-    if (!rules.gradeCategoryMaxBids || rules.gradeCategoryMaxBids.length === 0) return null;
-    const match = rules.gradeCategoryMaxBids.find(
-      limit => limit.grade === player.grade && (limit.category === player.role || limit.category === 'All')
-    );
-    return match && match.maxBid > 0 ? match.maxBid : null;
-  }, [rules.gradeCategoryMaxBids]);
+  const getGradeCategoryMaxBid = useCallback((_player: Player): number | null => {
+    // Deactivated per Requirement 17: ensure hidden settings do not block valid bids
+    return null;
+  }, []);
 
   // ================= CAPTAIN ALLOCATION LOGIC =================
   const allocateCaptainToTeam = useCallback((

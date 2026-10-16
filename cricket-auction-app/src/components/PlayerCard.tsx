@@ -120,16 +120,6 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
               <span>•</span>
               <span className="font-semibold text-amber-300 font-sans">{player.role}</span>
             </div>
-
-            {/* Description written on the Excel */}
-            {(player.description || player.previousPerformance || player.notes) && (
-              <p
-                title={player.description || player.previousPerformance || player.notes}
-                className="text-[11px] text-slate-300 mt-1 line-clamp-2 leading-tight bg-slate-950/60 px-2 py-1 rounded-lg border border-slate-800/80 font-sans italic"
-              >
-                {player.description || player.previousPerformance || player.notes}
-              </p>
-            )}
           </div>
         </div>
 

@@ -84,6 +84,16 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
 
 
+        {/* QR Code / Share Spectator */}
+        <button
+          onClick={onOpenQRCode}
+          title="Share Spectator QR Code & Live Links"
+          className="px-3 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/50 text-cyan-300 hover:text-white transition-all flex items-center gap-1.5 text-xs font-semibold shadow-sm shadow-cyan-500/10 cursor-pointer"
+        >
+          <QrCode className="w-4 h-4 text-cyan-400" />
+          <span className="hidden sm:inline">Spectator QR</span>
+        </button>
+
         {/* Projector Mode Launch */}
         <button
           onClick={onOpenProjector}

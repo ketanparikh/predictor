@@ -71,26 +71,11 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
   const [selectedIncrement, setSelectedIncrement] = useState<number>(() => rules.minBidIncrement || 500);
   const [customBidAmount, setCustomBidAmount] = useState<string>('');
 
-  // Direct Sell State & Confirmation Modal
-  const [directSellTeamId, setDirectSellTeamId] = useState<string>('');
-  const [directSellAmount, setDirectSellAmount] = useState<string>('');
-  const [isConfirmDirectSellOpen, setIsConfirmDirectSellOpen] = useState<boolean>(false);
-
   // Alerts
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const upcomingPlayers = useMemo(() => players.filter(p => p.status === 'upcoming'), [players]);
-
-  // Keep direct sell amount in sync with current bid or player base price
-  useEffect(() => {
-    if (currentPlayer) {
-      setDirectSellAmount(String(currentBid > 0 ? currentBid : currentPlayer.basePrice));
-    } else {
-      setDirectSellAmount('');
-      setDirectSellTeamId('');
-    }
-  }, [currentPlayer, currentBid]);
 
   // Ensure default selected bidder is valid
   useEffect(() => {
@@ -180,57 +165,6 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
     } else {
       setSuccessMessage('Player successfully marked SOLD!');
       setTimeout(() => setSuccessMessage(null), 3500);
-    }
-  };
-
-  // Direct Sell Logic with Preview & Confirmation
-  const selectedDirectSellTeam = useMemo(() => {
-    return teams.find(t => t.id === directSellTeamId) || null;
-  }, [teams, directSellTeamId]);
-
-  const directSellNumericAmount = useMemo(() => {
-    const num = Number(directSellAmount);
-    return isNaN(num) ? 0 : num;
-  }, [directSellAmount]);
-
-  const directSellProjectedPurse = useMemo(() => {
-    if (!selectedDirectSellTeam) return 0;
-    return selectedDirectSellTeam.remainingBudget - directSellNumericAmount;
-  }, [selectedDirectSellTeam, directSellNumericAmount]);
-
-  const handleInitiateDirectSell = () => {
-    if (!directSellTeamId) {
-      setErrorMessage('Please choose a franchise team for the direct sale.');
-      setTimeout(() => setErrorMessage(null), 4000);
-      return;
-    }
-    if (!directSellNumericAmount || directSellNumericAmount <= 0) {
-      setErrorMessage('Please enter a valid sold price in points.');
-      setTimeout(() => setErrorMessage(null), 4000);
-      return;
-    }
-
-    if (selectedDirectSellTeam && directSellNumericAmount > selectedDirectSellTeam.remainingBudget) {
-      setErrorMessage(`Cannot complete direct sale: ${selectedDirectSellTeam.name} only has ₹${selectedDirectSellTeam.remainingBudget.toLocaleString('en-IN')} remaining.`);
-      setTimeout(() => setErrorMessage(null), 4500);
-      return;
-    }
-
-    // Open confirmation step
-    setIsConfirmDirectSellOpen(true);
-  };
-
-  const handleConfirmDirectSell = () => {
-    setIsConfirmDirectSellOpen(false);
-    setErrorMessage(null);
-    const res = directSellPlayer(directSellTeamId, directSellNumericAmount);
-    if (!res.success) {
-      setErrorMessage(res.message || 'Direct sell failed.');
-      setTimeout(() => setErrorMessage(null), 4500);
-    } else {
-      setSuccessMessage(res.message || 'Player successfully sold directly!');
-      setTimeout(() => setSuccessMessage(null), 4000);
-      setDirectSellTeamId('');
     }
   };
 
@@ -541,13 +475,6 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                       <span className="text-slate-500 uppercase text-[10px] block">Next Valid Bid</span>
                       <strong className="text-orange-400 text-sm">₹{nextMinimumBid.toLocaleString('en-IN')}</strong>
                     </div>
-
-                    {categoryCap !== null && (
-                      <div className="text-center">
-                        <span className="text-slate-500 uppercase text-[10px] block">Category Bid Limit</span>
-                        <strong className="text-rose-400 text-sm">₹{categoryCap.toLocaleString('en-IN')}</strong>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -678,111 +605,8 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                     onClick={() => startAuctionForPlayer(upcomingPlayers[0].id)}
                     className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black text-xs transition-all shadow-lg shadow-orange-500/20"
                   >
-                    Start Lot #{upcomingPlayers[0].lotNumber}: {upcomingPlayers[0].name}
+                    Start Lot #{upcomingPlayers[0].lotNumber || upcomingPlayers[0].auctionOrder || 1}: {upcomingPlayers[0].name}
                   </button>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* ENLARGED & ENHANCED DIRECT SELL PANEL (Requirement 5) */}
-          <div className="p-5 rounded-3xl bg-slate-900 border border-orange-500/30 shadow-xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-orange-500/10 text-orange-400">
-                  <Zap className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-white uppercase tracking-wider font-mono">
-                    Direct Sell Panel
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Instantly assign player to franchise with purse preview and confirmation guard
-                  </p>
-                </div>
-              </div>
-
-              <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-slate-950 text-orange-400 border border-slate-800">
-                1-Click Finalization
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-              {/* Franchise Selector */}
-              <div className="md:col-span-5">
-                <label className="block text-xs font-mono font-bold text-slate-300 mb-1.5 uppercase">
-                  Winning Franchise (12 Teams)
-                </label>
-                <select
-                  value={directSellTeamId}
-                  onChange={e => setDirectSellTeamId(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-medium text-xs focus:outline-none focus:border-orange-500"
-                >
-                  <option value="">-- Choose Purchasing Team --</option>
-                  {teams.map(t => (
-                    <option key={t.id} value={t.id}>
-                      {t.name} (Remaining Purse: ₹{t.remainingBudget.toLocaleString('en-IN')})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sold Price Input */}
-              <div className="md:col-span-4">
-                <label className="block text-xs font-mono font-bold text-slate-300 mb-1.5 uppercase">
-                  Agreed Sale Price (₹)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-orange-400 font-mono text-xs font-bold">₹</span>
-                  <input
-                    type="number"
-                    value={directSellAmount}
-                    onChange={e => setDirectSellAmount(e.target.value)}
-                    placeholder="Enter final sold points..."
-                    className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-orange-400 font-mono font-bold text-sm focus:outline-none focus:border-orange-500"
-                  />
-                </div>
-              </div>
-
-              {/* Sell Button */}
-              <div className="md:col-span-3 pt-2 md:pt-5">
-                <button
-                  onClick={handleInitiateDirectSell}
-                  disabled={!currentPlayer || !directSellTeamId}
-                  className={`w-full py-2.5 px-4 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-lg ${
-                    currentPlayer && directSellTeamId
-                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 shadow-orange-500/20 active:scale-95 cursor-pointer'
-                      : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
-                  }`}
-                >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Direct Sell</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Live Purse Preview Before & After Sale */}
-            {selectedDirectSellTeam && (
-              <div className="mt-2 p-3.5 rounded-2xl bg-slate-950 border border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-                <div className="flex items-center gap-3">
-                  <span className="text-slate-400">Team: <strong className="text-white">{selectedDirectSellTeam.name}</strong></span>
-                  <span className="text-slate-500">|</span>
-                  <span className="text-slate-400">
-                    Purse Before: <strong className="text-slate-200">₹{selectedDirectSellTeam.remainingBudget.toLocaleString('en-IN')}</strong>
-                  </span>
-                  <span className="text-slate-500">➔</span>
-                  <span className="text-slate-400">
-                    Purse After: <strong className={directSellProjectedPurse < 0 ? 'text-rose-400' : 'text-emerald-400 font-black'}>
-                      ₹{directSellProjectedPurse.toLocaleString('en-IN')}
-                    </strong>
-                  </span>
-                </div>
-
-                {directSellProjectedPurse < 0 && (
-                  <span className="text-rose-400 font-bold flex items-center gap-1">
-                    <AlertTriangle className="w-3.5 h-3.5" />
-                    Exceeds Available Budget!
-                  </span>
                 )}
               </div>
             )}
@@ -901,91 +725,8 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
               </table>
             </div>
           </div>
-
-          {/* Next Candidate in Queue Preview Card */}
-          {nextUpcomingQueuePlayer && (
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-lg flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <img
-                  src={nextUpcomingQueuePlayer.photo || 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=120&q=80'}
-                  alt={nextUpcomingQueuePlayer.name}
-                  className="w-11 h-11 rounded-xl object-cover border border-slate-700"
-                />
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-500 font-mono">
-                    Next in Queue (Lot #{nextUpcomingQueuePlayer.lotNumber})
-                  </span>
-                  <div className="font-bold text-sm text-white flex items-center gap-2">
-                    {nextUpcomingQueuePlayer.name}
-                    <span className="px-1.5 py-0.2 rounded text-[10px] font-black bg-orange-500/20 text-orange-300 border border-orange-500/30">
-                      {nextUpcomingQueuePlayer.grade}
-                    </span>
-                  </div>
-                  <div className="text-xs text-slate-400 font-mono">
-                    {nextUpcomingQueuePlayer.category} • Base ₹{nextUpcomingQueuePlayer.basePrice.toLocaleString('en-IN')}
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => startAuctionForPlayer(nextUpcomingQueuePlayer.id)}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-orange-500 hover:text-slate-950 text-slate-300 font-bold text-xs transition-all flex items-center gap-1 shadow"
-              >
-                <span>Call Next</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
         </div>
       </div>
-
-      {/* Confirmation Modal for Direct Sell */}
-      {isConfirmDirectSellOpen && selectedDirectSellTeam && currentPlayer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl">
-            <div className="flex items-center gap-3 text-orange-400 mb-4">
-              <Zap className="w-6 h-6" />
-              <h3 className="font-bold text-lg text-white">Confirm Direct Sale</h3>
-            </div>
-
-            <p className="text-xs text-slate-300 leading-relaxed mb-4">
-              Are you sure you want to sell <strong>{currentPlayer.name}</strong> directly to{' '}
-              <strong className="text-orange-400">{selectedDirectSellTeam.name}</strong> for{' '}
-              <strong className="text-white">₹{directSellNumericAmount.toLocaleString('en-IN')}</strong>?
-            </p>
-
-            <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl mb-6 text-xs font-mono space-y-1">
-              <div className="flex justify-between text-slate-400">
-                <span>Current Purse:</span>
-                <span>₹{selectedDirectSellTeam.remainingBudget.toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-orange-400 font-bold">
-                <span>Sale Deduction:</span>
-                <span>-₹{directSellNumericAmount.toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-emerald-400 font-bold pt-1 border-t border-slate-800">
-                <span>Purse Remaining After:</span>
-                <span>₹{directSellProjectedPurse.toLocaleString('en-IN')}</span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3">
-              <button
-                onClick={() => setIsConfirmDirectSellOpen(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDirectSell}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-400 text-slate-950 transition-colors shadow-lg shadow-orange-500/20"
-              >
-                Yes, Finalize Direct Sale
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

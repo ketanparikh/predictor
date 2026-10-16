@@ -40,7 +40,7 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !window.location.hostname.includes('trycloudflare.com')) {
       return window.location.hostname;
     }
-    return '192.168.29.153';
+    return '192.168.0.214';
   });
   const [customPort, setCustomPort] = useState(() => {
     if (typeof window !== 'undefined' && window.location.port) {

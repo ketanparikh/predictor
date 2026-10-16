@@ -35,19 +35,29 @@ const AdminLoadingFallback: React.FC = () => (
 const AppContent: React.FC = () => {
   const { startAuctionForPlayer } = useAuction();
 
-  const [currentTab, setCurrentTab] = useState<ActiveNavTab>('dashboard');
+  const [currentTab, setCurrentTab] = useState<ActiveNavTab>(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.toLowerCase();
+      if (hash === '#admin' || hash === '#auction' || hash === '#live_auction') {
+        return 'live_auction';
+      }
+    }
+    return 'live_auction';
+  });
   const [viewMode, setViewMode] = useState<'admin' | 'projector' | 'spectator'>(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.toLowerCase();
+      if (hash === '#spectator') return 'spectator';
       if (hash === '#projector') return 'projector';
-      if (hash === '#admin') return 'admin';
+      const isRemoteTunnel = window.location.hostname.includes('trycloudflare.com');
+      if (isRemoteTunnel && hash !== '#admin') return 'spectator';
     }
-    return 'spectator';
+    return 'admin';
   });
   const [isQRCodeModalOpen, setIsQRCodeModalOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  // URL Hash-based routing: spectators and public tunnel are strictly locked to spectator mode
+  // URL Hash-based routing: #spectator for public audience, #projector for TV, #admin / default for auction panel
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.toLowerCase();
@@ -55,10 +65,13 @@ const AppContent: React.FC = () => {
 
       if (hash === '#projector') {
         setViewMode('projector');
-      } else if (hash === '#admin' && !isRemoteTunnel) {
-        setViewMode('admin');
-      } else {
+      } else if (hash === '#spectator' || (isRemoteTunnel && hash !== '#admin')) {
         setViewMode('spectator');
+      } else {
+        setViewMode('admin');
+        if (hash === '#admin' || hash === '#auction' || hash === '#live_auction') {
+          setCurrentTab('live_auction');
+        }
       }
     };
 

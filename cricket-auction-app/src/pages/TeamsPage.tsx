@@ -109,7 +109,8 @@ export const TeamsPage: React.FC = () => {
       {/* 10 Team Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {teams.map(team => {
-          const squadPlayers = players.filter(p => team.squad.includes(p.id));
+          const squadPlayers = players.filter(p => team.squad.includes(p.id) || p.teamId === team.id || p.id === team.captainPlayerId);
+          const captainPlayer = players.find(p => p.id === team.captainPlayerId || (p.teamId === team.id && (p.isCaptain || p.isPreAssignedCaptain)) || (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase()));
           const percentSpent = (team.totalSpent / team.startingBudget) * 100;
           const batsmenCount = squadPlayers.filter(p => p.role === 'Batsman').length;
           const bowlersCount = squadPlayers.filter(p => p.role === 'Bowler').length;
@@ -149,8 +150,20 @@ export const TeamsPage: React.FC = () => {
                           {team.shortName}
                         </span>
                         <span>•</span>
-                        <span className="text-amber-300 font-semibold flex items-center gap-1">
-                          👑 {team.captain || 'Captain TBD'}
+                        <span className="text-amber-300 font-semibold flex items-center gap-1.5 text-xs">
+                          {captainPlayer?.photo ? (
+                            <img
+                              src={captainPlayer.photo}
+                              alt={captainPlayer.name}
+                              className="w-4 h-4 rounded-full object-cover border border-amber-400/60"
+                              onError={(e) => {
+                                (e.target as HTMLElement).style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <span>👑</span>
+                          )}
+                          <span>{captainPlayer ? captainPlayer.name : (team.captain || 'Captain TBD')}</span>
                         </span>
                       </div>
                     </div>
@@ -166,6 +179,46 @@ export const TeamsPage: React.FC = () => {
                     {squadPlayers.length} / 9 Players
                   </span>
                 </div>
+
+                {/* Captain Showcase Banner */}
+                {captainPlayer ? (
+                  <div className="mt-3.5 p-2.5 rounded-xl bg-slate-950/80 border border-amber-500/30 flex items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="relative flex-shrink-0">
+                        <img
+                          src={captainPlayer.photo || 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=120&q=80'}
+                          alt={captainPlayer.name}
+                          className="w-9 h-9 rounded-full object-cover border-2 border-amber-400 shadow-sm"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=120&q=80';
+                          }}
+                        />
+                        <span className="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 text-[10px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">
+                          👑
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-white text-xs truncate">{captainPlayer.name}</span>
+                          <span className="text-[9px] font-black px-1.5 py-0.2 bg-amber-400/20 text-amber-300 rounded border border-amber-400/30">
+                            Grade {captainPlayer.grade || 'A'}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 truncate">
+                          Team Captain • {captainPlayer.role}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 flex-shrink-0">
+                      {captainPlayer.soldPrice ? `${captainPlayer.soldPrice.toLocaleString()} pts` : 'Assigned'}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="mt-3.5 p-2 rounded-xl bg-slate-950/40 border border-dashed border-slate-800 flex items-center justify-center gap-1.5 text-[11px] text-slate-500">
+                    <span>👑</span>
+                    <span>Captain TBD</span>
+                  </div>
+                )}
 
                 {/* Budget Progress Meter */}
                 <div className="mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">

@@ -702,13 +702,9 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     const player = players.find(p => p.id === playerId);
     if (!player) return { success: false, message: 'Player not found.' };
 
-    if (player.captainOfTeamId && player.captainOfTeamId !== teamId) {
-      const otherTeam = teams.find(t => t.id === player.captainOfTeamId);
-      return {
-        success: false,
-        message: `${player.name} is already assigned as Captain to ${otherTeam?.name || 'another team'}. Remove from that team first.`
-      };
-    }
+    // Find if player is already assigned as captain or squad member to another team for seamless reassignment
+    const prevAssignedTeamId = player.captainOfTeamId || (player.teamId && player.teamId !== teamId && player.isCaptain ? player.teamId : undefined);
+    const prevAssignedTeam = prevAssignedTeamId ? teams.find(t => t.id === prevAssignedTeamId) : undefined;
 
     let cost = 0;
     if (customCost !== undefined) {
@@ -728,8 +724,11 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       };
     }
 
-    const prevCaptainId = team.captainPlayerId;
+    const prevCaptainOfTargetTeamId = team.captainPlayerId;
 
+    // Update players state:
+    // 1. Target player gets marked as sold captain, keeping their original grade!
+    // 2. Previous captain of target team (if different) is reset to upcoming
     setPlayers(prev => prev.map(p => {
       if (p.id === playerId) {
         return {
@@ -740,10 +739,11 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           teamId: teamId,
           status: 'sold',
           soldPrice: cost,
-          grade: 'A+',
+          // Preserve player's existing grade
+          grade: p.grade || 'A',
         };
       }
-      if (prevCaptainId && p.id === prevCaptainId && p.id !== playerId) {
+      if (prevCaptainOfTargetTeamId && p.id === prevCaptainOfTargetTeamId && p.id !== playerId) {
         return {
           ...p,
           isCaptain: false,
@@ -757,40 +757,69 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       return p;
     }));
 
+    // Update teams state:
     setTeams(prev => prev.map(t => {
+      // If this was the team previously holding this player, release player & refund previous cost
+      if (prevAssignedTeam && t.id === prevAssignedTeam.id && t.id !== teamId) {
+        const refundOldCost = player.soldPrice || 0;
+        return {
+          ...t,
+          captain: undefined,
+          captainPlayerId: undefined,
+          squad: t.squad.filter(id => id !== playerId),
+          remainingBudget: t.remainingBudget + refundOldCost,
+          totalSpent: Math.max(0, t.totalSpent - refundOldCost),
+        };
+      }
+
+      // Target team updates: set captain, add to squad, adjust budget
       if (t.id === teamId) {
-        const filteredSquad = t.squad.filter(id => id !== prevCaptainId && id !== playerId);
+        const oldCapPlayer = prevCaptainOfTargetTeamId && prevCaptainOfTargetTeamId !== playerId
+          ? players.find(p => p.id === prevCaptainOfTargetTeamId)
+          : null;
+        const refundOldCapCost = oldCapPlayer?.soldPrice || 0;
+
+        const filteredSquad = t.squad.filter(id => id !== prevCaptainOfTargetTeamId && id !== playerId);
+        const newBudget = Math.max(0, t.remainingBudget + refundOldCapCost - cost);
+        const newSpent = Math.max(0, t.totalSpent - refundOldCapCost + cost);
+
         return {
           ...t,
           captain: player.name,
           captainPlayerId: player.id,
           squad: [...filteredSquad, player.id],
-          remainingBudget: Math.max(0, t.remainingBudget - cost),
-          totalSpent: t.totalSpent + cost,
+          remainingBudget: newBudget,
+          totalSpent: newSpent,
         };
       }
       return t;
     }));
 
-    logAndPersistSave('auto', `Allocated Captain: ${player.name} to ${team.name} (${cost > 0 ? `${cost.toLocaleString()} pts` : 'Free/Zero-Cost'})`);
+    const reassignedNotice = prevAssignedTeam ? ` (Reassigned from ${prevAssignedTeam.name})` : '';
+    logAndPersistSave('auto', `Allocated Captain: ${player.name} to ${team.name}${reassignedNotice} (${cost > 0 ? `${cost.toLocaleString()} pts` : 'Free/Zero-Cost'})`);
 
     return {
       success: true,
-      message: `Successfully assigned ${player.name} as Captain of ${team.name}!`,
+      message: `Successfully assigned ${player.name} as Captain of ${team.name}!${reassignedNotice}`,
     };
   }, [teams, players, rules, logAndPersistSave]);
 
   const removeCaptainFromTeam = useCallback((teamId: string): { success: boolean; message: string } => {
     const team = teams.find(t => t.id === teamId);
-    if (!team || !team.captainPlayerId) {
+    if (!team) {
+      return { success: false, message: 'Team not found.' };
+    }
+
+    const captainPlayer = players.find(p => p.id === team.captainPlayerId || (p.teamId === teamId && p.isCaptain));
+    if (!team.captainPlayerId && !captainPlayer) {
       return { success: false, message: 'No captain assigned to this team.' };
     }
 
-    const captainPlayer = players.find(p => p.id === team.captainPlayerId);
+    const captainIdToRemove = team.captainPlayerId || captainPlayer?.id;
     const refund = captainPlayer?.soldPrice || 0;
 
     setPlayers(prev => prev.map(p => {
-      if (p.id === team.captainPlayerId) {
+      if (p.id === captainIdToRemove) {
         return {
           ...p,
           isCaptain: false,
@@ -810,7 +839,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           ...t,
           captain: undefined,
           captainPlayerId: undefined,
-          squad: t.squad.filter(id => id !== team.captainPlayerId),
+          squad: t.squad.filter(id => id !== captainIdToRemove),
           remainingBudget: t.remainingBudget + refund,
           totalSpent: Math.max(0, t.totalSpent - refund),
         };
@@ -1584,10 +1613,13 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // RESET TEAM BUDGET
   const resetTeamBudget = useCallback((teamId: string) => {
+    // Reset team budget and clear squad & captain
     setTeams(prev => prev.map(t => {
       if (t.id === teamId) {
         return {
           ...t,
+          captain: undefined,
+          captainPlayerId: undefined,
           remainingBudget: t.startingBudget,
           totalSpent: 0,
           squad: [],
@@ -1598,17 +1630,22 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     // Reset status of players belonging to this team
     setPlayers(prev => prev.map(p => {
-      if (p.teamId === teamId) {
+      if (p.teamId === teamId || p.captainOfTeamId === teamId) {
         return {
           ...p,
           status: 'upcoming',
           teamId: null,
           soldPrice: null,
+          isCaptain: false,
+          isPreAssignedCaptain: false,
+          captainOfTeamId: undefined,
         };
       }
       return p;
     }));
-  }, []);
+
+    logAndPersistSave('auto', `Reset budget and squad for team`);
+  }, [logAndPersistSave]);
 
   // REMOVE PLAYER FROM SQUAD
   const removePlayerFromSquad = useCallback((teamId: string, playerId: string) => {
@@ -1617,8 +1654,11 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     setTeams(prev => prev.map(t => {
       if (t.id === teamId) {
+        const isTeamCaptain = t.captainPlayerId === playerId || (player && t.captain === player.name);
         return {
           ...t,
+          captain: isTeamCaptain ? undefined : t.captain,
+          captainPlayerId: isTeamCaptain ? undefined : t.captainPlayerId,
           remainingBudget: t.remainingBudget + refundPrice,
           totalSpent: Math.max(0, t.totalSpent - refundPrice),
           squad: t.squad.filter(id => id !== playerId),
@@ -1634,11 +1674,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           status: 'upcoming',
           teamId: null,
           soldPrice: null,
+          isCaptain: false,
+          isPreAssignedCaptain: false,
+          captainOfTeamId: undefined,
         };
       }
       return p;
     }));
-  }, [players]);
+
+    logAndPersistSave('auto', `Released player ${player?.name || playerId} from squad`);
+  }, [players, logAndPersistSave]);
 
   // TOGGLE WISHLIST
   const toggleWishlist = useCallback((teamId: string, playerId: string) => {

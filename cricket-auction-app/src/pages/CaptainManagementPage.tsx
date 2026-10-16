@@ -44,11 +44,13 @@ export const CaptainManagementPage: React.FC = () => {
   const teamCaptainMap = useMemo(() => {
     const map = new Map<string, Player | undefined>();
     teams.forEach((team) => {
-      // Find player with isCaptain or isPreAssignedCaptain in team's squad or matching captain name
+      // Find player with captainPlayerId, captainOfTeamId, isCaptain/isPreAssignedCaptain in team's squad, or matching captain name
       const captainInSquad = players.find(
         (p) =>
-          (p.teamId === team.id || team.squad.includes(p.id)) &&
-          (p.isCaptain || p.isPreAssignedCaptain || (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase()))
+          p.id === team.captainPlayerId ||
+          p.captainOfTeamId === team.id ||
+          ((p.teamId === team.id || team.squad.includes(p.id)) &&
+            (p.isCaptain || p.isPreAssignedCaptain || (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase())))
       );
       map.set(team.id, captainInSquad);
     });
@@ -69,21 +71,9 @@ export const CaptainManagementPage: React.FC = () => {
   const assignedCaptainsCount = Array.from(teamCaptainMap.values()).filter(Boolean).length;
   const unassignedTeamsCount = totalTeams - assignedCaptainsCount;
 
-  // Filter available players for captain selection modal
+  // Filter available players for captain selection modal - allow all players to be viewed and searched
   const eligiblePlayers = useMemo(() => {
     return players.filter((player) => {
-      // Exclude players who are already captains of other teams
-      if (assignedCaptainIds.has(player.id)) {
-        // If they are current team's captain, allow seeing them
-        const currentTeamCap = selectedTeamForAssignment ? teamCaptainMap.get(selectedTeamForAssignment.id) : null;
-        if (currentTeamCap?.id !== player.id) return false;
-      }
-
-      // Exclude players already sold to another team (unless they are assigned to this team)
-      if (player.teamId && selectedTeamForAssignment && player.teamId !== selectedTeamForAssignment.id) {
-        return false;
-      }
-
       const matchesSearch =
         player.name.toLowerCase().includes(playerSearchQuery.toLowerCase()) ||
         (player.category ? player.category.toLowerCase().includes(playerSearchQuery.toLowerCase()) : false) ||
@@ -93,7 +83,7 @@ export const CaptainManagementPage: React.FC = () => {
 
       return matchesSearch && matchesGrade;
     });
-  }, [players, assignedCaptainIds, selectedTeamForAssignment, teamCaptainMap, playerSearchQuery, gradeFilter]);
+  }, [players, playerSearchQuery, gradeFilter]);
 
   // Open assignment modal
   const handleOpenAssign = (team: Team) => {
@@ -259,7 +249,7 @@ export const CaptainManagementPage: React.FC = () => {
                   {/* Team Identity */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      {team.logo ? (
+                      {team.logo && (team.logo.startsWith('http') || team.logo.startsWith('/') || team.logo.startsWith('data:')) ? (
                         <img
                           src={team.logo}
                           alt={team.name}
@@ -267,10 +257,9 @@ export const CaptainManagementPage: React.FC = () => {
                         />
                       ) : (
                         <div
-                          className="w-11 h-11 rounded-xl flex items-center justify-center font-black text-slate-950 text-sm shadow"
-                          style={{ backgroundColor: team.color || '#f59e0b' }}
+                          className="w-11 h-11 rounded-xl flex items-center justify-center font-black text-white text-xl shadow border border-slate-700 bg-slate-950"
                         >
-                          {team.shortName || team.name.substring(0, 3).toUpperCase()}
+                          {team.logo || team.shortName || team.name.substring(0, 3).toUpperCase()}
                         </div>
                       )}
                       <div>
@@ -453,6 +442,17 @@ export const CaptainManagementPage: React.FC = () => {
                 eligiblePlayers.map((player) => {
                   const isCurrentCap =
                     teamCaptainMap.get(selectedTeamForAssignment.id)?.id === player.id;
+                  const otherCaptainTeam = teams.find(
+                    (t) =>
+                      t.id !== selectedTeamForAssignment.id &&
+                      (t.captainPlayerId === player.id ||
+                        player.captainOfTeamId === t.id ||
+                        (t.captain && player.name.trim().toLowerCase() === t.captain.trim().toLowerCase()))
+                  );
+                  const otherSquadTeam =
+                    !otherCaptainTeam && player.teamId && player.teamId !== selectedTeamForAssignment.id
+                      ? teams.find((t) => t.id === player.teamId)
+                      : null;
 
                   return (
                     <div
@@ -467,16 +467,30 @@ export const CaptainManagementPage: React.FC = () => {
                           }
                           alt={player.name}
                           className="w-10 h-10 rounded-full object-cover border border-slate-700"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src =
+                              'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=120&q=80';
+                          }}
                         />
                         <div>
-                          <div className="flex items-center gap-2 font-bold text-sm text-white">
-                            {player.name}
+                          <div className="flex items-center gap-2 font-bold text-sm text-white flex-wrap">
+                            <span>{player.name}</span>
                             <span className="px-1.5 py-0.2 rounded text-[10px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/30">
                               Grade {player.grade || 'A'}
                             </span>
                             {player.isViceCaptain && (
                               <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-500 text-white">
                                 VC
+                              </span>
+                            )}
+                            {otherCaptainTeam && (
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                👑 Captain of {otherCaptainTeam.name}
+                              </span>
+                            )}
+                            {otherSquadTeam && (
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                In {otherSquadTeam.name} Squad
                               </span>
                             )}
                           </div>
@@ -492,12 +506,37 @@ export const CaptainManagementPage: React.FC = () => {
                             <CheckCircle2 className="w-4 h-4" />
                             Current Captain
                           </span>
+                        ) : otherCaptainTeam ? (
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Reassign ${player.name} from ${otherCaptainTeam.name} to ${selectedTeamForAssignment.name}?`)) {
+                                handleConfirmAssignment(player);
+                              }
+                            }}
+                            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 transition-colors shadow flex items-center gap-1"
+                          >
+                            <span>Reassign</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        ) : otherSquadTeam ? (
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Transfer ${player.name} from ${otherSquadTeam.name} squad and assign as Captain to ${selectedTeamForAssignment.name}?`)) {
+                                handleConfirmAssignment(player);
+                              }
+                            }}
+                            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-500/20 hover:bg-blue-500 text-blue-300 hover:text-white border border-blue-500/40 transition-colors shadow flex items-center gap-1"
+                          >
+                            <span>Transfer & Assign</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
                         ) : (
                           <button
                             onClick={() => handleConfirmAssignment(player)}
                             className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-colors shadow flex items-center gap-1"
                           >
-                            Assign <ArrowRight className="w-3.5 h-3.5" />
+                            <span>Assign</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
                           </button>
                         )}
                       </div>

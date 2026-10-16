@@ -32,7 +32,18 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
 
   if (!isOpen || !team) return null;
 
-  const squadPlayers = allPlayers.filter(p => team.squad.includes(p.id));
+  const squadPlayers = allPlayers.filter(p => team.squad.includes(p.id) || p.teamId === team.id || p.id === team.captainPlayerId);
+  const captainPlayer = allPlayers.find(p => p.id === team.captainPlayerId || (p.teamId === team.id && (p.isCaptain || p.isPreAssignedCaptain)) || (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase()));
+
+  // Sort squad so captain is first
+  squadPlayers.sort((a, b) => {
+    const aIsCap = a.id === team.captainPlayerId || a.id === captainPlayer?.id || a.isCaptain || a.isPreAssignedCaptain;
+    const bIsCap = b.id === team.captainPlayerId || b.id === captainPlayer?.id || b.isCaptain || b.isPreAssignedCaptain;
+    if (aIsCap && !bIsCap) return -1;
+    if (!aIsCap && bIsCap) return 1;
+    return 0;
+  });
+
   const batsmen = squadPlayers.filter(p => p.role === 'Batsman');
   const bowlers = squadPlayers.filter(p => p.role === 'Bowler');
   const wicketkeepers = squadPlayers.filter(p => p.role === 'Wicketkeeper');
@@ -91,8 +102,24 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
                   {team.shortName}
                 </span>
               </div>
-              <div className="text-xs text-slate-400">
-                Owner: {team.owner || 'Franchise Board'} • Captain: {team.captain || 'TBD'}
+              <div className="text-xs text-slate-400 flex items-center gap-2 mt-1">
+                <span>Owner: {team.owner || 'Franchise Board'}</span>
+                <span>•</span>
+                <span className="flex items-center gap-1.5 font-semibold text-amber-300">
+                  {captainPlayer?.photo ? (
+                    <img
+                      src={captainPlayer.photo}
+                      alt={captainPlayer.name}
+                      className="w-5 h-5 rounded-full object-cover border border-amber-400/60"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <span>👑</span>
+                  )}
+                  <span>Captain: {captainPlayer ? captainPlayer.name : (team.captain || 'TBD')}</span>
+                </span>
               </div>
             </div>
           </div>
@@ -287,7 +314,11 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
                           <div className="flex flex-col">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span>{p.name}</span>
-                              {p.isCaptain && <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">👑 Captain</span>}
+                              {(p.isCaptain || p.isPreAssignedCaptain || p.id === team.captainPlayerId || p.id === captainPlayer?.id) && (
+                                <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">
+                                  👑 Captain
+                                </span>
+                              )}
                               {p.isViceCaptain && <span className="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono font-bold">⭐ VC</span>}
                               {(p.isSponsored || p.sponsorTag) && (
                                 <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono">

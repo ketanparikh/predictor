@@ -57,7 +57,7 @@ export function subscribeAuctionStateFromFirestore(
   try {
     initFirebase();
     if (!db) return () => {};
-    return onSnapshot(doc(db, STATE_DOC[0], STATE_DOC[1]), (snap) => {
+    return onSnapshot(doc(db, STATE_DOC[0], STATE_DOC[1]), (snap: any) => {
       const raw = snap.data()?.json;
       if (typeof raw !== 'string') return;
       try {

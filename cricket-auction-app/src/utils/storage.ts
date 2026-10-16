@@ -1,4 +1,4 @@
-import { Team, Player, AuctionTransaction, AuctionRules, TournamentInfo } from '../types/auction';
+import { Team, Player, AuctionTransaction, AuctionRules, TournamentInfo, AuctionOrderingMode, GradeCategoryMaxBid, SaveLogEntry, SaveSnapshot } from '../types/auction';
 import { initialTeams, initialPlayers, initialAuctionRules, initialTournamentInfo } from '../data/demoData';
 
 const STORAGE_KEYS = {
@@ -11,6 +11,11 @@ const STORAGE_KEYS = {
   CURRENT_BID: 'cricket_auction_current_bid_v3',
   CURRENT_BIDDER_ID: 'cricket_auction_current_bidder_v3',
   BID_HISTORY: 'cricket_auction_bid_history_v3',
+  AUCTION_ORDER_MODE: 'cricket_auction_order_mode_v3',
+  CUSTOM_ORDER_IDS: 'cricket_auction_custom_order_ids_v3',
+  SAVE_LOGS: 'cricket_auction_save_logs_v3',
+  SAVE_SNAPSHOTS: 'cricket_auction_save_snapshots_v3',
+  LAST_SAVED: 'cricket_auction_last_saved_v3',
 };
 
 // Legacy keys to clean up automatically
@@ -36,6 +41,9 @@ export interface AppStoredState {
   currentBid: number;
   currentBidderId: string | null;
   bidHistory: Array<{ id: string; teamId: string; teamName: string; amount: number; timestamp: string }>;
+  auctionOrderMode?: AuctionOrderingMode;
+  customAuctionOrderIds?: string[];
+  lastSaved?: string;
 }
 
 export const loadStoredState = (): AppStoredState => {
@@ -135,6 +143,10 @@ export const loadStoredState = (): AppStoredState => {
       localStorage.setItem(STORAGE_KEYS.TEAMS, JSON.stringify(loadedTeams));
     }
 
+    const rawOrderMode = localStorage.getItem(STORAGE_KEYS.AUCTION_ORDER_MODE);
+    const rawCustomOrderIds = localStorage.getItem(STORAGE_KEYS.CUSTOM_ORDER_IDS);
+    const rawLastSaved = localStorage.getItem(STORAGE_KEYS.LAST_SAVED);
+
     return {
       teams: loadedTeams,
       players: loadedPlayers,
@@ -145,6 +157,9 @@ export const loadStoredState = (): AppStoredState => {
       currentBid: rawCurrentBid ? Number(rawCurrentBid) : 0,
       currentBidderId: rawCurrentBidderId ? JSON.parse(rawCurrentBidderId) : null,
       bidHistory: rawBidHistory ? JSON.parse(rawBidHistory) : [],
+      auctionOrderMode: (rawOrderMode as AuctionOrderingMode) || 'default',
+      customAuctionOrderIds: rawCustomOrderIds ? JSON.parse(rawCustomOrderIds) : undefined,
+      lastSaved: rawLastSaved || new Date().toISOString(),
     };
   } catch (err) {
     console.error('Error loading stored auction state, resetting to demo:', err);
@@ -158,6 +173,8 @@ export const loadStoredState = (): AppStoredState => {
       currentBid: 0,
       currentBidderId: null,
       bidHistory: [],
+      auctionOrderMode: 'default',
+      lastSaved: new Date().toISOString(),
     };
   }
 };
@@ -173,16 +190,86 @@ export const saveStoredState = (state: Partial<AppStoredState>) => {
     if (state.currentBid !== undefined) localStorage.setItem(STORAGE_KEYS.CURRENT_BID, String(state.currentBid));
     if (state.currentBidderId !== undefined) localStorage.setItem(STORAGE_KEYS.CURRENT_BIDDER_ID, JSON.stringify(state.currentBidderId));
     if (state.bidHistory !== undefined) localStorage.setItem(STORAGE_KEYS.BID_HISTORY, JSON.stringify(state.bidHistory));
+    if (state.auctionOrderMode !== undefined) localStorage.setItem(STORAGE_KEYS.AUCTION_ORDER_MODE, state.auctionOrderMode);
+    if (state.customAuctionOrderIds !== undefined) localStorage.setItem(STORAGE_KEYS.CUSTOM_ORDER_IDS, JSON.stringify(state.customAuctionOrderIds));
+    const now = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEYS.LAST_SAVED, now);
   } catch (err) {
     console.error('Error saving auction state to localStorage:', err);
   }
+};
+
+// ================= SAVE LOGS & SNAPSHOTS MANAGEMENT =================
+
+export const loadSaveLogs = (): SaveLogEntry[] => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.SAVE_LOGS);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+};
+
+export const appendSaveLog = (entry: SaveLogEntry): void => {
+  try {
+    const logs = loadSaveLogs();
+    const updated = [entry, ...logs].slice(0, 100); // keep last 100 operations
+    localStorage.setItem(STORAGE_KEYS.SAVE_LOGS, JSON.stringify(updated));
+  } catch {}
+};
+
+export const loadSaveSnapshots = (): SaveSnapshot[] => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.SAVE_SNAPSHOTS);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+};
+
+export const createAndStoreSnapshot = (
+  description: string,
+  state: AppStoredState,
+  name?: string
+): SaveSnapshot => {
+  const snapshot: SaveSnapshot = {
+    id: `snap-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    timestamp: new Date().toISOString(),
+    name: name || `Backup: ${description}`,
+    description,
+    state: {
+      players: state.players,
+      teams: state.teams,
+      transactions: state.transactions,
+      tournament: state.tournament,
+      rules: state.rules,
+      auctionOrderMode: state.auctionOrderMode,
+      customAuctionOrderIds: state.customAuctionOrderIds,
+      gradeCategoryMaxBids: state.rules.gradeCategoryMaxBids,
+      currentPlayerId: state.currentPlayerId,
+      currentBid: state.currentBid,
+      currentBidderId: state.currentBidderId,
+    },
+  };
+
+  try {
+    const existing = loadSaveSnapshots();
+    const updated = [snapshot, ...existing].slice(0, 20); // retain up to 20 restore points
+    localStorage.setItem(STORAGE_KEYS.SAVE_SNAPSHOTS, JSON.stringify(updated));
+  } catch (err) {
+    console.error('Failed to store snapshot:', err);
+  }
+
+  return snapshot;
+};
+
+export const getLastSavedTimestamp = (): string => {
+  return localStorage.getItem(STORAGE_KEYS.LAST_SAVED) || new Date().toISOString();
 };
 
 export const exportStateAsJSON = (state: AppStoredState): void => {
   const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
   const downloadAnchor = document.createElement('a');
   downloadAnchor.setAttribute('href', dataStr);
-  downloadAnchor.setAttribute('download', `auction_backup_100_players_${new Date().toISOString().slice(0, 10)}.json`);
+  downloadAnchor.setAttribute('download', `jcpl4_auction_backup_${new Date().toISOString().slice(0, 10)}.json`);
   document.body.appendChild(downloadAnchor);
   downloadAnchor.click();
   downloadAnchor.remove();

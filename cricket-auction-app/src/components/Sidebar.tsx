@@ -14,6 +14,9 @@ import {
   Settings,
   Trophy,
   X,
+  ListOrdered,
+  Crown,
+  Database,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -29,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isMobileOpen,
   onCloseMobile,
 }) => {
-  const { players, teams, transactions } = useAuction();
+  const { players, teams, transactions, saveLogs } = useAuction();
 
   const totalPlayers = players.length;
   const soldPlayers = players.filter(p => p.status === 'sold').length;
@@ -49,7 +52,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Live Auction',
       icon: Gavel,
       badge: upcomingPlayers > 0 ? `${upcomingPlayers} Left` : 'Done',
-      badgeColor: upcomingPlayers > 0 ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-slate-800 text-slate-400',
+      badgeColor: upcomingPlayers > 0 ? 'bg-orange-500/20 text-orange-300 border-orange-500/40' : 'bg-slate-800 text-slate-400',
+    },
+    {
+      id: 'auction_order',
+      label: 'Auction Order',
+      icon: ListOrdered,
+      badge: 'Queue',
+      badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+    },
+    {
+      id: 'captain_management',
+      label: 'Captain Allocation',
+      icon: Crown,
+      badge: `${teams.filter(t => t.captain).length}/${teams.length}`,
+      badgeColor: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40',
     },
     {
       id: 'players',
@@ -60,7 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: 'teams',
-      label: 'Teams (10)',
+      label: `Teams (${teams.length})`,
       icon: Shield,
       badge: teams.length,
       badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/40',
@@ -78,6 +95,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: UserX,
       badge: unsoldPlayers > 0 ? unsoldPlayers : undefined,
       badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+    },
+    {
+      id: 'save_logs',
+      label: 'Save Data & Logs',
+      icon: Database,
+      badge: saveLogs.length > 0 ? `${saveLogs.length}` : undefined,
+      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
     },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'ai_assistant', label: 'AI Strategy Assistant', icon: Bot },
@@ -185,7 +209,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Sidebar Footer */}
         <div className="p-3 border-t border-slate-800/80 bg-slate-950/50">
           <div className="flex items-center justify-between text-[11px] text-slate-500 px-1">
-            <span>IPL Auction Engine v2.0</span>
+            <span>JCPL 4 Auction Engine</span>
             <span className="text-emerald-400 flex items-center gap-1 font-mono">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               Live

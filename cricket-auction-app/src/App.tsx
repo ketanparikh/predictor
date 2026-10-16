@@ -16,6 +16,9 @@ const AIAssistantPage = lazy(() => import('./pages/AIAssistantPage').then(m => (
 const ExcelImportPage = lazy(() => import('./pages/ExcelImportPage').then(m => ({ default: m.ExcelImportPage })));
 const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const AuctionCompletePage = lazy(() => import('./pages/AuctionCompletePage').then(m => ({ default: m.AuctionCompletePage })));
+const AuctionOrderPage = lazy(() => import('./pages/AuctionOrderPage').then(m => ({ default: m.AuctionOrderPage })));
+const CaptainManagementPage = lazy(() => import('./pages/CaptainManagementPage').then(m => ({ default: m.CaptainManagementPage })));
+const SaveLogsPage = lazy(() => import('./pages/SaveLogsPage').then(m => ({ default: m.SaveLogsPage })));
 const Navbar = lazy(() => import('./components/Navbar').then(m => ({ default: m.Navbar })));
 const Sidebar = lazy(() => import('./components/Sidebar').then(m => ({ default: m.Sidebar })));
 const QRCodeModal = lazy(() => import('./components/QRCodeModal').then(m => ({ default: m.QRCodeModal })));
@@ -160,6 +163,18 @@ const AppContent: React.FC = () => {
               )}
 
               {currentTab === 'settings' && <SettingsPage />}
+
+              {currentTab === 'auction_order' && (
+                <AuctionOrderPage onStartAuction={handleStartAuction} />
+              )}
+
+              {currentTab === 'captain_management' && (
+                <CaptainManagementPage />
+              )}
+
+              {currentTab === 'save_logs' && (
+                <SaveLogsPage />
+              )}
 
               {currentTab === 'complete' && <AuctionCompletePage />}
             </Suspense>

@@ -75,7 +75,6 @@ export const UnsoldPlayersPage: React.FC<UnsoldPlayersPageProps> = ({ onStartAuc
               player={player}
               teams={teams}
               onStartAuction={p => onStartAuction(p)}
-              onToggleWishlist={toggleWishlist}
             />
           ))}
         </div>

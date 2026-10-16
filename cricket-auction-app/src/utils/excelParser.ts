@@ -36,10 +36,33 @@ export interface ParsedPlayerRow {
   sponsorTag?: string;
   isSponsored?: boolean;
   photo?: string;
+  cricheroesProfileUrl?: string;
   auctionOrder?: number;
   errors: string[];
   warnings: string[];
   rawIndex: number;
+}
+
+export function normalizePhotoUrl(url: string): string {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+
+  // Google Drive link conversion: convert share/view links to direct thumbnail/image links
+  if (trimmed.includes('drive.google.com') || trimmed.includes('docs.google.com')) {
+    const matchId = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/) || trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (matchId && matchId[1]) {
+      const fileId = matchId[1];
+      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
+    }
+  }
+
+  // Dropbox link conversion: dl=0 -> raw=1
+  if (trimmed.includes('dropbox.com')) {
+    return trimmed.replace('dl=0', 'raw=1');
+  }
+
+  return trimmed;
 }
 
 /**
@@ -366,9 +389,14 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
     const isSponsored = !!sponsorVal && sponsorVal.toLowerCase() !== 'no' && sponsorVal.toLowerCase() !== 'none' && sponsorVal.toLowerCase() !== 'false';
     const sponsorTag = isSponsored ? sponsorVal : undefined;
 
-    // Photo / Image URL Detection
-    const rawPhoto = String(findVal(['photo', 'photo url', 'photourl', 'image', 'image url', 'picture', 'pic', 'avatar', 'img']) || '').trim();
-    const photo = rawPhoto && (rawPhoto.startsWith('http') || rawPhoto.startsWith('data:') || rawPhoto.startsWith('/') || rawPhoto.includes('.')) ? rawPhoto : undefined;
+    // Photo / Image URL Detection (Handles Google Drive share links, direct URLs, cloud paths)
+    const rawPhoto = String(findVal(['photo', 'photo url', 'photourl', 'image', 'image url', 'picture', 'pic', 'avatar', 'img', 'drive link', 'drive url', 'photo link']) || '').trim();
+    const normalizedPhoto = normalizePhotoUrl(rawPhoto);
+    const photo = normalizedPhoto && (normalizedPhoto.startsWith('http') || normalizedPhoto.startsWith('data:') || normalizedPhoto.startsWith('/') || normalizedPhoto.includes('.')) ? normalizedPhoto : undefined;
+
+    // CricHeroes Account / Profile Link Detection
+    const rawCricHeroes = String(findVal(['cricheroes', 'cricheroes profile', 'cricheroes url', 'cricheroes link', 'profile url', 'account link', 'cricheroes account']) || '').trim();
+    const cricheroesProfileUrl = rawCricHeroes || undefined;
 
     // Auction Order Sequencing
     const rawOrder = findVal(['auction order', 'auctionorder', 'order', 'lot', 'lot no', 'lot number', 'sequence', 'seq']);
@@ -532,6 +560,7 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
       sponsorTag,
       isSponsored,
       photo,
+      cricheroesProfileUrl,
       auctionOrder,
       errors,
       warnings,

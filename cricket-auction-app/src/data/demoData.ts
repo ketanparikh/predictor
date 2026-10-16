@@ -1,9 +1,9 @@
 import { Team, Player, TournamentInfo, AuctionRules } from '../types/auction';
 
 export const initialTournamentInfo: TournamentInfo = {
-  name: 'Premier Cricket League (PCL)',
-  season: 'Season 2026',
-  organizer: 'Tournament Auction Committee',
+  name: 'JCPL 4',
+  season: 'Season 4',
+  organizer: 'JCPL Tournament Committee',
   venue: 'Grand Arena Club & Sports Complex',
 };
 

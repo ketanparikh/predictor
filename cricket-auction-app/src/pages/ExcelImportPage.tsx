@@ -6,7 +6,9 @@ import {
   ParsedPlayerRow,
   analyzePlayerGradeWithAI,
   calculateRecommendedGrade,
+  normalizePhotoUrl,
 } from '../utils/excelParser';
+import { parseCricHeroesHtml } from '../utils/cricheroesParser';
 import { PlayerRole, PlayerGrade } from '../types/auction';
 import {
   FileSpreadsheet,
@@ -162,6 +164,17 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
         return updated;
       });
     });
+  };
+
+  const handleEditPhotoPrompt = (rawIndex: number, currentPhoto?: string) => {
+    const input = window.prompt(
+      'Enter photo link for player (Google Drive links, web URLs, cloud paths):\nLeave empty to remove photo.',
+      currentPhoto || ''
+    );
+    if (input !== null) {
+      const normalized = normalizePhotoUrl(input.trim());
+      handleUpdateRowField(rawIndex, 'photo', normalized || undefined);
+    }
   };
 
   const handleDeleteRow = (rawIndex: number) => {
@@ -420,74 +433,93 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
     );
   };
 
-  // Bulk CricHeroes stats fetch simulation
+  // Real CricHeroes stats fetch based on account / profile link (Requirement 1)
   const handleBulkStatsFetch = async () => {
     if (parsedRows.length === 0) return;
-    setIsFetchingStats(true);
-    setFetchProgress(20);
 
-    await new Promise(res => setTimeout(res, 300));
-    setFetchProgress(60);
-    await new Promise(res => setTimeout(res, 300));
-    setFetchProgress(90);
-
-    setParsedRows(prev =>
-      prev.map((r, idx) => {
-        const isBatter = r.role === 'Batsman';
-        const isBowler = r.role === 'Bowler';
-        const isKeeper = r.role === 'Wicketkeeper';
-
-        const matches = r.matches > 0 ? r.matches : Math.max(12, Math.round((r.experience || 3) * 6 + (idx % 10)));
-        const runs = r.runs > 0 ? r.runs : isBatter ? Math.round(matches * 28 + (idx % 20) * 15) : isKeeper ? Math.round(matches * 22) : Math.round(matches * 6);
-        const avg = r.average > 0 ? r.average : isBatter ? 32.5 + (idx % 5) : isKeeper ? 26.0 : 12.0;
-        const sr = r.strikeRate > 0 ? r.strikeRate : isBatter ? 138.0 + (idx % 12) : 110.0;
-        const wickets = r.wickets > 0 ? r.wickets : isBowler ? Math.round(matches * 1.4 + (idx % 8)) : Math.round(matches * 0.2);
-        const econ = r.economyRate > 0 ? r.economyRate : isBowler ? 7.2 : 8.8;
-
-        const stats = {
-          runs,
-          average: avg,
-          strikeRate: sr,
-          fifties: Math.floor(runs / 200),
-          hundreds: Math.floor(runs / 600),
-          wickets,
-          bowlingAverage: wickets > 0 ? Math.round((runs / wickets) * 0.4 * 10) / 10 : 0,
-          economyRate: econ,
-          catches: isKeeper ? Math.round(matches * 0.9) : Math.round(matches * 0.4),
-          stumpings: isKeeper ? Math.round(matches * 0.3) : 0,
-        };
-
-        const rec = calculateRecommendedGrade(stats, r.role, r.isCaptain, r.isViceCaptain);
-        let newBp = gradeBasePrices.gradeC;
-        if (rec.grade === 'A+') newBp = gradeBasePrices.gradeAPlus || 7000;
-        else if (rec.grade === 'A') newBp = gradeBasePrices.gradeA || 5000;
-        else if (rec.grade === 'B') newBp = gradeBasePrices.gradeB || 3000;
-        else newBp = gradeBasePrices.gradeC || 1000;
-
-        return {
-          ...r,
-          matches,
-          runs,
-          average: avg,
-          strikeRate: sr,
-          wickets,
-          economyRate: econ,
-          fifties: stats.fifties,
-          hundreds: stats.hundreds,
-          catches: stats.catches,
-          stumpings: stats.stumpings,
-          grade: rec.grade,
-          gradeReason: `CricHeroes: ${rec.reason}`,
-          basePrice: newBp,
-        };
-      })
+    // Check which rows have a CricHeroes profile link
+    const rowsWithLinks = parsedRows.filter(
+      r => r.cricheroesProfileUrl && r.cricheroesProfileUrl.trim().length > 0
     );
 
-    setFetchProgress(100);
-    setTimeout(() => {
-      setIsFetchingStats(false);
-      setFetchProgress(0);
-    }, 400);
+    if (rowsWithLinks.length === 0) {
+      alert(
+        'No CricHeroes account links found in the imported roster.\n\nPlease ensure your Excel file includes a "CricHeroes Profile" column with valid profile links (e.g. https://chshare.link/... or cricheroes.in/...) before fetching stats.'
+      );
+      return;
+    }
+
+    setIsFetchingStats(true);
+    setFetchProgress(10);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    const updatedRows = [...parsedRows];
+
+    for (let i = 0; i < updatedRows.length; i++) {
+      const r = updatedRows[i];
+      const link = r.cricheroesProfileUrl?.trim();
+
+      if (link && (link.includes('chshare.link') || link.includes('cricheroes.') || link.includes('cricheroes/'))) {
+        try {
+          const resp = await fetch('/api/fetch-cricheroes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ urlOrId: link }),
+          });
+
+          const data = await resp.json();
+          if (resp.ok && data.success && data.html) {
+            const parsed = parseCricHeroesHtml(data.html);
+            const pStats = parsed.player.stats;
+
+            const rec = calculateRecommendedGrade(pStats, r.role, r.isCaptain, r.isViceCaptain);
+            let newBp = gradeBasePrices.gradeC;
+            if (rec.grade === 'A+') newBp = gradeBasePrices.gradeAPlus || 7000;
+            else if (rec.grade === 'A') newBp = gradeBasePrices.gradeA || 5000;
+            else if (rec.grade === 'B') newBp = gradeBasePrices.gradeB || 3000;
+            else newBp = gradeBasePrices.gradeC || 1000;
+
+            updatedRows[i] = {
+              ...r,
+              matches: pStats.matches || r.matches,
+              runs: pStats.runs || r.runs,
+              average: pStats.average || r.average,
+              strikeRate: pStats.strikeRate || r.strikeRate,
+              highestScore: pStats.highestScore || r.highestScore,
+              fifties: pStats.fifties || r.fifties,
+              hundreds: pStats.hundreds || r.hundreds,
+              wickets: pStats.wickets || r.wickets,
+              bowlingAverage: pStats.bowlingAverage || r.bowlingAverage,
+              economyRate: pStats.economyRate || r.economyRate,
+              bestBowling: pStats.bestBowling || r.bestBowling,
+              catches: pStats.catches || r.catches,
+              stumpings: pStats.stumpings || r.stumpings,
+              photo: r.photo || (parsed.player.photo ? normalizePhotoUrl(parsed.player.photo) : undefined),
+              grade: rec.grade,
+              gradeReason: `CricHeroes Official: ${rec.reason}`,
+              basePrice: newBp,
+            };
+            successCount++;
+          } else {
+            failCount++;
+          }
+        } catch {
+          failCount++;
+        }
+      }
+
+      setFetchProgress(Math.round(((i + 1) / updatedRows.length) * 100));
+    }
+
+    setParsedRows(updatedRows);
+    setIsFetchingStats(false);
+    setFetchProgress(0);
+
+    alert(
+      `CricHeroes Bulk Fetch Finished!\n• Successfully fetched stats for: ${successCount} player(s)\n• Failed or invalid profile links: ${failCount} player(s)`
+    );
   };
 
   const handleRunAiAnalysis = () => {
@@ -1069,17 +1101,29 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
                           />
                         </td>
 
-                        {/* Photo Thumbnail */}
+                        {/* Photo Thumbnail with Interactive Preview & Quick Edit */}
                         <td className="p-3">
-                          <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleEditPhotoPrompt(row.rawIndex, row.photo)}
+                            title="Click to view, update, replace, or remove photo"
+                            className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:border-amber-400 flex items-center justify-center overflow-hidden shrink-0 transition-colors group relative cursor-pointer shadow-sm"
+                          >
                             {row.photo ? (
-                              <img src={row.photo} alt={row.name} className="w-full h-full object-cover" />
+                              <img
+                                src={row.photo}
+                                alt={row.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLElement).style.display = 'none';
+                                }}
+                              />
                             ) : (
-                              <span className="text-[10px] text-slate-500 font-bold">
+                              <span className="text-[10px] text-slate-500 font-bold group-hover:text-amber-400">
                                 {row.name ? row.name.charAt(0) : '?'}
                               </span>
                             )}
-                          </div>
+                          </button>
                         </td>
 
                         {/* Name */}

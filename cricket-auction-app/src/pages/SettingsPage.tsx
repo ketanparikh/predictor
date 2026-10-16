@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { exportStateAsJSON, loadStoredState } from '../utils/storage';
-import { GradeBasePrices } from '../types/auction';
+import { GradeBasePrices, GradeCategoryMaxBid, PlayerGrade } from '../types/auction';
 import {
   Settings,
   Shield,
@@ -18,6 +18,7 @@ import {
   Coins,
   Tag,
   Crown,
+  Layers,
 } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
@@ -54,7 +55,7 @@ export const SettingsPage: React.FC = () => {
   const [maxGradeB, setMaxGradeB] = useState(rules.squadRules.maxGradeB || 8);
   const [maxGradeC, setMaxGradeC] = useState(rules.squadRules.maxGradeC || 15);
 
-  // Dedicated Grade Base Prices state (default Grade A+: 7000, Grade A: 5000, Grade B: 3000, Grade C: 1000)
+  // Dedicated Grade Base Prices state
   const [gradeAPlusBasePrice, setGradeAPlusBasePrice] = useState(
     rules.gradeBasePrices?.gradeAPlus ?? 7000
   );
@@ -67,6 +68,49 @@ export const SettingsPage: React.FC = () => {
   const [gradeCBasePrice, setGradeCBasePrice] = useState(
     rules.gradeBasePrices?.gradeC === 1100 ? 1000 : (rules.gradeBasePrices?.gradeC ?? 1000)
   );
+
+  // Grade-Based Maximum Bidding Limits by Player Category (Requirement Part 2.9)
+  const defaultCategoryBids: GradeCategoryMaxBid[] = [
+    { grade: 'A+', category: 'Mens', maxBid: 25000 },
+    { grade: 'A', category: 'Mens', maxBid: 18000 },
+    { grade: 'B', category: 'Mens', maxBid: 10000 },
+    { grade: 'C', category: 'Mens', maxBid: 5000 },
+    { grade: 'A+', category: 'Boys', maxBid: 15000 },
+    { grade: 'A', category: 'Boys', maxBid: 10000 },
+    { grade: 'B', category: 'Boys', maxBid: 6000 },
+    { grade: 'C', category: 'Boys', maxBid: 3000 },
+    { grade: 'A+', category: 'Womens', maxBid: 15000 },
+    { grade: 'A', category: 'Womens', maxBid: 10000 },
+    { grade: 'B', category: 'Womens', maxBid: 6000 },
+    { grade: 'C', category: 'Womens', maxBid: 3000 },
+    { grade: 'A+', category: 'Girls', maxBid: 12000 },
+    { grade: 'A', category: 'Girls', maxBid: 8000 },
+    { grade: 'B', category: 'Girls', maxBid: 5000 },
+    { grade: 'C', category: 'Girls', maxBid: 2500 },
+  ];
+
+  const [categoryMaxBids, setCategoryMaxBids] = useState<GradeCategoryMaxBid[]>(() => {
+    return rules.gradeCategoryMaxBids && rules.gradeCategoryMaxBids.length > 0
+      ? rules.gradeCategoryMaxBids
+      : defaultCategoryBids;
+  });
+
+  const updateMaxBidCell = (grade: PlayerGrade, category: string, value: number) => {
+    setCategoryMaxBids(prev => {
+      const idx = prev.findIndex(item => item.grade === grade && item.category.toLowerCase() === category.toLowerCase());
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = { grade, category, maxBid: value };
+        return copy;
+      }
+      return [...prev, { grade, category, maxBid: value }];
+    });
+  };
+
+  const getCellMaxBid = (grade: PlayerGrade, category: string): number => {
+    const item = categoryMaxBids.find(i => i.grade === grade && i.category.toLowerCase() === category.toLowerCase());
+    return item ? item.maxBid : 0;
+  };
 
   const [syncToUpcomingPlayers, setSyncToUpcomingPlayers] = useState(true);
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -98,6 +142,7 @@ export const SettingsPage: React.FC = () => {
       soundEnabled,
       animationsEnabled,
       gradeBasePrices: newGradePrices,
+      gradeCategoryMaxBids: categoryMaxBids,
       squadRules: {
         ...rules.squadRules,
         minSquadSize: Number(minSquadSize),
@@ -511,11 +556,64 @@ export const SettingsPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Section 5: Grade-Based Maximum Bidding Limits by Player Category (Requirement Part 2.9) */}
+        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
+              <Layers className="w-4 h-4 text-orange-400" />
+              <span>Grade-Based Maximum Bidding Limits by Player Category</span>
+            </h2>
+            <span className="text-[11px] text-orange-400 font-mono bg-orange-500/10 border border-orange-500/30 px-2.5 py-1 rounded-md">
+              Enforced during Live Auction & Direct Sells
+            </span>
+          </div>
+
+          <p className="text-xs text-slate-400">
+            Configure the maximum allowable bid cap for each combination of player grade and category. If a franchise tries to bid higher than this limit, the system will automatically block the bid and notify the auctioneer.
+          </p>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs font-mono">
+              <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+                <tr>
+                  <th className="py-2.5 px-3 font-bold font-sans">Category</th>
+                  <th className="py-2.5 px-3 font-bold text-center text-purple-300">Grade A+ (Max Cap ₹)</th>
+                  <th className="py-2.5 px-3 font-bold text-center text-orange-300">Grade A (Max Cap ₹)</th>
+                  <th className="py-2.5 px-3 font-bold text-center text-blue-300">Grade B (Max Cap ₹)</th>
+                  <th className="py-2.5 px-3 font-bold text-center text-emerald-300">Grade C (Max Cap ₹)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60 font-sans">
+                {['Mens', 'Boys', 'Womens', 'Girls'].map((category) => (
+                  <tr key={category} className="hover:bg-slate-800/30 transition-colors">
+                    <td className="py-2.5 px-3 font-bold text-white text-xs">
+                      {category}
+                    </td>
+
+                    {(['A+', 'A', 'B', 'C'] as PlayerGrade[]).map((grade) => (
+                      <td key={grade} className="py-2 px-2 text-center">
+                        <input
+                          type="number"
+                          step="any"
+                          min="0"
+                          value={getCellMaxBid(grade, category)}
+                          onChange={(e) => updateMaxBidCell(grade, category, Number(e.target.value) || 0)}
+                          className="w-28 px-2.5 py-1.5 bg-slate-950 border border-slate-700/80 rounded-lg text-xs font-mono text-white text-right focus:outline-none focus:border-orange-500"
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* Save Changes Button */}
         <div className="flex justify-end">
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shadow-lg flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-xs transition-all shadow-lg shadow-orange-500/20 flex items-center gap-2"
           >
             <Save className="w-4 h-4" />
             <span>Save Configuration Settings</span>

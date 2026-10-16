@@ -1,7 +1,29 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
-import { Team, Player, AuctionTransaction, AuctionRules, TournamentInfo, BidRecord, GradeBasePrices } from '../types/auction';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo, ReactNode } from 'react';
+import { 
+  Team, 
+  Player, 
+  AuctionTransaction, 
+  AuctionRules, 
+  TournamentInfo, 
+  BidRecord, 
+  GradeBasePrices,
+  AuctionOrderingMode,
+  GradeCategoryMaxBid,
+  SaveLogEntry,
+  SaveSnapshot
+} from '../types/auction';
 import { initialTeams, initialPlayers, initialAuctionRules, initialTournamentInfo } from '../data/demoData';
-import { loadStoredState, saveStoredState, clearAuctionStorage, AppStoredState } from '../utils/storage';
+import {
+  loadStoredState,
+  saveStoredState,
+  clearAuctionStorage,
+  AppStoredState,
+  loadSaveLogs,
+  appendSaveLog,
+  loadSaveSnapshots,
+  createAndStoreSnapshot,
+  getLastSavedTimestamp,
+} from '../utils/storage';
 import { pushAuctionStateToFirestore, subscribeAuctionStateFromFirestore } from '../utils/firebaseSync';
 import { soundFx } from '../utils/audio';
 import { triggerSoldConfetti } from '../utils/confetti';
@@ -38,6 +60,28 @@ interface AuctionContextType {
   resetTimer: () => void;
   setCustomTimerDuration: (seconds: number) => void;
 
+  // Auction Order Modes & Queue
+  auctionOrderMode: AuctionOrderingMode;
+  setAuctionOrderMode: (mode: AuctionOrderingMode) => void;
+  customAuctionOrderIds: string[];
+  setCustomAuctionOrder: (playerIds: string[]) => void;
+  getOrderedUpcomingPlayers: () => Player[];
+  nextUpcomingQueuePlayer: Player | null;
+
+  // Grade & Category Maximum Bidding Limits
+  getGradeCategoryMaxBid: (player: Player) => number | null;
+
+  // Captain Allocation
+  allocateCaptainToTeam: (teamId: string, playerId: string, cost?: number) => { success: boolean; message: string };
+  removeCaptainFromTeam: (teamId: string) => { success: boolean; message: string };
+
+  // Data Saving, Auto-Save & Save Logs
+  saveLogs: SaveLogEntry[];
+  saveSnapshots: SaveSnapshot[];
+  lastSavedTimestamp: string;
+  triggerManualSave: (description?: string) => { success: boolean; message: string };
+  restoreFromSnapshot: (snapshotId: string) => { success: boolean; message: string };
+
   // Auction Actions
   startAuctionForPlayer: (playerId: string) => void;
   placeBid: (teamId: string, incrementOrAmount?: number, isAbsoluteAmount?: boolean) => { success: boolean; message?: string };
@@ -68,6 +112,17 @@ interface AuctionContextType {
   importPlayers: (parsedRows: ParsedPlayerRow[], replaceExisting?: boolean) => void;
 
   // Team Management
+  addTeam: (teamData: {
+    name: string;
+    shortName: string;
+    logo?: string;
+    color?: string;
+    secondaryColor?: string;
+    owner?: string;
+    captain?: string;
+    startingBudget?: number;
+  }) => Team;
+  removeTeam: (teamId: string) => { success: boolean; message: string };
   updateTeam: (team: Team) => void;
   updateTeamName: (teamId: string, name: string, shortName?: string) => void;
   updateAllTeams: (teamsList: Team[]) => void;
@@ -153,6 +208,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     bidHistory: BidRecord[];
   } | null>(null);
 
+  // Auction Order Mode & Custom Ordering State
+  const [auctionOrderMode, setAuctionOrderMode] = useState<AuctionOrderingMode>('default');
+  const [customAuctionOrderIds, setCustomAuctionOrderIds] = useState<string[]>([]);
+
+  // Save Logs, Snapshots & History State
+  const [saveLogs, setSaveLogs] = useState<SaveLogEntry[]>([]);
+  const [saveSnapshots, setSaveSnapshots] = useState<SaveSnapshot[]>([]);
+  const [lastSavedTimestamp, setLastSavedTimestamp] = useState<string>('');
+
   // Timer
   const [timerSeconds, setTimerSeconds] = useState<number>(15);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
@@ -197,7 +261,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       setCurrentBid(stored.currentBid);
       setCurrentBidderId(stored.currentBidderId);
       setBidHistory(stored.bidHistory as unknown as BidRecord[]);
+      setAuctionOrderMode(stored.auctionOrderMode || 'default');
+      if (stored.customAuctionOrderIds) setCustomAuctionOrderIds(stored.customAuctionOrderIds);
     }
+    setSaveLogs(loadSaveLogs());
+    setSaveSnapshots(loadSaveSnapshots());
+    setLastSavedTimestamp(getLastSavedTimestamp());
     setTimerSeconds(stored.rules.timerDuration || 15);
     soundFx.setEnabled(stored.rules.soundEnabled);
     setIsLoaded(true);
@@ -277,11 +346,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       currentBid,
       currentBidderId,
       bidHistory,
+      auctionOrderMode,
+      customAuctionOrderIds,
+      lastSaved: new Date().toISOString(),
     };
     saveStoredState(stateObj);
     broadcastState(stateObj);
     pushStateToServer(stateObj);
-  }, [teams, players, transactions, rules, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, isLoaded, broadcastState, pushStateToServer]);
+    setLastSavedTimestamp(new Date().toISOString());
+  }, [teams, players, transactions, rules, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, isLoaded, broadcastState, pushStateToServer]);
 
   // Network Real-Time Sync Listener (Live Spectator & Projector cross-device sync)
   useEffect(() => {
@@ -341,7 +414,18 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
     window.addEventListener('hashchange', handleHashChange);
 
-    // 3. Server-Sent Events (SSE) for instant cross-device broadcast (< 15ms latency)
+    // 3. Instant cross-tab storage listener (Zero latency on same device/browser)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (checkIsSpectatorOrProjector()) {
+        try {
+          const stored = loadStoredState();
+          applyIncomingState(stored);
+        } catch {}
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    // 4. Server-Sent Events (SSE) for instant cross-device broadcast (< 15ms latency)
     let es: EventSource | null = null;
     const connectSSE = () => {
       try {
@@ -363,15 +447,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
     connectSSE();
 
-    // 4. Fallback heartbeat polling for spectator & projector every 1.5 seconds
+    // 5. Fallback heartbeat polling for spectator & projector every 1 second
     const interval = setInterval(() => {
       if (checkIsSpectatorOrProjector()) {
         fetchLatestServerState();
       }
-    }, 1500);
+    }, 1000);
 
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('storage', handleStorageChange);
       if (es) es.close();
       clearInterval(interval);
       unsubFirestore();
@@ -474,6 +559,276 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     setTimerSeconds(seconds);
   }, []);
 
+  // ================= SAVE LOGS & PERSISTENCE HELPERS =================
+  const logAndPersistSave = useCallback((type: 'manual' | 'auto', description: string) => {
+    const entry: SaveLogEntry = {
+      id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      timestamp: new Date().toISOString(),
+      type,
+      status: 'success',
+      description,
+      itemCountSummary: {
+        teams: teams.length,
+        players: players.length,
+        transactions: transactions.length,
+      },
+    };
+    appendSaveLog(entry);
+    setSaveLogs(loadSaveLogs());
+    const ts = new Date().toISOString();
+    setLastSavedTimestamp(ts);
+  }, [teams.length, players.length, transactions.length]);
+
+  const triggerManualSave = useCallback((description?: string): { success: boolean; message: string } => {
+    try {
+      const stateObj: AppStoredState = {
+        teams,
+        players,
+        transactions,
+        rules,
+        tournament,
+        currentPlayerId,
+        currentBid,
+        currentBidderId,
+        bidHistory,
+        auctionOrderMode,
+        customAuctionOrderIds,
+        lastSaved: new Date().toISOString(),
+      };
+      saveStoredState(stateObj);
+      createAndStoreSnapshot(description || 'Manual Save by Organizer', stateObj);
+      logAndPersistSave('manual', description || 'Manual Save by Organizer');
+      setSaveSnapshots(loadSaveSnapshots());
+      return { success: true, message: 'All auction data, teams, players, and logs saved successfully!' };
+    } catch (err: any) {
+      const failEntry: SaveLogEntry = {
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        type: 'manual',
+        status: 'failure',
+        description: `Save failed: ${err?.message || 'Storage error'}`,
+      };
+      appendSaveLog(failEntry);
+      setSaveLogs(loadSaveLogs());
+      return { success: false, message: 'Failed to save data to local storage.' };
+    }
+  }, [teams, players, transactions, rules, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, logAndPersistSave]);
+
+  const restoreFromSnapshot = useCallback((snapshotId: string): { success: boolean; message: string } => {
+    const snaps = loadSaveSnapshots();
+    const target = snaps.find(s => s.id === snapshotId);
+    if (!target) return { success: false, message: 'Restore snapshot point not found.' };
+
+    try {
+      setTeams(target.state.teams);
+      setPlayers(target.state.players);
+      setTransactions(target.state.transactions);
+      setTournament(target.state.tournament);
+      setRules(target.state.rules);
+      if (target.state.auctionOrderMode) setAuctionOrderMode(target.state.auctionOrderMode);
+      if (target.state.customAuctionOrderIds) setCustomAuctionOrderIds(target.state.customAuctionOrderIds);
+      setCurrentPlayerId(target.state.currentPlayerId ?? null);
+      setCurrentBid(target.state.currentBid ?? 0);
+      setCurrentBidderId(target.state.currentBidderId ?? null);
+
+      saveStoredState(target.state);
+      logAndPersistSave('manual', `Restored auction state to snapshot: "${target.name || target.description}"`);
+      return { success: true, message: `Successfully restored state from ${new Date(target.timestamp).toLocaleString()}!` };
+    } catch (err: any) {
+      return { success: false, message: `Failed to restore snapshot: ${err?.message}` };
+    }
+  }, [logAndPersistSave]);
+
+  // ================= AUCTION ORDERING & QUEUE LOGIC =================
+  const getOrderedUpcomingPlayers = useCallback((): Player[] => {
+    const upcoming = players.filter(p => p.status === 'upcoming');
+    if (auctionOrderMode === 'grade') {
+      const gradeRank: Record<string, number> = { 'A+': 0, 'A': 1, 'B': 2, 'C': 3 };
+      return [...upcoming].sort((a, b) => {
+        const rankDiff = (gradeRank[a.grade] ?? 99) - (gradeRank[b.grade] ?? 99);
+        if (rankDiff !== 0) return rankDiff;
+        const orderA = a.auctionOrder ?? 99999;
+        const orderB = b.auctionOrder ?? 99999;
+        if (orderA !== orderB) return orderA - orderB;
+        return a.name.localeCompare(b.name);
+      });
+    }
+
+    if (auctionOrderMode === 'custom' && customAuctionOrderIds.length > 0) {
+      const orderMap = new Map<string, number>();
+      customAuctionOrderIds.forEach((id, index) => orderMap.set(id, index));
+      return [...upcoming].sort((a, b) => {
+        const idxA = orderMap.has(a.id) ? (orderMap.get(a.id) as number) : 999999;
+        const idxB = orderMap.has(b.id) ? (orderMap.get(b.id) as number) : 999999;
+        if (idxA !== idxB) return idxA - idxB;
+        return (a.auctionOrder ?? 9999) - (b.auctionOrder ?? 9999);
+      });
+    }
+
+    // Default: Sort by player's assigned auctionOrder or original list position
+    return [...upcoming].sort((a, b) => {
+      const orderA = a.auctionOrder ?? 99999;
+      const orderB = b.auctionOrder ?? 99999;
+      if (orderA !== orderB) return orderA - orderB;
+      return players.indexOf(a) - players.indexOf(b);
+    });
+  }, [players, auctionOrderMode, customAuctionOrderIds]);
+
+  const nextUpcomingQueuePlayer = useMemo(() => {
+    const ordered = getOrderedUpcomingPlayers();
+    return ordered.length > 0 ? ordered[0] : null;
+  }, [getOrderedUpcomingPlayers]);
+
+  const setCustomAuctionOrder = useCallback((playerIds: string[]) => {
+    setCustomAuctionOrderIds(playerIds);
+    setAuctionOrderMode('custom');
+    logAndPersistSave('auto', 'Updated custom player auction ordering');
+  }, [logAndPersistSave]);
+
+  const getGradeCategoryMaxBid = useCallback((player: Player): number | null => {
+    if (!rules.gradeCategoryMaxBids || rules.gradeCategoryMaxBids.length === 0) return null;
+    const match = rules.gradeCategoryMaxBids.find(
+      limit => limit.grade === player.grade && (limit.category === player.role || limit.category === 'All')
+    );
+    return match && match.maxBid > 0 ? match.maxBid : null;
+  }, [rules.gradeCategoryMaxBids]);
+
+  // ================= CAPTAIN ALLOCATION LOGIC =================
+  const allocateCaptainToTeam = useCallback((
+    teamId: string,
+    playerId: string,
+    customCost?: number
+  ): { success: boolean; message: string } => {
+    const team = teams.find(t => t.id === teamId);
+    if (!team) return { success: false, message: 'Franchise not found.' };
+
+    const player = players.find(p => p.id === playerId);
+    if (!player) return { success: false, message: 'Player not found.' };
+
+    if (player.captainOfTeamId && player.captainOfTeamId !== teamId) {
+      const otherTeam = teams.find(t => t.id === player.captainOfTeamId);
+      return {
+        success: false,
+        message: `${player.name} is already assigned as Captain to ${otherTeam?.name || 'another team'}. Remove from that team first.`
+      };
+    }
+
+    let cost = 0;
+    if (customCost !== undefined) {
+      cost = customCost;
+    } else if (rules.captainCostMode === 'basePrice') {
+      cost = player.basePrice;
+    } else if (rules.captainCostMode === 'custom' && rules.captainCustomCost !== undefined) {
+      cost = rules.captainCustomCost;
+    } else {
+      cost = 0;
+    }
+
+    if (cost > team.remainingBudget) {
+      return {
+        success: false,
+        message: `Insufficient purse! ${team.name} has only ${team.remainingBudget.toLocaleString()} pts, but captain allocation requires ${cost.toLocaleString()} pts.`
+      };
+    }
+
+    const prevCaptainId = team.captainPlayerId;
+
+    setPlayers(prev => prev.map(p => {
+      if (p.id === playerId) {
+        return {
+          ...p,
+          isCaptain: true,
+          isPreAssignedCaptain: true,
+          captainOfTeamId: teamId,
+          teamId: teamId,
+          status: 'sold',
+          soldPrice: cost,
+          grade: 'A+',
+        };
+      }
+      if (prevCaptainId && p.id === prevCaptainId && p.id !== playerId) {
+        return {
+          ...p,
+          isCaptain: false,
+          isPreAssignedCaptain: false,
+          captainOfTeamId: undefined,
+          teamId: null,
+          status: 'upcoming',
+          soldPrice: null,
+        };
+      }
+      return p;
+    }));
+
+    setTeams(prev => prev.map(t => {
+      if (t.id === teamId) {
+        const filteredSquad = t.squad.filter(id => id !== prevCaptainId && id !== playerId);
+        return {
+          ...t,
+          captain: player.name,
+          captainPlayerId: player.id,
+          squad: [...filteredSquad, player.id],
+          remainingBudget: Math.max(0, t.remainingBudget - cost),
+          totalSpent: t.totalSpent + cost,
+        };
+      }
+      return t;
+    }));
+
+    logAndPersistSave('auto', `Allocated Captain: ${player.name} to ${team.name} (${cost > 0 ? `${cost.toLocaleString()} pts` : 'Free/Zero-Cost'})`);
+
+    return {
+      success: true,
+      message: `Successfully assigned ${player.name} as Captain of ${team.name}!`,
+    };
+  }, [teams, players, rules, logAndPersistSave]);
+
+  const removeCaptainFromTeam = useCallback((teamId: string): { success: boolean; message: string } => {
+    const team = teams.find(t => t.id === teamId);
+    if (!team || !team.captainPlayerId) {
+      return { success: false, message: 'No captain assigned to this team.' };
+    }
+
+    const captainPlayer = players.find(p => p.id === team.captainPlayerId);
+    const refund = captainPlayer?.soldPrice || 0;
+
+    setPlayers(prev => prev.map(p => {
+      if (p.id === team.captainPlayerId) {
+        return {
+          ...p,
+          isCaptain: false,
+          isPreAssignedCaptain: false,
+          captainOfTeamId: undefined,
+          teamId: null,
+          status: 'upcoming',
+          soldPrice: null,
+        };
+      }
+      return p;
+    }));
+
+    setTeams(prev => prev.map(t => {
+      if (t.id === teamId) {
+        return {
+          ...t,
+          captain: undefined,
+          captainPlayerId: undefined,
+          squad: t.squad.filter(id => id !== team.captainPlayerId),
+          remainingBudget: t.remainingBudget + refund,
+          totalSpent: Math.max(0, t.totalSpent - refund),
+        };
+      }
+      return t;
+    }));
+
+    logAndPersistSave('auto', `Removed Captain of ${team.name}`);
+
+    return {
+      success: true,
+      message: `Captain removed from ${team.name} and returned to player pool.`,
+    };
+  }, [teams, players, logAndPersistSave]);
+
   // START AUCTION FOR A PLAYER
   const startAuctionForPlayer = useCallback((playerId: string) => {
     const ply = players.find(p => p.id === playerId);
@@ -532,6 +887,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       return {
         success: false,
         message: `Overspending Alert! ${team.name} can bid at most ${maxBid.toLocaleString()} pts. ${reason || 'Must reserve purse for remaining squad slots.'}`
+      };
+    }
+
+    // Grade & Category Maximum Bidding Limits (Part 2, Req 9)
+    const gradeCatCap = getGradeCategoryMaxBid(currentPlayer);
+    if (gradeCatCap !== null && newBidAmount > gradeCatCap) {
+      return {
+        success: false,
+        message: `Category Cap Exceeded! Grade ${currentPlayer.grade} ${currentPlayer.role} has a maximum bid limit of ${gradeCatCap.toLocaleString()} pts.`
       };
     }
 
@@ -723,6 +1087,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       };
     }
 
+    // Grade & Category Maximum Bidding Limits (Part 2, Req 9)
+    const gradeCatCap = getGradeCategoryMaxBid(currentPlayer);
+    if (gradeCatCap !== null && amount > gradeCatCap) {
+      return {
+        success: false,
+        message: `Category Cap Exceeded! Grade ${currentPlayer.grade} ${currentPlayer.role} has a maximum direct sale cap of ${gradeCatCap.toLocaleString()} pts.`,
+      };
+    }
+
     const squadPlayers = players.filter(p => team.squad.includes(p.id));
     const isCurrentPlayerSponsored = !!(currentPlayer.isSponsored || (currentPlayer.sponsorTag && currentPlayer.sponsorTag.trim()));
     if (isCurrentPlayerSponsored) {
@@ -900,11 +1273,11 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // SKIP / NEXT UPCOMING PLAYER
   const skipOrNextPlayer = useCallback(() => {
-    const nextUpcoming = players.find(p => p.status === 'upcoming');
-    if (nextUpcoming) {
-      startAuctionForPlayer(nextUpcoming.id);
+    const ordered = getOrderedUpcomingPlayers();
+    if (ordered.length > 0) {
+      startAuctionForPlayer(ordered[0].id);
     }
-  }, [players, startAuctionForPlayer]);
+  }, [getOrderedUpcomingPlayers, startAuctionForPlayer]);
 
   // RE-AUCTION AN UNSOLD PLAYER
   const reAuctionPlayer = useCallback((playerId: string) => {
@@ -1050,7 +1423,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       id: `ply-${Date.now()}-${idx}`,
       name: r.name,
       age: r.age,
-      ageCategory: r.ageCategory || (r.age <= 14 ? 'Below 14' : 'Above 14'),
+      ageCategory: r.ageCategory || (r.age <= 15 ? '15 and Below' : 'Above 15'),
       gender: r.gender || 'Male',
       experience: r.experience,
       role: r.role,
@@ -1062,7 +1435,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       status: 'upcoming',
       auctionOrder: r.auctionOrder !== undefined ? r.auctionOrder : ((replaceExisting ? 0 : players.length) + idx + 1),
       isCaptain: r.isCaptain,
-      isViceCaptain: r.isViceCaptain,
+      isViceCaptain: Boolean(r.isViceCaptain && r.grade === 'A'),
       sponsorTag: r.sponsorTag,
       isSponsored: r.isSponsored || !!(r.sponsorTag && r.sponsorTag.trim()),
       photo: r.photo,
@@ -1096,6 +1469,96 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
     }
   }, [players.length]);
+
+  // ADD NEW TEAM
+  const addTeam = useCallback((teamData: {
+    name: string;
+    shortName: string;
+    logo?: string;
+    color?: string;
+    secondaryColor?: string;
+    owner?: string;
+    captain?: string;
+    startingBudget?: number;
+  }): Team => {
+    const budget = teamData.startingBudget !== undefined && !isNaN(teamData.startingBudget) && teamData.startingBudget > 0
+      ? teamData.startingBudget
+      : (rules.startingBudget || 50000);
+    const newTeamId = `team-${Date.now()}`;
+    const newTeam: Team = {
+      id: newTeamId,
+      name: teamData.name.trim(),
+      shortName: (teamData.shortName || teamData.name.slice(0, 3)).trim().toUpperCase(),
+      logo: teamData.logo || '🏏',
+      color: teamData.color || '#3b82f6',
+      secondaryColor: teamData.secondaryColor || '#1d4ed8',
+      owner: teamData.owner?.trim() || 'Franchise Owner',
+      captain: teamData.captain?.trim() || '',
+      startingBudget: budget,
+      remainingBudget: budget,
+      totalSpent: 0,
+      squad: [],
+      wishlist: [],
+    };
+
+    setTeams(prev => {
+      const updated = [...prev, newTeam];
+      saveStoredState({ teams: updated });
+      return updated;
+    });
+
+    return newTeam;
+  }, [rules.startingBudget]);
+
+  // REMOVE TEAM (With minimum 12 teams validation for Mens tournament)
+  const removeTeam = useCallback((teamId: string): { success: boolean; message: string } => {
+    let result = { success: false, message: '' };
+
+    setTeams(prev => {
+      if (prev.length <= 12) {
+        result = {
+          success: false,
+          message: 'Tournament Rule: A minimum of 12 teams is required for the tournament.'
+        };
+        return prev;
+      }
+
+      const teamToRemove = prev.find(t => t.id === teamId);
+      if (!teamToRemove) {
+        result = { success: false, message: 'Team not found.' };
+        return prev;
+      }
+
+      // Reset any players that belonged to this team back to 'upcoming'
+      setPlayers(pPrev => pPrev.map(p => {
+        if (p.teamId === teamId || teamToRemove.squad.includes(p.id)) {
+          return {
+            ...p,
+            status: 'upcoming',
+            teamId: null,
+            soldPrice: null,
+          };
+        }
+        return p;
+      }));
+
+      // Remove transactions involving this team
+      setTransactions(tPrev => tPrev.filter(tx => tx.teamId !== teamId));
+
+      // Reset active bidder if it was this team
+      setCurrentBidderId(bId => (bId === teamId ? null : bId));
+
+      const updated = prev.filter(t => t.id !== teamId);
+      saveStoredState({ teams: updated });
+      result = {
+        success: true,
+        message: `Successfully removed ${teamToRemove.name}. Squad players have been returned to the auction pool.`
+      };
+      return updated;
+    });
+
+    return result;
+  }, []);
 
   // UPDATE TEAM
   const updateTeam = useCallback((updatedTeam: Team) => {
@@ -1319,11 +1782,35 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         deleteAllPlayers,
         restoreDeletedPlayers,
         importPlayers,
+        addTeam,
+        removeTeam,
         updateTeam,
         updateTeamName,
         updateAllTeams,
         resetTeamBudget,
         removePlayerFromSquad,
+
+        // Auction Order Modes & Queue
+        auctionOrderMode,
+        setAuctionOrderMode,
+        customAuctionOrderIds,
+        setCustomAuctionOrder,
+        getOrderedUpcomingPlayers,
+        nextUpcomingQueuePlayer,
+
+        // Grade & Category Maximum Bidding Limits
+        getGradeCategoryMaxBid,
+
+        // Captain Allocation
+        allocateCaptainToTeam,
+        removeCaptainFromTeam,
+
+        // Data Saving, Auto-Save & Save Logs
+        saveLogs,
+        saveSnapshots,
+        lastSavedTimestamp,
+        triggerManualSave,
+        restoreFromSnapshot,
 
         toggleWishlist,
         updateRules,

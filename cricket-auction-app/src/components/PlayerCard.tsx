@@ -2,7 +2,7 @@ import React from 'react';
 import { Player, Team } from '../types/auction';
 import { GradeBadge } from './GradeBadge';
 import { RoleBadge } from './RoleBadge';
-import { Gavel, Edit2, Trash2, Heart, Scale, ShieldCheck, User, Crown, Star, Tag } from 'lucide-react';
+import { Gavel, Edit2, Trash2, ShieldCheck, User, Crown, Star, Tag } from 'lucide-react';
 
 interface PlayerCardProps {
   player: Player;
@@ -10,11 +10,6 @@ interface PlayerCardProps {
   onStartAuction?: (player: Player) => void;
   onEdit?: (player: Player) => void;
   onDelete?: (player: Player) => void;
-  onToggleWishlist?: (teamId: string, playerId: string) => void;
-  onToggleCompare?: (player: Player) => void;
-  isComparing?: boolean;
-  activeWishlistTeamId?: string;
-  isWishlisted?: boolean;
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -23,11 +18,6 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   onStartAuction,
   onEdit,
   onDelete,
-  onToggleCompare,
-  isComparing = false,
-  activeWishlistTeamId,
-  isWishlisted = false,
-  onToggleWishlist,
 }) => {
   const soldTeam = player.teamId ? teams.find(t => t.id === player.teamId) : null;
 
@@ -70,33 +60,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5">
-            {onToggleCompare && (
-              <button
-                onClick={() => onToggleCompare(player)}
-                title={isComparing ? 'Remove from Comparison' : 'Compare Player'}
-                className={`p-1.5 rounded-lg border text-xs transition-colors ${
-                  isComparing
-                    ? 'border-cyan-500 bg-cyan-500/20 text-cyan-300'
-                    : 'border-slate-700 bg-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-700'
-                }`}
-              >
-                <Scale className="w-3.5 h-3.5" />
-              </button>
-            )}
 
-            {activeWishlistTeamId && onToggleWishlist && (
-              <button
-                onClick={() => onToggleWishlist(activeWishlistTeamId, player.id)}
-                title={isWishlisted ? 'Remove from Wishlist' : 'Add to Team Wishlist'}
-                className={`p-1.5 rounded-lg border text-xs transition-colors ${
-                  isWishlisted
-                    ? 'border-pink-500 bg-pink-500/20 text-pink-400'
-                    : 'border-slate-700 bg-slate-800/80 text-slate-400 hover:text-pink-400 hover:bg-slate-700'
-                }`}
-              >
-                <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-pink-400' : ''}`} />
-              </button>
-            )}
 
             {onEdit && (
               <button
@@ -138,11 +102,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
             </h3>
             <div className="text-xs text-slate-400 flex flex-wrap items-center gap-1.5 mt-0.5 font-mono">
               <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                (player.ageCategory || '').includes('Below') || player.age <= 14
+                (player.ageCategory || '').includes('Below') || player.age <= 15
                   ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                   : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
               }`}>
-                {player.ageCategory || (player.age <= 14 ? 'Below 14' : 'Above 14')}
+                {player.ageCategory || (player.age <= 15 ? '15 and Below' : 'Above 15')}
               </span>
               {player.gender && (
                 <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${

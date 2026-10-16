@@ -1,9 +1,9 @@
 import { Team, Player, TournamentInfo, AuctionRules } from '../types/auction';
 
 export const initialTournamentInfo: TournamentInfo = {
-  name: 'Premier Cricket League (PCL)',
-  season: 'Season 2026',
-  organizer: 'Tournament Auction Committee',
+  name: 'JCPL 4',
+  season: 'Season 4',
+  organizer: 'JCPL Tournament Committee',
   venue: 'Grand Arena Club & Sports Complex',
 };
 
@@ -181,6 +181,36 @@ export const initialTeams: Team[] = [
     secondaryColor: '#be123c',
     owner: 'KPH Dream Cricket',
     captain: 'Arshdeep Singh',
+    startingBudget: 50000,
+    remainingBudget: 50000,
+    totalSpent: 0,
+    squad: [],
+    wishlist: [],
+  },
+  {
+    id: 'team-11',
+    name: 'Pune Warriors Prime',
+    shortName: 'PWP',
+    logo: '⚔️',
+    color: '#6366f1', // Indigo
+    secondaryColor: '#4f46e5',
+    owner: 'Sahara Sports Venture',
+    captain: 'Ajinkya Rao',
+    startingBudget: 50000,
+    remainingBudget: 50000,
+    totalSpent: 0,
+    squad: [],
+    wishlist: [],
+  },
+  {
+    id: 'team-12',
+    name: 'Ahmedabad Aces',
+    shortName: 'AA',
+    logo: '🎯',
+    color: '#10b981', // Emerald
+    secondaryColor: '#059669',
+    owner: 'Torrent Sports Group',
+    captain: 'Hardik Rana',
     startingBudget: 50000,
     remainingBudget: 50000,
     totalSpent: 0,

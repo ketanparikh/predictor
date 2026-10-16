@@ -4,6 +4,7 @@ import { Team } from '../types/auction';
 import { TeamDetailModal } from '../components/TeamDetailModal';
 import { EditTeamModal } from '../components/EditTeamModal';
 import { QuickRenameTeamsModal } from '../components/QuickRenameTeamsModal';
+import { AddTeamModal } from '../components/AddTeamModal';
 import {
   Shield,
   Eye,
@@ -13,12 +14,16 @@ import {
   Coins,
   Users,
   CheckCircle2,
+  Plus,
+  Trash2,
 } from 'lucide-react';
 
 export const TeamsPage: React.FC = () => {
   const {
     teams,
     players,
+    addTeam,
+    removeTeam,
     updateTeam,
     updateAllTeams,
     resetTeamBudget,
@@ -31,6 +36,7 @@ export const TeamsPage: React.FC = () => {
   const [teamToEdit, setTeamToEdit] = useState<Team | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isQuickRenameOpen, setIsQuickRenameOpen] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -69,25 +75,33 @@ export const TeamsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Page Header with Quick Rename Action */}
+      {/* Page Header with Add Team and Quick Rename Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
             <Shield className="w-6 h-6 text-amber-400" />
-            <span>Tournament Franchise Hub (10 Teams)</span>
+            <span>Tournament Franchise Hub ({teams.length} Teams)</span>
           </h1>
           <p className="text-xs text-slate-400">
-            Customize team names, codes, colors, monitor purse utilization, and inspect squad rosters.
+            Add or remove franchise teams (minimum 12 for tournament), customize codes and colors, monitor purses, and inspect squad rosters.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Team</span>
+          </button>
+
           <button
             onClick={() => setIsQuickRenameOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 text-xs font-bold transition-all shadow flex items-center gap-2 group"
+            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 text-xs font-bold transition-all shadow flex items-center gap-2 group cursor-pointer"
           >
             <Edit3 className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform" />
-            <span>Rename All 10 Teams</span>
+            <span>Rename Teams</span>
           </button>
         </div>
       </div>
@@ -195,19 +209,42 @@ export const TeamsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Card Footer: Edit Team & Inspect Squad Buttons */}
+              {/* Card Footer: Edit Team, Delete Team & Inspect Squad Buttons */}
               <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
-                <button
-                  onClick={() => handleOpenEdit(team)}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition-colors flex items-center gap-1.5 border border-slate-700/60"
-                >
-                  <Edit2 className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Edit Team</span>
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => handleOpenEdit(team)}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition-colors flex items-center gap-1.5 border border-slate-700/60 cursor-pointer"
+                  >
+                    <Edit2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Edit</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (teams.length <= 12) {
+                        alert('Tournament Rule: A minimum of 12 teams is required for the tournament.');
+                        return;
+                      }
+                      if (window.confirm(`Are you sure you want to remove franchise "${team.name}"? Squad members will return to the auction player pool.`)) {
+                        const res = removeTeam(team.id);
+                        showNotification(res.message);
+                      }
+                    }}
+                    title={teams.length <= 12 ? 'Minimum 12 teams required for tournament' : `Remove ${team.name}`}
+                    className={`p-1.5 rounded-lg border transition-colors ${
+                      teams.length <= 12
+                        ? 'border-slate-800 text-slate-700 cursor-not-allowed'
+                        : 'border-slate-800 hover:border-rose-500/50 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 cursor-pointer'
+                    }`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
 
                 <button
                   onClick={() => handleOpenDetail(team)}
-                  className="px-3.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold transition-all flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span>Inspect Squad</span>
@@ -217,6 +254,13 @@ export const TeamsPage: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Add New Team Modal */}
+      <AddTeamModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={(name) => showNotification(`Added ${name} successfully!`)}
+      />
 
       {/* Edit Single Team Modal */}
       <EditTeamModal

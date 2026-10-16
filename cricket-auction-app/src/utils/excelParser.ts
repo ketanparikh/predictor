@@ -6,7 +6,7 @@ import { Player, PlayerGrade, PlayerRole, BattingStyle, BowlingStyle, Team, Auct
 export interface ParsedPlayerRow {
   name: string;
   age: number;
-  ageCategory?: string; // e.g. "Below 14" | "Above 14"
+  ageCategory?: string; // e.g. "15 and Below" | "Above 15"
   gender?: string; // e.g. "Male" | "Female"
   experience: number;
   role: PlayerRole;
@@ -36,10 +36,33 @@ export interface ParsedPlayerRow {
   sponsorTag?: string;
   isSponsored?: boolean;
   photo?: string;
+  cricheroesProfileUrl?: string;
   auctionOrder?: number;
   errors: string[];
   warnings: string[];
   rawIndex: number;
+}
+
+export function normalizePhotoUrl(url: string): string {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+
+  // Google Drive link conversion: convert share/view links to direct thumbnail/image links
+  if (trimmed.includes('drive.google.com') || trimmed.includes('docs.google.com')) {
+    const matchId = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/) || trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (matchId && matchId[1]) {
+      const fileId = matchId[1];
+      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
+    }
+  }
+
+  // Dropbox link conversion: dl=0 -> raw=1
+  if (trimmed.includes('dropbox.com')) {
+    return trimmed.replace('dl=0', 'raw=1');
+  }
+
+  return trimmed;
 }
 
 /**
@@ -265,28 +288,28 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
       errors.push('Player Name is required.');
     }
 
-    // Age & Age Category parsing (handles "Between 10 to 14", "Greater Than 14", "Above 14", "Below 14", or raw numbers)
+    // Age & Age Category parsing (handles "Between 10 to 15", "Greater Than 15", "Above 15", "15 and Below", "Below 15", or raw numbers)
     const ageVal = findVal(['age', 'player age', 'age group', 'age category']);
     let rawAge = 22;
-    let ageCategory = 'Above 14';
+    let ageCategory = 'Above 15';
 
     if (typeof ageVal === 'number' && !isNaN(ageVal) && ageVal > 0) {
       rawAge = Math.round(ageVal);
-      ageCategory = rawAge <= 14 ? 'Below 14' : 'Above 14';
+      ageCategory = rawAge <= 15 ? '15 and Below' : 'Above 15';
     } else if (typeof ageVal === 'string' && ageVal.trim() !== '') {
       const lowerAge = ageVal.toLowerCase();
-      if ((lowerAge.includes('10') && lowerAge.includes('14')) || lowerAge.includes('below') || lowerAge.includes('less') || lowerAge.includes('under') || lowerAge.includes('<')) {
-        rawAge = 13;
-        ageCategory = 'Below 14';
-      } else if (lowerAge.includes('greater') || lowerAge.includes('>') || lowerAge.includes('above') || lowerAge.includes('15') || lowerAge.includes('14')) {
+      if ((lowerAge.includes('10') && (lowerAge.includes('15') || lowerAge.includes('14'))) || lowerAge.includes('below') || lowerAge.includes('less') || lowerAge.includes('under') || lowerAge.includes('<=') || lowerAge.includes('<')) {
+        rawAge = 14;
+        ageCategory = '15 and Below';
+      } else if (lowerAge.includes('greater') || lowerAge.includes('>') || lowerAge.includes('above') || lowerAge.includes('16') || lowerAge.includes('15')) {
         const num = parseFloat(lowerAge.replace(/[^\d.]/g, ''));
-        rawAge = !isNaN(num) && num > 14 ? num : 20;
-        ageCategory = 'Above 14';
+        rawAge = !isNaN(num) && num > 15 ? num : 20;
+        ageCategory = 'Above 15';
       } else {
         const num = parseFloat(ageVal.replace(/[^\d.]/g, ''));
         if (!isNaN(num) && num > 0) {
           rawAge = Math.round(num);
-          ageCategory = rawAge <= 14 ? 'Below 14' : 'Above 14';
+          ageCategory = rawAge <= 15 ? '15 and Below' : 'Above 15';
         }
       }
     }
@@ -366,9 +389,14 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
     const isSponsored = !!sponsorVal && sponsorVal.toLowerCase() !== 'no' && sponsorVal.toLowerCase() !== 'none' && sponsorVal.toLowerCase() !== 'false';
     const sponsorTag = isSponsored ? sponsorVal : undefined;
 
-    // Photo / Image URL Detection
-    const rawPhoto = String(findVal(['photo', 'photo url', 'photourl', 'image', 'image url', 'picture', 'pic', 'avatar', 'img']) || '').trim();
-    const photo = rawPhoto && (rawPhoto.startsWith('http') || rawPhoto.startsWith('data:') || rawPhoto.startsWith('/') || rawPhoto.includes('.')) ? rawPhoto : undefined;
+    // Photo / Image URL Detection (Handles Google Drive share links, direct URLs, cloud paths)
+    const rawPhoto = String(findVal(['photo', 'photo url', 'photourl', 'image', 'image url', 'picture', 'pic', 'avatar', 'img', 'drive link', 'drive url', 'photo link']) || '').trim();
+    const normalizedPhoto = normalizePhotoUrl(rawPhoto);
+    const photo = normalizedPhoto && (normalizedPhoto.startsWith('http') || normalizedPhoto.startsWith('data:') || normalizedPhoto.startsWith('/') || normalizedPhoto.includes('.')) ? normalizedPhoto : undefined;
+
+    // CricHeroes Account / Profile Link Detection
+    const rawCricHeroes = String(findVal(['cricheroes', 'cricheroes profile', 'cricheroes url', 'cricheroes link', 'profile url', 'account link', 'cricheroes account']) || '').trim();
+    const cricheroesProfileUrl = rawCricHeroes || undefined;
 
     // Auction Order Sequencing
     const rawOrder = findVal(['auction order', 'auctionorder', 'order', 'lot', 'lot no', 'lot number', 'sequence', 'seq']);
@@ -532,6 +560,7 @@ export function parseExcelOrCsv(fileData: ArrayBuffer | string, customGradePrice
       sponsorTag,
       isSponsored,
       photo,
+      cricheroesProfileUrl,
       auctionOrder,
       errors,
       warnings,

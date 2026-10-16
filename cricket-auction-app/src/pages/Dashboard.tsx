@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { ActiveNavTab, Player } from '../types/auction';
 import { GradeBadge } from '../components/GradeBadge';
 import { RoleBadge } from '../components/RoleBadge';
+import { AddTeamModal } from '../components/AddTeamModal';
 import {
   Gavel,
   Users,
@@ -17,6 +18,9 @@ import {
   FileSpreadsheet,
   Tv,
   Crown,
+  Plus,
+  Trash2,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -30,7 +34,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onStartAuction,
   onOpenProjector,
 }) => {
-  const { tournament, teams, players, transactions, currentPlayer, currentBid, currentBidder } = useAuction();
+  const { tournament, teams, players, transactions, currentPlayer, currentBid, currentBidder, removeTeam } = useAuction();
+  const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
+  const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   const totalPlayers = players.length;
   const soldPlayers = players.filter(p => p.status === 'sold');
@@ -44,8 +50,28 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const topPurchases = [...transactions].sort((a, b) => b.soldPrice - a.soldPrice).slice(0, 5);
   const nextInLinePlayers = upcomingPlayers.slice(0, 4);
 
+  const handleRemoveTeam = (teamId: string, teamName: string) => {
+    if (teams.length <= 12) {
+      alert('Tournament Rule: A minimum of 12 teams is required for the tournament.');
+      return;
+    }
+    if (window.confirm(`Are you sure you want to remove franchise "${teamName}"? Any players in their squad will return to the upcoming auction pool.`)) {
+      const res = removeTeam(teamId);
+      setFeedbackMsg(res.message);
+      setTimeout(() => setFeedbackMsg(null), 4000);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Toast Feedback */}
+      {feedbackMsg && (
+        <div className="fixed top-20 right-6 z-50 p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-2 shadow-2xl backdrop-blur-md animate-fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{feedbackMsg}</span>
+        </div>
+      )}
+
       {/* Hero Tournament Banner */}
       <div className="relative rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/40 border border-slate-800 p-6 sm:p-8 overflow-hidden shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
@@ -59,12 +85,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
               {tournament.name}
             </h1>
             <p className="text-sm text-slate-400 max-w-2xl">
-              Manage live bidding across 10 franchise teams and 100 registered tournament players, monitor real-time point budgets ({totalStartingBudget.toLocaleString()} Total Purse), validate squad compliance, and analyze player statistics.
+              Manage live bidding across {teams.length} franchise teams and {totalPlayers} registered tournament players, monitor real-time point budgets ({totalStartingBudget.toLocaleString()} Total Purse), validate squad compliance, and analyze player statistics.
             </p>
           </div>
 
-
           <div className="flex flex-wrap items-center gap-3 flex-shrink-0">
+            <button
+              onClick={() => setIsAddTeamModalOpen(true)}
+              className="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 hover:text-amber-300 font-bold text-sm transition-colors flex items-center gap-2 shadow cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ Add Team</span>
+            </button>
+
             {upcomingPlayers.length > 0 && (
               <button
                 onClick={() => {
@@ -75,7 +108,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     onNavigate('live_auction');
                   }
                 }}
-                className="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/25 transition-all flex items-center gap-2 transform active:scale-95"
+                className="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/25 transition-all flex items-center gap-2 transform active:scale-95 cursor-pointer"
               >
                 <Gavel className="w-4 h-4" />
                 <span>{currentPlayer ? 'Go To Live Auction Block' : 'Start Next Player Auction'}</span>
@@ -84,7 +117,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
             <button
               onClick={onOpenProjector}
-              className="px-4 py-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-sm transition-colors flex items-center gap-2"
+              className="px-4 py-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer"
             >
               <Tv className="w-4 h-4 text-cyan-400" />
               <span>Launch Big Screen</span>
@@ -129,7 +162,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
           <div className="mt-3">
             <div className="text-2xl font-black font-mono text-purple-300">
-              {teams.length} <span className="text-xs text-slate-400 font-normal">Active Teams</span>
+              {teams.length} <span className="text-xs text-slate-400 font-normal">Active Teams (Min 12)</span>
             </div>
             <div className="text-xs text-slate-400 mt-1 font-mono">
               Avg Squad: {teams.length > 0 ? (soldPlayers.length / teams.length).toFixed(1) : 0} players/team
@@ -176,7 +209,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
             <button
               onClick={() => onNavigate('live_auction')}
-              className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs transition-all shadow flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs transition-all shadow flex items-center gap-1.5 cursor-pointer"
             >
               <Gavel className="w-4 h-4" />
               Open Live Console
@@ -190,17 +223,26 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Left 2 Cols: Team Budget Leaderboard */}
         <div className="lg:col-span-2 space-y-4">
           <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-amber-400" />
-                <h2 className="font-bold text-white text-base">Franchise Budget & Squad Leaderboard</h2>
+                <h2 className="font-bold text-white text-base">Franchise Budget & Squad Leaderboard ({teams.length} Teams)</h2>
               </div>
-              <button
-                onClick={() => onNavigate('teams')}
-                className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold"
-              >
-                View All Teams <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsAddTeamModalOpen(true)}
+                  className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center gap-1.5 transition-all shadow cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Team</span>
+                </button>
+                <button
+                  onClick={() => onNavigate('teams')}
+                  className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold"
+                >
+                  Manage <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             <div className="space-y-3">
@@ -248,11 +290,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       </div>
                     </div>
 
-                    <div className="text-right font-mono min-w-[120px]">
-                      <div className="text-xs text-slate-400">REMAINING</div>
-                      <div className="font-bold text-sm text-emerald-400">
-                        {team.remainingBudget.toLocaleString()} <span className="text-[10px] text-slate-500">pts</span>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right font-mono min-w-[110px]">
+                        <div className="text-xs text-slate-400">REMAINING</div>
+                        <div className="font-bold text-sm text-emerald-400">
+                          {team.remainingBudget.toLocaleString()} <span className="text-[10px] text-slate-500">pts</span>
+                        </div>
                       </div>
+                      <button
+                        onClick={() => handleRemoveTeam(team.id, team.name)}
+                        title={teams.length <= 12 ? 'Minimum 12 teams required for tournament' : `Remove ${team.name}`}
+                        className={`p-1.5 rounded-lg transition-colors ${
+                          teams.length <= 12
+                            ? 'text-slate-700 cursor-not-allowed'
+                            : 'text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 cursor-pointer'
+                        }`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 );
@@ -329,6 +384,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Add Team Modal */}
+      <AddTeamModal
+        isOpen={isAddTeamModalOpen}
+        onClose={() => setIsAddTeamModalOpen(false)}
+        onSuccess={(name) => {
+          setFeedbackMsg(`Franchise team "${name}" created successfully!`);
+          setTimeout(() => setFeedbackMsg(null), 3500);
+        }}
+      />
     </div>
   );
 };

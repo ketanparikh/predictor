@@ -3,14 +3,12 @@ import { useAuction } from '../context/AuctionContext';
 import { Player, PlayerRole, PlayerGrade, ActiveNavTab } from '../types/auction';
 import { PlayerCard } from '../components/PlayerCard';
 import { PlayerModal } from '../components/PlayerModal';
-import { PlayerComparisonModal } from '../components/PlayerComparisonModal';
 import { DeleteAllPlayersModal } from '../components/DeleteAllPlayersModal';
 import { CricHeroesModal } from '../components/CricHeroesModal';
 import {
   Users,
   Search,
   Plus,
-  Scale,
   Trash2,
   FileSpreadsheet,
   RefreshCw,
@@ -53,13 +51,6 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
 
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [isCricHeroesModalOpen, setIsCricHeroesModalOpen] = useState(false);
-
-  const [comparePlayerIds, setComparePlayerIds] = useState<string[]>([]);
-  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
-
-  const [activeWishlistTeamId, setActiveWishlistTeamId] = useState<string>(
-    teams[0]?.id || ''
-  );
 
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -107,19 +98,6 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
       });
   }, [players, searchTerm, roleFilter, gradeFilter, statusFilter, sortBy]);
 
-  const handleToggleCompare = (player: Player) => {
-    setComparePlayerIds(prev => {
-      if (prev.includes(player.id)) {
-        return prev.filter(id => id !== player.id);
-      }
-      if (prev.length >= 4) {
-        alert('You can compare a maximum of 4 players at a time.');
-        return prev;
-      }
-      return [...prev, player.id];
-    });
-  };
-
   const handleSavePlayer = (playerData: Omit<Player, 'id' | 'status'> | Player) => {
     if ('id' in playerData) {
       editPlayer(playerData as Player);
@@ -155,8 +133,6 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
       showNotification(`Restored ${count} player${count > 1 ? 's' : ''} to the database!`);
     }
   };
-
-  const comparedPlayers = players.filter(p => comparePlayerIds.includes(p.id));
 
   return (
     <div className="space-y-6">
@@ -217,15 +193,7 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
 
         {/* Action Button Strip */}
         <div className="flex flex-wrap items-center gap-2.5">
-          {comparePlayerIds.length >= 2 && (
-            <button
-              onClick={() => setIsCompareModalOpen(true)}
-              className="px-3.5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition-all shadow flex items-center gap-1.5"
-            >
-              <Scale className="w-4 h-4" />
-              <span>Compare ({comparePlayerIds.length})</span>
-            </button>
-          )}
+
 
           {onNavigate && (
             <button
@@ -309,7 +277,7 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
           >
             <option value="all">All Grades (A+, A, B, C)</option>
             <option value="A+">👑 Grade A+ (Marquee / Captain)</option>
-            <option value="A">⭐ Grade A (Elite / Vice Captain)</option>
+            <option value="A">⭐ Grade A (Elite)</option>
             <option value="B">⚡ Grade B (Regular)</option>
             <option value="C">🌱 Grade C (Emerging)</option>
             <option value="captains">👑 Captains Only</option>
@@ -351,32 +319,10 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
         </div>
       </div>
 
-      {/* Wishlist Selector Helper Bar */}
+      {/* Filter and Count Summary Bar */}
       {players.length > 0 && (
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-          <div className="flex items-center gap-2">
-            <span className="text-slate-400">Team Shortlist Target:</span>
-            <select
-              value={activeWishlistTeamId}
-              onChange={e => setActiveWishlistTeamId(e.target.value)}
-              className="px-2.5 py-1 bg-slate-900 border border-slate-700 rounded-lg text-amber-300 font-bold"
-            >
-              {teams.map(t => (
-                <option key={t.id} value={t.id}>
-                  {t.name} (Wishlist: {t.wishlist?.length || 0})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center gap-4 text-slate-400 text-[11px]">
-            <span>Showing {filteredPlayers.length} of {players.length} players</span>
-            {comparePlayerIds.length > 0 && (
-              <span className="text-cyan-400 font-bold">
-                {comparePlayerIds.length}/4 for comparison
-              </span>
-            )}
-          </div>
+        <div className="px-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-3 text-xs font-mono text-slate-400">
+          <span>Showing {filteredPlayers.length} of {players.length} players</span>
         </div>
       )}
 
@@ -449,29 +395,19 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
       ) : (
         /* Player Grid */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredPlayers.map(player => {
-            const activeTeam = teams.find(t => t.id === activeWishlistTeamId);
-            const isWishlisted = activeTeam?.wishlist?.includes(player.id) || false;
-
-            return (
-              <PlayerCard
-                key={player.id}
-                player={player}
-                teams={teams}
-                onStartAuction={p => onStartAuction(p)}
-                onEdit={p => {
-                  setPlayerToEdit(p);
-                  setIsPlayerModalOpen(true);
-                }}
-                onDelete={handleDeletePlayer}
-                onToggleCompare={handleToggleCompare}
-                isComparing={comparePlayerIds.includes(player.id)}
-                activeWishlistTeamId={activeWishlistTeamId}
-                isWishlisted={isWishlisted}
-                onToggleWishlist={toggleWishlist}
-              />
-            );
-          })}
+          {filteredPlayers.map(player => (
+            <PlayerCard
+              key={player.id}
+              player={player}
+              teams={teams}
+              onStartAuction={p => onStartAuction(p)}
+              onEdit={p => {
+                setPlayerToEdit(p);
+                setIsPlayerModalOpen(true);
+              }}
+              onDelete={handleDeletePlayer}
+            />
+          ))}
         </div>
       )}
 
@@ -507,14 +443,6 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
         onClose={() => setIsDeleteAllModalOpen(false)}
         playerCount={players.length}
         onConfirmDelete={handleConfirmDeleteAll}
-      />
-
-      {/* Player Comparison Modal */}
-      <PlayerComparisonModal
-        isOpen={isCompareModalOpen}
-        onClose={() => setIsCompareModalOpen(false)}
-        players={comparedPlayers}
-        onRemovePlayer={id => setComparePlayerIds(prev => prev.filter(x => x !== id))}
       />
     </div>
   );

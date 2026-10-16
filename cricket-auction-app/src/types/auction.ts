@@ -34,7 +34,7 @@ export interface Player {
   id: string;
   name: string;
   age: number;
-  ageCategory?: string; // e.g. "Below 14" | "Above 14"
+  ageCategory?: string; // e.g. "15 and Below" | "Above 15"
   gender?: string; // e.g. "Male" | "Female"
   dob?: string;
   photo?: string;
@@ -52,12 +52,17 @@ export interface Player {
   teamId?: string | null;
   soldPrice?: number | null;
   auctionOrder?: number;
+  lotNumber?: number;
+  category?: string;
+  specialism?: string;
   isOverseas?: boolean;
   isCaptain?: boolean;
   isViceCaptain?: boolean;
   captainOfTeamId?: string;
   sponsorTag?: string;
   isSponsored?: boolean;
+  cricheroesProfileUrl?: string;
+  isPreAssignedCaptain?: boolean;
 }
 
 export interface Team {
@@ -122,6 +127,52 @@ export interface GradeBasePrices {
   gradeC: number;
 }
 
+export type AuctionOrderingMode = 'default' | 'grade' | 'custom';
+
+export interface GradeCategoryMaxBid {
+  id?: string;
+  grade: PlayerGrade;
+  category: PlayerRole | string; // e.g. "Batsman", "Bowler", "Wicketkeeper"
+  maxBid: number;
+}
+
+export interface SaveLogEntry {
+  id: string;
+  timestamp: string;
+  type: 'manual' | 'auto' | 'snapshot';
+  status: 'success' | 'failure' | 'error';
+  description: string;
+  itemCountSummary?: {
+    teams: number;
+    players: number;
+    transactions: number;
+  };
+}
+
+export interface SaveSnapshot {
+  id: string;
+  timestamp: string;
+  name?: string;
+  type?: 'manual' | 'auto' | 'snapshot';
+  description: string;
+  teamsCount?: number;
+  playersCount?: number;
+  soldCount?: number;
+  state: {
+    players: Player[];
+    teams: Team[];
+    transactions: AuctionTransaction[];
+    auctionOrderMode?: AuctionOrderingMode;
+    customAuctionOrderIds?: string[];
+    gradeCategoryMaxBids?: GradeCategoryMaxBid[];
+    tournament: TournamentInfo;
+    rules: AuctionRules;
+    currentPlayerId?: string | null;
+    currentBid?: number;
+    currentBidderId?: string | null;
+  };
+}
+
 export interface AuctionRules {
   startingBudget: number;
   minBidIncrement: number;
@@ -132,6 +183,9 @@ export interface AuctionRules {
   soundEnabled: boolean;
   animationsEnabled: boolean;
   gradeBasePrices?: GradeBasePrices;
+  gradeCategoryMaxBids?: GradeCategoryMaxBid[];
+  captainCostMode?: 'zero' | 'custom' | 'basePrice';
+  captainCustomCost?: number;
   squadRules: SquadRules;
 }
 
@@ -147,6 +201,8 @@ export interface TournamentInfo {
 export type ActiveNavTab = 
   | 'dashboard' 
   | 'live_auction' 
+  | 'auction_order'
+  | 'captain_management'
   | 'players' 
   | 'teams' 
   | 'history' 
@@ -154,5 +210,6 @@ export type ActiveNavTab =
   | 'analytics' 
   | 'ai_assistant' 
   | 'import_excel' 
+  | 'save_logs'
   | 'settings'
   | 'complete';

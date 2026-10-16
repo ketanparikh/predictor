@@ -25,7 +25,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
 
   const [name, setName] = useState('');
   const [age, setAge] = useState(24);
-  const [ageCategory, setAgeCategory] = useState<string>('Above 14');
+  const [ageCategory, setAgeCategory] = useState<string>('Above 15');
   const [gender, setGender] = useState<string>('Male');
   const [experience, setExperience] = useState(4);
   const [role, setRole] = useState<PlayerRole>('Batsman');
@@ -65,7 +65,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
     if (playerToEdit) {
       setName(playerToEdit.name || '');
       setAge(playerToEdit.age || 24);
-      setAgeCategory(playerToEdit.ageCategory || (playerToEdit.age && playerToEdit.age <= 14 ? 'Below 14' : 'Above 14'));
+      setAgeCategory(playerToEdit.ageCategory || (playerToEdit.age && playerToEdit.age <= 15 ? '15 and Below' : 'Above 15'));
       setGender(playerToEdit.gender || 'Male');
       setExperience(playerToEdit.experience || 4);
       setRole((playerToEdit.role as string) === 'All-rounder' ? 'Batsman' : playerToEdit.role || 'Batsman');
@@ -167,43 +167,49 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
 
   if (!isOpen) return null;
 
+  const parseSafeNum = (val: any, fallback: number = 0): number => {
+    if (val === '' || val === null || val === undefined) return fallback;
+    const parsed = typeof val === 'number' ? val : parseFloat(String(val).trim());
+    return isNaN(parsed) || !isFinite(parsed) ? fallback : parsed;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
     const payload = {
       name: name.trim(),
-      age: Number(age),
+      age: parseSafeNum(age, 24),
       ageCategory,
       gender,
-      experience: Number(experience),
+      experience: parseSafeNum(experience, 4),
       role,
       battingStyle,
       bowlingStyle,
       grade,
-      basePrice: Number(basePrice),
+      basePrice: parseSafeNum(basePrice, 1000),
       photo: photo.trim() || undefined,
       previousPerformance: previousPerformance.trim() || undefined,
       notes: notes.trim() || undefined,
-      auctionOrder: Number(auctionOrder) || 1,
+      auctionOrder: parseSafeNum(auctionOrder, 1),
       isCaptain: Boolean(isCaptain),
       isViceCaptain: Boolean(isViceCaptain),
       sponsorTag: sponsorTag.trim() || undefined,
       isSponsored: Boolean(isSponsored || sponsorTag.trim()),
       stats: {
-        matches: Number(matches),
-        runs: Number(runs),
-        average: Number(average),
-        strikeRate: Number(strikeRate),
-        highestScore: Number(highestScore),
-        fifties: Number(fifties),
-        hundreds: Number(hundreds),
-        wickets: Number(wickets),
-        bowlingAverage: Number(bowlingAverage),
-        economyRate: Number(economyRate),
+        matches: Math.max(0, Math.round(parseSafeNum(matches, 0))),
+        runs: Math.max(0, Math.round(parseSafeNum(runs, 0))),
+        average: Math.max(0, parseSafeNum(average, 0)),
+        strikeRate: Math.max(0, parseSafeNum(strikeRate, 0)),
+        highestScore: Math.max(0, Math.round(parseSafeNum(highestScore, 0))),
+        fifties: Math.max(0, Math.round(parseSafeNum(fifties, 0))),
+        hundreds: Math.max(0, Math.round(parseSafeNum(hundreds, 0))),
+        wickets: Math.max(0, Math.round(parseSafeNum(wickets, 0))),
+        bowlingAverage: Math.max(0, parseSafeNum(bowlingAverage, 0)),
+        economyRate: Math.max(0, parseSafeNum(economyRate, 0)),
         bestBowling: bestBowling.trim() || 'N/A',
-        catches: Number(catches),
-        stumpings: Number(stumpings),
+        catches: Math.max(0, Math.round(parseSafeNum(catches, 0))),
+        stumpings: Math.max(0, Math.round(parseSafeNum(stumpings, 0))),
       },
     };
 
@@ -393,12 +399,12 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 onChange={e => {
                   const cat = e.target.value;
                   setAgeCategory(cat);
-                  setAge(cat === 'Below 14' ? 13 : 20);
+                  setAge(cat === '15 and Below' ? 14 : 20);
                 }}
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-cyan-300 font-bold text-sm focus:outline-none focus:border-amber-500"
               >
-                <option value="Above 14">Above 14</option>
-                <option value="Below 14">Below 14</option>
+                <option value="Above 15">Above 15</option>
+                <option value="15 and Below">15 and Below</option>
               </select>
             </div>
 
@@ -446,6 +452,12 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 onChange={e => {
                   const newGrade = e.target.value as PlayerGrade;
                   setGrade(newGrade);
+                  if (newGrade !== 'A' && isViceCaptain) {
+                    setIsViceCaptain(false); // Vice Captain has to be an A grade player
+                  }
+                  if (newGrade !== 'A+' && isCaptain) {
+                    setIsCaptain(false);
+                  }
                   const newPrice =
                     newGrade === 'A+'
                       ? gradeBasePrices.gradeAPlus || 7000
@@ -459,7 +471,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500 font-bold"
               >
                 <option value="A+">👑 Grade A+ (Marquee / Captain - {gradeBasePrices.gradeAPlus || 7000} pts)</option>
-                <option value="A">⭐ Grade A (Elite / Vice Captain - {gradeBasePrices.gradeA} pts)</option>
+                <option value="A">⭐ Grade A (Elite - {gradeBasePrices.gradeA} pts)</option>
                 <option value="B">⚡ Grade B (Core - {gradeBasePrices.gradeB} pts)</option>
                 <option value="C">🌱 Grade C (Emerging - {gradeBasePrices.gradeC} pts)</option>
               </select>
@@ -522,30 +534,32 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 <label className="text-slate-400">Matches</label>
                 <input
                   type="number"
+                  step="any"
                   min="0"
                   value={matches}
-                  onChange={e => setMatches(Number(e.target.value))}
+                  onChange={e => setMatches(parseSafeNum(e.target.value, 0))}
                   className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
                 />
               </div>
               <div>
-                <label className="text-slate-400">Runs</label>
+                <label className="text-slate-400">Total Runs</label>
                 <input
                   type="number"
+                  step="any"
                   min="0"
                   value={runs}
-                  onChange={e => setRuns(Number(e.target.value))}
-                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
+                  onChange={e => setRuns(parseSafeNum(e.target.value, 0))}
+                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-amber-300 font-bold"
                 />
               </div>
               <div>
                 <label className="text-slate-400">Batting Average</label>
                 <input
                   type="number"
-                  step="0.1"
+                  step="any"
                   min="0"
                   value={average}
-                  onChange={e => setAverage(Number(e.target.value))}
+                  onChange={e => setAverage(parseSafeNum(e.target.value, 0))}
                   className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
                 />
               </div>
@@ -553,10 +567,10 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 <label className="text-slate-400">Strike Rate</label>
                 <input
                   type="number"
-                  step="0.1"
+                  step="any"
                   min="0"
                   value={strikeRate}
-                  onChange={e => setStrikeRate(Number(e.target.value))}
+                  onChange={e => setStrikeRate(parseSafeNum(e.target.value, 0))}
                   className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-sky-400 font-bold"
                 />
               </div>
@@ -565,9 +579,10 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 <label className="text-slate-400">Highest Score</label>
                 <input
                   type="number"
+                  step="any"
                   min="0"
                   value={highestScore}
-                  onChange={e => setHighestScore(Number(e.target.value))}
+                  onChange={e => setHighestScore(parseSafeNum(e.target.value, 0))}
                   className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
                 />
               </div>
@@ -576,18 +591,20 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 <div className="flex gap-2">
                   <input
                     type="number"
+                    step="any"
                     min="0"
                     placeholder="50s"
                     value={fifties}
-                    onChange={e => setFifties(Number(e.target.value))}
+                    onChange={e => setFifties(parseSafeNum(e.target.value, 0))}
                     className="w-1/2 mt-1 px-2 py-1.5 bg-slate-950 border border-slate-800 rounded text-white text-center"
                   />
                   <input
                     type="number"
+                    step="any"
                     min="0"
                     placeholder="100s"
                     value={hundreds}
-                    onChange={e => setHundreds(Number(e.target.value))}
+                    onChange={e => setHundreds(parseSafeNum(e.target.value, 0))}
                     className="w-1/2 mt-1 px-2 py-1.5 bg-slate-950 border border-slate-800 rounded text-white text-center"
                   />
                 </div>
@@ -596,9 +613,10 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 <label className="text-slate-400">Wickets</label>
                 <input
                   type="number"
+                  step="any"
                   min="0"
                   value={wickets}
-                  onChange={e => setWickets(Number(e.target.value))}
+                  onChange={e => setWickets(parseSafeNum(e.target.value, 0))}
                   className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-emerald-400 font-bold"
                 />
               </div>
@@ -606,10 +624,54 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 <label className="text-slate-400">Economy Rate</label>
                 <input
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   value={economyRate}
-                  onChange={e => setEconomyRate(Number(e.target.value))}
+                  onChange={e => setEconomyRate(parseSafeNum(e.target.value, 0))}
+                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
+                />
+              </div>
+
+              <div>
+                <label className="text-slate-400">Bowling Average</label>
+                <input
+                  type="number"
+                  step="any"
+                  min="0"
+                  value={bowlingAverage}
+                  onChange={e => setBowlingAverage(parseSafeNum(e.target.value, 0))}
+                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
+                />
+              </div>
+              <div>
+                <label className="text-slate-400">Best Bowling</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 4/18"
+                  value={bestBowling}
+                  onChange={e => setBestBowling(e.target.value)}
+                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
+                />
+              </div>
+              <div>
+                <label className="text-slate-400">Catches</label>
+                <input
+                  type="number"
+                  step="any"
+                  min="0"
+                  value={catches}
+                  onChange={e => setCatches(parseSafeNum(e.target.value, 0))}
+                  className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
+                />
+              </div>
+              <div>
+                <label className="text-slate-400">Stumpings</label>
+                <input
+                  type="number"
+                  step="any"
+                  min="0"
+                  value={stumpings}
+                  onChange={e => setStumpings(parseSafeNum(e.target.value, 0))}
                   className="w-full mt-1 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded text-white"
                 />
               </div>

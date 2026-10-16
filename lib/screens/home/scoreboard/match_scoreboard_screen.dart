@@ -5,6 +5,7 @@ import '../../../models/live_score.dart';
 import '../../../models/tournament.dart';
 import '../../../providers/admin_provider.dart';
 import '../../../providers/auction_provider.dart';
+import '../../../services/cricheroes_live_service.dart';
 import '../../../services/live_score_service.dart';
 import '../../../services/team_roster_service.dart';
 import '../../../theme/app_theme.dart';
@@ -29,16 +30,19 @@ class MatchScoreboardScreen extends StatefulWidget {
 
 class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
   final LiveScoreService _service = LiveScoreService();
+  final CricHeroesLiveService _cricheroes = CricHeroesLiveService();
   final TeamRosterService _rosters = TeamRosterService();
   bool _saving = false;
   String? _error;
   LiveScore? _pending;
   LiveScore? _lastShown;
   LiveScore? _undoSnapshot;
+  late final Stream<LiveScore?> _liveStream;
 
   @override
   void initState() {
     super.initState();
+    _liveStream = _scoreStream();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _rosters.load();
       if (mounted) {
@@ -81,6 +85,9 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
   LiveScore _merged(LiveScore? remote) {
     final initial = widget.initial;
     final base = remote ?? initial;
+    if (base.isCricHeroes || initial.isCricHeroes) {
+      return remote ?? initial;
+    }
     final weekend = base.isWeekendMatch || initial.isWeekendMatch;
     if (weekend) {
       return base.copyWith(
@@ -118,8 +125,16 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
     return pending;
   }
 
+  Stream<LiveScore?> _scoreStream() {
+    final cricheroesId = widget.initial.cricheroesMatchId;
+    if (widget.initial.isCricHeroes && cricheroesId != null) {
+      return _cricheroes.watchMatch(cricheroesId).map<LiveScore?>((score) => score);
+    }
+    return _service.watchScore(widget.match.id);
+  }
+
   LiveScore _withAuctionSquads(LiveScore score, AuctionProvider auction) {
-    if (score.isWeekendMatch) {
+    if (score.isWeekendMatch || score.isCricHeroes) {
       return score;
     }
     List<String> squad(String teamName, List<String> existing) {
@@ -154,12 +169,13 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
   Widget build(BuildContext context) {
     final isAdmin = Provider.of<AdminProvider>(context).isAdmin;
     final auction = Provider.of<AuctionProvider>(context);
-    final tabCount = isAdmin ? 4 : 3;
+    final showScoring = isAdmin && !widget.initial.isCricHeroes;
+    final tabCount = showScoring ? 4 : 3;
 
     return DefaultTabController(
       length: tabCount,
       child: StreamBuilder<LiveScore?>(
-        stream: _service.watchScore(widget.match.id),
+        stream: _liveStream,
         builder: (context, snapshot) {
           var score = _withPending(_merged(snapshot.data));
           score = _withAuctionSquads(score, auction);
@@ -204,7 +220,7 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
                   const Tab(text: 'Live'),
                   const Tab(text: 'Scorecard'),
                   const Tab(text: 'Commentary'),
-                  if (isAdmin) const Tab(text: 'Score'),
+                  if (showScoring) const Tab(text: 'Score'),
                 ],
               ),
             ),
@@ -216,7 +232,7 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
                   color: kScoreboardNavy,
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                   child: Text(
-                    '${widget.dayName}${widget.match.time != null ? '  •  ${widget.match.time}' : ''}${score.isWeekendMatch ? '  •  Weekend' : ''}  •  JCPL-4',
+                    '${widget.dayName}${widget.match.time != null ? '  •  ${widget.match.time}' : ''}${score.isWeekendMatch ? '  •  Weekend' : ''}${score.isCricHeroes ? '  •  CricHeroes' : '  •  JCPL-4'}',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.65),
                       fontSize: 12,
@@ -230,7 +246,7 @@ class _MatchScoreboardScreenState extends State<MatchScoreboardScreen> {
                       LiveInningsPanel(score: score),
                       ScorecardView(score: score),
                       CommentaryView(score: score),
-                      if (isAdmin)
+                      if (showScoring)
                         ScoringConsole(
                           score: score,
                           saving: _saving,

@@ -38,11 +38,8 @@ const AppContent: React.FC = () => {
       const hash = window.location.hash.toLowerCase();
       if (hash === '#projector') return 'projector';
       if (hash === '#admin') return 'admin';
-      if (hash === '#spectator' || window.location.hostname.includes('trycloudflare.com')) {
-        return 'spectator';
-      }
     }
-    return 'admin';
+    return 'spectator';
   });
   const [isQRCodeModalOpen, setIsQRCodeModalOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -55,13 +52,10 @@ const AppContent: React.FC = () => {
 
       if (hash === '#projector') {
         setViewMode('projector');
-      } else if (hash === '#admin') {
+      } else if (hash === '#admin' && !isRemoteTunnel) {
         setViewMode('admin');
-      } else if (hash === '#spectator' || isRemoteTunnel) {
-        // Anyone accessing via public spectator tunnel or #spectator is locked to Spectator View
-        setViewMode('spectator');
       } else {
-        setViewMode('admin');
+        setViewMode('spectator');
       }
     };
 
@@ -86,7 +80,7 @@ const AppContent: React.FC = () => {
   };
 
   const handleCloseProjector = () => {
-    window.location.hash = '';
+    window.location.hash = 'admin';
     setViewMode('admin');
   };
 

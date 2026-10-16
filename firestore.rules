@@ -83,6 +83,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Live cricket-auction-app state (admin writes, everyone reads)
+    match /auctionLive/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Auctions collection: teams and player assignments
     match /auctions/{category} {
       allow read: if true; // Anyone can read auction data

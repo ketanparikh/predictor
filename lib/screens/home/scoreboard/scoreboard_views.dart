@@ -27,6 +27,26 @@ class ScoreboardHeader extends StatelessWidget {
           Row(
             children: [
               _StatusPill(score: score),
+              if (score.isCricHeroes) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: const Text(
+                    'CRICHEROES',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                ),
+              ],
               if (score.isWeekendMatch) ...[
                 const SizedBox(width: 8),
                 Container(
@@ -211,9 +231,13 @@ class LiveInningsPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final inn = score.liveInnings;
     if (inn == null) {
-      return const Padding(
-        padding: EdgeInsets.all(24),
-        child: Text('The scorer will start this match from the Score tab.'),
+      return Padding(
+        padding: const EdgeInsets.all(24),
+        child: Text(
+          score.isCricHeroes
+              ? 'Waiting for live data from CricHeroes.'
+              : 'The scorer will start this match from the Score tab.',
+        ),
       );
     }
     final striker = inn.batterNamed(inn.striker);

@@ -1,0 +1,12 @@
+{
+  "enabled": true,
+  "includeAppFixtures": false,
+  "pollSeconds": 8,
+  "matches": [
+    {
+      "enabled": true,
+      "cricheroesMatchId": 27691416,
+      "label": "Trinity U-14 vs CADENCE U-14 (Pune live)"
+    }
+  ]
+}

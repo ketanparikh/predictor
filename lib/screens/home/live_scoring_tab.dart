@@ -5,6 +5,7 @@ import '../../models/live_score.dart';
 import '../../models/tournament.dart';
 import '../../providers/admin_provider.dart';
 import '../../providers/game_provider.dart';
+import '../../services/cricheroes_live_service.dart';
 import '../../services/live_score_service.dart';
 import 'scoreboard/match_scoreboard_screen.dart';
 import 'weekend/weekend_setup_view.dart';
@@ -18,11 +19,36 @@ class LiveScoringTab extends StatefulWidget {
 
 class _LiveScoringTabState extends State<LiveScoringTab> {
   final LiveScoreService _scoreService = LiveScoreService();
+  final CricHeroesLiveService _cricheroes = CricHeroesLiveService();
   String _filter = 'all';
+  CricHeroesLiveConfig _liveConfig = CricHeroesLiveConfig.empty;
+  bool _configLoaded = false;
+  Stream<LiveScore>? _feedStream;
+
+  CricHeroesFeedMatch? get _testFeed =>
+      _liveConfig.enabled && _liveConfig.matches.isNotEmpty
+          ? _liveConfig.matches.first
+          : null;
 
   @override
   void initState() {
     super.initState();
+    _cricheroes.loadConfig().then((config) {
+      if (!mounted) return;
+      final feed = config.enabled && config.matches.isNotEmpty
+          ? config.matches.first
+          : null;
+      setState(() {
+        _liveConfig = config;
+        _configLoaded = true;
+        _feedStream = feed == null
+            ? null
+            : _cricheroes.watchMatch(
+                feed.cricheroesMatchId,
+                interval: config.pollInterval,
+              );
+      });
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final game = Provider.of<GameProvider>(context, listen: false);
       if (!game.tournamentsLoaded) {
@@ -85,9 +111,27 @@ class _LiveScoringTabState extends State<LiveScoringTab> {
       MaterialPageRoute(
         builder: (_) => MatchScoreboardScreen(
           match: item.match,
-          dayName: item.day.name,
+          dayName: score.dayName ?? item.day.name,
           initial: score,
         ),
+      ),
+    );
+  }
+
+  _LiveMatch _feedItem(CricHeroesFeedMatch feed, LiveScore score) {
+    return _LiveMatch(
+      day: Tournament(
+        id: 'cricheroes',
+        name: score.dayName ?? feed.label ?? 'CricHeroes',
+        matches: const [],
+      ),
+      match: MatchInfo(
+        id: feed.matchId,
+        name: '${score.team1} vs ${score.team2}',
+        date: DateTime.now().toIso8601String(),
+        questionFile: 'assets/config/prediction_bank.json',
+        time: score.matchTime,
+        category: 'cricheroes',
       ),
     );
   }
@@ -98,19 +142,22 @@ class _LiveScoringTabState extends State<LiveScoringTab> {
     final game = Provider.of<GameProvider>(context);
     final isAdmin = Provider.of<AdminProvider>(context).isAdmin;
 
-    if (!game.tournamentsLoaded) {
+    if (!game.tournamentsLoaded || !_configLoaded) {
       return const Center(child: CircularProgressIndicator());
     }
 
     return StreamBuilder<Map<String, LiveScore>>(
       stream: _scoreService.watchScores(),
       builder: (context, snapshot) {
-        final scores = snapshot.data ?? {};
+        final scores = Map<String, LiveScore>.from(snapshot.data ?? {});
         final weekendMatches = scores.values
             .where((score) => score.isWeekendMatch)
             .toList()
           ..sort((a, b) => '${a.team1}${a.team2}'.compareTo('${b.team1}${b.team2}'));
-        final matches = _allMatches(game.tournaments, scores).where((item) {
+        final sourceMatches = _liveConfig.includeAppFixtures
+            ? _allMatches(game.tournaments, scores)
+            : _allMatches(const [], scores);
+        final matches = sourceMatches.where((item) {
           final score = _scoreFor(item, scores);
           if (score.isWeekendMatch && !score.weekendSheetsReady) return false;
           if (_filter == 'weekend') return false;
@@ -176,30 +223,112 @@ class _LiveScoringTabState extends State<LiveScoringTab> {
                       matches: weekendMatches,
                       isAdmin: isAdmin,
                     )
-                  : matches.isEmpty
-                      ? Center(
-                          child: Text(
-                            'No matches to show',
-                            style: theme.textTheme.bodyLarge
-                                ?.copyWith(color: Colors.grey[600]),
-                          ),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                          itemCount: matches.length,
-                          itemBuilder: (context, index) {
-                            final item = matches[index];
-                            final score = _scoreFor(item, scores);
-                            return _ScoreCard(
-                              dayName: item.day.name,
-                              match: item.match,
-                              score: score,
-                              isAdmin: isAdmin,
-                              onOpen: () => _openMatch(item, score),
-                            );
-                          },
-                        ),
+                  : _buildMatchList(
+                      theme: theme,
+                      isAdmin: isAdmin,
+                      matches: matches,
+                      scores: scores,
+                    ),
             ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildMatchList({
+    required ThemeData theme,
+    required bool isAdmin,
+    required List<_LiveMatch> matches,
+    required Map<String, LiveScore> scores,
+  }) {
+    final feed = _testFeed;
+    if (feed == null) {
+      if (matches.isEmpty) {
+        return Center(
+          child: Text(
+            'No matches to show',
+            style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+          ),
+        );
+      }
+      return ListView.builder(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        itemCount: matches.length,
+        itemBuilder: (context, index) {
+          final item = matches[index];
+          final score = _scoreFor(item, scores);
+          return _ScoreCard(
+            dayName: item.day.name,
+            match: item.match,
+            score: score,
+            isAdmin: isAdmin,
+            onOpen: () => _openMatch(item, score),
+          );
+        },
+      );
+    }
+
+    return StreamBuilder<LiveScore>(
+      stream: _feedStream,
+      builder: (context, snapshot) {
+        final feedScore = snapshot.data;
+        final cards = <Widget>[];
+        if (snapshot.hasError && feedScore == null) {
+          cards.add(
+            Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: ListTile(
+                leading: const Icon(Icons.wifi_off),
+                title: Text(feed.label ?? 'CricHeroes live test'),
+                subtitle: Text('Could not load live score. ${snapshot.error}'),
+              ),
+            ),
+          );
+        } else if (feedScore != null) {
+          final statusOk = _filter == 'all' || feedScore.status == _filter;
+          if (statusOk) {
+            final item = _feedItem(feed, feedScore);
+            cards.add(
+              _ScoreCard(
+                dayName: feedScore.dayName ?? feed.label ?? 'CricHeroes',
+                match: item.match,
+                score: feedScore,
+                isAdmin: isAdmin,
+                onOpen: () => _openMatch(item, feedScore),
+              ),
+            );
+          }
+        } else {
+          cards.add(
+            const Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }
+
+        if (matches.isEmpty && cards.isEmpty) {
+          return Center(
+            child: Text(
+              'No matches to show',
+              style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+            ),
+          );
+        }
+
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          children: [
+            ...cards,
+            for (final item in matches)
+              _ScoreCard(
+                dayName: item.day.name,
+                match: item.match,
+                score: _scoreFor(item, scores),
+                isAdmin: isAdmin,
+                onOpen: () => _openMatch(item, _scoreFor(item, scores)),
+              ),
           ],
         );
       },
@@ -305,6 +434,26 @@ class _ScoreCard extends StatelessWidget {
                           ?.copyWith(color: Colors.grey[600]),
                     ),
                   const SizedBox(width: 8),
+                  if (score.isCricHeroes) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.teal.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.teal.shade200),
+                      ),
+                      child: Text(
+                        'CRICHEROES',
+                        style: TextStyle(
+                          color: Colors.teal.shade800,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   if (score.isWeekendMatch) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -375,7 +524,11 @@ class _ScoreCard extends StatelessWidget {
               ],
               const SizedBox(height: 8),
               Text(
-                isAdmin ? 'Open scoreboard to score' : 'Open full scorecard',
+                score.isCricHeroes
+                    ? 'Open live CricHeroes scorecard'
+                    : isAdmin
+                        ? 'Open scoreboard to score'
+                        : 'Open full scorecard',
                 style: theme.textTheme.bodySmall
                     ?.copyWith(color: Colors.grey[500]),
               ),

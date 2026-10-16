@@ -47,6 +47,13 @@ echo.
 
 REM Build Flutter Web App
 echo [4/5] Building Flutter Web App...
+if exist cricket-auction-app\package.json (
+  echo   Building auction studio...
+  pushd cricket-auction-app
+  if not exist node_modules call npm install
+  call npm run build
+  popd
+)
 flutter build web --pwa-strategy=none
 if %errorlevel% neq 0 (
     echo ✗ Failed to build Flutter web app

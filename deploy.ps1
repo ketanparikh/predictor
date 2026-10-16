@@ -59,6 +59,13 @@ Set-Location ..
 
 # Build Flutter Web App
 Write-Host "[4/5] Building Flutter Web App..." -ForegroundColor Yellow
+if (Test-Path "cricket-auction-app/package.json") {
+  Write-Host "  Building auction studio..." -ForegroundColor Yellow
+  Push-Location cricket-auction-app
+  if (-not (Test-Path "node_modules")) { npm install }
+  npm run build
+  Pop-Location
+}
 flutter build web --pwa-strategy=none
 $flutterExitCode = $LASTEXITCODE
 if ($flutterExitCode -ne 0) {

@@ -29,6 +29,7 @@ Thumbs.db
 
 # Web
 web/*.js.map
+web/auction/
 
 # Miscellaneous
 *.class

@@ -2,6 +2,10 @@ import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onRequest } from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
 
+const CRICHEROES_API = 'https://api.cricheroes.in/api/v1';
+const CRICHEROES_PATH =
+  /^\/(scorecard\/(get-mini-scorecard|v2\/get-scorecard|v2\/get-commentary)|scoreCard\/get-scorecard)\/\d+$/;
+
 admin.initializeApp();
 const db = admin.firestore();
 
@@ -231,6 +235,59 @@ export const resetJan18Matches = onRequest(
         success: false,
         error: error.message,
         timestamp: new Date().toISOString()
+      });
+    }
+  }
+);
+
+/**
+ * Same-origin / Cloud Functions proxy for CricHeroes live scoreboard APIs.
+ * CricHeroes returns 403 when the browser Origin is our hosting domain.
+ */
+export const cricheroesProxy = onRequest(
+  { region: 'us-central1', cors: true, invoker: 'public' },
+  async (req, res) => {
+    if (req.method === 'OPTIONS') {
+      res.status(204).send('');
+      return;
+    }
+    if (req.method !== 'GET') {
+      res.status(405).json({ status: false, error: 'GET only' });
+      return;
+    }
+
+    const rawPath = String(req.query.path || '');
+    const path = rawPath.startsWith('/') ? rawPath : `/${rawPath}`;
+    if (!CRICHEROES_PATH.test(path)) {
+      res.status(400).json({ status: false, error: 'Path is not allowed' });
+      return;
+    }
+
+    try {
+      const udid = Array.from({ length: 32 }, () =>
+        Math.floor(Math.random() * 16).toString(16)
+      ).join('');
+      const upstream = await fetch(`${CRICHEROES_API}${path}`, {
+        headers: {
+          'api-key': 'cr!CkH3r0s',
+          udid,
+          'device-type': 'Chrome: 126.0.0.0',
+          Accept: 'application/json',
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        },
+      });
+      const body = await upstream.text();
+      res
+        .status(upstream.status)
+        .set('Cache-Control', 'no-store')
+        .type('application/json')
+        .send(body);
+    } catch (error: any) {
+      console.error('CricHeroes proxy failed', error);
+      res.status(502).json({
+        status: false,
+        error: error?.message || 'Upstream request failed',
       });
     }
   }

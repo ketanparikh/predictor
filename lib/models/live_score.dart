@@ -360,6 +360,8 @@ class LiveScore {
   final bool isWeekendMatch;
   final bool team1SheetSubmitted;
   final bool team2SheetSubmitted;
+  final String? source;
+  final int? cricheroesMatchId;
 
   const LiveScore({
     required this.matchId,
@@ -387,7 +389,11 @@ class LiveScore {
     this.isWeekendMatch = false,
     this.team1SheetSubmitted = false,
     this.team2SheetSubmitted = false,
+    this.source,
+    this.cricheroesMatchId,
   });
+
+  bool get isCricHeroes => source == 'cricheroes';
 
   bool get weekendSheetsReady =>
       isWeekendMatch &&
@@ -517,6 +523,8 @@ class LiveScore {
       isWeekendMatch: map['isWeekendMatch'] == true,
       team1SheetSubmitted: _sheetSubmitted(map, 'team1SheetSubmitted', map['team1Squad']),
       team2SheetSubmitted: _sheetSubmitted(map, 'team2SheetSubmitted', map['team2Squad']),
+      source: map['source'] as String?,
+      cricheroesMatchId: (map['cricheroesMatchId'] as num?)?.toInt(),
     );
   }
 
@@ -546,6 +554,8 @@ class LiveScore {
       'isWeekendMatch': isWeekendMatch,
       'team1SheetSubmitted': team1SheetSubmitted,
       'team2SheetSubmitted': team2SheetSubmitted,
+      if (source != null) 'source': source,
+      if (cricheroesMatchId != null) 'cricheroesMatchId': cricheroesMatchId,
     };
   }
 
@@ -575,6 +585,8 @@ class LiveScore {
     bool? isWeekendMatch,
     bool? team1SheetSubmitted,
     bool? team2SheetSubmitted,
+    String? source,
+    int? cricheroesMatchId,
     bool clearToss = false,
   }) {
     return LiveScore(
@@ -603,6 +615,8 @@ class LiveScore {
       isWeekendMatch: isWeekendMatch ?? this.isWeekendMatch,
       team1SheetSubmitted: team1SheetSubmitted ?? this.team1SheetSubmitted,
       team2SheetSubmitted: team2SheetSubmitted ?? this.team2SheetSubmitted,
+      source: source ?? this.source,
+      cricheroesMatchId: cricheroesMatchId ?? this.cricheroesMatchId,
     );
   }
 }

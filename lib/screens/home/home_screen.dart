@@ -5,6 +5,8 @@ import '../../providers/game_provider.dart';
 import '../auth/login_screen.dart';
 import 'jcpl_home_tab.dart';
 import 'stats_tab.dart';
+import 'auctions_tab.dart';
+import 'live_scoring_tab.dart';
 import '../admin/outcome_admin_screen.dart';
 import '../../widgets/coming_soon_view.dart';
 import '../../theme/app_theme.dart';
@@ -48,15 +50,12 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    // Game tab is index 4
     if (index == 4) {
-      // Reset predictor tournament list when entering the Game tab
-      final gameProvider = Provider.of<GameProvider>(context, listen: false);
-      gameProvider.clearTournamentSelection();
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final user = authProvider.user;
       if (user != null) {
-        gameProvider.loadCompletedMatchesForUser(user.uid);
+        Provider.of<GameProvider>(context, listen: false)
+            .loadCompletedMatchesForUser(user.uid);
       }
     }
   }
@@ -72,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return 'Schedule';
       case 4:
-        return 'Game';
+        return 'Live';
       case 5:
         return 'Stats';
       default:
@@ -91,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return Icons.calendar_month;
       case 4:
-        return Icons.sports_esports;
+        return Icons.scoreboard;
       case 5:
         return Icons.bar_chart;
       default:
@@ -533,11 +532,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.groups,
         );
       case 2:
-        return const ComingSoonView(
-          title: 'Coming Soon',
-          message: 'The JCPL-4 auction will open once teams are finalized.',
-          icon: Icons.gavel,
-        );
+        return const AuctionsTab();
       case 3:
         return const ComingSoonView(
           title: 'Coming Soon',
@@ -545,11 +540,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.calendar_month,
         );
       case 4:
-        return const ComingSoonView(
-          title: 'Coming Soon',
-          message: 'Predictor, Bracket, and Fantasy will open for JCPL-4 soon.',
-          icon: Icons.sports_esports,
-        );
+        return const LiveScoringTab();
       case 5:
         return const StatsTab();
       default:
@@ -1171,9 +1162,9 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Schedule',
           ),
           NavigationDestination(
-            icon: Icon(Icons.sports_esports_outlined),
-            selectedIcon: Icon(Icons.sports_esports),
-            label: 'Game',
+            icon: Icon(Icons.scoreboard_outlined),
+            selectedIcon: Icon(Icons.scoreboard),
+            label: 'Live',
           ),
           NavigationDestination(
             icon: Icon(Icons.bar_chart_outlined),

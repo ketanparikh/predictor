@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { Team, Player, AuctionTransaction, AuctionRules, TournamentInfo, BidRecord, GradeBasePrices } from '../types/auction';
 import { initialTeams, initialPlayers, initialAuctionRules, initialTournamentInfo } from '../data/demoData';
 import { loadStoredState, saveStoredState, clearAuctionStorage, AppStoredState } from '../utils/storage';
+import { pushAuctionStateToFirestore, subscribeAuctionStateFromFirestore } from '../utils/firebaseSync';
 import { soundFx } from '../utils/audio';
 import { triggerSoldConfetti } from '../utils/confetti';
 import { ParsedPlayerRow } from '../utils/excelParser';
@@ -161,8 +162,8 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // Load initial state
   useEffect(() => {
-    const isSpectator = typeof window !== 'undefined' && 
-      (window.location.hash.toLowerCase().includes('spectator') || window.location.hash.toLowerCase().includes('projector') || window.location.hostname.includes('trycloudflare.com'));
+    const isSpectator = typeof window !== 'undefined' &&
+      window.location.hash.toLowerCase() !== '#admin';
     
     if (isSpectator) {
       try {
@@ -208,8 +209,8 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       bc.onmessage = (event) => {
         if (event.data?.type === 'SYNC_STATE') {
           // Read-only spectator/projector screens update from broadcast
-          const isReadOnly = typeof window !== 'undefined' && 
-            (window.location.hash.toLowerCase().includes('spectator') || window.location.hash.toLowerCase().includes('projector'));
+          const isReadOnly = typeof window === 'undefined' ||
+            window.location.hash.toLowerCase() !== '#admin';
           if (isReadOnly) {
             const payload = event.data.payload as AppStoredState;
             if (payload) {
@@ -255,14 +256,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         headers: { 'Content-Type': 'application/json' },
         body: json,
       }).catch(() => {});
+      void pushAuctionStateToFirestore(stateToPush);
     } catch {}
   }, []);
 
   // Persist state changes (Admin mode only pushes to server to prevent spectators from overwriting)
   useEffect(() => {
     if (!isLoaded) return;
-    const isReadOnly = typeof window !== 'undefined' && 
-      (window.location.hash.toLowerCase().includes('spectator') || window.location.hash.toLowerCase().includes('projector'));
+    const isReadOnly = typeof window === 'undefined' ||
+      window.location.hash.toLowerCase() !== '#admin';
     if (isReadOnly) return; // Read-only views never overwrite server state
 
     const stateObj: AppStoredState = {
@@ -285,8 +287,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   useEffect(() => {
     const checkIsSpectatorOrProjector = () => {
       if (typeof window === 'undefined') return false;
-      const h = window.location.hash.toLowerCase();
-      return h.includes('spectator') || h.includes('projector');
+      return window.location.hash.toLowerCase() !== '#admin';
     };
 
     const applyIncomingState = (payload: AppStoredState) => {
@@ -325,6 +326,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     if (checkIsSpectatorOrProjector()) {
       fetchLatestServerState();
     }
+
+    const unsubFirestore = subscribeAuctionStateFromFirestore((data) => {
+      if (checkIsSpectatorOrProjector()) {
+        applyIncomingState(data);
+      }
+    });
 
     // 2. React immediately to hash changes (e.g. entering #spectator or #projector)
     const handleHashChange = () => {
@@ -367,6 +374,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       window.removeEventListener('hashchange', handleHashChange);
       if (es) es.close();
       clearInterval(interval);
+      unsubFirestore();
     };
   }, []);
 

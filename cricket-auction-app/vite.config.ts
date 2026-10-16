@@ -291,6 +291,11 @@ function auctionSyncPlugin(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/auction/',
+  build: {
+    outDir: '../web/auction',
+    emptyOutDir: true,
+  },
   plugins: [react(), tailwindcss(), auctionSyncPlugin()],
   server: {
     host: true,

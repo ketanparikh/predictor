@@ -110,7 +110,12 @@ export const TeamsPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {teams.map(team => {
           const squadPlayers = players.filter(p => team.squad.includes(p.id) || p.teamId === team.id || p.id === team.captainPlayerId);
-          const captainPlayer = players.find(p => p.id === team.captainPlayerId || (p.teamId === team.id && (p.isCaptain || p.isPreAssignedCaptain)) || (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase()));
+          const captainPlayer = players.find(p =>
+            (team.captainPlayerId && p.id === team.captainPlayerId) ||
+            p.captainOfTeamId === team.id ||
+            ((p.teamId === team.id || team.squad.includes(p.id)) && (p.isCaptain || p.isPreAssignedCaptain)) ||
+            (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase())
+          );
           const percentSpent = (team.totalSpent / team.startingBudget) * 100;
           const batsmenCount = squadPlayers.filter(p => p.role === 'Batsman').length;
           const bowlersCount = squadPlayers.filter(p => p.role === 'Bowler').length;
@@ -212,6 +217,18 @@ export const TeamsPage: React.FC = () => {
                     <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 flex-shrink-0">
                       {captainPlayer.soldPrice ? `${captainPlayer.soldPrice.toLocaleString()} pts` : 'Assigned'}
                     </span>
+                  </div>
+                ) : team.captain ? (
+                  <div className="mt-3.5 p-2.5 rounded-xl bg-slate-950/80 border border-amber-500/30 flex items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm">
+                        👑
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-bold text-white text-xs truncate block">{team.captain}</span>
+                        <p className="text-[11px] text-amber-400 truncate">Designated Captain</p>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="mt-3.5 p-2 rounded-xl bg-slate-950/40 border border-dashed border-slate-800 flex items-center justify-center gap-1.5 text-[11px] text-slate-500">

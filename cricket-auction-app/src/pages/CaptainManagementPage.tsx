@@ -44,15 +44,21 @@ export const CaptainManagementPage: React.FC = () => {
   const teamCaptainMap = useMemo(() => {
     const map = new Map<string, Player | undefined>();
     teams.forEach((team) => {
-      // Find player with captainPlayerId, captainOfTeamId, isCaptain/isPreAssignedCaptain in team's squad, or matching captain name
-      const captainInSquad = players.find(
-        (p) =>
-          p.id === team.captainPlayerId ||
-          p.captainOfTeamId === team.id ||
-          ((p.teamId === team.id || team.squad.includes(p.id)) &&
-            (p.isCaptain || p.isPreAssignedCaptain || (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase())))
-      );
-      map.set(team.id, captainInSquad);
+      // 1. Direct match by captainPlayerId
+      let captain = team.captainPlayerId ? players.find(p => p.id === team.captainPlayerId) : undefined;
+      // 2. Match by player.captainOfTeamId
+      if (!captain) {
+        captain = players.find(p => p.captainOfTeamId === team.id);
+      }
+      // 3. Match by player in team squad or teamId with isCaptain
+      if (!captain) {
+        captain = players.find(p => (p.teamId === team.id || team.squad.includes(p.id)) && (p.isCaptain || p.isPreAssignedCaptain));
+      }
+      // 4. Match by player name === team.captain
+      if (!captain && team.captain) {
+        captain = players.find(p => p.name.trim().toLowerCase() === team.captain!.trim().toLowerCase());
+      }
+      map.set(team.id, captain);
     });
     return map;
   }, [teams, players]);
@@ -230,7 +236,7 @@ export const CaptainManagementPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {teams.map((team) => {
           const captain = teamCaptainMap.get(team.id);
-          const hasCaptain = Boolean(captain);
+          const hasCaptain = Boolean(captain || team.captain);
 
           return (
             <div
@@ -285,7 +291,7 @@ export const CaptainManagementPage: React.FC = () => {
                         : 'bg-slate-950/40 border-dashed border-slate-800'
                     }`}
                   >
-                    {hasCaptain && captain ? (
+                    {captain ? (
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
                           <div className="relative">
@@ -296,6 +302,10 @@ export const CaptainManagementPage: React.FC = () => {
                               }
                               alt={captain.name}
                               className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-md"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=120&q=80';
+                              }}
                             />
                             <span className="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 p-0.5 rounded-full shadow">
                               <Crown className="w-3 h-3" />
@@ -319,6 +329,25 @@ export const CaptainManagementPage: React.FC = () => {
                         </div>
 
                         {/* Remove Captain Button */}
+                        <button
+                          onClick={() => handleRemoveCaptain(team)}
+                          title="Remove Captain"
+                          className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition-colors"
+                        >
+                          <UserX className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : team.captain ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-lg">
+                            👑
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-sm text-white">{team.captain}</h4>
+                            <p className="text-[11px] text-amber-400 font-semibold">Designated Team Captain</p>
+                          </div>
+                        </div>
                         <button
                           onClick={() => handleRemoveCaptain(team)}
                           title="Remove Captain"

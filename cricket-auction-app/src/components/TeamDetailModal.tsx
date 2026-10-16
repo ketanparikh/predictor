@@ -33,7 +33,12 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
   if (!isOpen || !team) return null;
 
   const squadPlayers = allPlayers.filter(p => team.squad.includes(p.id) || p.teamId === team.id || p.id === team.captainPlayerId);
-  const captainPlayer = allPlayers.find(p => p.id === team.captainPlayerId || (p.teamId === team.id && (p.isCaptain || p.isPreAssignedCaptain)) || (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase()));
+  const captainPlayer = allPlayers.find(p =>
+    (team.captainPlayerId && p.id === team.captainPlayerId) ||
+    p.captainOfTeamId === team.id ||
+    ((p.teamId === team.id || team.squad.includes(p.id)) && (p.isCaptain || p.isPreAssignedCaptain)) ||
+    (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase())
+  );
 
   // Sort squad so captain is first
   squadPlayers.sort((a, b) => {

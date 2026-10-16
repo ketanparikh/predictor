@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { 
   Team, 
   Player, 
+  PlayerStatus,
   AuctionTransaction, 
   AuctionRules, 
   TournamentInfo, 
@@ -224,10 +225,19 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Broadcast channel for multi-screen sync
   const [channel, setChannel] = useState<BroadcastChannel | null>(null);
 
+  // Helper to reliably check if current window is spectator/projector
+  const isSpectatorOrProjectorView = (): boolean => {
+    if (typeof window === 'undefined') return false;
+    const hash = window.location.hash.toLowerCase();
+    const isRemoteTunnel = window.location.hostname.includes('trycloudflare.com');
+    if (hash === '#spectator' || hash === '#projector') return true;
+    if (isRemoteTunnel && hash !== '#admin') return true;
+    return false;
+  };
+
   // Load initial state
   useEffect(() => {
-    const isSpectator = typeof window !== 'undefined' &&
-      window.location.hash.toLowerCase() !== '#admin';
+    const isSpectator = isSpectatorOrProjectorView();
     
     if (isSpectator) {
       try {
@@ -278,8 +288,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       bc.onmessage = (event) => {
         if (event.data?.type === 'SYNC_STATE') {
           // Read-only spectator/projector screens update from broadcast
-          const isReadOnly = typeof window === 'undefined' ||
-            window.location.hash.toLowerCase() !== '#admin';
+          const isReadOnly = isSpectatorOrProjectorView();
           if (isReadOnly) {
             const payload = event.data.payload as AppStoredState;
             if (payload) {
@@ -332,8 +341,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Persist state changes (Admin mode only pushes to server to prevent spectators from overwriting)
   useEffect(() => {
     if (!isLoaded) return;
-    const isReadOnly = typeof window === 'undefined' ||
-      window.location.hash.toLowerCase() !== '#admin';
+    const isReadOnly = isSpectatorOrProjectorView();
     if (isReadOnly) return; // Read-only views never overwrite server state
 
     const stateObj: AppStoredState = {
@@ -358,10 +366,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // Network Real-Time Sync Listener (Live Spectator & Projector cross-device sync)
   useEffect(() => {
-    const checkIsSpectatorOrProjector = () => {
-      if (typeof window === 'undefined') return false;
-      return window.location.hash.toLowerCase() !== '#admin';
-    };
+    const checkIsSpectatorOrProjector = () => isSpectatorOrProjectorView();
 
     const applyIncomingState = (payload: AppStoredState) => {
       if (!payload || !payload.teams || !payload.players) return;
@@ -729,7 +734,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     // Update players state:
     // 1. Target player gets marked as sold captain, keeping their original grade!
     // 2. Previous captain of target team (if different) is reset to upcoming
-    setPlayers(prev => prev.map(p => {
+    const updatedPlayers = players.map(p => {
       if (p.id === playerId) {
         return {
           ...p,
@@ -737,7 +742,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           isPreAssignedCaptain: true,
           captainOfTeamId: teamId,
           teamId: teamId,
-          status: 'sold',
+          status: 'sold' as PlayerStatus,
           soldPrice: cost,
           // Preserve player's existing grade
           grade: p.grade || 'A',
@@ -750,15 +755,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           isPreAssignedCaptain: false,
           captainOfTeamId: undefined,
           teamId: null,
-          status: 'upcoming',
+          status: 'upcoming' as PlayerStatus,
           soldPrice: null,
         };
       }
       return p;
-    }));
+    });
 
     // Update teams state:
-    setTeams(prev => prev.map(t => {
+    const updatedTeams = teams.map(t => {
       // If this was the team previously holding this player, release player & refund previous cost
       if (prevAssignedTeam && t.id === prevAssignedTeam.id && t.id !== teamId) {
         const refundOldCost = player.soldPrice || 0;
@@ -793,7 +798,29 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         };
       }
       return t;
-    }));
+    });
+
+    setPlayers(updatedPlayers);
+    setTeams(updatedTeams);
+
+    // Synchronously write to localStorage and broadcast so changes are permanent immediately
+    saveStoredState({ teams: updatedTeams, players: updatedPlayers });
+    const snapshotState: AppStoredState = {
+      teams: updatedTeams,
+      players: updatedPlayers,
+      transactions,
+      rules,
+      tournament,
+      currentPlayerId,
+      currentBid,
+      currentBidderId,
+      bidHistory,
+      auctionOrderMode,
+      customAuctionOrderIds,
+      lastSaved: new Date().toISOString(),
+    };
+    broadcastState(snapshotState);
+    pushStateToServer(snapshotState);
 
     const reassignedNotice = prevAssignedTeam ? ` (Reassigned from ${prevAssignedTeam.name})` : '';
     logAndPersistSave('auto', `Allocated Captain: ${player.name} to ${team.name}${reassignedNotice} (${cost > 0 ? `${cost.toLocaleString()} pts` : 'Free/Zero-Cost'})`);
@@ -802,7 +829,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       success: true,
       message: `Successfully assigned ${player.name} as Captain of ${team.name}!${reassignedNotice}`,
     };
-  }, [teams, players, rules, logAndPersistSave]);
+  }, [teams, players, rules, transactions, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, broadcastState, pushStateToServer, logAndPersistSave]);
 
   const removeCaptainFromTeam = useCallback((teamId: string): { success: boolean; message: string } => {
     const team = teams.find(t => t.id === teamId);
@@ -818,7 +845,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     const captainIdToRemove = team.captainPlayerId || captainPlayer?.id;
     const refund = captainPlayer?.soldPrice || 0;
 
-    setPlayers(prev => prev.map(p => {
+    const updatedPlayers = players.map(p => {
       if (p.id === captainIdToRemove) {
         return {
           ...p,
@@ -826,14 +853,14 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           isPreAssignedCaptain: false,
           captainOfTeamId: undefined,
           teamId: null,
-          status: 'upcoming',
+          status: 'upcoming' as PlayerStatus,
           soldPrice: null,
         };
       }
       return p;
-    }));
+    });
 
-    setTeams(prev => prev.map(t => {
+    const updatedTeams = teams.map(t => {
       if (t.id === teamId) {
         return {
           ...t,
@@ -845,7 +872,28 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         };
       }
       return t;
-    }));
+    });
+
+    setPlayers(updatedPlayers);
+    setTeams(updatedTeams);
+
+    saveStoredState({ teams: updatedTeams, players: updatedPlayers });
+    const snapshotState: AppStoredState = {
+      teams: updatedTeams,
+      players: updatedPlayers,
+      transactions,
+      rules,
+      tournament,
+      currentPlayerId,
+      currentBid,
+      currentBidderId,
+      bidHistory,
+      auctionOrderMode,
+      customAuctionOrderIds,
+      lastSaved: new Date().toISOString(),
+    };
+    broadcastState(snapshotState);
+    pushStateToServer(snapshotState);
 
     logAndPersistSave('auto', `Removed Captain of ${team.name}`);
 
@@ -853,7 +901,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       success: true,
       message: `Captain removed from ${team.name} and returned to player pool.`,
     };
-  }, [teams, players, logAndPersistSave]);
+  }, [teams, players, transactions, rules, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, broadcastState, pushStateToServer, logAndPersistSave]);
 
   // START AUCTION FOR A PLAYER
   const startAuctionForPlayer = useCallback((playerId: string) => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { exportStateAsJSON, loadStoredState } from '../utils/storage';
-import { GradeBasePrices, GradeCategoryMaxBid, PlayerGrade } from '../types/auction';
+import { GradeBasePrices, PlayerGrade } from '../types/auction';
 import {
   Settings,
   Shield,
@@ -69,49 +69,6 @@ export const SettingsPage: React.FC = () => {
     rules.gradeBasePrices?.gradeC === 1100 ? 1000 : (rules.gradeBasePrices?.gradeC ?? 1000)
   );
 
-  // Grade-Based Maximum Bidding Limits by Player Category (Requirement Part 2.9)
-  const defaultCategoryBids: GradeCategoryMaxBid[] = [
-    { grade: 'A+', category: 'Mens', maxBid: 25000 },
-    { grade: 'A', category: 'Mens', maxBid: 18000 },
-    { grade: 'B', category: 'Mens', maxBid: 10000 },
-    { grade: 'C', category: 'Mens', maxBid: 5000 },
-    { grade: 'A+', category: 'Boys', maxBid: 15000 },
-    { grade: 'A', category: 'Boys', maxBid: 10000 },
-    { grade: 'B', category: 'Boys', maxBid: 6000 },
-    { grade: 'C', category: 'Boys', maxBid: 3000 },
-    { grade: 'A+', category: 'Womens', maxBid: 15000 },
-    { grade: 'A', category: 'Womens', maxBid: 10000 },
-    { grade: 'B', category: 'Womens', maxBid: 6000 },
-    { grade: 'C', category: 'Womens', maxBid: 3000 },
-    { grade: 'A+', category: 'Girls', maxBid: 12000 },
-    { grade: 'A', category: 'Girls', maxBid: 8000 },
-    { grade: 'B', category: 'Girls', maxBid: 5000 },
-    { grade: 'C', category: 'Girls', maxBid: 2500 },
-  ];
-
-  const [categoryMaxBids, setCategoryMaxBids] = useState<GradeCategoryMaxBid[]>(() => {
-    return rules.gradeCategoryMaxBids && rules.gradeCategoryMaxBids.length > 0
-      ? rules.gradeCategoryMaxBids
-      : defaultCategoryBids;
-  });
-
-  const updateMaxBidCell = (grade: PlayerGrade, category: string, value: number) => {
-    setCategoryMaxBids(prev => {
-      const idx = prev.findIndex(item => item.grade === grade && item.category.toLowerCase() === category.toLowerCase());
-      if (idx >= 0) {
-        const copy = [...prev];
-        copy[idx] = { grade, category, maxBid: value };
-        return copy;
-      }
-      return [...prev, { grade, category, maxBid: value }];
-    });
-  };
-
-  const getCellMaxBid = (grade: PlayerGrade, category: string): number => {
-    const item = categoryMaxBids.find(i => i.grade === grade && i.category.toLowerCase() === category.toLowerCase());
-    return item ? item.maxBid : 0;
-  };
-
   const [syncToUpcomingPlayers, setSyncToUpcomingPlayers] = useState(true);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [syncSuccessMsg, setSyncSuccessMsg] = useState<string | null>(null);
@@ -142,7 +99,6 @@ export const SettingsPage: React.FC = () => {
       soundEnabled,
       animationsEnabled,
       gradeBasePrices: newGradePrices,
-      gradeCategoryMaxBids: categoryMaxBids,
       squadRules: {
         ...rules.squadRules,
         minSquadSize: Number(minSquadSize),

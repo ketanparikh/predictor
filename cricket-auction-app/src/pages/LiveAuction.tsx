@@ -71,6 +71,15 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
   const [selectedIncrement, setSelectedIncrement] = useState<number>(() => rules.minBidIncrement || 500);
   const [customBidAmount, setCustomBidAmount] = useState<string>('');
 
+  const activeSelectedTeam = useMemo(() => {
+    return teams.find(t => t.id === selectedBidderTeamId) || teams[0] || null;
+  }, [teams, selectedBidderTeamId]);
+
+  const activeSelectedMaxAllowance = useMemo(() => {
+    if (!activeSelectedTeam) return null;
+    return calculateMaxAllowableBid(activeSelectedTeam, currentPlayer);
+  }, [activeSelectedTeam, currentPlayer, calculateMaxAllowableBid]);
+
   // Alerts
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -483,9 +492,23 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                     {/* Bidding Franchise Selector */}
                     <div className="flex-1">
-                      <label className="block text-[10px] font-mono uppercase font-bold text-slate-400 mb-1">
-                        Select Bidding Franchise ({teams.length} Teams)
-                      </label>
+                      <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                        <label className="block text-[10px] font-mono uppercase font-bold text-slate-400">
+                          Select Bidding Franchise ({teams.length} Teams)
+                        </label>
+                        {activeSelectedTeam && activeSelectedMaxAllowance && (
+                          <div className="flex items-center gap-2 text-[11px] font-mono">
+                            <span className="text-slate-400">
+                              Purse: <strong className="text-emerald-400 font-bold">₹{activeSelectedTeam.remainingBudget.toLocaleString('en-IN')}</strong>
+                            </span>
+                            <span className="text-slate-600">•</span>
+                            <span className="text-slate-400">
+                              Max Bid: <strong className="text-amber-400 font-black">₹{activeSelectedMaxAllowance.maxBid.toLocaleString('en-IN')}</strong>
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
                       <select
                         value={selectedBidderTeamId}
                         onChange={e => setSelectedBidderTeamId(e.target.value)}
@@ -496,11 +519,34 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                           const isLeader = currentBidder?.id === t.id;
                           return (
                             <option key={t.id} value={t.id}>
-                              {t.name} {isLeader ? '(Current Leader)' : ''} — Purse: ₹{t.remainingBudget.toLocaleString('en-IN')}
+                              {t.name} {isLeader ? '★ (Leader)' : ''} — Purse: ₹{t.remainingBudget.toLocaleString('en-IN')} | Max Bid: ₹{maxAllowance.maxBid.toLocaleString('en-IN')}
                             </option>
                           );
                         })}
                       </select>
+
+                      {/* Prominent Purse & Max Allowable Bid Indicator Strip */}
+                      {activeSelectedTeam && activeSelectedMaxAllowance && (
+                        <div className="mt-2 px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-slate-400">Remaining Purse:</span>
+                            <strong className="text-emerald-400 font-bold">
+                              ₹{activeSelectedTeam.remainingBudget.toLocaleString('en-IN')}
+                            </strong>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-slate-400">Max Bid for Player:</span>
+                            <strong className="text-amber-400 font-black text-sm">
+                              ₹{activeSelectedMaxAllowance.maxBid.toLocaleString('en-IN')}
+                            </strong>
+                          </div>
+                          {activeSelectedMaxAllowance.remainingSlotsNeeded > 0 && (
+                            <div className="text-[10px] text-slate-400">
+                              (Must reserve ₹{activeSelectedMaxAllowance.minReserveRequired.toLocaleString('en-IN')} for {activeSelectedMaxAllowance.remainingSlotsNeeded} slot{activeSelectedMaxAllowance.remainingSlotsNeeded > 1 ? 's' : ''})
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Quick Increments Buttons */}

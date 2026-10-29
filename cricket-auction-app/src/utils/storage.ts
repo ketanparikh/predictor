@@ -125,6 +125,26 @@ export const loadStoredState = (): AppStoredState => {
       localStorage.setItem(STORAGE_KEYS.RULES, JSON.stringify(loadedRules));
     }
 
+    // Ensure squad size defaults to 9 players per team
+    if (loadedRules.squadRules) {
+      let rulesUpdated = false;
+      if (!loadedRules.squadRules.maxSquadSize || loadedRules.squadRules.maxSquadSize > 9) {
+        loadedRules.squadRules.maxSquadSize = 9;
+        rulesUpdated = true;
+      }
+      if (!loadedRules.squadRules.minSquadSize || loadedRules.squadRules.minSquadSize > 9) {
+        loadedRules.squadRules.minSquadSize = 9;
+        rulesUpdated = true;
+      }
+      if (!loadedRules.squadRules.maxGradeC || loadedRules.squadRules.maxGradeC > 9) {
+        loadedRules.squadRules.maxGradeC = 9;
+        rulesUpdated = true;
+      }
+      if (rulesUpdated) {
+        localStorage.setItem(STORAGE_KEYS.RULES, JSON.stringify(loadedRules));
+      }
+    }
+
     let loadedTeams: Team[] = rawTeams ? JSON.parse(rawTeams) : initialTeams;
     // Upgrade existing teams from legacy 50000 purse to 100000 purse
     let didUpdateTeamsPurse = false;

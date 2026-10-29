@@ -24,11 +24,11 @@ export const initialAuctionRules: AuctionRules = {
   },
   squadRules: {
     minSquadSize: 9,
-    maxSquadSize: 15,
+    maxSquadSize: 9,
     maxGradeAPlus: 1,
     maxGradeA: 5,
     maxGradeB: 8,
-    maxGradeC: 15,
+    maxGradeC: 9,
     minBatsmen: 1,
     minBowlers: 1,
     minWicketkeepers: 1,

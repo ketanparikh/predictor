@@ -49,11 +49,11 @@ export const SettingsPage: React.FC = () => {
 
   // Squad Rules state
   const [minSquadSize, setMinSquadSize] = useState(rules.squadRules.minSquadSize || 9);
-  const [maxSquadSize, setMaxSquadSize] = useState(rules.squadRules.maxSquadSize || 15);
+  const [maxSquadSize, setMaxSquadSize] = useState(rules.squadRules.maxSquadSize || 9);
   const [maxGradeAPlus, setMaxGradeAPlus] = useState(rules.squadRules.maxGradeAPlus || 1);
   const [maxGradeA, setMaxGradeA] = useState(rules.squadRules.maxGradeA || 5);
   const [maxGradeB, setMaxGradeB] = useState(rules.squadRules.maxGradeB || 8);
-  const [maxGradeC, setMaxGradeC] = useState(rules.squadRules.maxGradeC || 15);
+  const [maxGradeC, setMaxGradeC] = useState(rules.squadRules.maxGradeC || 9);
 
   // Dedicated Grade Base Prices state
   const [gradeAPlusBasePrice, setGradeAPlusBasePrice] = useState(

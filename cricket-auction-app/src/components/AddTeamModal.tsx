@@ -42,7 +42,7 @@ export const AddTeamModal: React.FC<AddTeamModalProps> = ({
   const [logo, setLogo] = useState('🏏');
   const [color, setColor] = useState('#2563eb');
   const [secondaryColor, setSecondaryColor] = useState('#1d4ed8');
-  const [startingBudget, setStartingBudget] = useState<number>(rules.startingBudget || 50000);
+  const [startingBudget, setStartingBudget] = useState<number>(rules.startingBudget || 100000);
   const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -73,7 +73,7 @@ export const AddTeamModal: React.FC<AddTeamModalProps> = ({
       logo,
       color,
       secondaryColor,
-      startingBudget: Number(startingBudget) > 0 ? Number(startingBudget) : (rules.startingBudget || 50000),
+      startingBudget: Number(startingBudget) > 0 ? Number(startingBudget) : (rules.startingBudget || 100000),
     });
 
     if (onSuccess) onSuccess(created.name);
@@ -84,7 +84,7 @@ export const AddTeamModal: React.FC<AddTeamModalProps> = ({
     setOwner('');
     setLogo('🏏');
     setColor('#2563eb');
-    setStartingBudget(rules.startingBudget || 50000);
+    setStartingBudget(rules.startingBudget || 100000);
     setError(null);
     onClose();
   };

@@ -116,7 +116,34 @@ export const loadStoredState = (): AppStoredState => {
       localStorage.setItem(STORAGE_KEYS.PLAYERS, JSON.stringify(loadedPlayers));
     }
 
+    // Ensure purse / starting budget defaults to 100000
+    if (!loadedRules.startingBudget || loadedRules.startingBudget === 50000) {
+      loadedRules = {
+        ...loadedRules,
+        startingBudget: 100000,
+      };
+      localStorage.setItem(STORAGE_KEYS.RULES, JSON.stringify(loadedRules));
+    }
+
     let loadedTeams: Team[] = rawTeams ? JSON.parse(rawTeams) : initialTeams;
+    // Upgrade existing teams from legacy 50000 purse to 100000 purse
+    let didUpdateTeamsPurse = false;
+    loadedTeams = loadedTeams.map(t => {
+      if (!t.startingBudget || t.startingBudget === 50000) {
+        didUpdateTeamsPurse = true;
+        const spent = t.totalSpent || 0;
+        return {
+          ...t,
+          startingBudget: 100000,
+          remainingBudget: Math.max(0, 100000 - spent),
+        };
+      }
+      return t;
+    });
+    if (didUpdateTeamsPurse) {
+      localStorage.setItem(STORAGE_KEYS.TEAMS, JSON.stringify(loadedTeams));
+    }
+
     // For Mens tournament, ensure a minimum of 12 teams
     if (loadedTeams.length < 12) {
       const existingIds = new Set(loadedTeams.map(t => t.id));
@@ -133,8 +160,8 @@ export const loadStoredState = (): AppStoredState => {
           secondaryColor: '#1d4ed8',
           owner: 'Franchise Group',
           captain: `Captain ${idx}`,
-          startingBudget: loadedRules.startingBudget || 50000,
-          remainingBudget: loadedRules.startingBudget || 50000,
+          startingBudget: loadedRules.startingBudget || 100000,
+          remainingBudget: loadedRules.startingBudget || 100000,
           totalSpent: 0,
           squad: [],
           wishlist: [],

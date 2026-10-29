@@ -5,6 +5,7 @@ import { PlayerCard } from '../components/PlayerCard';
 import { PlayerModal } from '../components/PlayerModal';
 import { DeleteAllPlayersModal } from '../components/DeleteAllPlayersModal';
 import { CricHeroesModal } from '../components/CricHeroesModal';
+import { AutoGradeModal } from '../components/AutoGradeModal';
 import {
   Users,
   Search,
@@ -51,6 +52,7 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
 
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [isCricHeroesModalOpen, setIsCricHeroesModalOpen] = useState(false);
+  const [isAutoGradeModalOpen, setIsAutoGradeModalOpen] = useState(false);
 
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -213,6 +215,18 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
             >
               <Trash2 className="w-4 h-4 text-rose-400" />
               <span>Delete All Players</span>
+            </button>
+          )}
+
+          {/* Auto Grade Button */}
+          {players.length > 0 && (
+            <button
+              onClick={() => setIsAutoGradeModalOpen(true)}
+              title="Auto-grade players based on participant tournament statistics with cohort benchmarking"
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-xs transition-all shadow-lg shadow-purple-600/25 flex items-center gap-1.5 active:scale-95 border border-purple-400/30 cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+              <span>Auto Grade</span>
             </button>
           )}
 
@@ -435,6 +449,13 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
           setPlayerToEdit(playerData as any);
           setIsPlayerModalOpen(true);
         }}
+      />
+
+      {/* Auto Grade Modal */}
+      <AutoGradeModal
+        isOpen={isAutoGradeModalOpen}
+        onClose={() => setIsAutoGradeModalOpen(false)}
+        onSuccess={(msg) => showNotification(msg)}
       />
 
       {/* Delete All Players Confirmation Modal */}

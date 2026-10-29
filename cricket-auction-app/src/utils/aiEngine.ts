@@ -38,19 +38,19 @@ export function calculatePlayerRating(player: Partial<Player>): number {
   const role = player.role || 'Batsman';
 
   let battingScore = 0;
-  if (stats.matches > 0) {
-    const avgScore = Math.min(stats.average / 45, 1.2) * 35;
-    const srScore = Math.min(stats.strikeRate / 150, 1.3) * 35;
-    const volumeScore = Math.min(stats.runs / 2500, 1.2) * 20;
-    const fiftiesScore = Math.min((stats.fifties * 2 + stats.hundreds * 5) / 25, 1.0) * 10;
+  if (stats.matches > 0 || stats.runs > 0 || stats.average > 0) {
+    const avgScore = Math.min((stats.average || 15) / 30, 1.3) * 35;
+    const srScore = Math.min((stats.strikeRate || 100) / 130, 1.3) * 35;
+    const volumeScore = Math.min((stats.runs || 0) / 200, 1.3) * 20;
+    const fiftiesScore = Math.min(((stats.fifties || 0) * 2 + (stats.hundreds || 0) * 5) / 3, 1.0) * 10;
     battingScore = avgScore + srScore + volumeScore + fiftiesScore;
   }
 
   let bowlingScore = 0;
-  if (stats.wickets > 0) {
-    const wktScore = Math.min(stats.wickets / 80, 1.3) * 40;
-    const econScore = stats.economyRate > 0 ? Math.max(0, (10 - stats.economyRate) / 4) * 35 : 15;
-    const bowlAvgScore = stats.bowlingAverage > 0 ? Math.max(0, (35 - stats.bowlingAverage) / 15) * 25 : 15;
+  if (stats.wickets > 0 || stats.economyRate > 0) {
+    const wktScore = Math.min((stats.wickets || 0) / 10, 1.3) * 40;
+    const econScore = stats.economyRate > 0 ? Math.max(0, (10 - stats.economyRate) / 4) * 35 : 20;
+    const bowlAvgScore = stats.bowlingAverage > 0 ? Math.max(0, (30 - stats.bowlingAverage) / 15) * 25 : 20;
     bowlingScore = wktScore + econScore + bowlAvgScore;
   }
 
@@ -108,7 +108,7 @@ export function generatePlayerAIInsights(player: Player): PlayerAIInsights {
   if (stats.catches >= 30) strengths.push(`Safe hands in the field (${stats.catches} catches)`);
 
   // Concerns
-  if (stats.matches < 20) concerns.push('Small match sample size / relatively uncapped');
+  if (stats.matches === 0) concerns.push('Uncapped / pending match statistics');
   if (player.age >= 33) concerns.push('Senior veteran, potential stamina or longevity factor');
   if (player.role === 'Batsman' && stats.strikeRate > 0 && stats.strikeRate < 125) concerns.push('Moderate strike rate in fast-scoring formats');
   if (player.role === 'Bowler' && stats.economyRate >= 8.5) concerns.push('Can be expensive in high-pressure death overs');

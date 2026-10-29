@@ -96,30 +96,30 @@ export function calculateRecommendedGrade(
   const dismissals = (stats.catches || 0) + (stats.stumpings || 0);
 
   if (role === 'Batsman') {
-    if (runs >= 1200 || avg >= 38 || (centuries >= 1 && runs >= 600) || halfCenturies >= 8) {
-      return { grade: 'A', reason: `Elite batsman (${runs} runs, avg ${avg.toFixed(1)}, ${centuries} 100s, ${halfCenturies} 50s)` };
+    if (runs >= 200 || avg >= 28 || (centuries >= 1 && runs >= 50) || halfCenturies >= 2 || (sr >= 140 && runs >= 80)) {
+      return { grade: 'A', reason: `Elite batsman (${runs} runs, avg ${avg.toFixed(1)}, SR ${sr.toFixed(1)})` };
     }
-    if (runs >= 450 || avg >= 24 || halfCenturies >= 2 || sr >= 135) {
-      return { grade: 'B', reason: `Proven batsman (${runs} runs, avg ${avg.toFixed(1)}, SR ${sr})` };
+    if (runs >= 50 || avg >= 16 || halfCenturies >= 1 || sr >= 110 || (stats.matches || 0) >= 2) {
+      return { grade: 'B', reason: `Proven batsman (${runs} runs, avg ${avg.toFixed(1)}, SR ${sr.toFixed(1)})` };
     }
     return { grade: 'C', reason: `Developing batsman (${runs} runs)` };
   }
 
   if (role === 'Bowler') {
-    if (wickets >= 35 || (wickets >= 20 && bowlAvg > 0 && bowlAvg <= 18 && econ <= 6.5)) {
+    if (wickets >= 10 || (wickets >= 5 && bowlAvg > 0 && bowlAvg <= 18 && econ <= 7.0)) {
       return { grade: 'A', reason: `Frontline strike bowler (${wickets} wkts, avg ${bowlAvg.toFixed(1)}, econ ${econ.toFixed(1)})` };
     }
-    if (wickets >= 12 || (bowlAvg > 0 && bowlAvg <= 26 && econ <= 8.5)) {
+    if (wickets >= 3 || (bowlAvg > 0 && bowlAvg <= 28 && econ <= 8.8) || (stats.matches || 0) >= 2) {
       return { grade: 'B', reason: `Reliable bowler (${wickets} wkts, econ ${econ.toFixed(1)})` };
     }
     return { grade: 'C', reason: `Developing bowler (${wickets} wkts)` };
   }
 
   if (role === 'Wicketkeeper') {
-    if ((dismissals >= 20 && runs >= 600) || runs >= 1000 || dismissals >= 30) {
+    if ((dismissals >= 8 && runs >= 120) || runs >= 250 || dismissals >= 12) {
       return { grade: 'A', reason: `Elite wicketkeeper-batter (${dismissals} dismissals, ${runs} runs)` };
     }
-    if (dismissals >= 8 || runs >= 350) {
+    if (dismissals >= 3 || runs >= 60 || (stats.matches || 0) >= 2) {
       return { grade: 'B', reason: `Primary keeper (${dismissals} dismissals, ${runs} runs)` };
     }
     return { grade: 'C', reason: `Reserve keeper (${dismissals} dismissals)` };

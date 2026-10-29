@@ -41,7 +41,7 @@ export const DeleteAllPlayersModal: React.FC<DeleteAllPlayersModalProps> = ({
             </div>
             <ul className="list-disc list-inside space-y-1 text-slate-400 text-[11px]">
               <li>All registered players will be wiped completely.</li>
-              <li>Team rosters will be emptied and team budgets restored to full 50,000 points.</li>
+              <li>Team rosters will be emptied and team budgets restored to full 100,000 points.</li>
               <li>Any ongoing auction lot will be reset to standby.</li>
               <li>You can immediately upload a custom Excel sheet or add new players.</li>
             </ul>

@@ -107,6 +107,7 @@ interface AuctionContextType {
   // Player Database Management
   addPlayer: (playerData: Omit<Player, 'id' | 'status'>) => Player;
   editPlayer: (player: Player) => void;
+  bulkUpdatePlayers: (updatedPlayers: Player[], description?: string) => void;
   deletePlayer: (playerId: string) => void;
   deleteAllPlayers: () => void;
   restoreDeletedPlayers: (playersToRestore: Player[]) => void;
@@ -1433,6 +1434,17 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     });
   }, []);
 
+  // BULK UPDATE PLAYERS
+  const bulkUpdatePlayers = useCallback((updatedPlayers: Player[], description?: string) => {
+    setPlayers(prev => {
+      const map = new Map(updatedPlayers.map(p => [p.id, p]));
+      const updated = prev.map(p => map.get(p.id) || p);
+      saveStoredState({ players: updated });
+      return updated;
+    });
+    logAndPersistSave('auto', description || `Auto-graded ${updatedPlayers.length} players`);
+  }, [logAndPersistSave]);
+
   // DELETE PLAYER
   const deletePlayer = useCallback((playerId: string) => {
     setPlayers(prev => {
@@ -1557,7 +1569,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   }): Team => {
     const budget = teamData.startingBudget !== undefined && !isNaN(teamData.startingBudget) && teamData.startingBudget > 0
       ? teamData.startingBudget
-      : (rules.startingBudget || 50000);
+      : (rules.startingBudget || 100000);
     const newTeamId = `team-${Date.now()}`;
     const newTeam: Team = {
       id: newTeamId,
@@ -1796,8 +1808,8 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     clearAuctionStorage();
     const emptyTeams = initialTeams.map(t => ({
       ...t,
-      startingBudget: 50000,
-      remainingBudget: 50000,
+      startingBudget: 100000,
+      remainingBudget: 100000,
       totalSpent: 0,
       squad: [],
       wishlist: [],
@@ -1868,6 +1880,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         resetMockAuction,
         addPlayer,
         editPlayer,
+        bulkUpdatePlayers,
         deletePlayer,
         deleteAllPlayers,
         restoreDeletedPlayers,

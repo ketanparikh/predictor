@@ -3,6 +3,7 @@ import { Player, PlayerGrade, PlayerRole, BattingStyle, BowlingStyle } from '../
 import { useAuction } from '../context/AuctionContext';
 import { calculatePlayerRating } from '../utils/aiEngine';
 import { calculateRecommendedGrade } from '../utils/excelParser';
+import { autoGradeSinglePlayer } from '../utils/autoGrader';
 import { X, Sparkles, User, Save, AlertCircle, Crown, Star, Tag, Hash } from 'lucide-react';
 
 interface PlayerModalProps {
@@ -20,7 +21,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
   playerToEdit,
   onOpenCricHeroes,
 }) => {
-  const { rules } = useAuction();
+  const { rules, players } = useAuction();
   const gradeBasePrices = rules.gradeBasePrices || { gradeAPlus: 7000, gradeA: 5000, gradeB: 3000, gradeC: 1000 };
 
   const [name, setName] = useState('');
@@ -132,7 +133,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
     }
   }, [playerToEdit, isOpen]);
 
-  // AI & Stats Recommendation recalculator
+  // AI & Cohort Participant Recommendation recalculator
   const runAiGrading = () => {
     const statsObj = {
       runs,
@@ -146,6 +147,65 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
       catches,
       stumpings,
     };
+
+    // If we have tournament participants, evaluate relative to the participant cohort
+    if (players && players.length > 0) {
+      const tempPlayer: Player = {
+        id: (playerToEdit && 'id' in playerToEdit ? playerToEdit.id : 'temp-player') as string,
+        name: name.trim() || 'Player',
+        role,
+        grade,
+        basePrice,
+        status: 'upcoming',
+        auctionOrder: 0,
+        age,
+        experience,
+        battingStyle,
+        bowlingStyle,
+        isCaptain,
+        isViceCaptain,
+        stats: {
+          matches,
+          runs,
+          average,
+          strikeRate,
+          fifties,
+          hundreds,
+          wickets,
+          bowlingAverage,
+          economyRate,
+          catches,
+          stumpings,
+          highestScore,
+          bestBowling
+        }
+      };
+
+      const graded = autoGradeSinglePlayer(tempPlayer, players, gradeBasePrices, {
+        fillMissingStats: true,
+        updateBasePrice: true
+      });
+
+      // If stats were 0 and baseline was filled, update form fields to match participant cohort
+      if (matches === 0 && runs === 0 && wickets === 0 && graded.updatedPlayer.stats.matches > 0) {
+        setMatches(graded.updatedPlayer.stats.matches);
+        setRuns(graded.updatedPlayer.stats.runs);
+        setAverage(graded.updatedPlayer.stats.average);
+        setStrikeRate(graded.updatedPlayer.stats.strikeRate);
+        setWickets(graded.updatedPlayer.stats.wickets);
+        setBowlingAverage(graded.updatedPlayer.stats.bowlingAverage);
+        setEconomyRate(graded.updatedPlayer.stats.economyRate);
+      }
+
+      setAiSuggestion({
+        grade: graded.suggestedGrade,
+        score: graded.score,
+        reason: graded.reason
+      });
+      setGrade(graded.suggestedGrade);
+      setBasePrice(graded.suggestedBasePrice || gradeBasePrices.gradeC || 1000);
+      return;
+    }
 
     const rec = calculateRecommendedGrade(statsObj, role, isCaptain, isViceCaptain);
     const score = calculatePlayerRating({

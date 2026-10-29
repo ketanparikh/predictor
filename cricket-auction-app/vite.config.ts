@@ -4,9 +4,17 @@ import tailwindcss from '@tailwindcss/vite'
 
 
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 
 function getActiveTunnelUrl(): string {
+  try {
+    const cacheFile = path.resolve(__dirname, '.auction-cache', 'tunnel-url.txt');
+    if (fs.existsSync(cacheFile)) {
+      const saved = fs.readFileSync(cacheFile, 'utf8').trim();
+      if (saved && saved.startsWith('http')) return saved;
+    }
+  } catch {}
   try {
     const userProfile = process.env.USERPROFILE || 'C:\\Users\\rehet';
     const logDir = path.resolve(userProfile, '.gemini/antigravity/brain');
@@ -38,6 +46,21 @@ function getActiveTunnelUrl(): string {
     }
   } catch {}
   return 'https://health-massive-mechanism-speed.trycloudflare.com';
+}
+
+
+function getLocalNetworkIp(): string {
+  try {
+    const ifaces = os.networkInterfaces();
+    for (const name of Object.keys(ifaces)) {
+      for (const iface of ifaces[name] || []) {
+        if (iface.family === 'IPv4' && !iface.internal) {
+          return iface.address;
+        }
+      }
+    }
+  } catch {}
+  return '10.24.68.105';
 }
 
 function auctionSyncPlugin(): Plugin {
@@ -80,7 +103,8 @@ function auctionSyncPlugin(): Plugin {
     name: 'auction-network-sync-plugin',
     configureServer(server: ViteDevServer) {
       server.middlewares.use((req, res, next) => {
-        const url = req.url ? req.url.split('?')[0] : '';
+        const rawUrl = req.url ? req.url.split('?')[0] : '';
+        const url = rawUrl.replace(/^\/auction/, '') || '/';
 
         // CORS Headers for Wi-Fi devices & remote spectators
         res.setHeader('Access-Control-Allow-Origin', '*');
@@ -93,11 +117,12 @@ function auctionSyncPlugin(): Plugin {
           return;
         }
 
-        // 0. GET active Cloudflare tunnel URL
-        if (url === '/api/tunnel-url' && req.method === 'GET') {
+        // 0. GET active Cloudflare tunnel URL & Local Network IP
+        if ((url === '/api/tunnel-url' || url === '/auction/api/tunnel-url') && req.method === 'GET') {
           res.setHeader('Content-Type', 'application/json');
           const tunnelUrl = getActiveTunnelUrl();
-          res.end(JSON.stringify({ success: true, tunnelUrl }));
+          const localIp = getLocalNetworkIp();
+          res.end(JSON.stringify({ success: true, tunnelUrl, localIp, port: 5173 }));
           return;
         }
 

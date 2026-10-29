@@ -40,7 +40,7 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !window.location.hostname.includes('trycloudflare.com')) {
       return window.location.hostname;
     }
-    return '192.168.0.214';
+    return '10.24.68.105';
   });
   const [customPort, setCustomPort] = useState(() => {
     if (typeof window !== 'undefined' && window.location.port) {
@@ -57,11 +57,23 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
     }
 
     setIsDetectingTunnel(true);
-    fetch('/api/tunnel-url')
+    const apiUrl = typeof window !== 'undefined' && window.location.pathname.startsWith('/auction')
+      ? '/auction/api/tunnel-url'
+      : '/api/tunnel-url';
+
+    fetch(apiUrl)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
-        if (data && data.tunnelUrl) {
-          setWorldwideUrl(data.tunnelUrl);
+        if (data) {
+          if (data.tunnelUrl) {
+            setWorldwideUrl(data.tunnelUrl);
+          }
+          if (data.localIp && (!customHost || customHost === '192.168.0.214' || customHost === 'localhost')) {
+            setCustomHost(data.localIp);
+          }
+          if (data.port) {
+            setCustomPort(String(data.port));
+          }
         }
       })
       .catch(() => {})
@@ -79,15 +91,17 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
   // Compute active base URL based on mode
   let activeOrigin = `http://${customHost}:${customPort}`;
   if (connectionMode === 'wifi') {
-    activeOrigin = `http://${customHost}:${customPort}`;
+    activeOrigin = customHost.startsWith('http') ? customHost : `http://${customHost}:${customPort}`;
   } else if (connectionMode === 'localhost') {
     activeOrigin = `http://localhost:${customPort}`;
   } else if (connectionMode === 'worldwide') {
-    activeOrigin = worldwideUrl || `http://${customHost}:${customPort}`;
+    activeOrigin = worldwideUrl || (customHost.startsWith('http') ? customHost : `http://${customHost}:${customPort}`);
   }
 
-  const spectatorUrl = `${activeOrigin}/#spectator`;
-  const projectorUrl = `${activeOrigin}/#projector`;
+  const cleanOrigin = activeOrigin.replace(/\/+$/, '');
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/auction') ? '/auction/' : '/auction/';
+  const spectatorUrl = `${cleanOrigin}${basePath}#spectator`;
+  const projectorUrl = `${cleanOrigin}${basePath}#projector`;
 
   // Generate QR Code locally via QRCode library with high contrast black-on-white for 100% scanner compatibility
   useEffect(() => {

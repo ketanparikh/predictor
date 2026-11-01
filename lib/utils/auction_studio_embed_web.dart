@@ -31,7 +31,10 @@ class _AuctionStudioEmbedState extends State<AuctionStudioEmbed> {
     }
   }
 
-  String _srcFor(bool admin) => admin ? '/auction/#admin' : '/auction/#spectator';
+  String _srcFor(bool admin) {
+    final mode = admin ? 'admin' : 'spectator';
+    return '/auction/index.html?view=$mode#$mode';
+  }
 
   void _ensureIframe(String src) {
     if (_iframe == null) {
@@ -59,6 +62,8 @@ class _AuctionStudioEmbedState extends State<AuctionStudioEmbed> {
 
   @override
   Widget build(BuildContext context) {
-    return const HtmlElementView(viewType: _viewType);
+    return const SizedBox.expand(
+      child: HtmlElementView(viewType: _viewType),
+    );
   }
 }

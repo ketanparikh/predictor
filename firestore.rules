@@ -113,6 +113,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // JCPL + auction player stats catalog (admin writes, everyone reads)
+    match /playerStats/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Bracket challenge: everyone can read; owners write picks until locked
     match /brackets/{category} {
       allow read: if true;

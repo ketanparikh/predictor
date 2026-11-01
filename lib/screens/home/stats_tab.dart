@@ -11,11 +11,11 @@ import 'stats_table.dart';
 import 'tournament_stats_screen.dart';
 
 enum StatsCategory {
-  mens('Mens', 'Men\'s player & team stats', Icons.man, AppTheme.electricBlue),
-  womens('Womens', 'Women\'s player & team stats', Icons.woman,
+  mens('Mens', 'JCPL 4 registered men', Icons.man, AppTheme.electricBlue),
+  womens('Womens', 'JCPL 4 registered women', Icons.woman,
       AppTheme.accentColor),
-  boys('Boys', 'Boys\' player & team stats', Icons.boy, AppTheme.cricketOrange),
-  girls('Girls', 'Girls\' player & team stats', Icons.girl,
+  boys('Boys', 'JCPL 4 registered boys', Icons.boy, AppTheme.cricketOrange),
+  girls('Girls', 'JCPL 4 registered girls', Icons.girl,
       AppTheme.secondaryColor),
   tournament('Tournament', 'Overall tournament records & leaders',
       Icons.emoji_events, AppTheme.primaryColor);
@@ -189,7 +189,7 @@ class _StatsCategoryScreenState extends State<StatsCategoryScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                 child: Text(
-                  '${players.length} player${players.length == 1 ? '' : 's'} · A–Z · CricHeroes career stats',
+                  '${players.length} player${players.length == 1 ? '' : 's'} · A–Z · JCPL 4 registrations',
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ),

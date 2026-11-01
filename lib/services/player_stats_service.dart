@@ -12,7 +12,7 @@ class PlayerStatsService {
   static Future<List<PlayerStats>> load() async {
     if (_cache != null) return _cache!;
     final raw =
-        await rootBundle.loadString('assets/config/jcpl3_player_stats.json');
+        await rootBundle.loadString('assets/config/jcpl4_player_stats.json');
     final data = json.decode(raw) as Map<String, dynamic>;
     final players = (data['players'] as List? ?? [])
         .map((e) => PlayerStats.fromJson(e as Map<String, dynamic>))

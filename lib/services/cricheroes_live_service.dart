@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/live_score.dart';
+import 'live_score_service.dart';
 
 class CricHeroesFeedMatch {
   final int cricheroesMatchId;
@@ -47,37 +49,69 @@ class CricHeroesLiveService {
 
   CricHeroesLiveService({http.Client? client}) : _client = client ?? http.Client();
 
+  Map<String, dynamic>? _configMap(Object? raw) {
+    if (raw is! Map) return null;
+    return Map<String, dynamic>.from(raw);
+  }
+
+  CricHeroesLiveConfig _configFromMap(Map<String, dynamic> raw) {
+    final matches = <CricHeroesFeedMatch>[];
+    for (final item in (raw['matches'] as List? ?? const [])) {
+      if (item is! Map) continue;
+      if (item['enabled'] == false) continue;
+      final id = (item['cricheroesMatchId'] as num?)?.toInt();
+      if (id == null) continue;
+      matches.add(CricHeroesFeedMatch(
+        cricheroesMatchId: id,
+        label: item['label'] as String?,
+      ));
+    }
+    return CricHeroesLiveConfig(
+      enabled: raw['enabled'] != false,
+      includeAppFixtures: raw['includeAppFixtures'] == true,
+      pollInterval: Duration(
+        seconds: (raw['pollSeconds'] as num?)?.toInt() ?? 8,
+      ),
+      matches: matches,
+    );
+  }
+
   Future<CricHeroesLiveConfig> loadConfig() async {
     if (_config != null) return _config!;
     try {
+      final remote = await FirebaseFirestore.instance
+          .collection('config')
+          .doc('liveScoreboard')
+          .get();
+      final remoteMap = _configMap(remote.data());
+      if (remoteMap != null && remoteMap['matches'] is List) {
+        _config = _configFromMap(remoteMap);
+        return _config!;
+      }
+    } catch (_) {}
+
+    try {
       final raw = jsonDecode(await rootBundle.loadString(_bundlePath));
-      if (raw is! Map) {
+      final bundled = _configMap(raw);
+      if (bundled == null) {
         _config = CricHeroesLiveConfig.empty;
         return _config!;
       }
-      final matches = <CricHeroesFeedMatch>[];
-      for (final item in (raw['matches'] as List? ?? const [])) {
-        if (item is! Map) continue;
-        if (item['enabled'] == false) continue;
-        final id = (item['cricheroesMatchId'] as num?)?.toInt();
-        if (id == null) continue;
-        matches.add(CricHeroesFeedMatch(
-          cricheroesMatchId: id,
-          label: item['label'] as String?,
-        ));
-      }
-      _config = CricHeroesLiveConfig(
-        enabled: raw['enabled'] != false,
-        includeAppFixtures: raw['includeAppFixtures'] == true,
-        pollInterval: Duration(
-          seconds: (raw['pollSeconds'] as num?)?.toInt() ?? 8,
-        ),
-        matches: matches,
-      );
+      _config = _configFromMap(bundled);
+      try {
+        await FirebaseFirestore.instance
+            .collection('config')
+            .doc('liveScoreboard')
+            .set({
+          ...bundled,
+          'updatedAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      } catch (_) {}
+      return _config!;
     } catch (_) {
       _config = CricHeroesLiveConfig.empty;
+      return _config!;
     }
-    return _config!;
   }
 
   Stream<LiveScore> watchMatch(int cricheroesMatchId, {Duration? interval}) {
@@ -90,6 +124,9 @@ class CricHeroesLiveService {
       inflight = true;
       try {
         final score = await fetchMatch(cricheroesMatchId);
+        try {
+          await LiveScoreService().saveScore(score);
+        } catch (_) {}
         if (!controller.isClosed) controller.add(score);
       } catch (error, stack) {
         if (!controller.isClosed) controller.addError(error, stack);

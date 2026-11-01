@@ -360,9 +360,21 @@ export const SpectatorView: React.FC = () => {
                   <div>
                     <h2 className="text-2xl sm:text-3xl font-black text-white">Live Stage on Standby</h2>
                     <p className="text-sm text-slate-400 font-mono mt-1 max-w-md mx-auto">
-                      Awaiting the auctioneer to announce the next player lot on the bidding block...
+                      {players.length
+                        ? `${players.length} JCPL 4 players are loaded. Waiting for the next lot.`
+                        : 'Awaiting the auctioneer to announce the next player lot on the bidding block...'}
                     </p>
                   </div>
+                  {players.length > 0 && (
+                    <div className="max-w-md mx-auto text-left space-y-2">
+                      {players.filter((p) => p.status === 'upcoming').slice(0, 6).map((player) => (
+                        <div key={player.id} className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                          <span className="text-sm text-white font-semibold">{player.name}</span>
+                          <span className="text-[11px] font-mono text-slate-400">{player.role}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   {recentSales.length > 0 && (
                     <div className="mt-6 pt-6 border-t border-slate-800 max-w-md mx-auto text-left">

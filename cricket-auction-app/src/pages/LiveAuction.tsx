@@ -413,19 +413,19 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                     {/* Stats Highlights Mini Pills */}
                     <div className="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs font-mono">
                       <span className="px-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
-                        Matches: <strong className="text-white">{currentPlayer.stats.matches}</strong>
+                        Matches: <strong className="text-white">{currentPlayer.stats?.matches ?? 0}</strong>
                       </span>
                       <span className="px-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
-                        Runs: <strong className="text-amber-400">{currentPlayer.stats.runs}</strong>
+                        Runs: <strong className="text-amber-400">{currentPlayer.stats?.runs ?? 0}</strong>
                       </span>
                       <span className="px-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
-                        Wkts: <strong className="text-emerald-400">{currentPlayer.stats.wickets}</strong>
+                        Wkts: <strong className="text-emerald-400">{currentPlayer.stats?.wickets ?? 0}</strong>
                       </span>
                       <span className="px-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
-                        Avg: <strong className="text-cyan-400">{currentPlayer.stats.average}</strong>
+                        Avg: <strong className="text-cyan-400">{currentPlayer.stats?.average ?? 0}</strong>
                       </span>
                       <span className="px-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
-                        SR: <strong className="text-purple-400">{currentPlayer.stats.strikeRate}</strong>
+                        SR: <strong className="text-purple-400">{currentPlayer.stats?.strikeRate ?? 0}</strong>
                       </span>
                     </div>
                   </div>

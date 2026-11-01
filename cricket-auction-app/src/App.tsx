@@ -1,36 +1,56 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuctionProvider, useAuction } from './context/AuctionContext';
 import { ActiveNavTab, Player } from './types/auction';
 import { ProjectorView } from './pages/ProjectorView';
 import { SpectatorView } from './pages/SpectatorView';
+import { Dashboard } from './pages/Dashboard';
+import { LiveAuction } from './pages/LiveAuction';
+import { PlayersPage } from './pages/PlayersPage';
+import { TeamsPage } from './pages/TeamsPage';
+import { AuctionHistoryPage } from './pages/AuctionHistoryPage';
+import { UnsoldPlayersPage } from './pages/UnsoldPlayersPage';
+import { AnalyticsPage } from './pages/AnalyticsPage';
+import { AIAssistantPage } from './pages/AIAssistantPage';
+import { ExcelImportPage } from './pages/ExcelImportPage';
+import { SettingsPage } from './pages/SettingsPage';
+import { AuctionCompletePage } from './pages/AuctionCompletePage';
+import { AuctionOrderPage } from './pages/AuctionOrderPage';
+import { CaptainManagementPage } from './pages/CaptainManagementPage';
+import { SaveLogsPage } from './pages/SaveLogsPage';
+import { Navbar } from './components/Navbar';
+import { Sidebar } from './components/Sidebar';
+import { QRCodeModal } from './components/QRCodeModal';
 
-// Lazily load heavy admin pages so the spectator window bundle is ultra-lightweight and opens in milliseconds!
-const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
-const LiveAuction = lazy(() => import('./pages/LiveAuction').then(m => ({ default: m.LiveAuction })));
-const PlayersPage = lazy(() => import('./pages/PlayersPage').then(m => ({ default: m.PlayersPage })));
-const TeamsPage = lazy(() => import('./pages/TeamsPage').then(m => ({ default: m.TeamsPage })));
-const AuctionHistoryPage = lazy(() => import('./pages/AuctionHistoryPage').then(m => ({ default: m.AuctionHistoryPage })));
-const UnsoldPlayersPage = lazy(() => import('./pages/UnsoldPlayersPage').then(m => ({ default: m.UnsoldPlayersPage })));
-const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage').then(m => ({ default: m.AnalyticsPage })));
-const AIAssistantPage = lazy(() => import('./pages/AIAssistantPage').then(m => ({ default: m.AIAssistantPage })));
-const ExcelImportPage = lazy(() => import('./pages/ExcelImportPage').then(m => ({ default: m.ExcelImportPage })));
-const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const AuctionCompletePage = lazy(() => import('./pages/AuctionCompletePage').then(m => ({ default: m.AuctionCompletePage })));
-const AuctionOrderPage = lazy(() => import('./pages/AuctionOrderPage').then(m => ({ default: m.AuctionOrderPage })));
-const CaptainManagementPage = lazy(() => import('./pages/CaptainManagementPage').then(m => ({ default: m.CaptainManagementPage })));
-const SaveLogsPage = lazy(() => import('./pages/SaveLogsPage').then(m => ({ default: m.SaveLogsPage })));
-const Navbar = lazy(() => import('./components/Navbar').then(m => ({ default: m.Navbar })));
-const Sidebar = lazy(() => import('./components/Sidebar').then(m => ({ default: m.Sidebar })));
-const QRCodeModal = lazy(() => import('./components/QRCodeModal').then(m => ({ default: m.QRCodeModal })));
+class AdminErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { error: string | null }
+> {
+  state = { error: null as string | null };
 
-const AdminLoadingFallback: React.FC = () => (
-  <div className="flex-1 flex items-center justify-center p-12 text-slate-400 font-mono text-xs">
-    <div className="flex items-center gap-2">
-      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-      <span>Loading Studio...</span>
-    </div>
-  </div>
-);
+  static getDerivedStateFromError(error: Error) {
+    return { error: error.message || 'Auction studio failed to load' };
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-8">
+          <div className="max-w-md text-center space-y-3">
+            <p className="font-mono text-amber-400 text-sm">Auction studio error</p>
+            <p className="text-slate-300 text-sm">{this.state.error}</p>
+            <button
+              className="px-4 py-2 rounded-lg bg-amber-500 text-slate-950 text-sm font-bold"
+              onClick={() => window.location.reload()}
+            >
+              Reload
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const AppContent: React.FC = () => {
   const { startAuctionForPlayer } = useAuction();
@@ -57,7 +77,6 @@ const AppContent: React.FC = () => {
   const [isQRCodeModalOpen, setIsQRCodeModalOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  // URL Hash-based routing: #spectator for public audience, #projector for TV, #admin / default for auction panel
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.toLowerCase();
@@ -105,109 +124,100 @@ const AppContent: React.FC = () => {
   }
 
   if (viewMode === 'spectator') {
-    // Spectator view is strictly read-only with no admin controls or exit buttons
     return <SpectatorView />;
   }
 
   return (
-    <Suspense fallback={<AdminLoadingFallback />}>
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-        {/* Top Navigation */}
-        <Navbar
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+      <Navbar
+        currentTab={currentTab}
+        onSelectTab={setCurrentTab}
+        onOpenProjector={handleOpenProjector}
+        onOpenQRCode={() => setIsQRCodeModalOpen(true)}
+        onToggleMobileMenu={() => setIsMobileSidebarOpen(prev => !prev)}
+      />
+
+      <div className="flex-1 flex">
+        <Sidebar
           currentTab={currentTab}
           onSelectTab={setCurrentTab}
-          onOpenProjector={handleOpenProjector}
-          onOpenQRCode={() => setIsQRCodeModalOpen(true)}
-          onToggleMobileMenu={() => setIsMobileSidebarOpen(prev => !prev)}
+          isMobileOpen={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
         />
 
-        {/* Main Layout Area */}
-        <div className="flex-1 flex">
-          {/* Navigation Sidebar */}
-          <Sidebar
-            currentTab={currentTab}
-            onSelectTab={setCurrentTab}
-            isMobileOpen={isMobileSidebarOpen}
-            onCloseMobile={() => setIsMobileSidebarOpen(false)}
-          />
+        <main className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto overflow-x-hidden">
+          {currentTab === 'dashboard' && (
+            <Dashboard
+              onNavigate={setCurrentTab}
+              onStartAuction={handleStartAuction}
+              onOpenProjector={handleOpenProjector}
+              onOpenQRCode={() => setIsQRCodeModalOpen(true)}
+            />
+          )}
 
-          {/* Dynamic Page Content */}
-          <main className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto overflow-x-hidden">
-            <Suspense fallback={<AdminLoadingFallback />}>
-              {currentTab === 'dashboard' && (
-                <Dashboard
-                  onNavigate={setCurrentTab}
-                  onStartAuction={handleStartAuction}
-                  onOpenProjector={handleOpenProjector}
-                  onOpenQRCode={() => setIsQRCodeModalOpen(true)}
-                />
-              )}
+          {currentTab === 'live_auction' && (
+            <LiveAuction onOpenProjector={handleOpenProjector} />
+          )}
 
-              {currentTab === 'live_auction' && (
-                <LiveAuction onOpenProjector={handleOpenProjector} />
-              )}
+          {currentTab === 'players' && (
+            <PlayersPage
+              onStartAuction={handleStartAuction}
+              onNavigate={setCurrentTab}
+            />
+          )}
 
-              {currentTab === 'players' && (
-                <PlayersPage
-                  onStartAuction={handleStartAuction}
-                  onNavigate={setCurrentTab}
-                />
-              )}
+          {currentTab === 'teams' && <TeamsPage />}
 
-              {currentTab === 'teams' && <TeamsPage />}
+          {currentTab === 'history' && <AuctionHistoryPage />}
 
-              {currentTab === 'history' && <AuctionHistoryPage />}
+          {currentTab === 'unsold' && (
+            <UnsoldPlayersPage onStartAuction={handleStartAuction} />
+          )}
 
-              {currentTab === 'unsold' && (
-                <UnsoldPlayersPage onStartAuction={handleStartAuction} />
-              )}
+          {currentTab === 'analytics' && <AnalyticsPage />}
 
-              {currentTab === 'analytics' && <AnalyticsPage />}
+          {currentTab === 'ai_assistant' && <AIAssistantPage />}
 
-              {currentTab === 'ai_assistant' && <AIAssistantPage />}
+          {currentTab === 'import_excel' && (
+            <ExcelImportPage onNavigateToPlayers={() => setCurrentTab('players')} />
+          )}
 
-              {currentTab === 'import_excel' && (
-                <ExcelImportPage onNavigateToPlayers={() => setCurrentTab('players')} />
-              )}
+          {currentTab === 'settings' && <SettingsPage />}
 
-              {currentTab === 'settings' && <SettingsPage />}
+          {currentTab === 'auction_order' && (
+            <AuctionOrderPage onStartAuction={handleStartAuction} />
+          )}
 
-              {currentTab === 'auction_order' && (
-                <AuctionOrderPage onStartAuction={handleStartAuction} />
-              )}
+          {currentTab === 'captain_management' && (
+            <CaptainManagementPage />
+          )}
 
-              {currentTab === 'captain_management' && (
-                <CaptainManagementPage />
-              )}
+          {currentTab === 'save_logs' && (
+            <SaveLogsPage />
+          )}
 
-              {currentTab === 'save_logs' && (
-                <SaveLogsPage />
-              )}
-
-              {currentTab === 'complete' && <AuctionCompletePage />}
-            </Suspense>
-          </main>
-        </div>
-
-        {/* QR Code / Spectator Share Modal */}
-        {isQRCodeModalOpen && (
-          <QRCodeModal
-            isOpen={isQRCodeModalOpen}
-            onClose={() => setIsQRCodeModalOpen(false)}
-            onOpenProjector={handleOpenProjector}
-            onOpenSpectator={handleOpenSpectator}
-          />
-        )}
+          {currentTab === 'complete' && <AuctionCompletePage />}
+        </main>
       </div>
-    </Suspense>
+
+      {isQRCodeModalOpen && (
+        <QRCodeModal
+          isOpen={isQRCodeModalOpen}
+          onClose={() => setIsQRCodeModalOpen(false)}
+          onOpenProjector={handleOpenProjector}
+          onOpenSpectator={handleOpenSpectator}
+        />
+      )}
+    </div>
   );
 };
-
 
 export const App: React.FC = () => {
   return (
     <AuctionProvider>
-      <AppContent />
+      <AdminErrorBoundary>
+        <AppContent />
+      </AdminErrorBoundary>
     </AuctionProvider>
   );
 };

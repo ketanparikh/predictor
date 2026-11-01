@@ -88,20 +88,20 @@ function auctionSyncPlugin(): Plugin {
   } catch {}
   const sseClients = new Set<any>();
 
-  // Periodic heartbeat every 15s to keep Cloudflare tunnel streams alive
-  setInterval(() => {
-    for (const client of sseClients) {
-      try {
-        client.write(': ping\n\n');
-      } catch {
-        sseClients.delete(client);
-      }
-    }
-  }, 15000);
-
   return {
     name: 'auction-network-sync-plugin',
     configureServer(server: ViteDevServer) {
+      // Periodic heartbeat every 15s to keep Cloudflare tunnel streams alive
+      setInterval(() => {
+        for (const client of sseClients) {
+          try {
+            client.write(': ping\n\n');
+          } catch {
+            sseClients.delete(client);
+          }
+        }
+      }, 15000);
+
       server.middlewares.use((req, res, next) => {
         const rawUrl = req.url ? req.url.split('?')[0] : '';
         const url = rawUrl.replace(/^\/auction/, '') || '/';

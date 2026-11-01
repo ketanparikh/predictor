@@ -9,6 +9,13 @@ import {
   normalizePhotoUrl,
 } from '../utils/excelParser';
 import { parseCricHeroesHtml } from '../utils/cricheroesParser';
+import { enrichRowsWithJcplStats } from '../utils/jcplStats';
+import {
+  isJcpl4RegistrationSheet,
+  loadBundledJcpl4Registrations,
+  parseJcpl4RegistrationRows,
+} from '../utils/jcpl4Registrations';
+import * as XLSX from 'xlsx';
 import { PlayerRole, PlayerGrade } from '../types/auction';
 import {
   FileSpreadsheet,
@@ -79,12 +86,26 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const initialExcelSession = React.useMemo(() => getStoredExcelSession(), []);
-
-  const [parsedRows, setParsedRows] = useState<ParsedPlayerRow[]>(initialExcelSession?.parsedRows || []);
-  const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
-    new Set(initialExcelSession?.selectedIndices || [])
+  const bundledRows = React.useMemo(
+    () => loadBundledJcpl4Registrations(rules.gradeBasePrices || {
+      gradeAPlus: 7000, gradeA: 5000, gradeB: 3000, gradeC: 1000,
+    }),
+    [rules.gradeBasePrices],
   );
-  const [fileName, setFileName] = useState<string>(initialExcelSession?.fileName || '');
+
+  const [parsedRows, setParsedRows] = useState<ParsedPlayerRow[]>(() => (
+    initialExcelSession?.parsedRows?.length ? initialExcelSession.parsedRows : bundledRows
+  ));
+  const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
+    new Set(
+      initialExcelSession?.selectedIndices?.length
+        ? initialExcelSession.selectedIndices
+        : bundledRows.map((row) => row.rawIndex),
+    ),
+  );
+  const [fileName, setFileName] = useState<string>(
+    initialExcelSession?.fileName || 'JCPL 4 Registeration (Responses).xlsx',
+  );
   const [replaceExisting, setReplaceExisting] = useState<boolean>(false);
   const [importSuccessMessage, setImportSuccessMessage] = useState<string | null>(null);
 
@@ -135,8 +156,19 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
       const buffer = evt.target?.result as ArrayBuffer;
       if (buffer) {
         try {
-          const rows = parseExcelOrCsv(buffer, gradeBasePrices);
+          const workbook = XLSX.read(buffer, { type: 'array' });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rawRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: '' });
+          const rows = isJcpl4RegistrationSheet(rawRows)
+            ? parseJcpl4RegistrationRows(rawRows, gradeBasePrices)
+            : enrichRowsWithJcplStats(parseExcelOrCsv(buffer, gradeBasePrices), gradeBasePrices).rows;
+          const matched = rows.filter((row) => row.jcplMatched).length;
           setParsedRows(rows);
+          if (matched > 0) {
+            setImportSuccessMessage(
+              `Matched JCPL tournament stats for ${matched} of ${rows.length} players.`,
+            );
+          }
           // Select all parsed rows by default initially
           setSelectedIndices(new Set(rows.map(r => r.rawIndex)));
           setActivePreset('all');
@@ -389,11 +421,14 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
       return;
     }
 
+    const jcplCount = selectedRowsToImport.filter((r) => r.jcplMatched).length;
     importPlayers(selectedRowsToImport, replaceExisting);
     setImportSuccessMessage(
-      `Successfully imported ${selectedRowsToImport.length} player${
+      `Imported ${selectedRowsToImport.length} player${
         selectedRowsToImport.length === 1 ? '' : 's'
-      } into the tournament database!`
+      } into the shared auction database${
+        jcplCount ? ` (${jcplCount} with JCPL tournament stats)` : ''
+      }.`,
     );
     setParsedRows([]);
     setSelectedIndices(new Set());
@@ -555,7 +590,7 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
             <span>Import & Segregate Players from Excel</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Upload tournament spreadsheets (.xlsx, .csv). Includes automatic grade calculation, CricHeroes bulk stats fetching, player photos, auction sequence orders, and captain/sponsor tags.
+            Load the JCPL 4 Google Form registrations, or upload another spreadsheet. Names are matched to JCPL Season 1–3 stats automatically.
           </p>
         </div>
 
@@ -609,6 +644,28 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
         </div>
 
         <div className="flex items-center justify-center gap-3 pt-2">
+          <button
+            onClick={() => {
+              const rows = loadBundledJcpl4Registrations(gradeBasePrices);
+              const matched = rows.filter((r) => r.jcplMatched).length;
+              setParsedRows(rows);
+              setSelectedIndices(new Set(rows.map((r) => r.rawIndex)));
+              setFileName('JCPL 4 Registeration (Responses).xlsx');
+              setActivePreset('all');
+              setGenderFilter('all');
+              setAgeGroupFilter('all');
+              setRoleFilter('all');
+              setGradeFilter('all');
+              setSearchQuery('');
+              setImportSuccessMessage(
+                `Loaded ${rows.length} JCPL 4 registrations. Matched JCPL tournament stats for ${matched} players.`,
+              );
+            }}
+            className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-all shadow-md flex items-center gap-2 hover:scale-105 cursor-pointer"
+          >
+            <Database className="w-4 h-4" />
+            <span>Load JCPL 4 Registrations</span>
+          </button>
           <button
             onClick={() => fileInputRef.current?.click()}
             className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shadow-md flex items-center gap-2 hover:scale-105 cursor-pointer"
@@ -915,6 +972,21 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>Auto-Grade from Stats</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const enriched = enrichRowsWithJcplStats(parsedRows, gradeBasePrices);
+                  setParsedRows(enriched.rows);
+                  setImportSuccessMessage(
+                    `Matched JCPL tournament stats for ${enriched.matched} of ${enriched.rows.length} players.`,
+                  );
+                }}
+                title="Fill stats from JCPL Seasons 1–3 for players who already participated"
+                className="px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 font-bold text-xs flex items-center gap-1.5 transition-all shadow cursor-pointer"
+              >
+                <Database className="w-3.5 h-3.5 text-sky-400" />
+                <span>Match JCPL Stats ({parsedRows.filter((r) => r.jcplMatched).length})</span>
               </button>
 
               <button

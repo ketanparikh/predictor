@@ -144,6 +144,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
             <div className="font-semibold text-emerald-300 mt-0.5">{player.stats.wickets}</div>
           </div>
         </div>
+        {player.jcplSeasons && player.jcplSeasons.length > 0 && (
+          <div className="mt-2 text-[10px] font-bold uppercase tracking-wide text-sky-300/90">
+            JCPL {player.jcplSeasons.join(' · ')}
+          </div>
+        )}
       </div>
 
       {/* Card Footer: Status & Price */}

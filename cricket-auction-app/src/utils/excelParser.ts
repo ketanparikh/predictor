@@ -37,6 +37,9 @@ export interface ParsedPlayerRow {
   isSponsored?: boolean;
   photo?: string;
   cricheroesProfileUrl?: string;
+  jcplPlayerId?: number;
+  jcplSeasons?: string[];
+  jcplMatched?: boolean;
   auctionOrder?: number;
   errors: string[];
   warnings: string[];

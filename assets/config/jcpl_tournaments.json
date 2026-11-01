@@ -1,6 +1,34 @@
 {
   "seasons": [
     {
+      "id": "4",
+      "label": "Season 4",
+      "year": "2026",
+      "subtitle": "JCPL 4 Excel registrations",
+      "categories": [
+        {
+          "id": "mens",
+          "label": "Mens",
+          "asset": "assets/config/jcpl_s4_mens.json"
+        },
+        {
+          "id": "womens",
+          "label": "Womens",
+          "asset": "assets/config/jcpl_s4_womens.json"
+        },
+        {
+          "id": "boys",
+          "label": "Boys",
+          "asset": "assets/config/jcpl_s4_boys.json"
+        },
+        {
+          "id": "girls",
+          "label": "Girls",
+          "asset": "assets/config/jcpl_s4_girls.json"
+        }
+      ]
+    },
+    {
       "id": "1",
       "label": "Season 1",
       "year": "2024",

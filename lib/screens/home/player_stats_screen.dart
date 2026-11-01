@@ -12,7 +12,7 @@ class PlayerStatsScreen extends StatelessWidget {
     super.key,
     required this.player,
     this.sourceNote =
-        'Source: CricHeroes career statistics. These are not JCPL-only figures.',
+        'Source: JCPL 4 registration name with matched career statistics.',
   });
 
   @override

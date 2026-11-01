@@ -25,10 +25,16 @@ import {
   createAndStoreSnapshot,
   getLastSavedTimestamp,
 } from '../utils/storage';
-import { pushAuctionStateToFirestore, subscribeAuctionStateFromFirestore } from '../utils/firebaseSync';
+import {
+  loadAuctionStateFromFirestore,
+  pushAuctionStateToFirestore,
+  pushPlayerStatsCatalogToFirestore,
+  subscribeAuctionStateFromFirestore,
+} from '../utils/firebaseSync';
 import { soundFx } from '../utils/audio';
 import { triggerSoldConfetti } from '../utils/confetti';
 import { ParsedPlayerRow } from '../utils/excelParser';
+import { bundledJcpl4AsPlayers, parsedRowToPlayer } from '../utils/jcpl4Registrations';
 
 export interface LastAuctionResult {
   type: 'sold' | 'unsold';
@@ -187,7 +193,7 @@ export function calculateMaxBidForTeam(
 export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [teams, setTeams] = useState<Team[]>(initialTeams);
-  const [players, setPlayers] = useState<Player[]>(initialPlayers);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [transactions, setTransactions] = useState<AuctionTransaction[]>([]);
   const [rules, setRules] = useState<AuctionRules>(initialAuctionRules);
   const [tournament, setTournament] = useState<TournamentInfo>(initialTournamentInfo);
@@ -238,49 +244,64 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // Load initial state
   useEffect(() => {
+    let cancelled = false;
     const isSpectator = isSpectatorOrProjectorView();
-    
+
+    const applyStored = (stored: AppStoredState) => {
+      setTeams(stored.teams?.length ? stored.teams : initialTeams);
+      setPlayers(stored.players);
+      setTransactions(stored.transactions || []);
+      setRules(stored.rules || initialAuctionRules);
+      setTournament(stored.tournament || initialTournamentInfo);
+      setCurrentPlayerId(stored.currentPlayerId ?? null);
+      setCurrentBid(stored.currentBid ?? 0);
+      setCurrentBidderId(stored.currentBidderId ?? null);
+      setBidHistory((stored.bidHistory as unknown as BidRecord[]) || []);
+      setAuctionOrderMode(stored.auctionOrderMode || 'default');
+      if (stored.customAuctionOrderIds) setCustomAuctionOrderIds(stored.customAuctionOrderIds);
+      setTimerSeconds(stored.rules?.timerDuration || 15);
+      soundFx.setEnabled(stored.rules?.soundEnabled);
+    };
+
+    const withRoster = (state: AppStoredState): AppStoredState => {
+      const prices = state.rules?.gradeBasePrices || initialAuctionRules.gradeBasePrices!;
+      const players = state.players?.length ? state.players : bundledJcpl4AsPlayers(prices);
+      const teams = state.teams?.length ? state.teams : initialTeams;
+      return { ...state, players, teams };
+    };
+
     if (isSpectator) {
       try {
         const cached = sessionStorage.getItem('cricket_auction_spectator_fast_cache');
         if (cached) {
-          const parsed = JSON.parse(cached) as AppStoredState;
-          if (parsed && parsed.players && parsed.teams) {
-            setTeams(parsed.teams);
-            setPlayers(parsed.players);
-            setTransactions(parsed.transactions || []);
-            setRules(parsed.rules || initialAuctionRules);
-            setTournament(parsed.tournament || initialTournamentInfo);
-            setCurrentPlayerId(parsed.currentPlayerId ?? null);
-            setCurrentBid(parsed.currentBid ?? 0);
-            setCurrentBidderId(parsed.currentBidderId ?? null);
-            setBidHistory(parsed.bidHistory as unknown as BidRecord[] || []);
-            setIsLoaded(true);
+          const parsed = withRoster(JSON.parse(cached) as AppStoredState);
+          if (parsed.players.length && parsed.teams.length) {
+            applyStored(parsed);
           }
         }
       } catch {}
     }
 
-    const stored = loadStoredState();
-    if (!isSpectator) {
-      setTeams(stored.teams);
-      setPlayers(stored.players);
-      setTransactions(stored.transactions);
-      setRules(stored.rules);
-      setTournament(stored.tournament);
-      setCurrentPlayerId(stored.currentPlayerId);
-      setCurrentBid(stored.currentBid);
-      setCurrentBidderId(stored.currentBidderId);
-      setBidHistory(stored.bidHistory as unknown as BidRecord[]);
-      setAuctionOrderMode(stored.auctionOrderMode || 'default');
-      if (stored.customAuctionOrderIds) setCustomAuctionOrderIds(stored.customAuctionOrderIds);
-    }
-    setSaveLogs(loadSaveLogs());
-    setSaveSnapshots(loadSaveSnapshots());
-    setLastSavedTimestamp(getLastSavedTimestamp());
-    setTimerSeconds(stored.rules.timerDuration || 15);
-    soundFx.setEnabled(stored.rules.soundEnabled);
-    setIsLoaded(true);
+    void (async () => {
+      const local = withRoster(loadStoredState());
+      const remote = await loadAuctionStateFromFirestore();
+      if (cancelled) return;
+
+      const next = withRoster({
+        ...(remote || local),
+        teams: remote?.teams?.length ? remote.teams : local.teams,
+        players: remote?.players?.length ? remote.players : local.players,
+      });
+
+      applyStored(next);
+      if (!isSpectator) {
+        saveStoredState(next);
+      }
+      setSaveLogs(loadSaveLogs());
+      setSaveSnapshots(loadSaveSnapshots());
+      setLastSavedTimestamp(getLastSavedTimestamp());
+      setIsLoaded(true);
+    })();
 
     if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
       const bc = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
@@ -288,29 +309,25 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
       bc.onmessage = (event) => {
         if (event.data?.type === 'SYNC_STATE') {
-          // Read-only spectator/projector screens update from broadcast
           const isReadOnly = isSpectatorOrProjectorView();
           if (isReadOnly) {
             const payload = event.data.payload as AppStoredState;
-            if (payload) {
-              setTeams(payload.teams);
-              setPlayers(payload.players);
-              setTransactions(payload.transactions);
-              setRules(payload.rules);
-              setTournament(payload.tournament);
-              setCurrentPlayerId(payload.currentPlayerId);
-              setCurrentBid(payload.currentBid);
-              setCurrentBidderId(payload.currentBidderId);
-              setBidHistory(payload.bidHistory as unknown as BidRecord[]);
+            if (payload?.players?.length) {
+              applyStored(withRoster(payload));
             }
           }
         }
       };
 
       return () => {
+        cancelled = true;
         bc.close();
       };
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Broadcast state helper (Same browser tabs)
@@ -323,10 +340,13 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Dedup ref to prevent spamming duplicate state pushes
   const lastPushedJsonRef = useRef<string>('');
 
+  const fingerprintState = (state: AppStoredState) =>
+    JSON.stringify({ ...state, lastSaved: undefined });
+
   // Push state to server (Cross-device Wi-Fi sync for mobile spectator phones & projector screens)
   const pushStateToServer = useCallback((stateToPush: AppStoredState) => {
     try {
-      const json = JSON.stringify(stateToPush);
+      const json = fingerprintState(stateToPush);
       if (lastPushedJsonRef.current === json) return;
       lastPushedJsonRef.current = json;
 
@@ -336,6 +356,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         body: json,
       }).catch(() => {});
       void pushAuctionStateToFirestore(stateToPush);
+      void pushPlayerStatsCatalogToFirestore(stateToPush.players || []);
     } catch {}
   }, []);
 
@@ -370,7 +391,8 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     const checkIsSpectatorOrProjector = () => isSpectatorOrProjectorView();
 
     const applyIncomingState = (payload: AppStoredState) => {
-      if (!payload || !payload.teams || !payload.players) return;
+      if (!payload || !payload.teams?.length) return;
+      if (!payload.players?.length) return;
       try {
         if (typeof window !== 'undefined' && checkIsSpectatorOrProjector()) {
           sessionStorage.setItem('cricket_auction_spectator_fast_cache', JSON.stringify(payload));
@@ -385,6 +407,10 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       setCurrentBid(payload.currentBid ?? 0);
       setCurrentBidderId(payload.currentBidderId ?? null);
       setBidHistory(payload.bidHistory as unknown as BidRecord[] || []);
+      setAuctionOrderMode(payload.auctionOrderMode || 'default');
+      if (payload.customAuctionOrderIds) {
+        setCustomAuctionOrderIds(payload.customAuctionOrderIds);
+      }
     };
 
     const fetchLatestServerState = () => {
@@ -407,9 +433,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
 
     const unsubFirestore = subscribeAuctionStateFromFirestore((data) => {
-      if (checkIsSpectatorOrProjector()) {
-        applyIncomingState(data);
-      }
+      try {
+        const incoming = fingerprintState(data);
+        if (incoming === lastPushedJsonRef.current) return;
+        lastPushedJsonRef.current = incoming;
+      } catch {}
+      applyIncomingState(data);
     });
 
     // 2. React immediately to hash changes (e.g. entering #spectator or #projector)
@@ -1505,44 +1534,18 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // IMPORT PLAYERS FROM EXCEL
   const importPlayers = useCallback((parsedRows: ParsedPlayerRow[], replaceExisting: boolean = false) => {
-    const newPlayers: Player[] = parsedRows.map((r, idx) => ({
-      id: `ply-${Date.now()}-${idx}`,
-      name: r.name,
-      age: r.age,
-      ageCategory: r.ageCategory || (r.age <= 15 ? '15 and Below' : 'Above 15'),
-      gender: r.gender || 'Male',
-      experience: r.experience,
-      role: r.role,
-      battingStyle: r.battingStyle,
-      bowlingStyle: r.bowlingStyle,
-      grade: r.grade,
-      basePrice: r.basePrice,
-      description: r.description || r.previousPerformance || r.notes,
-      status: 'upcoming',
-      auctionOrder: r.auctionOrder !== undefined ? r.auctionOrder : ((replaceExisting ? 0 : players.length) + idx + 1),
-      isCaptain: r.isCaptain,
-      isViceCaptain: Boolean(r.isViceCaptain && r.grade === 'A'),
-      sponsorTag: r.sponsorTag,
-      isSponsored: r.isSponsored || !!(r.sponsorTag && r.sponsorTag.trim()),
-      photo: r.photo,
-      previousPerformance: r.previousPerformance || r.description,
-      notes: r.notes || r.description,
-      stats: {
-        matches: r.matches,
-        runs: r.runs,
-        average: r.average,
-        strikeRate: r.strikeRate,
-        highestScore: r.highestScore,
-        fifties: r.fifties,
-        hundreds: r.hundreds,
-        wickets: r.wickets,
-        bowlingAverage: r.bowlingAverage,
-        economyRate: r.economyRate,
-        bestBowling: r.bestBowling,
-        catches: r.catches,
-        stumpings: r.stumpings,
-      },
-    }));
+    const newPlayers: Player[] = parsedRows.map((r, idx) =>
+      parsedRowToPlayer(
+        {
+          ...r,
+          auctionOrder: r.auctionOrder !== undefined
+            ? r.auctionOrder
+            : ((replaceExisting ? 0 : players.length) + idx + 1),
+        },
+        idx,
+        `ply-${Date.now()}`,
+      ),
+    );
 
     if (replaceExisting) {
       setPlayers(newPlayers);

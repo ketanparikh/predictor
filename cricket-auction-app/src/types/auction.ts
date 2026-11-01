@@ -62,6 +62,8 @@ export interface Player {
   sponsorTag?: string;
   isSponsored?: boolean;
   cricheroesProfileUrl?: string;
+  jcplPlayerId?: number;
+  jcplSeasons?: string[];
   isPreAssignedCaptain?: boolean;
 }
 

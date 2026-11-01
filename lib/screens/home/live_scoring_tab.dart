@@ -165,6 +165,30 @@ class _LiveScoringTabState extends State<LiveScoringTab> {
           return score.status == _filter;
         }).toList();
 
+        final seenIds = matches.map((item) => item.match.id).toSet();
+        for (final score in scores.values) {
+          if (!score.isCricHeroes || seenIds.contains(score.matchId)) continue;
+          seenIds.add(score.matchId);
+          matches.insert(
+            0,
+            _LiveMatch(
+              day: Tournament(
+                id: 'cricheroes',
+                name: score.dayName ?? 'CricHeroes',
+                matches: const [],
+              ),
+              match: MatchInfo(
+                id: score.matchId,
+                name: '${score.team1} vs ${score.team2}',
+                date: DateTime.now().toIso8601String(),
+                questionFile: 'assets/config/prediction_bank.json',
+                time: score.matchTime,
+                category: 'cricheroes',
+              ),
+            ),
+          );
+        }
+
         matches.sort((a, b) {
           final aScore = _scoreFor(a, scores);
           final bScore = _scoreFor(b, scores);

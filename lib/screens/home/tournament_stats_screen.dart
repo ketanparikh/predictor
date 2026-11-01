@@ -35,6 +35,29 @@ class TournamentStatsScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              FutureBuilder<List<Map<String, dynamic>>>(
+                future: TournamentStatsService.loadSharedAuctionPlayers(),
+                builder: (context, auctionSnap) {
+                  final auctionPlayers = auctionSnap.data ?? const [];
+                  if (auctionPlayers.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return _NavCard(
+                    title: 'JCPL 4 registrations',
+                    subtitle:
+                        '${auctionPlayers.length} players from the JCPL 4 Excel form',
+                    icon: Icons.gavel,
+                    color: AppTheme.cricketOrange,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => AuctionRosterStatsScreen(
+                          players: auctionPlayers,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
               Text(
                 'SEASONS',
                 style: GoogleFonts.barlowCondensed(
@@ -774,6 +797,52 @@ class _LeaderChip extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class AuctionRosterStatsScreen extends StatelessWidget {
+  final List<Map<String, dynamic>> players;
+
+  const AuctionRosterStatsScreen({super.key, required this.players});
+
+  @override
+  Widget build(BuildContext context) {
+    final sorted = [...players]..sort((a, b) {
+      return '${a['name']}'.toLowerCase().compareTo('${b['name']}'.toLowerCase());
+    });
+    return Scaffold(
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: AppTheme.stadiumGradient),
+        ),
+        title: const Text('JCPL 4 registrations'),
+      ),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: sorted.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        itemBuilder: (context, index) {
+          final player = sorted[index];
+          final stats = player['stats'] is Map
+              ? Map<String, dynamic>.from(player['stats'] as Map)
+              : const <String, dynamic>{};
+          final seasons = (player['jcplSeasons'] as List?)?.join(' · ') ?? '';
+          return Card(
+            child: ListTile(
+              title: Text('${player['name'] ?? ''}'),
+              subtitle: Text(
+                [
+                  if ('${player['role'] ?? ''}'.isNotEmpty) '${player['role']}',
+                  if ('${player['grade'] ?? ''}'.isNotEmpty) 'Grade ${player['grade']}',
+                  if (seasons.isNotEmpty) seasons,
+                  '${stats['matches'] ?? 0} matches · ${stats['runs'] ?? 0} runs · ${stats['wickets'] ?? 0} wkts',
+                ].join(' · '),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

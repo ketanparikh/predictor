@@ -25,6 +25,10 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     <div className={`relative flex flex-col justify-between rounded-xl border transition-all duration-200 overflow-hidden ${
       player.status === 'in_auction'
         ? 'border-amber-500/80 bg-slate-900/90 shadow-[0_0_20px_rgba(245,158,11,0.3)] ring-1 ring-amber-400'
+        : player.isCaptain
+        ? 'border-amber-500/50 bg-slate-900/85 shadow-[0_0_15px_rgba(245,158,11,0.15)] ring-1 ring-amber-500/30'
+        : player.isViceCaptain
+        ? 'border-blue-500/50 bg-slate-900/85 shadow-[0_0_15px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/30'
         : player.status === 'sold'
         ? 'border-emerald-500/40 bg-slate-900/60 opacity-95'
         : player.status === 'unsold'
@@ -43,8 +47,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
               </span>
             )}
             {player.isViceCaptain && (
-              <span className="px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px] font-mono font-bold flex items-center gap-0.5 border border-sky-500/30">
-                <Star className="w-2.5 h-2.5 text-sky-400" /> VC
+              <span className="px-2 py-0.5 rounded bg-blue-500/25 text-blue-300 text-[10px] font-mono font-bold flex items-center gap-1 border border-blue-500/40 shadow-sm">
+                <Star className="w-3 h-3 text-blue-400 fill-current" /> Vice-Captain
               </span>
             )}
             {(player.sponsorTag || player.isSponsored) && (
@@ -98,7 +102,17 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
           <div className="min-w-0 flex-1">
             <h3 className="font-bold text-white text-base truncate tracking-tight flex items-center gap-1.5">
-              {player.name}
+              <span>{player.name}</span>
+              {player.isCaptain && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-0.5 shadow-sm">
+                  <Crown className="w-2.5 h-2.5 fill-current text-amber-400" /> C
+                </span>
+              )}
+              {player.isViceCaptain && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40 flex items-center gap-0.5 shadow-sm">
+                  <Star className="w-2.5 h-2.5 fill-current text-blue-400" /> VC
+                </span>
+              )}
             </h3>
             <div className="text-xs text-slate-400 flex flex-wrap items-center gap-1.5 mt-0.5 font-mono">
               <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${

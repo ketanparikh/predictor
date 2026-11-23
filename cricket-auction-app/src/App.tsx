@@ -16,6 +16,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { AuctionCompletePage } from './pages/AuctionCompletePage';
 import { AuctionOrderPage } from './pages/AuctionOrderPage';
 import { CaptainManagementPage } from './pages/CaptainManagementPage';
+import { ViceCaptainManagementPage } from './pages/ViceCaptainManagementPage';
 import { SaveLogsPage } from './pages/SaveLogsPage';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
@@ -190,6 +191,10 @@ const AppContent: React.FC = () => {
 
           {currentTab === 'captain_management' && (
             <CaptainManagementPage />
+          )}
+
+          {currentTab === 'vice_captain_management' && (
+            <ViceCaptainManagementPage />
           )}
 
           {currentTab === 'save_logs' && (

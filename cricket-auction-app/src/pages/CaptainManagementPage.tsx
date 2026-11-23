@@ -3,6 +3,7 @@ import { useAuction } from '../context/AuctionContext';
 import { Team, Player } from '../types/auction';
 import {
   Crown,
+  Star,
   Shield,
   UserCheck,
   UserX,
@@ -16,6 +17,7 @@ import {
   Users,
   X,
   ArrowRight,
+  Save,
 } from 'lucide-react';
 
 export const CaptainManagementPage: React.FC = () => {
@@ -26,6 +28,8 @@ export const CaptainManagementPage: React.FC = () => {
     updateRules,
     allocateCaptainToTeam,
     removeCaptainFromTeam,
+    applyCaptainCostToAllAllotted,
+    getTeamGradeMetrics,
   } = useAuction();
 
   const [selectedTeamForAssignment, setSelectedTeamForAssignment] = useState<Team | null>(null);
@@ -33,6 +37,7 @@ export const CaptainManagementPage: React.FC = () => {
   const [gradeFilter, setGradeFilter] = useState<string>('all');
   const [costMode, setCostMode] = useState<'zero' | 'custom'>(() => rules.captainCostMode === 'custom' ? 'custom' : 'zero');
   const [captainCost, setCaptainCost] = useState<number>(() => rules.captainCustomCost ?? 0);
+  const [teamCostInputs, setTeamCostInputs] = useState<Record<string, number>>({});
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   const showToast = (text: string, type: 'success' | 'error' = 'success') => {
@@ -132,11 +137,24 @@ export const CaptainManagementPage: React.FC = () => {
   // Toggle captain cost mode
   const handleToggleCostMode = (newMode: 'zero' | 'custom') => {
     setCostMode(newMode);
-    updateRules({
-      ...rules,
-      captainCostMode: newMode,
-    });
-    showToast(`Captain Cost Mode set to: ${newMode === 'zero' ? 'Zero Cost (₹0)' : 'Custom Cost'}`, 'success');
+    if (newMode === 'zero') {
+      const res = applyCaptainCostToAllAllotted(0);
+      updateRules({
+        ...rules,
+        captainCostMode: 'zero',
+        captainCustomCost: 0,
+      });
+      showToast('Set to Zero Cost: all captain deductions refunded back to team purses!', 'success');
+    } else {
+      const defaultCost = captainCost > 0 ? captainCost : 15000;
+      setCaptainCost(defaultCost);
+      updateRules({
+        ...rules,
+        captainCostMode: 'custom',
+        captainCustomCost: defaultCost,
+      });
+      showToast('Custom Cost Mode active. Set price and click "Apply to All" or deduct per franchise below.', 'success');
+    }
   };
 
   return (
@@ -230,6 +248,37 @@ export const CaptainManagementPage: React.FC = () => {
               : 'Captains are assigned at custom amount and deducted from team purse.'}
           </div>
         </div>
+
+        {/* Custom Price Global Deduct Tool */}
+        {costMode === 'custom' && (
+          <div className="mt-4 p-4 rounded-xl bg-slate-950/90 border border-amber-500/30 flex flex-wrap items-center justify-between gap-3 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-bold text-amber-300">Set Captain Price (Deduct from Purse):</span>
+              <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl">
+                <span className="text-xs font-mono text-amber-400 font-bold">₹</span>
+                <input
+                  type="number"
+                  min="0"
+                  max={50000}
+                  step="500"
+                  value={captainCost}
+                  onChange={(e) => setCaptainCost(Number(e.target.value) || 0)}
+                  className="w-28 bg-transparent text-sm font-mono text-white text-right font-bold focus:outline-none"
+                />
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                const res = applyCaptainCostToAllAllotted(captainCost);
+                showToast(res.message, res.success ? 'success' : 'error');
+              }}
+              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-lg transition-all cursor-pointer"
+            >
+              <Coins className="w-4 h-4" />
+              <span>Apply & Deduct ₹{captainCost.toLocaleString('en-IN')} For All Allotted Captains</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Teams Grid (All 12 Teams) */}
@@ -292,50 +341,83 @@ export const CaptainManagementPage: React.FC = () => {
                     }`}
                   >
                     {captain ? (
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="relative">
-                            <img
-                              src={
-                                captain.photo ||
-                                'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=120&q=80'
-                              }
-                              alt={captain.name}
-                              className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-md"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src =
-                                  'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=120&q=80';
-                              }}
-                            />
-                            <span className="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 p-0.5 rounded-full shadow">
-                              <Crown className="w-3 h-3" />
-                            </span>
-                          </div>
-
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-bold text-sm text-white">{captain.name}</h4>
-                              <span className="px-1.5 py-0.2 rounded text-[10px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                                {captain.grade || 'A'}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <img
+                                src={
+                                  captain.photo ||
+                                  'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=120&q=80'
+                                }
+                                alt={captain.name}
+                                className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-md"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src =
+                                    'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=120&q=80';
+                                }}
+                              />
+                              <span className="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 p-0.5 rounded-full shadow">
+                                <Crown className="w-3 h-3" />
                               </span>
                             </div>
-                            <p className="text-xs text-slate-400">
-                              {captain.category} • {captain.specialism || captain.role}
-                            </p>
-                            <span className="text-[11px] font-mono text-emerald-400 font-semibold">
-                              Cost: ₹{(captain.soldPrice ?? 0).toLocaleString('en-IN')}
-                            </span>
+
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-bold text-sm text-white">{captain.name}</h4>
+                                <span className="px-1.5 py-0.2 rounded text-[10px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                                  {captain.grade || 'A'}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-400">
+                                {captain.category} • {captain.specialism || captain.role}
+                              </p>
+                              <span className="text-[11px] font-mono text-emerald-400 font-semibold">
+                                Cost: ₹{(captain.soldPrice ?? 0).toLocaleString('en-IN')}
+                              </span>
+                            </div>
                           </div>
+
+                          {/* Remove Captain Button */}
+                          <button
+                            onClick={() => handleRemoveCaptain(team)}
+                            title="Remove Captain"
+                            className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition-colors"
+                          >
+                            <UserX className="w-4 h-4" />
+                          </button>
                         </div>
 
-                        {/* Remove Captain Button */}
-                        <button
-                          onClick={() => handleRemoveCaptain(team)}
-                          title="Remove Captain"
-                          className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition-colors"
-                        >
-                          <UserX className="w-4 h-4" />
-                        </button>
+                        {/* Inline Custom Captain Cost Deduct Controller */}
+                        {costMode === 'custom' && (
+                          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                            <span className="text-[11px] text-slate-400 font-mono">Captain Cost:</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs text-amber-400 font-mono font-bold">₹</span>
+                              <input
+                                type="number"
+                                min="0"
+                                max={50000}
+                                step="500"
+                                value={teamCostInputs[team.id] ?? (captain.soldPrice ?? 0)}
+                                onChange={(e) => setTeamCostInputs(prev => ({ ...prev, [team.id]: Number(e.target.value) || 0 }))}
+                                className="w-24 px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white text-right focus:outline-none focus:border-amber-500 font-bold"
+                              />
+                              <button
+                                onClick={() => {
+                                  const costToApply = teamCostInputs[team.id] ?? (captain.soldPrice ?? 0);
+                                  const res = allocateCaptainToTeam(team.id, captain.id, costToApply);
+                                  showToast(res.message, res.success ? 'success' : 'error');
+                                }}
+                                title="Deduct custom captain price from team purse"
+                                className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] shadow transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+                              >
+                                <Save className="w-3 h-3" />
+                                <span>Deduct</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : team.captain ? (
                       <div className="flex items-center justify-between gap-3">
@@ -366,6 +448,39 @@ export const CaptainManagementPage: React.FC = () => {
                     )}
                   </div>
                 </div>
+
+                {/* Leadership Budget & Vice-Captain Info */}
+                {(() => {
+                  const m = getTeamGradeMetrics ? getTeamGradeMetrics(team) : null;
+                  const vc = team.viceCaptainPlayerId ? players.find(p => p.id === team.viceCaptainPlayerId) : players.find(p => (p.teamId === team.id || p.viceCaptainOfTeamId === team.id) && p.isViceCaptain);
+                  return (
+                    <div className="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs font-mono space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400">Vice-Captain:</span>
+                        {vc ? (
+                          <span className="text-blue-400 font-bold flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-current" />
+                            {vc.name} (₹{(vc.soldPrice || 0).toLocaleString('en-IN')})
+                          </span>
+                        ) : (
+                          <span className="text-slate-500 italic">Not Assigned</span>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between border-t border-slate-800/50 pt-1">
+                        <span className="text-slate-400">C+VC Budget:</span>
+                        <span className={(m?.combinedCapCost || 0) > 50000 ? "text-rose-400 font-black" : "text-amber-400 font-bold"}>
+                          ₹{(m?.combinedCapCost || 0).toLocaleString('en-IN')} / 50,000 pts
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                        <div
+                          style={{ width: `${Math.min(100, ((m?.combinedCapCost || 0) / 50000) * 100)}%` }}
+                          className={(m?.combinedCapCost || 0) > 50000 ? "bg-rose-500 h-full" : "bg-gradient-to-r from-amber-500 to-yellow-500 h-full"}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Card Bottom Actions */}
                 <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
@@ -418,22 +533,36 @@ export const CaptainManagementPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Optional Custom Cost Input */}
-            {costMode === 'custom' && (
-              <div className="my-4 p-3 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-300">
-                  Assign Price for Captain (₹):
-                </span>
-                <input
-                  type="number"
-                  min="0"
-                  step="500"
-                  value={captainCost}
-                  onChange={(e) => setCaptainCost(Number(e.target.value) || 0)}
-                  className="w-36 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-sm font-mono text-white text-right focus:outline-none focus:border-amber-500"
-                />
-              </div>
-            )}
+            {/* Leadership Budget Cap Notice */}
+            {(() => {
+              const tm = selectedTeamForAssignment && getTeamGradeMetrics ? getTeamGradeMetrics(selectedTeamForAssignment) : null;
+              const vcCost = tm?.viceCaptainCost || 0;
+              const maxAllowed = Math.max(0, 50000 - vcCost);
+              return (
+                <div className="my-3 p-3 bg-slate-950 border border-amber-500/30 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-300 font-semibold">Leadership Combined Budget:</span>
+                    <span className="font-mono font-bold text-amber-400">
+                      Current VC: ₹{vcCost.toLocaleString('en-IN')} | Max Captain: ₹{maxAllowed.toLocaleString('en-IN')} (Combined Limit: ₹50,000)
+                    </span>
+                  </div>
+                  {costMode === 'custom' && (
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-800">
+                      <span className="text-xs text-slate-400">Captain Price (₹):</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max={maxAllowed}
+                        step="500"
+                        value={captainCost}
+                        onChange={(e) => setCaptainCost(Number(e.target.value) || 0)}
+                        className="w-36 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-sm font-mono text-white text-right focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Search and Filters */}
             <div className="mt-4 flex items-center gap-3">
@@ -531,10 +660,20 @@ export const CaptainManagementPage: React.FC = () => {
 
                       <div>
                         {isCurrentCap ? (
-                          <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
-                            <CheckCircle2 className="w-4 h-4" />
-                            Current Captain
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
+                              <CheckCircle2 className="w-4 h-4" />
+                              Current Captain
+                            </span>
+                            <button
+                              onClick={() => handleConfirmAssignment(player)}
+                              title="Update captain price and deduct from team purse"
+                              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-colors shadow flex items-center gap-1 cursor-pointer"
+                            >
+                              <Save className="w-3.5 h-3.5" />
+                              <span>Save & Deduct (₹{captainCost.toLocaleString('en-IN')})</span>
+                            </button>
+                          </div>
                         ) : otherCaptainTeam ? (
                           <button
                             onClick={() => {

@@ -66,6 +66,8 @@ function getLocalNetworkIp(): string {
 function auctionSyncPlugin(): Plugin {
   const cacheDir = path.resolve(__dirname, '.auction-cache');
   const stateFilePath = path.join(cacheDir, 'auction-server-state.json');
+  const overridesFilePath = path.join(cacheDir, 'player-overrides.json');
+  const saveLogsFilePath = path.join(cacheDir, 'save-logs.json');
   const legacyFilePath = path.resolve(__dirname, '.auction-server-state.json');
 
   if (!fs.existsSync(cacheDir)) {
@@ -75,6 +77,9 @@ function auctionSyncPlugin(): Plugin {
   }
 
   let globalAuctionState: any = null;
+  let playerOverrides: Record<string, any> = {};
+  let saveLogs: any[] = [];
+
   try {
     if (fs.existsSync(stateFilePath)) {
       globalAuctionState = JSON.parse(fs.readFileSync(stateFilePath, 'utf8'));
@@ -86,6 +91,19 @@ function auctionSyncPlugin(): Plugin {
       } catch {}
     }
   } catch {}
+
+  try {
+    if (fs.existsSync(overridesFilePath)) {
+      playerOverrides = JSON.parse(fs.readFileSync(overridesFilePath, 'utf8')) || {};
+    }
+  } catch {}
+
+  try {
+    if (fs.existsSync(saveLogsFilePath)) {
+      saveLogs = JSON.parse(fs.readFileSync(saveLogsFilePath, 'utf8')) || [];
+    }
+  } catch {}
+
   const sseClients = new Set<any>();
 
   return {
@@ -186,6 +204,271 @@ function auctionSyncPlugin(): Plugin {
             } catch (err) {
               res.statusCode = 400;
               res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
+            }
+          });
+          return;
+        }
+
+        // 3a. GET player overrides (persisted administrator edits)
+        if (url === '/api/player-overrides' && req.method === 'GET') {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(playerOverrides || {}));
+          return;
+        }
+
+        // 3b. POST player overrides (save and merge permanent administrator player edits)
+        if (url === '/api/player-overrides' && req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const incoming = JSON.parse(body || '{}');
+              playerOverrides = { ...playerOverrides, ...incoming };
+              try {
+                fs.writeFileSync(overridesFilePath, JSON.stringify(playerOverrides, null, 2), 'utf8');
+              } catch {}
+
+              // Also apply overrides to globalAuctionState.players if present
+              if (globalAuctionState && Array.isArray(globalAuctionState.players)) {
+                globalAuctionState.players = globalAuctionState.players.map((p: any) => {
+                  const ovr = playerOverrides[p.id];
+                  return ovr ? { ...p, ...ovr } : p;
+                });
+                try {
+                  fs.writeFileSync(stateFilePath, JSON.stringify(globalAuctionState), 'utf8');
+                } catch {}
+
+                // Push updated state to SSE clients
+                const sseMessage = `data: ${JSON.stringify(globalAuctionState)}\n\n`;
+                for (const client of sseClients) {
+                  try { client.write(sseMessage); } catch { sseClients.delete(client); }
+                }
+              }
+
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true, overrides: playerOverrides }));
+            } catch (err) {
+              res.statusCode = 400;
+              res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
+            }
+          });
+          return;
+        }
+
+        // 3c. GET save logs
+        if (url === '/api/save-logs' && req.method === 'GET') {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(saveLogs || []));
+          return;
+        }
+
+        // 3d. POST save logs (record an administrative edit or action permanently)
+        if (url === '/api/save-logs' && req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const newEntry = JSON.parse(body || '{}');
+              if (newEntry && newEntry.id) {
+                saveLogs = [newEntry, ...saveLogs.filter((l: any) => l.id !== newEntry.id)].slice(0, 500);
+                try {
+                  fs.writeFileSync(saveLogsFilePath, JSON.stringify(saveLogs, null, 2), 'utf8');
+                } catch {}
+              }
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true }));
+            } catch (err) {
+              res.statusCode = 400;
+              res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
+            }
+          });
+          return;
+        }
+
+        // 3e. POST /api/auction-restart (Atomic restart preserving captains, vice-captains & player edits)
+        if (url === '/api/auction-restart' && req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const meta = JSON.parse(body || '{}');
+              if (globalAuctionState) {
+                let reversedCount = 0;
+                let returnedCount = 0;
+
+                // 1. Reset sold auction players (preserving captains & vice-captains)
+                if (Array.isArray(globalAuctionState.players)) {
+                  globalAuctionState.players = globalAuctionState.players.map((p: any) => {
+                    if (p.isCaptain || p.isViceCaptain) {
+                      return p; // Preserved
+                    }
+                    if (p.status === 'sold' || p.status === 'unsold' || p.teamId) {
+                      returnedCount++;
+                      return {
+                        ...p,
+                        status: 'upcoming',
+                        soldPrice: null,
+                        teamId: null,
+                        soldToTeamId: undefined,
+                      };
+                    }
+                    return {
+                      ...p,
+                      soldPrice: null,
+                      teamId: null,
+                    };
+                  });
+                }
+
+                // 2. Clear auction transaction history
+                if (Array.isArray(globalAuctionState.transactions)) {
+                  reversedCount = globalAuctionState.transactions.length;
+                  globalAuctionState.transactions = [];
+                }
+
+                // 3. Reset team squads keeping Captain & Vice-Captain, restoring starting purse
+                const startBudget = globalAuctionState.rules?.startingBudget || 100000;
+                const playerMap = new Map((globalAuctionState.players || []).map((p: any) => [p.id, p]));
+                if (Array.isArray(globalAuctionState.teams)) {
+                  globalAuctionState.teams = globalAuctionState.teams.map((t: any) => {
+                    const preservedSquad = (t.squad || []).filter((item: any) => {
+                      const pId = typeof item === 'string' ? item : item?.id;
+                      const p = playerMap.get(pId) || (typeof item === 'object' ? item : null);
+                      return p && (p.isCaptain || p.isViceCaptain || pId === t.captainPlayerId || pId === t.viceCaptainPlayerId);
+                    }).map((item: any) => typeof item === 'string' ? item : item?.id);
+
+                    // Ensure captain and vice-captain are in squad
+                    if (t.captainPlayerId && !preservedSquad.includes(t.captainPlayerId)) {
+                      preservedSquad.push(t.captainPlayerId);
+                    }
+                    if (t.viceCaptainPlayerId && !preservedSquad.includes(t.viceCaptainPlayerId)) {
+                      preservedSquad.push(t.viceCaptainPlayerId);
+                    }
+
+                    const capPlayer: any = t.captainPlayerId ? playerMap.get(t.captainPlayerId) : null;
+                    const vcPlayer: any = t.viceCaptainPlayerId ? playerMap.get(t.viceCaptainPlayerId) : null;
+                    const capCost = Number(capPlayer?.soldPrice || capPlayer?.basePrice || 0);
+                    const vcCost = Number(vcPlayer?.soldPrice || vcPlayer?.basePrice || 0);
+                    const leadershipCost = capCost + vcCost;
+
+                    return {
+                      ...t,
+                      startingBudget: startBudget,
+                      totalSpent: leadershipCost,
+                      remainingBudget: Math.max(0, startBudget - leadershipCost),
+                      squad: preservedSquad,
+                    };
+                  });
+                }
+
+                // 4. Reset live bidding state
+                globalAuctionState.currentPlayerId = null;
+                globalAuctionState.currentBid = 0;
+                globalAuctionState.currentBidderId = null;
+                globalAuctionState.bidHistory = [];
+
+                // 5. Save state to disk
+                try {
+                  fs.writeFileSync(stateFilePath, JSON.stringify(globalAuctionState), 'utf8');
+                } catch {}
+
+                // 6. Append Restart Log entry
+                const logEntry = {
+                  id: `restart-${Date.now()}`,
+                  timestamp: new Date().toISOString(),
+                  type: 'restart',
+                  status: 'success',
+                  description: `Auction restarted: ${reversedCount} auction transactions reversed, ${returnedCount} players returned to pool. Captain & Vice-Captain allotments preserved.`,
+                  action: 'Auction Restarted',
+                  modifiedBy: meta.modifiedBy || 'Administrator',
+                  date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+                  time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                  metadata: {
+                    reversedCount,
+                    returnedCount,
+                    captainVcPreserved: true,
+                  },
+                };
+                saveLogs = [logEntry, ...saveLogs].slice(0, 500);
+                try {
+                  fs.writeFileSync(saveLogsFilePath, JSON.stringify(saveLogs, null, 2), 'utf8');
+                } catch {}
+
+                // 7. Push to SSE clients
+                const sseMsg = `data: ${JSON.stringify(globalAuctionState)}\n\n`;
+                for (const client of sseClients) {
+                  try { client.write(sseMsg); } catch { sseClients.delete(client); }
+                }
+
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: true, reversedCount, returnedCount, state: globalAuctionState, log: logEntry }));
+                return;
+              }
+
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true }));
+            } catch (err) {
+              res.statusCode = 400;
+              res.end(JSON.stringify({ error: 'Failed to restart auction' }));
+            }
+          });
+          return;
+        }
+
+        // 3f. POST /api/auction-clear-history (Clear transaction & bid records without touching player ownership)
+        if (url === '/api/auction-clear-history' && req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const meta = JSON.parse(body || '{}');
+              let deletedCount = 0;
+              if (globalAuctionState) {
+                if (Array.isArray(globalAuctionState.transactions)) {
+                  deletedCount = globalAuctionState.transactions.length;
+                  globalAuctionState.transactions = [];
+                }
+                globalAuctionState.bidHistory = [];
+
+                try {
+                  fs.writeFileSync(stateFilePath, JSON.stringify(globalAuctionState), 'utf8');
+                } catch {}
+
+                const logEntry = {
+                  id: `clear-history-${Date.now()}`,
+                  timestamp: new Date().toISOString(),
+                  type: 'clear_history',
+                  status: 'success',
+                  description: `Auction history cleared: ${deletedCount} transaction records deleted. Player ownership & team configurations preserved.`,
+                  action: 'Auction History Cleared',
+                  modifiedBy: meta.modifiedBy || 'Administrator',
+                  date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+                  time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                  metadata: {
+                    deletedCount,
+                    playerOwnershipPreserved: true,
+                  },
+                };
+                saveLogs = [logEntry, ...saveLogs].slice(0, 500);
+                try {
+                  fs.writeFileSync(saveLogsFilePath, JSON.stringify(saveLogs, null, 2), 'utf8');
+                } catch {}
+
+                const sseMsg = `data: ${JSON.stringify(globalAuctionState)}\n\n`;
+                for (const client of sseClients) {
+                  try { client.write(sseMsg); } catch { sseClients.delete(client); }
+                }
+
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: true, deletedCount, log: logEntry }));
+                return;
+              }
+
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true, deletedCount: 0 }));
+            } catch (err) {
+              res.statusCode = 400;
+              res.end(JSON.stringify({ error: 'Failed to clear auction history' }));
             }
           });
           return;

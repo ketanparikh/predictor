@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { Team } from '../types/auction';
 import { TeamDetailModal } from '../components/TeamDetailModal';
+import { getTeamGradeMetrics } from '../utils/auctionValidation';
 import { EditTeamModal } from '../components/EditTeamModal';
 import { QuickRenameTeamsModal } from '../components/QuickRenameTeamsModal';
 import { AddTeamModal } from '../components/AddTeamModal';
@@ -16,12 +17,15 @@ import {
   CheckCircle2,
   Plus,
   Trash2,
+  Star,
+  Crown,
 } from 'lucide-react';
 
 export const TeamsPage: React.FC = () => {
   const {
     teams,
     players,
+    rules,
     addTeam,
     removeTeam,
     updateTeam,
@@ -109,7 +113,14 @@ export const TeamsPage: React.FC = () => {
       {/* 10 Team Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {teams.map(team => {
-          const squadPlayers = players.filter(p => team.squad.includes(p.id) || p.teamId === team.id || p.id === team.captainPlayerId);
+          const squadPlayers = players.filter(p =>
+            (team.squad.includes(p.id) && (p.status === 'sold' || p.isCaptain || p.isViceCaptain)) ||
+            (p.teamId === team.id && p.status === 'sold') ||
+            p.id === team.captainPlayerId ||
+            p.id === team.viceCaptainPlayerId ||
+            p.captainOfTeamId === team.id ||
+            p.viceCaptainOfTeamId === team.id
+          );
           const captainPlayer = players.find(p =>
             (team.captainPlayerId && p.id === team.captainPlayerId) ||
             p.captainOfTeamId === team.id ||
@@ -237,6 +248,33 @@ export const TeamsPage: React.FC = () => {
                   </div>
                 )}
 
+                {/* Vice-Captain Card */}
+                {(() => {
+                  const vc = players.find(p =>
+                    (team.viceCaptainPlayerId && p.id === team.viceCaptainPlayerId) ||
+                    p.viceCaptainOfTeamId === team.id ||
+                    ((p.teamId === team.id || team.squad.includes(p.id)) && p.isViceCaptain) ||
+                    (team.viceCaptain && p.name.trim().toLowerCase() === team.viceCaptain.trim().toLowerCase())
+                  );
+                  return vc ? (
+                    <div className="mt-2 p-2 rounded-xl bg-slate-950/80 border border-blue-500/30 flex items-center justify-between gap-2 text-xs">
+                      <div className="flex items-center gap-2 truncate">
+                        <Star className="w-3.5 h-3.5 text-blue-400 fill-current" />
+                        <span className="font-bold text-white truncate">{vc.name}</span>
+                        <span className="text-[10px] text-blue-300 font-mono font-bold bg-blue-500/20 px-1 py-0.2 rounded">VC</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
+                        {vc.soldPrice ? `₹${vc.soldPrice.toLocaleString()} pts` : 'Assigned'}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="mt-2 p-1.5 rounded-lg bg-slate-950/30 border border-dashed border-slate-800/80 flex items-center justify-center gap-1 text-[11px] text-slate-500 font-mono">
+                      <Star className="w-3 h-3 text-slate-600" />
+                      <span>Vice-Captain TBD</span>
+                    </div>
+                  );
+                })()}
+
                 {/* Budget Progress Meter */}
                 <div className="mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
                   <div className="flex justify-between items-center text-xs font-mono">
@@ -254,6 +292,36 @@ export const TeamsPage: React.FC = () => {
                     <span>{Math.round(percentSpent)}%</span>
                   </div>
                 </div>
+
+                {/* Grade-Wise Restrictions (Grade A: max 2, Grade B: max 3, Grade C: max 2) & C+VC Budget */}
+                {(() => {
+                  const m = getTeamGradeMetrics(team, players, rules);
+                  return (
+                    <div className="mt-3 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] font-mono space-y-1.5">
+                      <div className="flex items-center justify-between text-slate-300">
+                        <span className="font-bold text-slate-400">GRADE RESTRICTIONS:</span>
+                        <span className="text-[10px] text-indigo-300">C+VC: ₹{m.combinedCapCost.toLocaleString('en-IN')}/50k</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-1.5 text-center text-[10px]">
+                        <div className={`p-1 rounded ${m.aRemainingSlots === 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-slate-900 text-slate-300 border border-slate-800'}`}>
+                          <div className="font-bold text-amber-400">Grade A (Max 2)</div>
+                          <div className="text-white font-bold">{m.aCount}/2 ({m.aRemainingSlots} left)</div>
+                          <div className="text-[9px] text-amber-300">₹{m.aRemainingBudget.toLocaleString('en-IN')}/30k rem</div>
+                        </div>
+                        <div className={`p-1 rounded ${m.bRemainingSlots === 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-slate-900 text-slate-300 border border-slate-800'}`}>
+                          <div className="font-bold text-blue-400">Grade B (Max 3)</div>
+                          <div className="text-white font-bold">{m.bCount}/3 ({m.bRemainingSlots} left)</div>
+                          <div className="text-[9px] text-blue-300">₹{m.bRemainingBudget.toLocaleString('en-IN')}/18k rem</div>
+                        </div>
+                        <div className={`p-1 rounded ${m.cRemainingSlots === 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-slate-900 text-slate-300 border border-slate-800'}`}>
+                          <div className="font-bold text-emerald-400">Grade C (Max 2)</div>
+                          <div className="text-white font-bold">{m.cCount}/2 ({m.cRemainingSlots} left)</div>
+                          <div className="text-[9px] text-emerald-300">Purse reserve</div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Role Balance Counters & Sponsor Tag */}
                 <div className="mt-3 grid grid-cols-4 gap-1.5 text-center text-xs font-mono">

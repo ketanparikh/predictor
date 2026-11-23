@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useAuction } from '../context/AuctionContext';
 import { Team, Player } from '../types/auction';
 import { GradeBadge } from './GradeBadge';
 import { RoleBadge } from './RoleBadge';
+import { getTeamGradeMetrics } from '../utils/auctionValidation';
 import { X, Shield, Users, DollarSign, Trash2, Edit2, Check, RefreshCw, UserMinus } from 'lucide-react';
 
 interface TeamDetailModalProps {
@@ -23,6 +25,7 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
   onResetBudget,
   onRemovePlayerFromSquad,
 }) => {
+  const { rules } = useAuction();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('');
   const [shortName, setShortName] = useState('');
@@ -32,7 +35,14 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
 
   if (!isOpen || !team) return null;
 
-  const squadPlayers = allPlayers.filter(p => team.squad.includes(p.id) || p.teamId === team.id || p.id === team.captainPlayerId);
+  const squadPlayers = allPlayers.filter(p =>
+    (team.squad.includes(p.id) && (p.status === 'sold' || p.isCaptain || p.isViceCaptain)) ||
+    (p.teamId === team.id && p.status === 'sold') ||
+    p.id === team.captainPlayerId ||
+    p.id === team.viceCaptainPlayerId ||
+    p.captainOfTeamId === team.id ||
+    p.viceCaptainOfTeamId === team.id
+  );
   const captainPlayer = allPlayers.find(p =>
     (team.captainPlayerId && p.id === team.captainPlayerId) ||
     p.captainOfTeamId === team.id ||
@@ -58,6 +68,7 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
   const gradeACount = squadPlayers.filter(p => p.grade === 'A').length;
   const gradeBCount = squadPlayers.filter(p => p.grade === 'B').length;
   const gradeCCount = squadPlayers.filter(p => p.grade === 'C').length;
+  const gradeMetrics = getTeamGradeMetrics(team, allPlayers, rules);
 
   const highestPurchase = squadPlayers.length > 0
     ? Math.max(...squadPlayers.map(p => p.soldPrice || 0))
@@ -230,12 +241,12 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
             </div>
 
             <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800">
-              <div className="text-xs text-slate-400 font-mono">SQUAD SIZE (MAX 9)</div>
+              <div className="text-xs text-slate-400 font-mono">AUCTION SQUAD (EXCL. C/VC)</div>
               <div className="text-xl font-bold font-mono text-white mt-1">
-                {squadPlayers.length} <span className="text-xs text-slate-400 font-normal">/ 9 players</span>
+                {gradeMetrics.auctionPlayersCount} <span className="text-xs text-slate-400 font-normal">/ 7 auction slots</span>
               </div>
               <div className="text-[11px] text-slate-400 mt-1 font-mono">
-                A:{gradeACount} • B:{gradeBCount} • C:{gradeCCount}
+                A: {gradeMetrics.aCount}/2 • B: {gradeMetrics.bCount}/3 • C: {gradeMetrics.cCount}/2
               </div>
             </div>
 
@@ -269,6 +280,59 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
               <span className={sponsoredPlayer ? 'text-emerald-400' : 'text-slate-500'}>
                 🏷️ Sponsor: {sponsoredPlayer ? (sponsoredPlayer.sponsorTag || 'Sponsored') : 'None (Max 1)'}
               </span>
+            </div>
+          </div>
+
+          {/* Grade Restrictions & Budget Limits Strip */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs font-mono">
+            {/* Grade A Restrictions */}
+            <div className={`p-2.5 rounded-lg border ${gradeMetrics.aRemainingSlots === 0 ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-900 border-slate-800'}`}>
+              <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Grade A (Max 2 Players)</div>
+              <div className="font-black text-white mt-1 text-sm">{gradeMetrics.aCount} / 2 used</div>
+              <div className={`text-[10px] ${gradeMetrics.aRemainingSlots === 0 ? 'text-rose-400 font-bold' : 'text-slate-400'}`}>
+                {gradeMetrics.aRemainingSlots} slot{gradeMetrics.aRemainingSlots !== 1 ? 's' : ''} remaining
+              </div>
+              <div className="text-[10px] text-amber-300 font-semibold mt-1.5 border-t border-slate-800/80 pt-1">
+                Budget: ₹{gradeMetrics.aSpent.toLocaleString('en-IN')} / 30k (₹{gradeMetrics.aRemainingBudget.toLocaleString('en-IN')} rem)
+              </div>
+            </div>
+
+            {/* Grade B Restrictions */}
+            <div className={`p-2.5 rounded-lg border ${gradeMetrics.bRemainingSlots === 0 ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-900 border-slate-800'}`}>
+              <div className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Grade B (Max 3 Players)</div>
+              <div className="font-black text-white mt-1 text-sm">{gradeMetrics.bCount} / 3 used</div>
+              <div className={`text-[10px] ${gradeMetrics.bRemainingSlots === 0 ? 'text-rose-400 font-bold' : 'text-slate-400'}`}>
+                {gradeMetrics.bRemainingSlots} slot{gradeMetrics.bRemainingSlots !== 1 ? 's' : ''} remaining
+              </div>
+              <div className="text-[10px] text-blue-300 font-semibold mt-1.5 border-t border-slate-800/80 pt-1">
+                Budget: ₹{gradeMetrics.bSpent.toLocaleString('en-IN')} / 18k (₹{gradeMetrics.bRemainingBudget.toLocaleString('en-IN')} rem)
+              </div>
+            </div>
+
+            {/* Grade C Restrictions */}
+            <div className={`p-2.5 rounded-lg border ${gradeMetrics.cRemainingSlots === 0 ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-900 border-slate-800'}`}>
+              <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Grade C (Max 2 Players)</div>
+              <div className="font-black text-white mt-1 text-sm">{gradeMetrics.cCount} / 2 used</div>
+              <div className={`text-[10px] ${gradeMetrics.cRemainingSlots === 0 ? 'text-rose-400 font-bold' : 'text-slate-400'}`}>
+                {gradeMetrics.cRemainingSlots} slot{gradeMetrics.cRemainingSlots !== 1 ? 's' : ''} remaining
+              </div>
+              <div className="text-[10px] text-emerald-300 font-semibold mt-1.5 border-t border-slate-800/80 pt-1">
+                Spent: ₹{gradeMetrics.cSpent.toLocaleString('en-IN')} pts (Purse reserve)
+              </div>
+            </div>
+
+            {/* Leadership C+VC Combined */}
+            <div className={`p-2.5 rounded-lg border ${gradeMetrics.combinedCapCost > 50000 ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-900 border-slate-800'}`}>
+              <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Leadership (Max ₹50k)</div>
+              <div className={`font-black mt-1 text-sm ${gradeMetrics.combinedCapCost > 50000 ? 'text-rose-400' : 'text-indigo-300'}`}>
+                ₹{gradeMetrics.combinedCapCost.toLocaleString('en-IN')} / 50k
+              </div>
+              <div className="text-[10px] text-slate-400">
+                ₹{gradeMetrics.remainingCapBudget.toLocaleString('en-IN')} budget remaining
+              </div>
+              <div className="text-[10px] text-slate-400 font-semibold mt-1.5 border-t border-slate-800/80 pt-1">
+                C: ₹{gradeMetrics.captainCost.toLocaleString('en-IN')} | VC: ₹{gradeMetrics.viceCaptainCost.toLocaleString('en-IN')}
+              </div>
             </div>
           </div>
 

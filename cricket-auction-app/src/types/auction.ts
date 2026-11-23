@@ -65,6 +65,8 @@ export interface Player {
   jcplPlayerId?: number;
   jcplSeasons?: string[];
   isPreAssignedCaptain?: boolean;
+  viceCaptainOfTeamId?: string;
+  isPreAssignedViceCaptain?: boolean;
 }
 
 export interface Team {
@@ -77,6 +79,8 @@ export interface Team {
   owner?: string;
   captain?: string;
   captainPlayerId?: string;
+  viceCaptain?: string;
+  viceCaptainPlayerId?: string;
   startingBudget: number;
   remainingBudget: number;
   totalSpent: number;
@@ -116,6 +120,9 @@ export interface SquadRules {
   maxGradeA?: number;
   maxGradeB?: number;
   maxGradeC?: number;
+  maxGradeASpending?: number;
+  maxGradeBSpending?: number;
+  maxCaptainViceCaptainSpending?: number;
   minBatsmen?: number;
   minBowlers?: number;
   minWicketkeepers?: number;
@@ -141,9 +148,19 @@ export interface GradeCategoryMaxBid {
 export interface SaveLogEntry {
   id: string;
   timestamp: string;
-  type: 'manual' | 'auto' | 'snapshot';
+  type: 'manual' | 'auto' | 'snapshot' | 'player_edit' | 'restart' | 'clear_history';
   status: 'success' | 'failure' | 'error';
   description: string;
+  playerName?: string;
+  playerId?: string;
+  fieldChanged?: string;
+  previousValue?: string;
+  newValue?: string;
+  modifiedBy?: string;
+  date?: string;
+  time?: string;
+  action?: string;
+  metadata?: Record<string, any>;
   itemCountSummary?: {
     teams: number;
     players: number;
@@ -205,6 +222,7 @@ export type ActiveNavTab =
   | 'live_auction' 
   | 'auction_order'
   | 'captain_management'
+  | 'vice_captain_management'
   | 'players' 
   | 'teams' 
   | 'history' 

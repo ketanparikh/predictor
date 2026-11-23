@@ -15,6 +15,7 @@ const STORAGE_KEYS = {
   CUSTOM_ORDER_IDS: 'cricket_auction_custom_order_ids_v3',
   SAVE_LOGS: 'cricket_auction_save_logs_v3',
   SAVE_SNAPSHOTS: 'cricket_auction_save_snapshots_v3',
+  PLAYER_OVERRIDES: 'cricket_auction_player_overrides_v3',
   LAST_SAVED: 'cricket_auction_last_saved_v3',
 };
 
@@ -116,6 +117,9 @@ export const loadStoredState = (): AppStoredState => {
       localStorage.setItem(STORAGE_KEYS.PLAYERS, JSON.stringify(loadedPlayers));
     }
 
+    // Apply permanent player overrides (grades, stats, base prices saved by admin)
+    loadedPlayers = applyPlayerOverrides(loadedPlayers);
+
     // Ensure purse / starting budget defaults to 100000
     if (!loadedRules.startingBudget || loadedRules.startingBudget === 50000) {
       loadedRules = {
@@ -125,7 +129,7 @@ export const loadStoredState = (): AppStoredState => {
       localStorage.setItem(STORAGE_KEYS.RULES, JSON.stringify(loadedRules));
     }
 
-    // Ensure squad size defaults to 9 players per team
+    // Ensure squad size and grade restrictions (A: 2, B: 3, C: 2)
     if (loadedRules.squadRules) {
       let rulesUpdated = false;
       if (!loadedRules.squadRules.maxSquadSize || loadedRules.squadRules.maxSquadSize > 9) {
@@ -136,8 +140,28 @@ export const loadStoredState = (): AppStoredState => {
         loadedRules.squadRules.minSquadSize = 9;
         rulesUpdated = true;
       }
-      if (!loadedRules.squadRules.maxGradeC || loadedRules.squadRules.maxGradeC > 9) {
-        loadedRules.squadRules.maxGradeC = 9;
+      if (!loadedRules.squadRules.maxGradeA || loadedRules.squadRules.maxGradeA !== 2) {
+        loadedRules.squadRules.maxGradeA = 2;
+        rulesUpdated = true;
+      }
+      if (!loadedRules.squadRules.maxGradeB || loadedRules.squadRules.maxGradeB !== 3) {
+        loadedRules.squadRules.maxGradeB = 3;
+        rulesUpdated = true;
+      }
+      if (!loadedRules.squadRules.maxGradeC || loadedRules.squadRules.maxGradeC !== 2) {
+        loadedRules.squadRules.maxGradeC = 2;
+        rulesUpdated = true;
+      }
+      if (!loadedRules.squadRules.maxGradeASpending || loadedRules.squadRules.maxGradeASpending !== 30000) {
+        loadedRules.squadRules.maxGradeASpending = 30000;
+        rulesUpdated = true;
+      }
+      if (!loadedRules.squadRules.maxGradeBSpending || loadedRules.squadRules.maxGradeBSpending !== 18000) {
+        loadedRules.squadRules.maxGradeBSpending = 18000;
+        rulesUpdated = true;
+      }
+      if (!loadedRules.squadRules.maxCaptainViceCaptainSpending || loadedRules.squadRules.maxCaptainViceCaptainSpending !== 50000) {
+        loadedRules.squadRules.maxCaptainViceCaptainSpending = 50000;
         rulesUpdated = true;
       }
       if (rulesUpdated) {
@@ -246,6 +270,79 @@ export const saveStoredState = (state: Partial<AppStoredState>) => {
   }
 };
 
+// ================= PLAYER OVERRIDES MANAGEMENT (PERMANENT EDITS) =================
+
+export const loadPlayerOverrides = (): Record<string, Partial<Player>> => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.PLAYER_OVERRIDES);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return {};
+};
+
+export const savePlayerOverride = (playerId: string, override: Partial<Player>): void => {
+  try {
+    const current = loadPlayerOverrides();
+    current[playerId] = { ...(current[playerId] || {}), ...override };
+    localStorage.setItem(STORAGE_KEYS.PLAYER_OVERRIDES, JSON.stringify(current));
+
+    // Also persist to server disk storage in background
+    if (typeof fetch !== 'undefined') {
+      fetch('/api/player-overrides', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [playerId]: current[playerId] }),
+      }).catch(() => {});
+    }
+  } catch (err) {
+    console.error('Failed to save player override:', err);
+  }
+};
+
+export const saveAllPlayerOverrides = (overrides: Record<string, Partial<Player>>): void => {
+  try {
+    const current = loadPlayerOverrides();
+    const merged = { ...current, ...overrides };
+    localStorage.setItem(STORAGE_KEYS.PLAYER_OVERRIDES, JSON.stringify(merged));
+
+    if (typeof fetch !== 'undefined') {
+      fetch('/api/player-overrides', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(merged),
+      }).catch(() => {});
+    }
+  } catch (err) {
+    console.error('Failed to save all player overrides:', err);
+  }
+};
+
+export const applyPlayerOverrides = (
+  players: Player[],
+  overrides?: Record<string, Partial<Player>>
+): Player[] => {
+  const ovr = overrides || loadPlayerOverrides();
+  if (!ovr || Object.keys(ovr).length === 0) return players;
+
+  // Build name-based lookup for resilience across ID regenerations or Excel re-imports
+  const nameMap = new Map<string, Partial<Player>>();
+  Object.values(ovr).forEach(patch => {
+    if (patch && patch.name) {
+      nameMap.set(patch.name.trim().toLowerCase(), patch);
+    }
+  });
+
+  return players.map((p) => {
+    const patch = ovr[p.id] || (p.name ? nameMap.get(p.name.trim().toLowerCase()) : undefined);
+    if (!patch) return p;
+    return {
+      ...p,
+      ...patch,
+      stats: patch.stats ? { ...p.stats, ...patch.stats } : p.stats,
+    };
+  });
+};
+
 // ================= SAVE LOGS & SNAPSHOTS MANAGEMENT =================
 
 export const loadSaveLogs = (): SaveLogEntry[] => {
@@ -259,8 +356,17 @@ export const loadSaveLogs = (): SaveLogEntry[] => {
 export const appendSaveLog = (entry: SaveLogEntry): void => {
   try {
     const logs = loadSaveLogs();
-    const updated = [entry, ...logs].slice(0, 100); // keep last 100 operations
+    const updated = [entry, ...logs.filter((l) => l.id !== entry.id)].slice(0, 500); // retain up to 500 audit logs
     localStorage.setItem(STORAGE_KEYS.SAVE_LOGS, JSON.stringify(updated));
+
+    // Also sync to server disk log storage
+    if (typeof fetch !== 'undefined') {
+      fetch('/api/save-logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry),
+      }).catch(() => {});
+    }
   } catch {}
 };
 

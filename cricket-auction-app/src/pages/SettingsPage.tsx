@@ -19,6 +19,9 @@ import {
   Tag,
   Crown,
   Layers,
+  History,
+  RefreshCcw,
+  X,
 } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
@@ -31,6 +34,8 @@ export const SettingsPage: React.FC = () => {
     clearAllData,
     importBackupJSON,
     syncGradeBasePricesToPlayers,
+    restartAuction,
+    clearAuctionHistory,
   } = useAuction();
 
   // Tournament info state
@@ -51,9 +56,12 @@ export const SettingsPage: React.FC = () => {
   const [minSquadSize, setMinSquadSize] = useState(rules.squadRules.minSquadSize || 9);
   const [maxSquadSize, setMaxSquadSize] = useState(rules.squadRules.maxSquadSize || 9);
   const [maxGradeAPlus, setMaxGradeAPlus] = useState(rules.squadRules.maxGradeAPlus || 1);
-  const [maxGradeA, setMaxGradeA] = useState(rules.squadRules.maxGradeA || 5);
-  const [maxGradeB, setMaxGradeB] = useState(rules.squadRules.maxGradeB || 8);
-  const [maxGradeC, setMaxGradeC] = useState(rules.squadRules.maxGradeC || 9);
+  const [maxGradeA, setMaxGradeA] = useState(rules.squadRules.maxGradeA ?? 2);
+  const [maxGradeB, setMaxGradeB] = useState(rules.squadRules.maxGradeB ?? 3);
+  const [maxGradeC, setMaxGradeC] = useState(rules.squadRules.maxGradeC ?? 2);
+  const [maxGradeASpending, setMaxGradeASpending] = useState(rules.squadRules.maxGradeASpending ?? 30000);
+  const [maxGradeBSpending, setMaxGradeBSpending] = useState(rules.squadRules.maxGradeBSpending ?? 18000);
+  const [maxCapVcSpending, setMaxCapVcSpending] = useState(rules.squadRules.maxCaptainViceCaptainSpending ?? 50000);
 
   // Dedicated Grade Base Prices state
   const [gradeAPlusBasePrice, setGradeAPlusBasePrice] = useState(
@@ -72,6 +80,40 @@ export const SettingsPage: React.FC = () => {
   const [syncToUpcomingPlayers, setSyncToUpcomingPlayers] = useState(true);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [syncSuccessMsg, setSyncSuccessMsg] = useState<string | null>(null);
+
+  // Restart Auction & Clear History Modal States
+  const [isRestartModalOpen, setIsRestartModalOpen] = useState(false);
+  const [isClearHistoryModalOpen, setIsClearHistoryModalOpen] = useState(false);
+  const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
+  const [isProcessingAction, setIsProcessingAction] = useState(false);
+
+  const handleConfirmRestart = async () => {
+    setIsProcessingAction(true);
+    try {
+      const res = await restartAuction('Administrator');
+      setIsRestartModalOpen(false);
+      if (res.success) {
+        setActionSuccessMsg('AUCTION SUCCESSFULLY RESTARTED');
+        setTimeout(() => setActionSuccessMsg(null), 5000);
+      }
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
+
+  const handleConfirmClearHistory = async () => {
+    setIsProcessingAction(true);
+    try {
+      const res = await clearAuctionHistory('Administrator');
+      setIsClearHistoryModalOpen(false);
+      if (res.success) {
+        setActionSuccessMsg('AUCTION HISTORY SUCCESSFULLY CLEARED');
+        setTimeout(() => setActionSuccessMsg(null), 5000);
+      }
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,6 +149,9 @@ export const SettingsPage: React.FC = () => {
         maxGradeA: Number(maxGradeA),
         maxGradeB: Number(maxGradeB),
         maxGradeC: Number(maxGradeC),
+        maxGradeASpending: Number(maxGradeASpending),
+        maxGradeBSpending: Number(maxGradeBSpending),
+        maxCaptainViceCaptainSpending: Number(maxCapVcSpending),
       },
     });
 
@@ -453,17 +498,20 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         {/* Section 4: Squad Quotas & Grade Restrictions */}
-        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
-          <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider">
-            Squad Rules & Grade Limits
-          </h2>
-          <p className="text-xs text-slate-400">
-            Teams have flexible squad composition (unrestricted distribution of Batsmen, Bowlers, and Wicketkeepers). Configure squad size bounds and marquee grade caps below.
-          </p>
+        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-5">
+          <div>
+            <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider">
+              Squad Rules & Grade Restrictions
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Teams have a squad of 9 players. Grade limits apply strictly to auction-purchased players (Captains and Vice-Captains are excluded from these counts).
+            </p>
+          </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-xs font-mono">
+          {/* Squad Bounds & Leadership Combined Budget */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs font-mono">
             <div>
-              <label className="text-slate-400 font-sans">Min Squad Size</label>
+              <label className="text-slate-400 font-sans font-bold">Min Squad Size</label>
               <input
                 type="number"
                 min="1"
@@ -472,10 +520,11 @@ export const SettingsPage: React.FC = () => {
                 onChange={e => setMinSquadSize(Number(e.target.value))}
                 className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-bold"
               />
+              <span className="text-[10px] text-slate-500 font-sans">Official team squad target (9 players)</span>
             </div>
 
             <div>
-              <label className="text-slate-400 font-sans">Max Squad Size</label>
+              <label className="text-slate-400 font-sans font-bold">Max Squad Size</label>
               <input
                 type="number"
                 min="1"
@@ -484,30 +533,117 @@ export const SettingsPage: React.FC = () => {
                 onChange={e => setMaxSquadSize(Number(e.target.value))}
                 className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-bold"
               />
+              <span className="text-[10px] text-slate-500 font-sans">Hard maximum squad capacity (9 players)</span>
             </div>
 
             <div>
-              <label className="text-slate-400 font-sans">Max Grade A+ (Captains)</label>
+              <label className="text-indigo-400 font-sans font-bold">Captain + VC Max Budget</label>
               <input
                 type="number"
-                min="1"
-                max="5"
-                value={maxGradeAPlus}
-                onChange={e => setMaxGradeAPlus(Number(e.target.value))}
-                className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-purple-300 font-bold"
+                min="1000"
+                step="1000"
+                value={maxCapVcSpending}
+                onChange={e => setMaxCapVcSpending(Number(e.target.value))}
+                className="w-full mt-1 px-3 py-2 bg-slate-950 border border-indigo-500/30 rounded-lg text-indigo-300 font-bold"
               />
+              <span className="text-[10px] text-slate-500 font-sans">Combined expenditure cap (50,000 pts)</span>
             </div>
+          </div>
 
-            <div>
-              <label className="text-slate-400 font-sans">Max Grade A</label>
-              <input
-                type="number"
-                min="1"
-                max="10"
-                value={maxGradeA}
-                onChange={e => setMaxGradeA(Number(e.target.value))}
-                className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-amber-300 font-bold"
-              />
+          {/* Grade-Wise Restrictions (Grade A, Grade B, Grade C) */}
+          <div className="pt-3 border-t border-slate-800/80">
+            <h3 className="text-xs font-bold text-slate-300 font-sans mb-3">Grade-Wise Player & Spending Restrictions:</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs font-mono">
+              {/* Grade A Restrictions */}
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-amber-500/30 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-amber-400 text-xs">Grade A Restrictions</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">Max 2</span>
+                </div>
+                <div>
+                  <label className="text-slate-400 font-sans text-[11px] block">Max Grade A Players</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={maxGradeA}
+                    onChange={e => setMaxGradeA(Number(e.target.value))}
+                    className="w-full mt-0.5 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-amber-300 font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500 font-sans">Max 2 auction players per franchise</span>
+                </div>
+                <div>
+                  <label className="text-slate-400 font-sans text-[11px] block">Max Grade A Budget (pts)</label>
+                  <input
+                    type="number"
+                    min="1000"
+                    step="1000"
+                    value={maxGradeASpending}
+                    onChange={e => setMaxGradeASpending(Number(e.target.value))}
+                    className="w-full mt-0.5 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-amber-300 font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500 font-sans">Limit for both A players combined (30,000 pts)</span>
+                </div>
+              </div>
+
+              {/* Grade B Restrictions */}
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-blue-500/30 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-blue-400 text-xs">Grade B Restrictions</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300">Max 3</span>
+                </div>
+                <div>
+                  <label className="text-slate-400 font-sans text-[11px] block">Max Grade B Players</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={maxGradeB}
+                    onChange={e => setMaxGradeB(Number(e.target.value))}
+                    className="w-full mt-0.5 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-blue-300 font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500 font-sans">Max 3 auction players per franchise</span>
+                </div>
+                <div>
+                  <label className="text-slate-400 font-sans text-[11px] block">Max Grade B Budget (pts)</label>
+                  <input
+                    type="number"
+                    min="1000"
+                    step="1000"
+                    value={maxGradeBSpending}
+                    onChange={e => setMaxGradeBSpending(Number(e.target.value))}
+                    className="w-full mt-0.5 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-blue-300 font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500 font-sans">Limit for all 3 B players combined (18,000 pts)</span>
+                </div>
+              </div>
+
+              {/* Grade C Restrictions */}
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-emerald-400 text-xs">Grade C Restrictions</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">Max 2</span>
+                </div>
+                <div>
+                  <label className="text-slate-400 font-sans text-[11px] block">Max Grade C Players</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={maxGradeC}
+                    onChange={e => setMaxGradeC(Number(e.target.value))}
+                    className="w-full mt-0.5 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-emerald-300 font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500 font-sans">Max 2 auction players per franchise</span>
+                </div>
+                <div>
+                  <label className="text-slate-400 font-sans text-[11px] block">Budget Limit Rule</label>
+                  <div className="mt-0.5 px-3 py-2 bg-slate-900/80 border border-slate-700/60 rounded-lg text-slate-300 text-[11px] font-sans">
+                    Purse reserve rule (reserves min base price for remaining slots)
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-sans">Standard franchise purse rules apply</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -524,7 +660,86 @@ export const SettingsPage: React.FC = () => {
         </div>
       </form>
 
-      {/* Section 4: Data Management, Backups & Factory Reset */}
+      {/* Section 4: Auction Lifecycle & Administrator Controls */}
+      <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
+              <RefreshCcw className="w-4 h-4 text-orange-400" />
+              <span>Auction Lifecycle & Administrative Operations</span>
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Independent administrator tools to restart auction bidding or clear transaction history safely while preserving permanent player edits, team rosters, and Captain/Vice-Captain allotments.
+            </p>
+          </div>
+        </div>
+
+        {/* Global Action Success Banner */}
+        {actionSuccessMsg && (
+          <div className="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-sm font-black flex items-center gap-2 animate-bounce">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+            <span>{actionSuccessMsg}</span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          {/* 1. RESTART AUCTION CARD */}
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-orange-500/30 flex flex-col justify-between space-y-3">
+            <div>
+              <div className="flex items-center gap-2 text-white font-bold text-xs uppercase tracking-wide">
+                <span className="p-1.5 rounded-lg bg-orange-500/20 text-orange-400">
+                  <RotateCcw className="w-4 h-4" />
+                </span>
+                <span>Restart Auction</span>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+                Returns all auction players back to the available pool and restores starting purse budgets.
+              </p>
+              <div className="mt-2 text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/20">
+                ✅ <strong>PRESERVED:</strong> Captain & Vice-Captain allotments, team branding, and manually edited player grades remain untouched.
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsRestartModalOpen(true)}
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>RESTART AUCTION</span>
+            </button>
+          </div>
+
+          {/* 2. CLEAR AUCTION HISTORY CARD */}
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30 flex flex-col justify-between space-y-3">
+            <div>
+              <div className="flex items-center gap-2 text-white font-bold text-xs uppercase tracking-wide">
+                <span className="p-1.5 rounded-lg bg-purple-500/20 text-purple-400">
+                  <History className="w-4 h-4" />
+                </span>
+                <span>Clear Auction History</span>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+                Permanently removes historical auction transaction records and sales logs from the history view.
+              </p>
+              <div className="mt-2 text-[10px] text-purple-300 font-semibold bg-purple-500/10 p-2 rounded-lg border border-purple-500/20">
+                ℹ️ <strong>SEPARATE ACTION:</strong> Does not restart auction or remove player ownership or change current team budgets.
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsClearHistoryModalOpen(true)}
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-purple-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <History className="w-4 h-4" />
+              <span>CLEAR AUCTION HISTORY</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Section 5: Data Management, Backups & Factory Reset */}
       <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
         <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider">
           State Persistence & Backups
@@ -596,6 +811,121 @@ export const SettingsPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* CONFIRMATION MODAL: RESTART AUCTION */}
+      {isRestartModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-orange-500/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2.5 text-orange-400">
+                <AlertTriangle className="w-6 h-6" />
+                <h3 className="font-black text-lg text-white">RESTART AUCTION?</h3>
+              </div>
+              <button
+                onClick={() => setIsRestartModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              This action will remove all auction sales and restore all auction players to the available pool. Captain and Vice-Captain allotments, team names, player grades, statistics, base prices, and saved edits will remain unchanged.
+            </p>
+
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
+              <div className="text-emerald-400 font-bold">What will be preserved:</div>
+              <div>• Captain & Vice-Captain allotments and assigned squads</div>
+              <div>• All edited player grades, statistics, and base prices</div>
+              <div>• Franchise names, logos, colors, and owners</div>
+              <div>• Administrator audit logs and edit history</div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                disabled={isProcessingAction}
+                onClick={() => setIsRestartModalOpen(false)}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+              >
+                CANCEL
+              </button>
+              <button
+                type="button"
+                disabled={isProcessingAction}
+                onClick={handleConfirmRestart}
+                className="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 shadow-lg shadow-orange-500/25 transition-all flex items-center gap-2"
+              >
+                {isProcessingAction ? (
+                  <span>RESTARTING...</span>
+                ) : (
+                  <>
+                    <RotateCcw className="w-4 h-4" />
+                    <span>CONFIRM RESTART</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRMATION MODAL: CLEAR AUCTION HISTORY */}
+      {isClearHistoryModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-purple-500/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2.5 text-purple-400">
+                <History className="w-6 h-6" />
+                <h3 className="font-black text-lg text-white">CLEAR AUCTION HISTORY?</h3>
+              </div>
+              <button
+                onClick={() => setIsClearHistoryModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              This action will permanently delete previous auction sales and bidding history. It will not change player data, edited grades, team configurations, Captain/Vice-Captain allotments, or player edit logs.
+            </p>
+
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
+              <div className="text-purple-300 font-bold">Important distinction:</div>
+              <div>• Current player ownership and sold statuses remain unchanged</div>
+              <div>• Franchise budgets and current squads are NOT reset</div>
+              <div>• Only historical log tables and completed bid records are cleared</div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                disabled={isProcessingAction}
+                onClick={() => setIsClearHistoryModalOpen(false)}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+              >
+                CANCEL
+              </button>
+              <button
+                type="button"
+                disabled={isProcessingAction}
+                onClick={handleConfirmClearHistory}
+                className="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-500/25 transition-all flex items-center gap-2"
+              >
+                {isProcessingAction ? (
+                  <span>CLEARING...</span>
+                ) : (
+                  <>
+                    <History className="w-4 h-4" />
+                    <span>CONFIRM CLEAR HISTORY</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

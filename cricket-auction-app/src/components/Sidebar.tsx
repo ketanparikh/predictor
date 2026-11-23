@@ -16,6 +16,7 @@ import {
   X,
   ListOrdered,
   Crown,
+  Star,
   Database,
 } from 'lucide-react';
 
@@ -67,6 +68,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: Crown,
       badge: `${teams.filter(t => t.captain).length}/${teams.length}`,
       badgeColor: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40',
+    },
+    {
+      id: 'vice_captain_management',
+      label: 'Vice-Captain Allocation',
+      icon: Star,
+      badge: `${teams.filter(t => t.viceCaptain).length}/${teams.length}`,
+      badgeColor: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
     },
     {
       id: 'players',

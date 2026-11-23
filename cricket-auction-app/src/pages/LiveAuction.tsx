@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { GradeBadge } from '../components/GradeBadge';
 import { RoleBadge } from '../components/RoleBadge';
-import { Player, Team } from '../types/auction';
+import { Player, Team, PlayerGrade } from '../types/auction';
 import {
   Gavel,
   CheckCircle2,
@@ -29,11 +29,56 @@ import {
   ChevronRight,
   X,
   Award,
+  Edit2,
+  Check,
+  Save,
 } from 'lucide-react';
 
 interface LiveAuctionProps {
   onOpenProjector: () => void;
 }
+
+const getGradeVisuals = (grade: string) => {
+  switch (grade) {
+    case 'A+':
+      return {
+        badgeBg: 'bg-gradient-to-r from-amber-500/25 via-fuchsia-500/25 to-purple-500/25 text-amber-200 border-amber-400 shadow-[0_0_18px_rgba(251,191,36,0.35)]',
+        cardBorder: 'border-purple-500/50 shadow-[0_0_35px_rgba(168,85,247,0.2)]',
+        avatarBorder: 'border-amber-400 ring-2 ring-amber-400/40',
+        glowBg: 'bg-purple-500/10',
+        dotColor: 'bg-amber-400',
+        label: 'Grade A+ (Marquee / Captain)',
+      };
+    case 'A':
+      return {
+        badgeBg: 'bg-gradient-to-r from-amber-500/25 to-yellow-500/25 text-amber-300 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.35)]',
+        cardBorder: 'border-amber-500/50 shadow-[0_0_35px_rgba(245,158,11,0.2)]',
+        avatarBorder: 'border-amber-400 ring-2 ring-amber-400/50',
+        glowBg: 'bg-amber-500/10',
+        dotColor: 'bg-amber-400',
+        label: 'Grade A (Elite)',
+      };
+    case 'B':
+      return {
+        badgeBg: 'bg-gradient-to-r from-sky-500/25 to-blue-600/25 text-sky-300 border-sky-400 shadow-[0_0_15px_rgba(14,165,233,0.35)]',
+        cardBorder: 'border-sky-500/50 shadow-[0_0_35px_rgba(14,165,233,0.2)]',
+        avatarBorder: 'border-sky-400 ring-2 ring-sky-400/50',
+        glowBg: 'bg-sky-500/10',
+        dotColor: 'bg-sky-400',
+        label: 'Grade B (Core)',
+      };
+    case 'C':
+    default:
+      return {
+        badgeBg: 'bg-gradient-to-r from-emerald-500/25 to-teal-600/25 text-emerald-300 border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.35)]',
+        cardBorder: 'border-emerald-500/50 shadow-[0_0_35px_rgba(16,185,129,0.2)]',
+        avatarBorder: 'border-emerald-400 ring-2 ring-emerald-400/50',
+        glowBg: 'bg-emerald-500/10',
+        dotColor: 'bg-emerald-400',
+        label: 'Grade C (Emerging)',
+      };
+  }
+};
 
 export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => {
   const {
@@ -59,6 +104,8 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
     resetMockAuction,
     getGradeCategoryMaxBid,
     nextUpcomingQueuePlayer,
+    getTeamGradeMetrics,
+    editPlayer,
   } = useAuction();
 
   // Search State
@@ -80,9 +127,55 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
     return calculateMaxAllowableBid(activeSelectedTeam, currentPlayer);
   }, [activeSelectedTeam, currentPlayer, calculateMaxAllowableBid]);
 
+  const isSelectedTeamGradeCapReached = useMemo(() => {
+    if (!activeSelectedTeam || !currentPlayer) return false;
+    const tm = getTeamGradeMetrics ? getTeamGradeMetrics(activeSelectedTeam) : null;
+    if (!tm) return false;
+    if ((currentPlayer.grade === 'A' || currentPlayer.grade === 'A+') && tm.aCount >= 2) return true;
+    if (currentPlayer.grade === 'B' && tm.bCount >= 3) return true;
+    if (currentPlayer.grade === 'C' && tm.cCount >= 2) return true;
+    return false;
+  }, [activeSelectedTeam, currentPlayer, getTeamGradeMetrics]);
+
   // Alerts
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Quick Grade Editor State for Podium
+  const [isEditGradeModalOpen, setIsEditGradeModalOpen] = useState(false);
+  const [selectedQuickGrade, setSelectedQuickGrade] = useState<PlayerGrade>(() => currentPlayer?.grade || 'B');
+
+  useEffect(() => {
+    if (currentPlayer) {
+      setSelectedQuickGrade(currentPlayer.grade);
+    }
+  }, [currentPlayer]);
+
+  const gradeVisuals = useMemo(() => {
+    return getGradeVisuals(currentPlayer?.grade || 'C');
+  }, [currentPlayer?.grade]);
+
+  const handleSaveQuickGrade = () => {
+    if (!currentPlayer || !selectedQuickGrade) return;
+    const gradePrices = rules.gradeBasePrices || { gradeAPlus: 7000, gradeA: 5000, gradeB: 3000, gradeC: 1000 };
+    const newPrice =
+      selectedQuickGrade === 'A+'
+        ? gradePrices.gradeAPlus || 7000
+        : selectedQuickGrade === 'A'
+        ? gradePrices.gradeA || 5000
+        : selectedQuickGrade === 'B'
+        ? gradePrices.gradeB || 3000
+        : gradePrices.gradeC || 1000;
+
+    editPlayer({
+      ...currentPlayer,
+      grade: selectedQuickGrade,
+      basePrice: newPrice,
+    });
+    setIsEditGradeModalOpen(false);
+    setSuccessMessage(`Grade updated to Grade ${selectedQuickGrade} for ${currentPlayer.name}!`);
+    setTimeout(() => setSuccessMessage(null), 3500);
+  };
 
   const upcomingPlayers = useMemo(() => players.filter(p => p.status === 'upcoming'), [players]);
 
@@ -162,6 +255,28 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
       setErrorMessage(res.message);
       setTimeout(() => setErrorMessage(null), 4000);
     } else {
+      setCustomBidAmount('');
+    }
+  };
+
+  const handleDirectSell = () => {
+    if (!selectedBidderTeamId) {
+      setErrorMessage('Please select a franchise first.');
+      return;
+    }
+    const amount = Number(customBidAmount) || (currentPlayer ? currentPlayer.basePrice : 0);
+    if (!amount || amount <= 0) {
+      setErrorMessage('Please specify a valid sale amount in points.');
+      return;
+    }
+    setErrorMessage(null);
+    const res = directSellPlayer(selectedBidderTeamId, amount);
+    if (!res.success && res.message) {
+      setErrorMessage(res.message);
+      setTimeout(() => setErrorMessage(null), 4500);
+    } else {
+      setSuccessMessage(`${currentPlayer?.name} directly sold to franchise!`);
+      setTimeout(() => setSuccessMessage(null), 3500);
       setCustomBidAmount('');
     }
   };
@@ -332,9 +447,7 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                   <div className="min-w-0">
                     <div className="font-bold text-white flex items-center gap-2 truncate">
                       <span className="truncate">{p.name}</span>
-                      <span className="px-1.5 py-0.2 rounded text-[10px] font-black bg-orange-500/20 text-orange-300 border border-orange-500/30">
-                        {p.grade}
-                      </span>
+                      <GradeBadge grade={p.grade} size="sm" />
                     </div>
                     <div className="text-[11px] text-slate-400 font-mono mt-0.5">
                       {p.category} • Base ₹{p.basePrice.toLocaleString('en-IN')}
@@ -364,8 +477,8 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
         {/* LEFT / CENTER: Central Live Auction Stage & Direct Sell Panel (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           {/* Main Central Stage Card */}
-          <div className="p-6 rounded-3xl bg-slate-900 border-2 border-orange-500/40 shadow-[0_0_35px_rgba(249,115,22,0.15)] relative overflow-hidden">
-            <div className="absolute -top-16 -right-16 w-56 h-56 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className={`p-6 rounded-3xl bg-slate-900 border-2 transition-all duration-300 ${currentPlayer ? gradeVisuals.cardBorder : 'border-orange-500/40 shadow-[0_0_35px_rgba(249,115,22,0.15)]'} relative overflow-hidden`}>
+            <div className={`absolute -top-16 -right-16 w-56 h-56 ${currentPlayer ? gradeVisuals.glowBg : 'bg-orange-500/10'} rounded-full blur-3xl pointer-events-none transition-colors duration-500`} />
 
             {currentPlayer ? (
               <div className="space-y-6">
@@ -375,7 +488,7 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                     <img
                       src={currentPlayer.photo || 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=150&q=80'}
                       alt={currentPlayer.name}
-                      className="w-24 h-24 rounded-2xl object-cover border-2 border-orange-500 shadow-xl"
+                      className={`w-24 h-24 rounded-2xl object-cover border-2 shadow-xl transition-all duration-300 ${gradeVisuals.avatarBorder}`}
                     />
                     <span className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-lg bg-orange-500 text-slate-950 font-mono text-xs font-black shadow">
                       #{currentPlayer.lotNumber}
@@ -384,9 +497,26 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
 
                   <div className="flex-1 text-center sm:text-left min-w-0">
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1.5">
-                      <span className="px-2.5 py-0.5 rounded-lg text-xs font-black bg-orange-500/20 text-orange-300 border border-orange-500/40">
-                        Grade {currentPlayer.grade}
+                      {/* Colour-Coded Grade Badge */}
+                      <span className={`px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider border flex items-center gap-1.5 shadow-md ${gradeVisuals.badgeBg}`}>
+                        <span className={`w-2 h-2 rounded-full ${gradeVisuals.dotColor} animate-pulse`} />
+                        <span>GRADE {currentPlayer.grade}</span>
                       </span>
+
+                      {/* Quick Grade Edit Button */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedQuickGrade(currentPlayer.grade);
+                          setIsEditGradeModalOpen(true);
+                        }}
+                        title="Change player grade"
+                        className="px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer shadow hover:border-amber-500/50"
+                      >
+                        <Edit2 className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Edit Grade</span>
+                      </button>
+
                       <RoleBadge role={currentPlayer.role} size="sm" />
                       {currentPlayer.isCaptain && (
                         <span className="px-2 py-0.5 rounded-lg text-xs font-black bg-amber-500 text-slate-950 flex items-center gap-1 shadow">
@@ -400,8 +530,18 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                       )}
                     </div>
 
-                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                      {currentPlayer.name}
+                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex flex-wrap items-center gap-2">
+                      <span>{currentPlayer.name}</span>
+                      {currentPlayer.isViceCaptain && (
+                        <span className="px-2.5 py-0.5 rounded-lg text-xs font-black bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center gap-1 shadow-lg shadow-blue-500/30 border border-blue-400/40">
+                          <Star className="w-3.5 h-3.5 fill-current" /> Vice Captain
+                        </span>
+                      )}
+                      {currentPlayer.isCaptain && (
+                        <span className="px-2.5 py-0.5 rounded-lg text-xs font-black bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 flex items-center gap-1 shadow-lg shadow-amber-500/30 border border-amber-300">
+                          <Crown className="w-3.5 h-3.5 fill-current" /> Captain
+                        </span>
+                      )}
                     </h1>
 
                     <div className="text-xs text-slate-400 mt-1 flex flex-wrap items-center justify-center sm:justify-start gap-3">
@@ -517,35 +657,85 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                         {teams.map(t => {
                           const maxAllowance = calculateMaxAllowableBid(t, currentPlayer);
                           const isLeader = currentBidder?.id === t.id;
+                          const tm = getTeamGradeMetrics ? getTeamGradeMetrics(t) : null;
+                          let gradeCapReached = false;
+                          if (currentPlayer && tm) {
+                            if (currentPlayer.grade === 'A' && tm.aCount >= 2) gradeCapReached = true;
+                            if (currentPlayer.grade === 'B' && tm.bCount >= 3) gradeCapReached = true;
+                            if (currentPlayer.grade === 'C' && tm.cCount >= 2) gradeCapReached = true;
+                          }
                           return (
                             <option key={t.id} value={t.id}>
-                              {t.name} {isLeader ? '★ (Leader)' : ''} — Purse: ₹{t.remainingBudget.toLocaleString('en-IN')} | Max Bid: ₹{maxAllowance.maxBid.toLocaleString('en-IN')}
+                              {gradeCapReached ? '🚫 [GRADE CAP REACHED] ' : ''}{t.name} {isLeader ? '★ (Leader)' : ''} — Purse: ₹{t.remainingBudget.toLocaleString('en-IN')} | Max Bid: ₹{maxAllowance.maxBid.toLocaleString('en-IN')}
                             </option>
                           );
                         })}
                       </select>
 
-                      {/* Prominent Purse & Max Allowable Bid Indicator Strip */}
-                      {activeSelectedTeam && activeSelectedMaxAllowance && (
-                        <div className="mt-2 px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-slate-400">Remaining Purse:</span>
-                            <strong className="text-emerald-400 font-bold">
-                              ₹{activeSelectedTeam.remainingBudget.toLocaleString('en-IN')}
-                            </strong>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-slate-400">Max Bid for Player:</span>
-                            <strong className="text-amber-400 font-black text-sm">
-                              ₹{activeSelectedMaxAllowance.maxBid.toLocaleString('en-IN')}
-                            </strong>
-                          </div>
-                          {activeSelectedMaxAllowance.remainingSlotsNeeded > 0 && (
-                            <div className="text-[10px] text-slate-400">
-                              (Must reserve ₹{activeSelectedMaxAllowance.minReserveRequired.toLocaleString('en-IN')} for {activeSelectedMaxAllowance.remainingSlotsNeeded} slot{activeSelectedMaxAllowance.remainingSlotsNeeded > 1 ? 's' : ''})
-                            </div>
-                          )}
+                      {/* Prominent Grade Cap Warning Banner */}
+                      {isSelectedTeamGradeCapReached && activeSelectedTeam && currentPlayer && (
+                        <div className="mt-2 p-2.5 rounded-xl bg-rose-500/15 border border-rose-500/50 text-rose-300 text-xs font-bold flex items-center gap-2 animate-pulse">
+                          <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+                          <span>
+                            GRADE LIMIT REACHED: {activeSelectedTeam.name} already has {currentPlayer.grade === 'B' ? '3 Grade B' : '2 Grade ' + currentPlayer.grade} players. Bidding and direct sales are locked.
+                          </span>
                         </div>
+                      )}
+
+                      {/* Prominent Purse & Max Allowable Bid Indicator Strip */}
+                      {activeSelectedTeam && (
+                        (() => {
+                          const sm = getTeamGradeMetrics ? getTeamGradeMetrics(activeSelectedTeam) : null;
+                          return (
+                            <div className="mt-2 p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-xs font-mono space-y-1.5">
+                              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/60 pb-1.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-slate-400">Purse:</span>
+                                  <strong className="text-emerald-400 font-bold">
+                                    ₹{activeSelectedTeam.remainingBudget.toLocaleString('en-IN')}
+                                  </strong>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-slate-400">Max Bid for Lot:</span>
+                                  <strong className={(activeSelectedMaxAllowance?.maxBid ?? 0) === 0 ? "text-rose-400 font-black" : "text-amber-400 font-black text-sm"}>
+                                    ₹{(activeSelectedMaxAllowance?.maxBid ?? 0).toLocaleString('en-IN')}
+                                  </strong>
+                                </div>
+                                {sm && (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-slate-400">C+VC Spent:</span>
+                                    <strong className="text-indigo-300 font-bold">
+                                      ₹{sm.combinedCapCost.toLocaleString('en-IN')} / 50k
+                                    </strong>
+                                  </div>
+                                )}
+                              </div>
+
+                              {sm && (
+                                <div className="grid grid-cols-3 gap-1.5 text-center text-[10px]">
+                                  <div className={`p-1.5 rounded ${sm.aRemainingSlots === 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-slate-900 text-slate-300 border border-slate-800'}`}>
+                                    <span className="font-bold">Grade A (Max 2):</span> {sm.aCount}/2 ({sm.aRemainingSlots} left)
+                                    <div className="text-amber-400 font-semibold">₹{sm.aRemainingBudget.toLocaleString('en-IN')}/30k rem</div>
+                                  </div>
+                                  <div className={`p-1.5 rounded ${sm.bRemainingSlots === 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-slate-900 text-slate-300 border border-slate-800'}`}>
+                                    <span className="font-bold">Grade B (Max 3):</span> {sm.bCount}/3 ({sm.bRemainingSlots} left)
+                                    <div className="text-blue-400 font-semibold">₹{sm.bRemainingBudget.toLocaleString('en-IN')}/18k rem</div>
+                                  </div>
+                                  <div className={`p-1.5 rounded ${sm.cRemainingSlots === 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-slate-900 text-slate-300 border border-slate-800'}`}>
+                                    <span className="font-bold">Grade C (Max 2):</span> {sm.cCount}/2 ({sm.cRemainingSlots} left)
+                                    <div className="text-emerald-400 font-semibold">Max 2 players</div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {activeSelectedMaxAllowance?.reason && (
+                                <div className="text-[10px] text-amber-300/90 font-sans italic pt-0.5">
+                                  ⚠️ {activeSelectedMaxAllowance.reason}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()
                       )}
                     </div>
 
@@ -554,12 +744,15 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                       {[rules.minBidIncrement || 500, 1000, 2000, 5000].map(inc => (
                         <button
                           key={inc}
+                          disabled={isSelectedTeamGradeCapReached || (activeSelectedMaxAllowance?.maxBid ?? 0) === 0}
                           onClick={() => {
                             setSelectedIncrement(inc);
                             handleCentralBid(inc);
                           }}
                           className={`px-3 py-2 rounded-xl text-xs font-bold font-mono transition-all ${
-                            selectedIncrement === inc
+                            isSelectedTeamGradeCapReached || (activeSelectedMaxAllowance?.maxBid ?? 0) === 0
+                              ? 'bg-slate-900/60 text-slate-600 border border-slate-800 cursor-not-allowed opacity-50'
+                              : selectedIncrement === inc
                               ? 'bg-orange-500 text-slate-950 font-black shadow-lg shadow-orange-500/20'
                               : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700'
                           }`}
@@ -575,7 +768,12 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleCentralBid()}
-                        className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 transition-all active:scale-95 flex items-center gap-2"
+                        disabled={isSelectedTeamGradeCapReached || (activeSelectedMaxAllowance?.maxBid ?? 0) === 0}
+                        className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
+                          isSelectedTeamGradeCapReached || (activeSelectedMaxAllowance?.maxBid ?? 0) === 0
+                            ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                            : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 shadow-lg shadow-orange-500/20 active:scale-95 cursor-pointer'
+                        }`}
                       >
                         <Gavel className="w-4 h-4" />
                         Place Next Bid (+₹{selectedIncrement.toLocaleString('en-IN')})
@@ -592,20 +790,37 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                       </button>
                     </div>
 
-                    {/* Custom Bid Input */}
+                    {/* Custom Bid & Direct Sell Input */}
                     <div className="flex items-center gap-1.5">
                       <input
                         type="number"
-                        placeholder="Custom ₹..."
+                        placeholder="Points ₹..."
                         value={customBidAmount}
                         onChange={e => setCustomBidAmount(e.target.value)}
-                        className="w-32 px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-orange-500 text-right"
+                        className="w-28 px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-orange-500 text-right"
                       />
                       <button
                         onClick={handleCustomBid}
-                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-colors"
+                        disabled={isSelectedTeamGradeCapReached || (activeSelectedMaxAllowance?.maxBid ?? 0) === 0}
+                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-colors ${
+                          isSelectedTeamGradeCapReached || (activeSelectedMaxAllowance?.maxBid ?? 0) === 0
+                            ? 'bg-slate-900 text-slate-600 border border-slate-800 cursor-not-allowed'
+                            : 'bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer'
+                        }`}
                       >
                         Bid
+                      </button>
+                      <button
+                        onClick={handleDirectSell}
+                        disabled={isSelectedTeamGradeCapReached || (activeSelectedMaxAllowance?.maxBid ?? 0) === 0}
+                        title={isSelectedTeamGradeCapReached ? "Grade limit reached for this team" : "Direct sell player to selected team with centralized validation"}
+                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-colors shadow ${
+                          isSelectedTeamGradeCapReached || (activeSelectedMaxAllowance?.maxBid ?? 0) === 0
+                            ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                            : 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer'
+                        }`}
+                      >
+                        Direct Sell
                       </button>
                     </div>
                   </div>
@@ -685,8 +900,8 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                   <tr>
                     <th className="py-2.5 px-3 w-10 text-center">Rank</th>
                     <th className="py-2.5 px-3">Franchise</th>
+                    <th className="py-2.5 px-2 text-center">Grades (A/B/C)</th>
                     <th className="py-2.5 px-3 text-center">Squad</th>
-                    <th className="py-2.5 px-3 text-right">Spent</th>
                     <th className="py-2.5 px-3 text-right">Purse Left</th>
                   </tr>
                 </thead>
@@ -740,14 +955,26 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                           </div>
                         </td>
 
+                        {/* Grade Limits Breakdown */}
+                        <td className="py-2.5 px-2 text-center text-[10px] font-mono">
+                          {(() => {
+                            const tm = getTeamGradeMetrics ? getTeamGradeMetrics(team) : null;
+                            if (!tm) return null;
+                            return (
+                              <div className="flex items-center justify-center gap-1">
+                                <span className={tm.aRemainingSlots === 0 ? "text-rose-400 font-bold" : "text-amber-400"}>A:{tm.aCount}/2</span>
+                                <span className="text-slate-600">•</span>
+                                <span className={tm.bRemainingSlots === 0 ? "text-rose-400 font-bold" : "text-blue-400"}>B:{tm.bCount}/3</span>
+                                <span className="text-slate-600">•</span>
+                                <span className={tm.cRemainingSlots === 0 ? "text-rose-400 font-bold" : "text-emerald-400"}>C:{tm.cCount}/2</span>
+                              </div>
+                            );
+                          })()}
+                        </td>
+
                         {/* Squad Count */}
                         <td className="py-2.5 px-3 text-center text-slate-300">
                           {team.squad.length}/{rules.squadRules.maxSquadSize}
-                        </td>
-
-                        {/* Spent */}
-                        <td className="py-2.5 px-3 text-right text-slate-400 text-xs">
-                          ₹{team.totalSpent.toLocaleString('en-IN')}
                         </td>
 
                         {/* Remaining Purse */}
@@ -773,6 +1000,143 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
           </div>
         </div>
       </div>
+
+      {/* QUICK GRADE EDITOR MODAL */}
+      {isEditGradeModalOpen && currentPlayer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-slate-900 border-2 border-slate-700 w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-5 relative">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                  <Edit2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-white">Edit Player Grade</h3>
+                  <p className="text-xs text-slate-400">{currentPlayer.name} • Lot #{currentPlayer.lotNumber}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditGradeModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs text-slate-300 font-medium">Select new grade for this player:</p>
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  {
+                    grade: 'A+' as PlayerGrade,
+                    label: 'Grade A+',
+                    desc: 'Marquee / Top Tier',
+                    color: 'from-amber-500/20 via-fuchsia-500/20 to-purple-500/20 border-purple-400/60 text-amber-200',
+                    dot: 'bg-amber-400',
+                    basePrice: rules.gradeBasePrices?.gradeAPlus || 7000,
+                  },
+                  {
+                    grade: 'A' as PlayerGrade,
+                    label: 'Grade A',
+                    desc: 'Elite (Max 2/Team)',
+                    color: 'from-amber-500/20 to-yellow-500/20 border-amber-400/60 text-amber-300',
+                    dot: 'bg-amber-400',
+                    basePrice: rules.gradeBasePrices?.gradeA || 5000,
+                  },
+                  {
+                    grade: 'B' as PlayerGrade,
+                    label: 'Grade B',
+                    desc: 'Core (Max 3/Team)',
+                    color: 'from-sky-500/20 to-blue-600/20 border-sky-400/60 text-sky-300',
+                    dot: 'bg-sky-400',
+                    basePrice: rules.gradeBasePrices?.gradeB || 3000,
+                  },
+                  {
+                    grade: 'C' as PlayerGrade,
+                    label: 'Grade C',
+                    desc: 'Emerging (Max 2/Team)',
+                    color: 'from-emerald-500/20 to-teal-600/20 border-emerald-400/60 text-emerald-300',
+                    dot: 'bg-emerald-400',
+                    basePrice: rules.gradeBasePrices?.gradeC || 1000,
+                  },
+                ].map((item) => {
+                  const isSelected = selectedQuickGrade === item.grade;
+                  return (
+                    <button
+                      key={item.grade}
+                      type="button"
+                      onClick={() => setSelectedQuickGrade(item.grade)}
+                      className={`p-3.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
+                        isSelected
+                          ? `bg-gradient-to-br ${item.color} ring-2 ring-white/30 shadow-lg scale-[1.02]`
+                          : 'bg-slate-950/70 border-slate-800 hover:border-slate-700 text-slate-400'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-2 font-black text-sm text-white">
+                          <span className={`w-2.5 h-2.5 rounded-full ${item.dot}`} />
+                          {item.label}
+                        </span>
+                        {isSelected && <Check className="w-4 h-4 text-emerald-400" />}
+                      </div>
+                      <div className="mt-2 text-[11px] text-slate-400">
+                        <span>{item.desc}</span>
+                        <div className="font-mono text-xs text-amber-400 font-bold mt-0.5">
+                          ₹{item.basePrice.toLocaleString('en-IN')} base
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800/80 text-xs text-slate-400 space-y-1">
+              <div className="flex justify-between">
+                <span>Current Grade:</span>
+                <span className="font-bold text-white font-mono">Grade {currentPlayer.grade}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>New Grade:</span>
+                <span className="font-bold text-amber-400 font-mono">Grade {selectedQuickGrade}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>New Base Price:</span>
+                <span className="font-bold text-emerald-400 font-mono">
+                  ₹{(
+                    selectedQuickGrade === 'A+'
+                      ? rules.gradeBasePrices?.gradeAPlus || 7000
+                      : selectedQuickGrade === 'A'
+                      ? rules.gradeBasePrices?.gradeA || 5000
+                      : selectedQuickGrade === 'B'
+                      ? rules.gradeBasePrices?.gradeB || 3000
+                      : rules.gradeBasePrices?.gradeC || 1000
+                  ).toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsEditGradeModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveQuickGrade}
+                className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-lg transition-all"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save Grade</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

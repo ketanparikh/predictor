@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useAuction } from '../context/AuctionContext';
-import { GradeBadge } from '../components/GradeBadge';
 import { RoleBadge } from '../components/RoleBadge';
 import {
   Trophy,
@@ -220,13 +219,7 @@ export const SpectatorView: React.FC = () => {
                   {/* Background Stadium Glow Accent */}
                   <div
                     style={{
-                      background: `radial-gradient(circle at top right, ${
-                        currentPlayer.grade === 'A+'
-                          ? 'rgba(234, 179, 8, 0.15)'
-                          : currentPlayer.grade === 'A'
-                          ? 'rgba(59, 130, 246, 0.15)'
-                          : 'rgba(16, 185, 129, 0.1)'
-                      }, transparent 70%)`,
+                      background: 'radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 70%)',
                     }}
                     className="absolute inset-0 pointer-events-none"
                   />
@@ -234,7 +227,7 @@ export const SpectatorView: React.FC = () => {
                   {/* Player Lot Top Bar */}
                   <div className="flex items-center justify-between relative z-10">
                     <div className="flex flex-wrap items-center gap-2">
-                      <GradeBadge grade={currentPlayer.grade} size="md" />
+                      
                       <RoleBadge role={currentPlayer.role} size="md" />
                       {currentPlayer.isCaptain && (
                         <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-xs border border-amber-500/40 flex items-center gap-1 shadow-sm">
@@ -615,7 +608,7 @@ export const SpectatorView: React.FC = () => {
                                 className="p-2 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs"
                               >
                                 <div className="flex items-center gap-2 truncate mr-2">
-                                  <GradeBadge grade={p.grade} size="sm" />
+                                  
                                   <span className="font-semibold text-white truncate">{p.name}</span>
                                   {p.isCaptain && <span className="text-[10px]">👑</span>}
                                   {p.isViceCaptain && <span className="text-[10px]">⭐</span>}
@@ -666,7 +659,7 @@ export const SpectatorView: React.FC = () => {
                       <span className="w-7 h-7 rounded-full bg-slate-800 text-slate-400 font-mono font-bold flex items-center justify-center text-xs flex-shrink-0">
                         #{idx + 1}
                       </span>
-                      <GradeBadge grade={tx.playerGrade} size="sm" />
+                      
                       <div className="min-w-0">
                         <div className="font-bold text-white text-sm truncate">{tx.playerName}</div>
                         <div className="text-[11px] text-emerald-400 font-mono mt-0.5">

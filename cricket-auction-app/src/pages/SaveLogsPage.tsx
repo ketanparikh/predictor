@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import {
   Save,
@@ -14,6 +14,13 @@ import {
   RefreshCw,
   HardDrive,
   ShieldCheck,
+  Search,
+  Filter,
+  Calendar,
+  User,
+  ArrowRight,
+  Activity,
+  Layers,
 } from 'lucide-react';
 
 export const SaveLogsPage: React.FC = () => {
@@ -35,6 +42,41 @@ export const SaveLogsPage: React.FC = () => {
   const [saveDescription, setSaveDescription] = useState('');
   const [selectedSnapshotId, setSelectedSnapshotId] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  // Filters for Save Logs
+  const [nameFilter, setNameFilter] = useState('');
+  const [actionFilter, setActionFilter] = useState<string>('all');
+  const [dateFilter, setDateFilter] = useState('');
+
+  const filteredLogs = useMemo(() => {
+    return saveLogs.filter(log => {
+      // 1. Player name / ID filter
+      if (nameFilter.trim()) {
+        const query = nameFilter.toLowerCase().trim();
+        const matchesPlayer = log.playerName && log.playerName.toLowerCase().includes(query);
+        const matchesDesc = log.description && log.description.toLowerCase().includes(query);
+        const matchesId = log.playerId && log.playerId.toLowerCase().includes(query);
+        if (!matchesPlayer && !matchesDesc && !matchesId) return false;
+      }
+      // 2. Action / Type filter
+      if (actionFilter !== 'all') {
+        if (actionFilter === 'player_edit' && log.type !== 'player_edit') return false;
+        if (actionFilter === 'restart' && log.type !== 'restart') return false;
+        if (actionFilter === 'clear_history' && log.type !== 'clear_history') return false;
+        if (actionFilter === 'manual' && log.type !== 'manual') return false;
+        if (actionFilter === 'snapshot' && log.type !== 'snapshot') return false;
+      }
+      // 3. Date filter
+      if (dateFilter) {
+        const logDateIso = log.timestamp ? log.timestamp.slice(0, 10) : '';
+        const logDateReadable = log.date || '';
+        if (!logDateIso.includes(dateFilter) && !logDateReadable.toLowerCase().includes(dateFilter.toLowerCase())) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [saveLogs, nameFilter, actionFilter, dateFilter]);
 
   const showToast = (text: string, type: 'success' | 'error' = 'success') => {
     setToastMessage({ text, type });
@@ -289,36 +331,103 @@ export const SaveLogsPage: React.FC = () => {
 
         {/* Right Column: Save Operation Logs (7 cols) */}
         <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 mb-3 gap-2">
             <div className="flex items-center gap-2">
               <FileCheck className="w-5 h-5 text-emerald-400" />
-              <h2 className="font-bold text-white text-base">Save Operation Audit Logs</h2>
+              <div>
+                <h2 className="font-bold text-white text-base">Save Logs & Administrator Edits</h2>
+                <span className="text-[11px] text-slate-400 font-mono">
+                  Permanent audit history ({filteredLogs.length} of {saveLogs.length} events)
+                </span>
+              </div>
             </div>
-            <span className="text-xs text-slate-400 font-mono">
-              Live chronological trace
-            </span>
+            {(nameFilter || actionFilter !== 'all' || dateFilter) && (
+              <button
+                onClick={() => {
+                  setNameFilter('');
+                  setActionFilter('all');
+                  setDateFilter('');
+                }}
+                className="text-[11px] text-amber-400 hover:text-amber-300 font-semibold underline self-start sm:self-auto"
+              >
+                Clear Filters
+              </button>
+            )}
           </div>
 
-          <div className="overflow-x-auto flex-1 max-h-[520px]">
+          {/* Interactive Filters Strip */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3 bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+            {/* Player Search Filter */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Filter player name / ID..."
+                value={nameFilter}
+                onChange={e => setNameFilter(e.target.value)}
+                className="w-full pl-8 pr-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+
+            {/* Action / Type Filter */}
+            <div className="relative">
+              <Filter className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
+              <select
+                value={actionFilter}
+                onChange={e => setActionFilter(e.target.value)}
+                className="w-full pl-8 pr-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-semibold"
+              >
+                <option value="all">All Action Types</option>
+                <option value="player_edit">Player Edits & Grades</option>
+                <option value="restart">Auction Restarted</option>
+                <option value="clear_history">History Cleared</option>
+                <option value="manual">Manual Saves</option>
+                <option value="snapshot">Snapshots</option>
+              </select>
+            </div>
+
+            {/* Date Filter */}
+            <div className="relative">
+              <Calendar className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Filter date (e.g. 23 Nov)..."
+                value={dateFilter}
+                onChange={e => setDateFilter(e.target.value)}
+                className="w-full pl-8 pr-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+              />
+            </div>
+          </div>
+
+          {/* Audit Logs Table */}
+          <div className="overflow-x-auto flex-1 max-h-[500px]">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800 sticky top-0 z-10">
+              <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800 sticky top-0 z-10 font-mono">
                 <tr>
-                  <th className="py-2.5 px-3 font-bold">Time</th>
-                  <th className="py-2.5 px-3 font-bold">Type</th>
+                  <th className="py-2.5 px-3 font-bold">Date & Time</th>
+                  <th className="py-2.5 px-3 font-bold">Action</th>
+                  <th className="py-2.5 px-3 font-bold">Player / Target</th>
+                  <th className="py-2.5 px-3 font-bold">Modification Details</th>
+                  <th className="py-2.5 px-3 font-bold">By</th>
                   <th className="py-2.5 px-3 font-bold">Status</th>
-                  <th className="py-2.5 px-3 font-bold">Event Details</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
-                {saveLogs.length === 0 ? (
+              <tbody className="divide-y divide-slate-800/60 font-sans">
+                {filteredLogs.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="py-12 text-center text-slate-500">
-                      No save log events recorded yet.
+                    <td colSpan={6} className="py-12 text-center text-slate-500">
+                      {saveLogs.length === 0
+                        ? 'No activity or save log events recorded yet.'
+                        : 'No log events match the selected filters.'}
                     </td>
                   </tr>
                 ) : (
-                  saveLogs.map((log) => {
-                    const timeFormatted = new Date(log.timestamp).toLocaleTimeString('en-IN', {
+                  filteredLogs.map((log) => {
+                    const dateFormatted = log.date || new Date(log.timestamp).toLocaleDateString('en-IN', {
+                      day: 'numeric',
+                      month: 'short',
+                    });
+                    const timeFormatted = log.time || new Date(log.timestamp).toLocaleTimeString('en-IN', {
                       hour: '2-digit',
                       minute: '2-digit',
                       second: '2-digit',
@@ -326,37 +435,74 @@ export const SaveLogsPage: React.FC = () => {
 
                     return (
                       <tr key={log.id} className="hover:bg-slate-800/40 transition-colors">
-                        <td className="py-2.5 px-3 font-mono text-slate-400 whitespace-nowrap">
-                          {timeFormatted}
+                        <td className="py-2.5 px-3 font-mono text-slate-300 whitespace-nowrap text-[11px]">
+                          <div>{dateFormatted}</div>
+                          <div className="text-slate-500 text-[10px]">{timeFormatted}</div>
                         </td>
                         <td className="py-2.5 px-3 whitespace-nowrap">
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              log.type === 'manual'
-                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                : log.type === 'snapshot'
+                              log.type === 'player_edit'
                                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                : log.type === 'restart'
+                                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                                : log.type === 'clear_history'
+                                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                : log.type === 'manual'
+                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                                 : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                             }`}
                           >
-                            {log.type}
+                            {log.action || (log.type === 'player_edit' ? 'Player Edited' : log.type.toUpperCase())}
                           </span>
                         </td>
                         <td className="py-2.5 px-3 whitespace-nowrap">
+                          {log.playerName ? (
+                            <div>
+                              <div className="font-bold text-white text-xs">{log.playerName}</div>
+                              {log.playerId && (
+                                <div className="text-[10px] font-mono text-slate-500">ID: {log.playerId}</div>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 text-xs italic">System / Tournament</span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-300">
+                          {log.fieldChanged ? (
+                            <div className="space-y-0.5">
+                              <div className="text-[11px] font-semibold text-slate-300">
+                                <span className="text-slate-400">Field:</span> {log.fieldChanged}
+                              </div>
+                              {(log.previousValue || log.newValue) && (
+                                <div className="flex items-center gap-1.5 text-[10px] font-mono">
+                                  <span className="text-slate-400 line-through">{log.previousValue || '-'}</span>
+                                  <ArrowRight className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                                  <span className="text-emerald-300 font-bold">{log.newValue || '-'}</span>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="text-slate-300 text-xs leading-relaxed max-w-xs">
+                              {log.description}
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3 whitespace-nowrap text-[11px] font-medium text-slate-400">
+                          {log.modifiedBy || 'Admin'}
+                        </td>
+                        <td className="py-2.5 px-3 whitespace-nowrap">
                           {log.status === 'success' ? (
-                            <span className="inline-flex items-center gap-1 text-emerald-400 font-semibold">
+                            <span className="inline-flex items-center gap-1 text-emerald-400 font-semibold text-[11px]">
                               <CheckCircle2 className="w-3.5 h-3.5" />
-                              OK
+                              Saved
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-rose-400 font-semibold">
+                            <span className="inline-flex items-center gap-1 text-rose-400 font-semibold text-[11px]">
                               <AlertCircle className="w-3.5 h-3.5" />
                               Error
                             </span>
                           )}
-                        </td>
-                        <td className="py-2.5 px-3 text-slate-300">
-                          {log.description}
                         </td>
                       </tr>
                     );

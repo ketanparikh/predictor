@@ -18,6 +18,7 @@ import {
   FileSpreadsheet,
   Tv,
   Crown,
+  Star,
   Plus,
   Trash2,
   CheckCircle2,
@@ -37,7 +38,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onOpenProjector,
   onOpenQRCode,
 }) => {
-  const { tournament, teams, players, transactions, currentPlayer, currentBid, currentBidder, removeTeam } = useAuction();
+  const { tournament, teams, players, transactions, currentPlayer, currentBid, currentBidder, removeTeam, getTeamGradeMetrics } = useAuction();
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
@@ -261,11 +262,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div className="space-y-3">
               {teams.map(team => {
                 const percentSpent = (team.totalSpent / team.startingBudget) * 100;
+                const m = getTeamGradeMetrics ? getTeamGradeMetrics(team) : null;
                 return (
-                  <div
-                    key={team.id}
-                    className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 hover:border-slate-700 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                  >
+                  <div key={team.id} className="rounded-xl border border-slate-800/80 overflow-hidden bg-slate-950/60 hover:border-slate-700 transition-colors">
+                    <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-[200px]">
                       <span className="text-2xl">{team.logo}</span>
                       <div>
@@ -283,6 +283,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
                               <span className="text-amber-400 font-sans font-medium flex items-center gap-1">
                                 <Crown className="w-3 h-3 text-amber-400" />
                                 {team.captain || players.find(p => (p.teamId === team.id || p.captainOfTeamId === team.id) && p.isCaptain)?.name}
+                              </span>
+                            </>
+                          )}
+                          {(team.viceCaptain || players.find(p => (p.teamId === team.id || p.viceCaptainOfTeamId === team.id) && p.isViceCaptain)) && (
+                            <>
+                              <span>•</span>
+                              <span className="text-blue-400 font-sans font-medium flex items-center gap-1">
+                                <Star className="w-3 h-3 text-blue-400 fill-current" />
+                                {team.viceCaptain || players.find(p => (p.teamId === team.id || p.viceCaptainOfTeamId === team.id) && p.isViceCaptain)?.name}
                               </span>
                             </>
                           )}
@@ -322,6 +331,37 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
+                    </div>
+
+                    {/* Grade-Wise Restrictions & Leadership Tracker Strip */}
+                    {m && (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 py-2 px-3 text-[11px] font-mono bg-slate-950/80 border-t border-slate-800/60">
+                        <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
+                          <span className="text-slate-400">Grade A (Max 2):</span>
+                          <span className={m.aRemainingSlots === 0 ? "text-rose-400 font-bold" : "text-amber-400 font-bold"}>
+                            {m.aCount}/2 ({m.aRemainingSlots} left) • ₹{m.aRemainingBudget.toLocaleString('en-IN')}/30k
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
+                          <span className="text-slate-400">Grade B (Max 3):</span>
+                          <span className={m.bRemainingSlots === 0 ? "text-rose-400 font-bold" : "text-blue-400 font-bold"}>
+                            {m.bCount}/3 ({m.bRemainingSlots} left) • ₹{m.bRemainingBudget.toLocaleString('en-IN')}/18k
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
+                          <span className="text-slate-400">Grade C (Max 2):</span>
+                          <span className={m.cRemainingSlots === 0 ? "text-rose-400 font-bold" : "text-emerald-400 font-bold"}>
+                            {m.cCount}/2 ({m.cRemainingSlots} left)
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
+                          <span className="text-slate-400">C+VC Budget:</span>
+                          <span className={m.combinedCapCost > 50000 ? "text-rose-400 font-black" : "text-indigo-300 font-bold"}>
+                            ₹{m.combinedCapCost.toLocaleString('en-IN')} / 50k
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}

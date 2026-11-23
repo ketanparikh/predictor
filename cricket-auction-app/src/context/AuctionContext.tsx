@@ -24,6 +24,10 @@ import {
   loadSaveSnapshots,
   createAndStoreSnapshot,
   getLastSavedTimestamp,
+  loadPlayerOverrides,
+  savePlayerOverride,
+  saveAllPlayerOverrides,
+  applyPlayerOverrides,
 } from '../utils/storage';
 import {
   loadAuctionStateFromFirestore,
@@ -35,6 +39,7 @@ import { soundFx } from '../utils/audio';
 import { triggerSoldConfetti } from '../utils/confetti';
 import { ParsedPlayerRow } from '../utils/excelParser';
 import { bundledJcpl4AsPlayers, parsedRowToPlayer } from '../utils/jcpl4Registrations';
+import { validatePurchase, calculateMaxAllowableBidForPlayer, getTeamGradeMetrics, TeamGradeMetrics } from '../utils/auctionValidation';
 
 export interface LastAuctionResult {
   type: 'sold' | 'unsold';
@@ -81,6 +86,16 @@ interface AuctionContextType {
   // Captain Allocation
   allocateCaptainToTeam: (teamId: string, playerId: string, cost?: number) => { success: boolean; message: string };
   removeCaptainFromTeam: (teamId: string) => { success: boolean; message: string };
+  applyCaptainCostToAllAllotted: (cost: number) => { success: boolean; count: number; message: string };
+
+  // Vice-Captain Allocation
+  allocateViceCaptainToTeam: (teamId: string, playerId: string, cost?: number) => { success: boolean; message: string };
+  removeViceCaptainFromTeam: (teamId: string) => { success: boolean; message: string };
+  applyViceCaptainCostToAllAllotted: (cost: number) => { success: boolean; count: number; message: string };
+
+  // Grade Metrics & Validation
+  getTeamGradeMetrics: (team: Team) => TeamGradeMetrics;
+  validatePurchaseForTeam: (team: Team, player: Player, amount: number) => { isValid: boolean; error?: string };
 
   // Data Saving, Auto-Save & Save Logs
   saveLogs: SaveLogEntry[];
@@ -145,6 +160,10 @@ interface AuctionContextType {
   resetToDemoData: () => void;
   clearAllData: () => void;
   importBackupJSON: (jsonString: string) => boolean;
+
+  // Auction Lifecycle & History Management
+  restartAuction: (modifiedBy?: string) => Promise<{ success: boolean; message: string; reversedCount?: number; returnedCount?: number }>;
+  clearAuctionHistory: (modifiedBy?: string) => Promise<{ success: boolean; message: string; deletedCount?: number }>;
 }
 
 const AuctionContext = createContext<AuctionContextType | undefined>(undefined);
@@ -251,7 +270,19 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       setTeams(stored.teams?.length ? stored.teams : initialTeams);
       setPlayers(stored.players);
       setTransactions(stored.transactions || []);
-      setRules(stored.rules || initialAuctionRules);
+      const normalizedRules: AuctionRules = {
+        ...(stored.rules || initialAuctionRules),
+        squadRules: {
+          ...(stored.rules?.squadRules || initialAuctionRules.squadRules),
+          maxGradeA: 2,
+          maxGradeB: 3,
+          maxGradeC: 2,
+          maxGradeASpending: 30000,
+          maxGradeBSpending: 18000,
+          maxCaptainViceCaptainSpending: 50000,
+        }
+      };
+      setRules(normalizedRules);
       setTournament(stored.tournament || initialTournamentInfo);
       setCurrentPlayerId(stored.currentPlayerId ?? null);
       setCurrentBid(stored.currentBid ?? 0);
@@ -284,20 +315,94 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     void (async () => {
       const local = withRoster(loadStoredState());
+      let serverState: AppStoredState | null = null;
+      let serverOverrides: Record<string, Partial<Player>> = {};
+      let serverLogs: SaveLogEntry[] = [];
+
+      try {
+        const [stateRes, overridesRes, logsRes] = await Promise.all([
+          fetch('/api/auction-state').catch(() => null),
+          fetch('/api/player-overrides').catch(() => null),
+          fetch('/api/save-logs').catch(() => null),
+        ]);
+        if (stateRes && stateRes.ok) {
+          serverState = await stateRes.json();
+        }
+        if (overridesRes && overridesRes.ok) {
+          serverOverrides = await overridesRes.json();
+        }
+        if (logsRes && logsRes.ok) {
+          serverLogs = await logsRes.json();
+        }
+      } catch {}
+
       const remote = await loadAuctionStateFromFirestore();
       if (cancelled) return;
 
+      // Merge server overrides with local storage overrides
+      const localOverrides = loadPlayerOverrides();
+      const mergedOverrides = { ...serverOverrides, ...localOverrides };
+      saveAllPlayerOverrides(mergedOverrides);
+
+      // Choose base state: prefer disk serverState if it has players/teams, otherwise local
+      let candidate: AppStoredState = local;
+      if (serverState && serverState.players && serverState.players.length > 0) {
+        candidate = serverState;
+      } else if (remote && remote.players && remote.players.length > 0 && !local.players?.length) {
+        candidate = remote;
+      }
+
+      const candidateTeams = candidate.teams?.length ? candidate.teams : local.teams;
+      let candidatePlayers = candidate.players?.length ? candidate.players : local.players;
+
+      // Always apply permanent player overrides so administrator edits never revert
+      candidatePlayers = applyPlayerOverrides(candidatePlayers, mergedOverrides);
+
+      // Ensure team purses strictly align with captain, vice-captain, and transaction expenditures
+      const alignedTeams = candidateTeams.map(t => {
+        const cap = candidatePlayers.find(p => p.id === t.captainPlayerId || (p.captainOfTeamId === t.id) || ((p.teamId === t.id || t.squad.includes(p.id)) && p.isCaptain));
+        const vc = candidatePlayers.find(p => p.id === t.viceCaptainPlayerId || (p.viceCaptainOfTeamId === t.id) || ((p.teamId === t.id || t.squad.includes(p.id)) && p.isViceCaptain));
+        const leadershipCost = (cap?.soldPrice || 0) + (vc?.soldPrice || 0);
+
+        const txSpent = (candidate.transactions || [])
+          .filter(tx => !tx.undone && tx.teamId === t.id)
+          .reduce((sum, tx) => sum + (tx.soldPrice || 0), 0);
+
+        const expectedSpent = leadershipCost + txSpent;
+        const startBudget = t.startingBudget || 100000;
+        const expectedRemaining = Math.max(0, startBudget - expectedSpent);
+
+        return {
+          ...t,
+          startingBudget: startBudget,
+          totalSpent: expectedSpent,
+          remainingBudget: expectedRemaining,
+        };
+      });
+
       const next = withRoster({
-        ...(remote || local),
-        teams: remote?.teams?.length ? remote.teams : local.teams,
-        players: remote?.players?.length ? remote.players : local.players,
+        ...candidate,
+        teams: alignedTeams,
+        players: candidatePlayers,
       });
 
       applyStored(next);
       if (!isSpectator) {
         saveStoredState(next);
       }
-      setSaveLogs(loadSaveLogs());
+
+      // Merge save logs (server disk logs + local storage logs)
+      const localLogs = loadSaveLogs();
+      const logMap = new Map<string, SaveLogEntry>();
+      [...serverLogs, ...localLogs].forEach(l => {
+        if (l && l.id && !logMap.has(l.id)) logMap.set(l.id, l);
+      });
+      const mergedLogs = Array.from(logMap.values()).sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+      setSaveLogs(mergedLogs);
+      localStorage.setItem('cricket_auction_save_logs_v3', JSON.stringify(mergedLogs));
+
       setSaveSnapshots(loadSaveSnapshots());
       setLastSavedTimestamp(getLastSavedTimestamp());
       setIsLoaded(true);
@@ -398,10 +503,45 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           sessionStorage.setItem('cricket_auction_spectator_fast_cache', JSON.stringify(payload));
         }
       } catch {}
-      setTeams(payload.teams);
-      setPlayers(payload.players);
+      const overrides = loadPlayerOverrides();
+      const updatedPlayers = applyPlayerOverrides(payload.players, overrides);
+      setPlayers(updatedPlayers);
+
+      const alignedTeams = payload.teams.map(t => {
+        const cap = updatedPlayers.find(p => p.id === t.captainPlayerId || (p.captainOfTeamId === t.id) || ((p.teamId === t.id || t.squad.includes(p.id)) && p.isCaptain));
+        const vc = updatedPlayers.find(p => p.id === t.viceCaptainPlayerId || (p.viceCaptainOfTeamId === t.id) || ((p.teamId === t.id || t.squad.includes(p.id)) && p.isViceCaptain));
+        const leadershipCost = (cap?.soldPrice || 0) + (vc?.soldPrice || 0);
+
+        const txSpent = (payload.transactions || [])
+          .filter(tx => !tx.undone && tx.teamId === t.id)
+          .reduce((sum, tx) => sum + (tx.soldPrice || 0), 0);
+
+        const expectedSpent = leadershipCost + txSpent;
+        const startBudget = t.startingBudget || 100000;
+        const expectedRemaining = Math.max(0, startBudget - expectedSpent);
+
+        return {
+          ...t,
+          startingBudget: startBudget,
+          totalSpent: expectedSpent,
+          remainingBudget: expectedRemaining,
+        };
+      });
+      setTeams(alignedTeams);
       setTransactions(payload.transactions || []);
-      setRules(payload.rules || initialAuctionRules);
+      const normalizedIncomingRules: AuctionRules = {
+        ...(payload.rules || initialAuctionRules),
+        squadRules: {
+          ...(payload.rules?.squadRules || initialAuctionRules.squadRules),
+          maxGradeA: 2,
+          maxGradeB: 3,
+          maxGradeC: 2,
+          maxGradeASpending: 30000,
+          maxGradeBSpending: 18000,
+          maxCaptainViceCaptainSpending: 50000,
+        }
+      };
+      setRules(normalizedIncomingRules);
       setTournament(payload.tournament || initialTournamentInfo);
       setCurrentPlayerId(payload.currentPlayerId ?? null);
       setCurrentBid(payload.currentBid ?? 0);
@@ -433,6 +573,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
 
     const unsubFirestore = subscribeAuctionStateFromFirestore((data) => {
+      if (!checkIsSpectatorOrProjector()) return;
       try {
         const incoming = fingerprintState(data);
         if (incoming === lastPushedJsonRef.current) return;
@@ -549,8 +690,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, [mockSnapshot]);
 
   const calculateMaxAllowableBid = useCallback((team: Team, player?: Player | null) => {
-    return calculateMaxBidForTeam(team, rules, player || currentPlayer);
-  }, [rules, currentPlayer]);
+    return calculateMaxAllowableBidForPlayer(team, player || currentPlayer, players, rules);
+  }, [rules, currentPlayer, players]);
+
+  const getTeamGradeMetricsHelper = useCallback((team: Team) => {
+    return getTeamGradeMetrics(team, players, rules);
+  }, [players, rules]);
+
+  const validatePurchaseForTeam = useCallback((team: Team, player: Player, amount: number) => {
+    return validatePurchase(team, player, amount, players, rules);
+  }, [players, rules]);
 
   // Timer ticker
   useEffect(() => {
@@ -740,6 +889,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     // Find if player is already assigned as captain or squad member to another team for seamless reassignment
     const prevAssignedTeamId = player.captainOfTeamId || (player.teamId && player.teamId !== teamId && player.isCaptain ? player.teamId : undefined);
     const prevAssignedTeam = prevAssignedTeamId ? teams.find(t => t.id === prevAssignedTeamId) : undefined;
+    const prevCaptainOfTargetTeamId = team.captainPlayerId;
 
     let cost = 0;
     if (customCost !== undefined) {
@@ -752,14 +902,32 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       cost = 0;
     }
 
-    if (cost > team.remainingBudget) {
+    // Determine current cost if player was already captain of this target team
+    const isAlreadyCaptainOfThisTeam = prevCaptainOfTargetTeamId === playerId || (team.captain && team.captain.trim().toLowerCase() === player.name.trim().toLowerCase());
+    const oldCaptainPrice = isAlreadyCaptainOfThisTeam ? (player.soldPrice || 0) : 0;
+    const netCostDifference = cost - oldCaptainPrice;
+
+    if (netCostDifference > team.remainingBudget) {
       return {
         success: false,
-        message: `Insufficient purse! ${team.name} has only ${team.remainingBudget.toLocaleString()} pts, but captain allocation requires ${cost.toLocaleString()} pts.`
+        message: `Insufficient purse! ${team.name} has only ₹${team.remainingBudget.toLocaleString('en-IN')} remaining, but this deduction requires ₹${netCostDifference.toLocaleString('en-IN')}.`
       };
     }
 
-    const prevCaptainOfTargetTeamId = team.captainPlayerId;
+    if (player.id === team.viceCaptainPlayerId || (player.isViceCaptain && !isAlreadyCaptainOfThisTeam)) {
+      return {
+        success: false,
+        message: `${player.name} is already assigned as Vice-Captain and cannot also be assigned as Captain.`
+      };
+    }
+
+    const teamMetricsForCap = getTeamGradeMetrics(team, players, rules);
+    if (teamMetricsForCap.viceCaptainCost + cost > 50000) {
+      return {
+        success: false,
+        message: `Captain and Vice-Captain combined budget cannot exceed 50,000 points. (Current VC: ₹${teamMetricsForCap.viceCaptainCost.toLocaleString('en-IN')}, Attempted Captain: ₹${cost.toLocaleString('en-IN')})`
+      };
+    }
 
     // Update players state:
     // 1. Target player gets marked as sold captain, keeping their original grade!
@@ -792,6 +960,14 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       return p;
     });
 
+    // Also persist player override so captain status and cost persist permanently
+    savePlayerOverride(playerId, {
+      isCaptain: true,
+      isPreAssignedCaptain: true,
+      soldPrice: cost,
+      teamId: teamId,
+    });
+
     // Update teams state:
     const updatedTeams = teams.map(t => {
       // If this was the team previously holding this player, release player & refund previous cost
@@ -809,10 +985,10 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
       // Target team updates: set captain, add to squad, adjust budget
       if (t.id === teamId) {
-        const oldCapPlayer = prevCaptainOfTargetTeamId && prevCaptainOfTargetTeamId !== playerId
+        const oldCapPlayer = prevCaptainOfTargetTeamId
           ? players.find(p => p.id === prevCaptainOfTargetTeamId)
           : null;
-        const refundOldCapCost = oldCapPlayer?.soldPrice || 0;
+        const refundOldCapCost = isAlreadyCaptainOfThisTeam ? oldCaptainPrice : (oldCapPlayer?.soldPrice || 0);
 
         const filteredSquad = t.squad.filter(id => id !== prevCaptainOfTargetTeamId && id !== playerId);
         const newBudget = Math.max(0, t.remainingBudget + refundOldCapCost - cost);
@@ -933,6 +1109,408 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
   }, [teams, players, transactions, rules, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, broadcastState, pushStateToServer, logAndPersistSave]);
 
+  // ================= VICE-CAPTAIN ALLOCATION LOGIC =================
+  const allocateViceCaptainToTeam = useCallback((
+    teamId: string,
+    playerId: string,
+    customCost?: number
+  ): { success: boolean; message: string } => {
+    const team = teams.find(t => t.id === teamId);
+    if (!team) return { success: false, message: 'Franchise not found.' };
+
+    const player = players.find(p => p.id === playerId);
+    if (!player) return { success: false, message: 'Player not found.' };
+
+    if (player.id === team.captainPlayerId || player.isCaptain) {
+      return {
+        success: false,
+        message: `${player.name} is already assigned as Captain and cannot also be assigned as Vice-Captain.`
+      };
+    }
+
+    const prevAssignedTeamId = player.viceCaptainOfTeamId || (player.teamId && player.teamId !== teamId && player.isViceCaptain ? player.teamId : undefined);
+    const prevAssignedTeam = prevAssignedTeamId ? teams.find(t => t.id === prevAssignedTeamId) : undefined;
+    const prevVcOfTargetTeamId = team.viceCaptainPlayerId;
+
+    let cost = 0;
+    if (customCost !== undefined) {
+      cost = customCost;
+    } else if (rules.captainCostMode === 'basePrice') {
+      cost = player.basePrice;
+    } else if (rules.captainCostMode === 'custom' && rules.captainCustomCost !== undefined) {
+      cost = rules.captainCustomCost;
+    } else {
+      cost = 0;
+    }
+
+    // Determine current cost if player was already vice-captain of this target team
+    const isAlreadyVcOfThisTeam = prevVcOfTargetTeamId === playerId || (team.viceCaptain && team.viceCaptain.trim().toLowerCase() === player.name.trim().toLowerCase());
+    const oldVcPrice = isAlreadyVcOfThisTeam ? (player.soldPrice || 0) : 0;
+    const netCostDifference = cost - oldVcPrice;
+
+    if (netCostDifference > team.remainingBudget) {
+      return {
+        success: false,
+        message: `Insufficient purse! ${team.name} has only ₹${team.remainingBudget.toLocaleString('en-IN')} remaining, but this deduction requires ₹${netCostDifference.toLocaleString('en-IN')}.`
+      };
+    }
+
+    const teamMetricsForVc = getTeamGradeMetrics(team, players, rules);
+    if (teamMetricsForVc.captainCost + cost > 50000) {
+      return {
+        success: false,
+        message: `Captain and Vice-Captain combined budget cannot exceed 50,000 points. (Current Captain: ₹${teamMetricsForVc.captainCost.toLocaleString('en-IN')}, Attempted VC: ₹${cost.toLocaleString('en-IN')})`
+      };
+    }
+
+    const updatedPlayers = players.map(p => {
+      if (p.id === playerId) {
+        return {
+          ...p,
+          isViceCaptain: true,
+          isPreAssignedViceCaptain: true,
+          viceCaptainOfTeamId: teamId,
+          teamId: teamId,
+          status: 'sold' as PlayerStatus,
+          soldPrice: cost,
+          grade: p.grade || 'A',
+        };
+      }
+      if (prevVcOfTargetTeamId && p.id === prevVcOfTargetTeamId && p.id !== playerId) {
+        return {
+          ...p,
+          isViceCaptain: false,
+          isPreAssignedViceCaptain: false,
+          viceCaptainOfTeamId: undefined,
+          teamId: null,
+          status: 'upcoming' as PlayerStatus,
+          soldPrice: null,
+        };
+      }
+      return p;
+    });
+
+    // Also persist player override so vice-captain status and cost persist permanently
+    savePlayerOverride(playerId, {
+      isViceCaptain: true,
+      isPreAssignedViceCaptain: true,
+      soldPrice: cost,
+      teamId: teamId,
+    });
+
+    const updatedTeams = teams.map(t => {
+      if (prevAssignedTeam && t.id === prevAssignedTeam.id && t.id !== teamId) {
+        const refundOldCost = player.soldPrice || 0;
+        return {
+          ...t,
+          viceCaptain: undefined,
+          viceCaptainPlayerId: undefined,
+          squad: t.squad.filter(id => id !== playerId),
+          remainingBudget: t.remainingBudget + refundOldCost,
+          totalSpent: Math.max(0, t.totalSpent - refundOldCost),
+        };
+      }
+
+      if (t.id === teamId) {
+        const oldVcPlayer = prevVcOfTargetTeamId
+          ? players.find(p => p.id === prevVcOfTargetTeamId)
+          : null;
+        const refundOldVcCost = isAlreadyVcOfThisTeam ? oldVcPrice : (oldVcPlayer?.soldPrice || 0);
+
+        const filteredSquad = t.squad.filter(id => id !== prevVcOfTargetTeamId && id !== playerId);
+        const newBudget = Math.max(0, t.remainingBudget + refundOldVcCost - cost);
+        const newSpent = Math.max(0, t.totalSpent - refundOldVcCost + cost);
+
+        return {
+          ...t,
+          viceCaptain: player.name,
+          viceCaptainPlayerId: player.id,
+          squad: [...filteredSquad, player.id],
+          remainingBudget: newBudget,
+          totalSpent: newSpent,
+        };
+      }
+      return t;
+    });
+
+    setPlayers(updatedPlayers);
+    setTeams(updatedTeams);
+
+    saveStoredState({ teams: updatedTeams, players: updatedPlayers });
+    const snapshotState: AppStoredState = {
+      teams: updatedTeams,
+      players: updatedPlayers,
+      transactions,
+      rules,
+      tournament,
+      currentPlayerId,
+      currentBid,
+      currentBidderId,
+      bidHistory,
+      auctionOrderMode,
+      customAuctionOrderIds,
+      lastSaved: new Date().toISOString(),
+    };
+    broadcastState(snapshotState);
+    pushStateToServer(snapshotState);
+
+    const reassignedNotice = prevAssignedTeam ? ` (Reassigned from ${prevAssignedTeam.name})` : '';
+    logAndPersistSave('auto', `Allocated Vice-Captain: ${player.name} to ${team.name}${reassignedNotice} (${cost > 0 ? `${cost.toLocaleString()} pts` : 'Free/Zero-Cost'})`);
+
+    return {
+      success: true,
+      message: `Successfully assigned ${player.name} as Vice-Captain of ${team.name}!${reassignedNotice}`,
+    };
+  }, [teams, players, rules, transactions, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, broadcastState, pushStateToServer, logAndPersistSave]);
+
+  const removeViceCaptainFromTeam = useCallback((teamId: string): { success: boolean; message: string } => {
+    const team = teams.find(t => t.id === teamId);
+    if (!team) {
+      return { success: false, message: 'Team not found.' };
+    }
+
+    const vcPlayer = players.find(p => p.id === team.viceCaptainPlayerId || (p.teamId === teamId && p.isViceCaptain));
+    if (!team.viceCaptainPlayerId && !vcPlayer) {
+      return { success: false, message: 'No vice-captain assigned to this team.' };
+    }
+
+    const vcIdToRemove = team.viceCaptainPlayerId || vcPlayer?.id;
+    const refund = vcPlayer?.soldPrice || 0;
+
+    const updatedPlayers = players.map(p => {
+      if (p.id === vcIdToRemove) {
+        return {
+          ...p,
+          isViceCaptain: false,
+          isPreAssignedViceCaptain: false,
+          viceCaptainOfTeamId: undefined,
+          teamId: null,
+          status: 'upcoming' as PlayerStatus,
+          soldPrice: null,
+        };
+      }
+      return p;
+    });
+
+    const updatedTeams = teams.map(t => {
+      if (t.id === teamId) {
+        return {
+          ...t,
+          viceCaptain: undefined,
+          viceCaptainPlayerId: undefined,
+          squad: t.squad.filter(id => id !== vcIdToRemove),
+          remainingBudget: t.remainingBudget + refund,
+          totalSpent: Math.max(0, t.totalSpent - refund),
+        };
+      }
+      return t;
+    });
+
+    setPlayers(updatedPlayers);
+    setTeams(updatedTeams);
+
+    saveStoredState({ teams: updatedTeams, players: updatedPlayers });
+    const snapshotState: AppStoredState = {
+      teams: updatedTeams,
+      players: updatedPlayers,
+      transactions,
+      rules,
+      tournament,
+      currentPlayerId,
+      currentBid,
+      currentBidderId,
+      bidHistory,
+      auctionOrderMode,
+      customAuctionOrderIds,
+      lastSaved: new Date().toISOString(),
+    };
+    broadcastState(snapshotState);
+    pushStateToServer(snapshotState);
+
+    logAndPersistSave('auto', `Removed Vice-Captain of ${team.name}`);
+
+    return {
+      success: true,
+      message: `Vice-Captain removed from ${team.name} and returned to player pool.`,
+    };
+  }, [teams, players, transactions, rules, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, broadcastState, pushStateToServer, logAndPersistSave]);
+
+  // APPLY CAPTAIN COST ACROSS ALL ALLOTTED TEAMS (IMMEDIATE PURSE DEDUCTION)
+  const applyCaptainCostToAllAllotted = useCallback((cost: number): { success: boolean; count: number; message: string } => {
+    let affectedCount = 0;
+    const updatedPlayersMap = new Map<string, Player>();
+    const updatedTeamsMap = new Map<string, Team>();
+
+    teams.forEach(team => {
+      const captain = team.captainPlayerId
+        ? players.find(p => p.id === team.captainPlayerId)
+        : players.find(p => p.captainOfTeamId === team.id || ((p.teamId === team.id || team.squad.includes(p.id)) && p.isCaptain) || (team.captain && p.name.trim().toLowerCase() === team.captain.trim().toLowerCase()));
+
+      if (!captain) return;
+
+      const oldCost = captain.soldPrice || 0;
+      const netDiff = cost - oldCost;
+      if (netDiff > team.remainingBudget) return;
+
+      const tm = getTeamGradeMetrics(team, players, rules);
+      if (tm.viceCaptainCost + cost > 50000) return;
+
+      affectedCount++;
+      const updatedCap: Player = {
+        ...captain,
+        isCaptain: true,
+        isPreAssignedCaptain: true,
+        captainOfTeamId: team.id,
+        teamId: team.id,
+        status: 'sold' as PlayerStatus,
+        soldPrice: cost,
+      };
+      updatedPlayersMap.set(captain.id, updatedCap);
+      savePlayerOverride(captain.id, {
+        isCaptain: true,
+        isPreAssignedCaptain: true,
+        soldPrice: cost,
+        teamId: team.id,
+      });
+
+      const newBudget = Math.max(0, team.remainingBudget - netDiff);
+      const newSpent = Math.max(0, team.totalSpent + netDiff);
+      updatedTeamsMap.set(team.id, {
+        ...team,
+        captain: captain.name,
+        captainPlayerId: captain.id,
+        remainingBudget: newBudget,
+        totalSpent: newSpent,
+        squad: team.squad.includes(captain.id) ? team.squad : [...team.squad, captain.id],
+      });
+    });
+
+    if (affectedCount === 0) {
+      return { success: false, count: 0, message: 'No allotted captains found to update.' };
+    }
+
+    const nextPlayers = players.map(p => updatedPlayersMap.get(p.id) || p);
+    const nextTeams = teams.map(t => updatedTeamsMap.get(t.id) || t);
+    setPlayers(nextPlayers);
+    setTeams(nextTeams);
+    saveStoredState({ teams: nextTeams, players: nextPlayers });
+
+    const newRules = { ...rules, captainCostMode: (cost > 0 ? 'custom' : 'zero') as 'custom' | 'zero', captainCustomCost: cost };
+    setRules(newRules);
+
+    const snapshotState: AppStoredState = {
+      teams: nextTeams,
+      players: nextPlayers,
+      transactions,
+      rules: newRules,
+      tournament,
+      currentPlayerId,
+      currentBid,
+      currentBidderId,
+      bidHistory,
+      auctionOrderMode,
+      customAuctionOrderIds,
+      lastSaved: new Date().toISOString(),
+    };
+    broadcastState(snapshotState);
+    pushStateToServer(snapshotState);
+    logAndPersistSave('auto', `Applied ₹${cost.toLocaleString('en-IN')} captain cost across ${affectedCount} franchises (purses updated)`);
+
+    return {
+      success: true,
+      count: affectedCount,
+      message: `Successfully set ₹${cost.toLocaleString('en-IN')} captain cost across ${affectedCount} franchises! Team purses updated.`,
+    };
+  }, [teams, players, rules, transactions, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, broadcastState, pushStateToServer, logAndPersistSave]);
+
+  // APPLY VICE-CAPTAIN COST ACROSS ALL ALLOTTED TEAMS (IMMEDIATE PURSE DEDUCTION)
+  const applyViceCaptainCostToAllAllotted = useCallback((cost: number): { success: boolean; count: number; message: string } => {
+    let affectedCount = 0;
+    const updatedPlayersMap = new Map<string, Player>();
+    const updatedTeamsMap = new Map<string, Team>();
+
+    teams.forEach(team => {
+      const vc = team.viceCaptainPlayerId
+        ? players.find(p => p.id === team.viceCaptainPlayerId)
+        : players.find(p => p.viceCaptainOfTeamId === team.id || ((p.teamId === team.id || team.squad.includes(p.id)) && p.isViceCaptain) || (team.viceCaptain && p.name.trim().toLowerCase() === team.viceCaptain.trim().toLowerCase()));
+
+      if (!vc) return;
+
+      const oldCost = vc.soldPrice || 0;
+      const netDiff = cost - oldCost;
+      if (netDiff > team.remainingBudget) return;
+
+      const tm = getTeamGradeMetrics(team, players, rules);
+      if (tm.captainCost + cost > 50000) return;
+
+      affectedCount++;
+      const updatedVc: Player = {
+        ...vc,
+        isViceCaptain: true,
+        isPreAssignedViceCaptain: true,
+        viceCaptainOfTeamId: team.id,
+        teamId: team.id,
+        status: 'sold' as PlayerStatus,
+        soldPrice: cost,
+      };
+      updatedPlayersMap.set(vc.id, updatedVc);
+      savePlayerOverride(vc.id, {
+        isViceCaptain: true,
+        isPreAssignedViceCaptain: true,
+        soldPrice: cost,
+        teamId: team.id,
+      });
+
+      const newBudget = Math.max(0, team.remainingBudget - netDiff);
+      const newSpent = Math.max(0, team.totalSpent + netDiff);
+      updatedTeamsMap.set(team.id, {
+        ...team,
+        viceCaptain: vc.name,
+        viceCaptainPlayerId: vc.id,
+        remainingBudget: newBudget,
+        totalSpent: newSpent,
+        squad: team.squad.includes(vc.id) ? team.squad : [...team.squad, vc.id],
+      });
+    });
+
+    if (affectedCount === 0) {
+      return { success: false, count: 0, message: 'No allotted vice-captains found to update.' };
+    }
+
+    const nextPlayers = players.map(p => updatedPlayersMap.get(p.id) || p);
+    const nextTeams = teams.map(t => updatedTeamsMap.get(t.id) || t);
+    setPlayers(nextPlayers);
+    setTeams(nextTeams);
+    saveStoredState({ teams: nextTeams, players: nextPlayers });
+
+    const newRules = { ...rules, captainCostMode: (cost > 0 ? 'custom' : 'zero') as 'custom' | 'zero', captainCustomCost: cost };
+    setRules(newRules);
+
+    const snapshotState: AppStoredState = {
+      teams: nextTeams,
+      players: nextPlayers,
+      transactions,
+      rules: newRules,
+      tournament,
+      currentPlayerId,
+      currentBid,
+      currentBidderId,
+      bidHistory,
+      auctionOrderMode,
+      customAuctionOrderIds,
+      lastSaved: new Date().toISOString(),
+    };
+    broadcastState(snapshotState);
+    pushStateToServer(snapshotState);
+    logAndPersistSave('auto', `Applied ₹${cost.toLocaleString('en-IN')} vice-captain cost across ${affectedCount} franchises (purses updated)`);
+
+    return {
+      success: true,
+      count: affectedCount,
+      message: `Successfully set ₹${cost.toLocaleString('en-IN')} vice-captain cost across ${affectedCount} franchises! Team purses updated.`,
+    };
+  }, [teams, players, rules, transactions, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, broadcastState, pushStateToServer, logAndPersistSave]);
+
   // START AUCTION FOR A PLAYER
   const startAuctionForPlayer = useCallback((playerId: string) => {
     const ply = players.find(p => p.id === playerId);
@@ -985,6 +1563,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       };
     }
 
+    // Centralized auction rules & squad validation (Grade caps, spending limits, leadership)
+    const purchaseValidation = validatePurchase(team, currentPlayer, newBidAmount, players, rules);
+    if (!purchaseValidation.isValid) {
+      return { success: false, message: purchaseValidation.error };
+    }
+
     // Dynamic spending optimization check (Max allowable bid)
     const { maxBid, reason } = calculateMaxBidForTeam(team, rules, currentPlayer);
     if (newBidAmount > maxBid) {
@@ -1025,23 +1609,6 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       }
     }
 
-    // Grade Limits Validation
-    if (currentPlayer.grade === 'A+' && rules.squadRules.maxGradeAPlus !== undefined) {
-      const gradeAPlusCount = squadPlayers.filter(p => p.grade === 'A+').length;
-      if (gradeAPlusCount >= rules.squadRules.maxGradeAPlus) {
-        return { success: false, message: `${team.name} already has maximum allowed Grade A+ players (${rules.squadRules.maxGradeAPlus}).` };
-      }
-    } else if (currentPlayer.grade === 'A' && rules.squadRules.maxGradeA !== undefined) {
-      const gradeACount = squadPlayers.filter(p => p.grade === 'A').length;
-      if (gradeACount >= rules.squadRules.maxGradeA) {
-        return { success: false, message: `${team.name} already has maximum allowed Grade A players (${rules.squadRules.maxGradeA}).` };
-      }
-    } else if (currentPlayer.grade === 'B' && rules.squadRules.maxGradeB !== undefined) {
-      const gradeBCount = squadPlayers.filter(p => p.grade === 'B').length;
-      if (gradeBCount >= rules.squadRules.maxGradeB) {
-        return { success: false, message: `${team.name} already has maximum allowed Grade B players (${rules.squadRules.maxGradeB}).` };
-      }
-    }
 
     // Record bid
     const newRecord: BidRecord = {
@@ -1092,6 +1659,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     if (!winningTeam) return { success: false, message: 'Winning team could not be resolved.' };
 
     const finalPrice = currentBid;
+
+    // Strict squad composition and grade limits validation (Max 2 A, 3 B, 2 C)
+    const saleValidation = validatePurchase(winningTeam, currentPlayer, finalPrice, players, rules);
+    if (!saleValidation.isValid) {
+      return { success: false, message: saleValidation.error };
+    }
 
     // 1. Update Team Budget & Squad (Overflow guarded)
     setTeams(prev => prev.map(t => {
@@ -1181,6 +1754,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     if (amount > team.remainingBudget) {
       return { success: false, message: `Insufficient budget! ${team.name} has only ${team.remainingBudget.toLocaleString()} points remaining.` };
+    }
+
+    // Centralized auction rules & squad validation (Grade caps, spending limits, leadership)
+    const directSellValidation = validatePurchase(team, currentPlayer, amount, players, rules);
+    if (!directSellValidation.isValid) {
+      return { success: false, message: directSellValidation.error };
     }
 
     const { maxBid, reason } = calculateMaxBidForTeam(team, rules, currentPlayer);
@@ -1454,14 +2033,94 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     return newPlayer;
   }, [players.length]);
 
-  // EDIT PLAYER
-  const editPlayer = useCallback((updatedPlayer: Player) => {
+  // EDIT PLAYER (With permanent storage and detailed audit logging)
+  const editPlayer = useCallback((updatedPlayer: Player, modifiedBy: string = 'Administrator') => {
+    // 1. Get previous player synchronously from current state
+    const oldPlayer = players.find(p => p.id === updatedPlayer.id);
+
+    // 2. Save permanent override immediately (in localStorage and server disk)
+    savePlayerOverride(updatedPlayer.id, {
+      name: updatedPlayer.name,
+      grade: updatedPlayer.grade,
+      basePrice: updatedPlayer.basePrice,
+      role: updatedPlayer.role,
+      age: updatedPlayer.age,
+      stats: updatedPlayer.stats,
+      photo: updatedPlayer.photo,
+      battingStyle: updatedPlayer.battingStyle,
+      bowlingStyle: updatedPlayer.bowlingStyle,
+      sponsorTag: updatedPlayer.sponsorTag,
+      isCaptain: updatedPlayer.isCaptain,
+      isViceCaptain: updatedPlayer.isViceCaptain,
+    });
+
+    // 3. Update players state and persist state immediately
     setPlayers(prev => {
-      const updated = prev.map(p => p.id === updatedPlayer.id ? updatedPlayer : p);
+      const updated = prev.map(p => p.id === updatedPlayer.id ? { ...p, ...updatedPlayer } : p);
       saveStoredState({ players: updated });
       return updated;
     });
-  }, []);
+
+    // 3a. If this player is currently on the auction block and no bids placed yet, refresh starting bid
+    if (currentPlayerId === updatedPlayer.id && currentBidderId === null) {
+      setCurrentBid(updatedPlayer.basePrice);
+    }
+
+    // 4. Compute changed fields for the audit log
+    const changedFields: string[] = [];
+    let previousValueStr = '';
+    let newValueStr = '';
+
+    if (oldPlayer) {
+      if (oldPlayer.grade !== updatedPlayer.grade) {
+        changedFields.push('Grade');
+        previousValueStr = `Grade: ${oldPlayer.grade}`;
+        newValueStr = `Grade: ${updatedPlayer.grade}`;
+      }
+      if (oldPlayer.basePrice !== updatedPlayer.basePrice) {
+        changedFields.push('Base Price');
+        previousValueStr = previousValueStr ? `${previousValueStr}, ₹${oldPlayer.basePrice}` : `₹${oldPlayer.basePrice}`;
+        newValueStr = newValueStr ? `${newValueStr}, ₹${updatedPlayer.basePrice}` : `₹${updatedPlayer.basePrice}`;
+      }
+      if (oldPlayer.name !== updatedPlayer.name) {
+        changedFields.push('Name');
+        previousValueStr = previousValueStr ? `${previousValueStr}, ${oldPlayer.name}` : oldPlayer.name;
+        newValueStr = newValueStr ? `${newValueStr}, ${updatedPlayer.name}` : updatedPlayer.name;
+      }
+      if (oldPlayer.role !== updatedPlayer.role) {
+        changedFields.push('Role');
+      }
+      if (JSON.stringify(oldPlayer.stats) !== JSON.stringify(updatedPlayer.stats)) {
+        changedFields.push('Stats');
+      }
+    }
+
+    const fieldChangedLabel = changedFields.length > 0 ? changedFields.join(', ') : 'Grade';
+    const actionLabel = changedFields.includes('Grade') ? 'Grade Changed' : 'Player Edited';
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    const logEntry: SaveLogEntry = {
+      id: `edit-${updatedPlayer.id}-${Date.now()}`,
+      timestamp: now.toISOString(),
+      type: 'player_edit',
+      status: 'success',
+      action: actionLabel,
+      playerName: updatedPlayer.name,
+      playerId: updatedPlayer.id,
+      fieldChanged: fieldChangedLabel,
+      previousValue: previousValueStr || (oldPlayer?.grade ? `Grade: ${oldPlayer.grade}` : 'Original Record'),
+      newValue: newValueStr || `Grade: ${updatedPlayer.grade}, Base: ₹${updatedPlayer.basePrice}`,
+      modifiedBy,
+      date: dateStr,
+      time: timeStr,
+      description: `Player: ${updatedPlayer.name} | Action: ${actionLabel} | Previous: ${previousValueStr || oldPlayer?.grade || '-'} | New: ${newValueStr || updatedPlayer.grade} | Status: Successfully Saved`,
+    };
+
+    appendSaveLog(logEntry);
+    setSaveLogs(prev => [logEntry, ...prev.filter(l => l.id !== logEntry.id)].slice(0, 500));
+  }, [players, currentPlayerId, currentBidderId]);
 
   // BULK UPDATE PLAYERS
   const bulkUpdatePlayers = useCallback((updatedPlayers: Player[], description?: string) => {
@@ -1676,13 +2335,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // RESET TEAM BUDGET
   const resetTeamBudget = useCallback((teamId: string) => {
-    // Reset team budget and clear squad & captain
+    // Reset team budget and clear squad, captain & vice-captain
     setTeams(prev => prev.map(t => {
       if (t.id === teamId) {
         return {
           ...t,
           captain: undefined,
           captainPlayerId: undefined,
+          viceCaptain: undefined,
+          viceCaptainPlayerId: undefined,
           remainingBudget: t.startingBudget,
           totalSpent: 0,
           squad: [],
@@ -1693,7 +2354,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     // Reset status of players belonging to this team
     setPlayers(prev => prev.map(p => {
-      if (p.teamId === teamId || p.captainOfTeamId === teamId) {
+      if (p.teamId === teamId || p.captainOfTeamId === teamId || p.viceCaptainOfTeamId === teamId) {
         return {
           ...p,
           status: 'upcoming',
@@ -1702,6 +2363,9 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           isCaptain: false,
           isPreAssignedCaptain: false,
           captainOfTeamId: undefined,
+          isViceCaptain: false,
+          isPreAssignedViceCaptain: false,
+          viceCaptainOfTeamId: undefined,
         };
       }
       return p;
@@ -1718,10 +2382,13 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     setTeams(prev => prev.map(t => {
       if (t.id === teamId) {
         const isTeamCaptain = t.captainPlayerId === playerId || (player && t.captain === player.name);
+        const isTeamVc = t.viceCaptainPlayerId === playerId || (player && t.viceCaptain === player.name);
         return {
           ...t,
           captain: isTeamCaptain ? undefined : t.captain,
           captainPlayerId: isTeamCaptain ? undefined : t.captainPlayerId,
+          viceCaptain: isTeamVc ? undefined : t.viceCaptain,
+          viceCaptainPlayerId: isTeamVc ? undefined : t.viceCaptainPlayerId,
           remainingBudget: t.remainingBudget + refundPrice,
           totalSpent: Math.max(0, t.totalSpent - refundPrice),
           squad: t.squad.filter(id => id !== playerId),
@@ -1740,6 +2407,9 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           isCaptain: false,
           isPreAssignedCaptain: false,
           captainOfTeamId: undefined,
+          isViceCaptain: false,
+          isPreAssignedViceCaptain: false,
+          viceCaptainOfTeamId: undefined,
         };
       }
       return p;
@@ -1848,6 +2518,182 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   }, []);
 
+  // RESTART AUCTION (Resets auction transactions & returning sold players to pool; PRESERVES Captains, Vice-Captains & player edits)
+  const restartAuction = useCallback(async (modifiedBy: string = 'Administrator'): Promise<{ success: boolean; message: string; reversedCount?: number; returnedCount?: number }> => {
+    try {
+      let reversedCount = 0;
+      let returnedCount = 0;
+
+      // 1. Reset sold players back to pool (excluding captains and vice-captains)
+      let nextPlayers: Player[] = [];
+      setPlayers(prev => {
+        const updated = prev.map(p => {
+          if (p.isCaptain || p.isViceCaptain) {
+            return p; // Preserved completely!
+          }
+          if (p.status === 'sold' || p.status === 'unsold' || p.teamId) {
+            returnedCount++;
+            return {
+              ...p,
+              status: 'upcoming' as const,
+              soldPrice: null,
+              teamId: null,
+            };
+          }
+          return p;
+        });
+        nextPlayers = updated;
+        saveStoredState({ players: updated });
+        return updated;
+      });
+
+      // 2. Count reversed transactions and clear them
+      setTransactions(prev => {
+        reversedCount = prev.length;
+        saveStoredState({ transactions: [] });
+        return [];
+      });
+
+      // 3. Reset team squads keeping Captain & Vice-Captain, restore starting budget
+      setTeams(prev => {
+        const startBudget = rules.startingBudget || 100000;
+        const updated = prev.map(t => {
+          const preservedSquad = (t.squad || []).filter(pid => {
+            if (t.captainPlayerId && pid === t.captainPlayerId) return true;
+            if (t.viceCaptainPlayerId && pid === t.viceCaptainPlayerId) return true;
+            const p = (nextPlayers.length ? nextPlayers : players).find(x => x.id === pid);
+            return Boolean(p && (p.isCaptain || p.isViceCaptain || p.captainOfTeamId === t.id || p.viceCaptainOfTeamId === t.id));
+          });
+          const leadershipCost = (nextPlayers.length ? nextPlayers : players)
+            .filter(p => preservedSquad.includes(p.id))
+            .reduce((sum, p) => sum + (p.soldPrice || 0), 0);
+          return {
+            ...t,
+            startingBudget: startBudget,
+            totalSpent: leadershipCost,
+            remainingBudget: Math.max(0, startBudget - leadershipCost),
+            squad: preservedSquad,
+          };
+        });
+        saveStoredState({ teams: updated });
+        return updated;
+      });
+
+      // 4. Reset live bidding state
+      setCurrentPlayerId(null);
+      setCurrentBid(0);
+      setCurrentBidderId(null);
+      setBidHistory([]);
+      setTimerSeconds(rules.timerDuration || 15);
+      saveStoredState({
+        currentPlayerId: null,
+        currentBid: 0,
+        currentBidderId: null,
+        bidHistory: [],
+      });
+
+      // 5. Generate Restart Log Entry
+      const now = new Date();
+      const logEntry: SaveLogEntry = {
+        id: `restart-${Date.now()}`,
+        timestamp: now.toISOString(),
+        type: 'restart',
+        status: 'success',
+        action: 'Auction Restarted',
+        modifiedBy,
+        date: now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+        time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        description: `Auction restarted: ${reversedCount} auction sales reversed, ${returnedCount} players returned to pool. Captain & Vice-Captain allotments preserved.`,
+        metadata: {
+          reversedCount,
+          returnedCount,
+          captainVcPreserved: true,
+        },
+      };
+
+      appendSaveLog(logEntry);
+      setSaveLogs(prev => [logEntry, ...prev].slice(0, 500));
+
+      // 6. Push to server endpoint
+      try {
+        await fetch('/api/auction-restart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ modifiedBy }),
+        });
+      } catch {}
+
+      return {
+        success: true,
+        message: 'AUCTION SUCCESSFULLY RESTARTED',
+        reversedCount,
+        returnedCount,
+      };
+    } catch (err) {
+      console.error('Failed to restart auction:', err);
+      return {
+        success: false,
+        message: 'Failed to restart auction',
+      };
+    }
+  }, [rules.startingBudget, rules.timerDuration]);
+
+  // CLEAR AUCTION HISTORY (Clears transaction history and bid logs WITHOUT touching player ownership, squads or budgets)
+  const clearAuctionHistory = useCallback(async (modifiedBy: string = 'Administrator'): Promise<{ success: boolean; message: string; deletedCount?: number }> => {
+    try {
+      let deletedCount = 0;
+
+      setTransactions(prev => {
+        deletedCount = prev.length;
+        saveStoredState({ transactions: [] });
+        return [];
+      });
+
+      setBidHistory([]);
+      saveStoredState({ bidHistory: [] });
+
+      const now = new Date();
+      const logEntry: SaveLogEntry = {
+        id: `clear-history-${Date.now()}`,
+        timestamp: now.toISOString(),
+        type: 'clear_history',
+        status: 'success',
+        action: 'Auction History Cleared',
+        modifiedBy,
+        date: now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+        time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        description: `Auction history cleared: ${deletedCount} transaction records deleted. Player ownership & team configurations preserved.`,
+        metadata: {
+          deletedCount,
+          playerOwnershipPreserved: true,
+        },
+      };
+
+      appendSaveLog(logEntry);
+      setSaveLogs(prev => [logEntry, ...prev].slice(0, 500));
+
+      try {
+        await fetch('/api/auction-clear-history', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ modifiedBy }),
+        });
+      } catch {}
+
+      return {
+        success: true,
+        message: 'Auction history successfully cleared',
+        deletedCount,
+      };
+    } catch (err) {
+      console.error('Failed to clear auction history:', err);
+      return {
+        success: false,
+        message: 'Failed to clear auction history',
+      };
+    }
+  }, []);
+
   return (
     <AuctionContext.Provider
       value={{
@@ -1910,6 +2756,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         // Captain Allocation
         allocateCaptainToTeam,
         removeCaptainFromTeam,
+        applyCaptainCostToAllAllotted,
+
+        // Vice-Captain Allocation
+        allocateViceCaptainToTeam,
+        removeViceCaptainFromTeam,
+        applyViceCaptainCostToAllAllotted,
+
+        // Grade Metrics & Validation
+        getTeamGradeMetrics: getTeamGradeMetricsHelper,
+        validatePurchaseForTeam,
 
         // Data Saving, Auto-Save & Save Logs
         saveLogs,
@@ -1917,6 +2773,10 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         lastSavedTimestamp,
         triggerManualSave,
         restoreFromSnapshot,
+
+        // Auction Lifecycle & History Management
+        restartAuction,
+        clearAuctionHistory,
 
         toggleWishlist,
         updateRules,

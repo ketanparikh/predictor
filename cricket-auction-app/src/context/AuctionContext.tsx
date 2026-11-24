@@ -40,7 +40,7 @@ import { soundFx } from '../utils/audio';
 import { triggerSoldConfetti } from '../utils/confetti';
 import { ParsedPlayerRow } from '../utils/excelParser';
 import { bundledJcpl4AsPlayers, mergeBundledCareerStats, parsedRowToPlayer, regradeAuctionPlayers, shouldReplaceWithMensRoster } from '../utils/jcpl4Registrations';
-import { validatePurchase, calculateMaxAllowableBidForPlayer, getTeamGradeMetrics, TeamGradeMetrics } from '../utils/auctionValidation';
+import { validatePurchase, calculateMaxAllowableBidForPlayer, getTeamGradeMetrics, TeamGradeMetrics, captainFixedCost } from '../utils/auctionValidation';
 
 export interface LastAuctionResult {
   type: 'sold' | 'unsold';
@@ -174,11 +174,15 @@ const BROADCAST_CHANNEL_NAME = 'cricket_auction_sync_channel';
 export function calculateMaxBidForTeam(
   team: Team,
   rules: AuctionRules,
-  _player?: Player | null
+  player?: Player | null,
+  allPlayers: Player[] = [],
 ): { maxBid: number; minReserveRequired: number; remainingSlotsNeeded: number; reason?: string } {
+  if (player) {
+    return calculateMaxAllowableBidForPlayer(team, player, allPlayers, rules);
+  }
+
   const minSquadSize = rules.squadRules.minSquadSize || 9;
   const currentSquadSize = team.squad.length;
-  // If team already has or needs at most 1 player to reach minSquadSize
   if (currentSquadSize >= minSquadSize - 1) {
     return {
       maxBid: Math.max(0, team.remainingBudget),
@@ -187,26 +191,17 @@ export function calculateMaxBidForTeam(
     };
   }
 
-  // After acquiring this player, how many more slots must still be filled to reach minSquadSize?
   const slotsRemainingAfterThis = Math.max(0, minSquadSize - (currentSquadSize + 1));
-  const baseC = rules.gradeBasePrices?.gradeC ?? 1000;
-  const minBasePrice = Math.min(
-    rules.gradeBasePrices?.gradeAPlus ?? 7000,
-    rules.gradeBasePrices?.gradeA ?? 5000,
-    rules.gradeBasePrices?.gradeB ?? 3000,
-    baseC
-  );
-
-  const minReserveRequired = slotsRemainingAfterThis * minBasePrice;
+  const minReserveRequired = slotsRemainingAfterThis * (rules.gradeBasePrices?.gradeC ?? 1000);
   const maxBid = Math.max(0, team.remainingBudget - minReserveRequired);
 
   return {
     maxBid,
     minReserveRequired,
     remainingSlotsNeeded: slotsRemainingAfterThis,
-    reason: slotsRemainingAfterThis > 0 
-      ? `Must reserve ${minReserveRequired.toLocaleString()} pts for ${slotsRemainingAfterThis} remaining squad slot(s) (min base price ${minBasePrice.toLocaleString()} pts).` 
-      : undefined
+    reason: slotsRemainingAfterThis > 0
+      ? `Must reserve ${minReserveRequired.toLocaleString()} pts for ${slotsRemainingAfterThis} remaining squad slot(s).`
+      : undefined,
   };
 }
 
@@ -918,7 +913,13 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     } else if (rules.captainCostMode === 'custom' && rules.captainCustomCost !== undefined) {
       cost = rules.captainCustomCost;
     } else {
-      cost = 0;
+      cost = captainFixedCost(player, rules);
+    }
+    if (cost < 0 || cost > 50000) {
+      return {
+        success: false,
+        message: `Captain cost must be between ₹0 and ₹50,000 (each team may have its own pre-allocated amount).`,
+      };
     }
 
     // Determine current cost if player was already captain of this target team
@@ -1147,6 +1148,14 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       };
     }
 
+    const leadershipMetrics = getTeamGradeMetrics(team, players, rules);
+    if (!leadershipMetrics.captainPlayer && !team.captainPlayerId) {
+      return {
+        success: false,
+        message: `Captain must be allocated at a fixed base before ${team.name} can auction a Vice-Captain.`,
+      };
+    }
+
     const prevAssignedTeamId = player.viceCaptainOfTeamId || (player.teamId && player.teamId !== teamId && player.isViceCaptain ? player.teamId : undefined);
     const prevAssignedTeam = prevAssignedTeamId ? teams.find(t => t.id === prevAssignedTeamId) : undefined;
     const prevVcOfTargetTeamId = team.viceCaptainPlayerId;
@@ -1356,6 +1365,9 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // APPLY CAPTAIN COST ACROSS ALL ALLOTTED TEAMS (IMMEDIATE PURSE DEDUCTION)
   const applyCaptainCostToAllAllotted = useCallback((cost: number): { success: boolean; count: number; message: string } => {
+    if (!Number.isFinite(cost) || cost < 0 || cost > 50000) {
+      return { success: false, count: 0, message: 'Captain cost must be between ₹0 and ₹50,000 for all allotted captains.' };
+    }
     let affectedCount = 0;
     const updatedPlayersMap = new Map<string, Player>();
     const updatedTeamsMap = new Map<string, Team>();
@@ -1589,7 +1601,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
 
     // Dynamic spending optimization check (Max allowable bid)
-    const { maxBid, reason } = calculateMaxBidForTeam(team, rules, currentPlayer);
+    const { maxBid, reason } = calculateMaxBidForTeam(team, rules, currentPlayer, players);
     if (newBidAmount > maxBid) {
       return {
         success: false,
@@ -1781,7 +1793,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       return { success: false, message: directSellValidation.error };
     }
 
-    const { maxBid, reason } = calculateMaxBidForTeam(team, rules, currentPlayer);
+    const { maxBid, reason } = calculateMaxBidForTeam(team, rules, currentPlayer, players);
     if (amount > maxBid) {
       return {
         success: false,

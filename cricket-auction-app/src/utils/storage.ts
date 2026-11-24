@@ -67,20 +67,21 @@ export function sanitizeAuctionRules(rules?: AuctionRules | null): AuctionRules 
     },
   };
 
-  if (
-    !loadedRules.gradeBasePrices ||
-    !loadedRules.gradeBasePrices.gradeAPlus ||
-    loadedRules.gradeBasePrices.gradeA === 5100 ||
-    loadedRules.gradeBasePrices.gradeB === 3100 ||
-    loadedRules.gradeBasePrices.gradeC === 1100
-  ) {
+  const bases = loadedRules.gradeBasePrices;
+  const hasLegacyBases =
+    !bases ||
+    !bases.gradeAPlus ||
+    bases.gradeA === 5100 ||
+    bases.gradeB === 3100 ||
+    bases.gradeC === 1100;
+  if (hasLegacyBases) {
     loadedRules = {
       ...loadedRules,
       gradeBasePrices: {
-        gradeAPlus: loadedRules.gradeBasePrices?.gradeAPlus || 7000,
-        gradeA: loadedRules.gradeBasePrices?.gradeA || 5000,
-        gradeB: loadedRules.gradeBasePrices?.gradeB || 3000,
-        gradeC: loadedRules.gradeBasePrices?.gradeC || 1000,
+        gradeAPlus: bases?.gradeAPlus && bases.gradeAPlus !== 5100 ? bases.gradeAPlus : 7000,
+        gradeA: bases?.gradeA && bases.gradeA !== 5100 ? bases.gradeA : 5000,
+        gradeB: bases?.gradeB && bases.gradeB !== 3100 ? bases.gradeB : 3000,
+        gradeC: bases?.gradeC && bases.gradeC !== 1100 ? bases.gradeC : 1000,
       },
     };
   }

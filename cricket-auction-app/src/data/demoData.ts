@@ -37,6 +37,8 @@ export const initialAuctionRules: AuctionRules = {
     minWicketkeepers: 1,
     maxOverseas: 3,
   },
+  captainCostMode: 'zero',
+  captainCustomCost: 0,
 };
 
 export const initialTeams: Team[] = [

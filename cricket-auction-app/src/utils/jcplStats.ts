@@ -48,6 +48,8 @@ export interface JcplIndexedPlayer {
 const PLAYERS = (jcplIndex as { players: JcplIndexedPlayer[] }).players;
 
 const NAME_ALIASES: Record<string, string> = {
+  'akshay': 'akshay pore',
+  'aaryan mandar joshi': 'aaryan joshi',
   'hrishikesh baradkar': 'hrishi jade jcpl',
   'medha vivek pawar': 'adv medha pawar jade',
   'pankaj': 'pankaj guglani',
@@ -114,7 +116,7 @@ export function findJcplPlayer(name: string, cricheroesUrl?: string): JcplIndexe
   const lastMatches = PLAYERS.filter((p) =>
     p.names.some((n) => {
       const t = tokens(n);
-      return t[t.length - 1] === last && (t[0] === first || t[0]?.[0] === first[0]);
+      return t[t.length - 1] === last && (t[0] === first || (first.length <= 2 && t[0]?.[0] === first[0]));
     }),
   );
   if (lastMatches.length === 1) return lastMatches[0];
@@ -122,29 +124,115 @@ export function findJcplPlayer(name: string, cricheroesUrl?: string): JcplIndexe
   return null;
 }
 
+function betterHighScore(current: string, next: string): string {
+  const value = (score: string) => Number(String(score || '').replace(/[^0-9.]/g, '')) || 0;
+  if (value(next) > value(current)) return next || '';
+  if (value(current) > value(next)) return current || '';
+  if (String(next).includes('*') && !String(current).includes('*')) return next || '';
+  return current || next || '';
+}
+
+function betterBestBowling(current: string, next: string): string {
+  const parse = (text: string) => {
+    const match = String(text || '').match(/(\d+)\s*\/\s*(\d+)/);
+    return match ? { wickets: Number(match[1]), runs: Number(match[2]) } : null;
+  };
+  const currentBest = parse(current);
+  const nextBest = parse(next);
+  if (!nextBest) return current || '';
+  if (!currentBest) return next || '';
+  if (nextBest.wickets > currentBest.wickets) return next;
+  if (nextBest.wickets === currentBest.wickets && nextBest.runs < currentBest.runs) return next;
+  return current;
+}
+
+/** Aggregate JCPL season rows only. Never use all-tournament CricHeroes career. */
 export function careerToAuctionStats(player: JcplIndexedPlayer): PlayerStats {
-  const c = player.career;
+  const seasons = player.seasons || [];
+  if (!seasons.length) {
+    return {
+      matches: 0,
+      runs: 0,
+      average: 0,
+      strikeRate: 0,
+      highestScore: 0,
+      fifties: 0,
+      hundreds: 0,
+      wickets: 0,
+      bowlingAverage: 0,
+      economyRate: 0,
+      bestBowling: '',
+      catches: 0,
+      stumpings: 0,
+    };
+  }
+
+  let matches = 0;
+  let runs = 0;
+  let wickets = 0;
+  let fifties = 0;
+  let hundreds = 0;
+  let catches = 0;
+  let stumpings = 0;
+  let highestScore = '';
+  let bestBowling = '';
+  let runWeight = 0;
+  let srWeight = 0;
+  let bowlWicketWeight = 0;
+  let bowlAvgWeight = 0;
+  let econWeight = 0;
+  let econSum = 0;
+
+  for (const season of seasons) {
+    matches += season.matches || 0;
+    runs += season.runs || 0;
+    wickets += season.wickets || 0;
+    fifties += season.fifties || 0;
+    hundreds += season.hundreds || 0;
+    catches += season.catches || 0;
+    stumpings += season.stumpings || 0;
+    highestScore = betterHighScore(highestScore, season.highestScore);
+    bestBowling = betterBestBowling(bestBowling, season.bestBowling);
+    if ((season.runs || 0) > 0 && (season.strikeRate || 0) > 0) {
+      runWeight += season.runs;
+      srWeight += season.strikeRate * season.runs;
+    }
+    if ((season.wickets || 0) > 0 && (season.bowlingAverage || 0) > 0) {
+      bowlWicketWeight += season.wickets;
+      bowlAvgWeight += season.bowlingAverage * season.wickets;
+    }
+    if ((season.matches || 0) > 0 && (season.economyRate || 0) > 0) {
+      econWeight += season.matches;
+      econSum += season.economyRate * season.matches;
+    }
+  }
+
+  const dismissedApprox = seasons.reduce((sum, season) => {
+    if (!season.runs || !season.average) return sum;
+    return sum + Math.max(1, Math.round(season.runs / season.average));
+  }, 0);
+
   return {
-    matches: c.matches,
-    runs: c.runs,
-    average: c.average,
-    strikeRate: c.strikeRate,
-    highestScore: Number(String(c.highestScore).replace(/[^0-9.]/g, '')) || 0,
-    fifties: c.fifties,
-    hundreds: c.hundreds,
-    wickets: c.wickets,
-    bowlingAverage: c.bowlingAverage,
-    economyRate: c.economyRate,
-    bestBowling: c.bestBowling || '',
-    catches: c.catches,
-    stumpings: c.stumpings,
+    matches,
+    runs,
+    average: dismissedApprox > 0 ? Math.round((runs / dismissedApprox) * 100) / 100 : 0,
+    strikeRate: runWeight > 0 ? Math.round((srWeight / runWeight) * 100) / 100 : 0,
+    highestScore: Number(String(highestScore).replace(/[^0-9.]/g, '')) || 0,
+    fifties,
+    hundreds,
+    wickets,
+    bowlingAverage: bowlWicketWeight > 0 ? Math.round((bowlAvgWeight / bowlWicketWeight) * 100) / 100 : 0,
+    economyRate: econWeight > 0 ? Math.round((econSum / econWeight) * 100) / 100 : 0,
+    bestBowling,
+    catches,
+    stumpings,
   };
 }
 
 export function jcplSummary(player: JcplIndexedPlayer): string {
   const labels = player.seasons.map((s) => `${s.seasonLabel} ${s.category}`).join(', ');
-  const c = player.career;
-  return `JCPL ${labels}: ${c.matches} matches, ${c.runs} runs, ${c.wickets} wickets`;
+  const stats = careerToAuctionStats(player);
+  return `JCPL ${labels}: ${stats.matches} matches, ${stats.runs} runs, ${stats.wickets} wickets`;
 }
 
 export function enrichRowsWithJcplStats(

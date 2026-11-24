@@ -26,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  int _previousIndex = 0;
   bool _questionsLoaded = false;
 
   @override
@@ -46,9 +47,19 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _questionsLoaded = true);
   }
 
+  void _goToPreviousTab() {
+    setState(() {
+      _selectedIndex = _previousIndex;
+      _previousIndex = 0;
+    });
+  }
+
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      if (index != _selectedIndex) {
+        _previousIndex = _selectedIndex;
+        _selectedIndex = index;
+      }
     });
     if (index == 4) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -564,6 +575,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: _selectedIndex == 0
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                tooltip: 'Back',
+                onPressed: _goToPreviousTab,
+              ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: AppTheme.stadiumGradient,

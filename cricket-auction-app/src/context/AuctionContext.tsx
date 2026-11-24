@@ -13,7 +13,7 @@ import {
   SaveLogEntry,
   SaveSnapshot
 } from '../types/auction';
-import { initialTeams, initialPlayers, initialAuctionRules, initialTournamentInfo } from '../data/demoData';
+import { initialTeams, initialAuctionRules, initialTournamentInfo } from '../data/demoData';
 import {
   loadStoredState,
   saveStoredState,
@@ -28,6 +28,7 @@ import {
   savePlayerOverride,
   saveAllPlayerOverrides,
   applyPlayerOverrides,
+  sanitizeAuctionState,
 } from '../utils/storage';
 import {
   loadAuctionStateFromFirestore,
@@ -38,7 +39,7 @@ import {
 import { soundFx } from '../utils/audio';
 import { triggerSoldConfetti } from '../utils/confetti';
 import { ParsedPlayerRow } from '../utils/excelParser';
-import { bundledJcpl4AsPlayers, parsedRowToPlayer } from '../utils/jcpl4Registrations';
+import { bundledJcpl4AsPlayers, mergeBundledCareerStats, parsedRowToPlayer, regradeAuctionPlayers, shouldReplaceWithMensRoster } from '../utils/jcpl4Registrations';
 import { validatePurchase, calculateMaxAllowableBidForPlayer, getTeamGradeMetrics, TeamGradeMetrics } from '../utils/auctionValidation';
 
 export interface LastAuctionResult {
@@ -295,10 +296,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
 
     const withRoster = (state: AppStoredState): AppStoredState => {
-      const prices = state.rules?.gradeBasePrices || initialAuctionRules.gradeBasePrices!;
-      const players = state.players?.length ? state.players : bundledJcpl4AsPlayers(prices);
-      const teams = state.teams?.length ? state.teams : initialTeams;
-      return { ...state, players, teams };
+      const sanitized = sanitizeAuctionState(state);
+      const prices = sanitized.rules?.gradeBasePrices || initialAuctionRules.gradeBasePrices!;
+      const basePlayers = shouldReplaceWithMensRoster(sanitized.players || [])
+        ? bundledJcpl4AsPlayers(prices, 'mens')
+        : sanitized.players;
+      const players = regradeAuctionPlayers(
+        mergeBundledCareerStats(basePlayers || [], prices, 'mens'),
+        prices,
+      );
+      return { ...sanitized, players, teams: sanitized.teams };
     };
 
     if (isSpectator) {
@@ -498,6 +505,18 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     const applyIncomingState = (payload: AppStoredState) => {
       if (!payload || !payload.teams?.length) return;
       if (!payload.players?.length) return;
+      payload = sanitizeAuctionState(payload);
+      const prices = payload.rules?.gradeBasePrices || initialAuctionRules.gradeBasePrices!;
+      if (shouldReplaceWithMensRoster(payload.players)) {
+        payload = { ...payload, players: bundledJcpl4AsPlayers(prices, 'mens') };
+      }
+      payload = {
+        ...payload,
+        players: regradeAuctionPlayers(
+          mergeBundledCareerStats(payload.players || [], prices, 'mens'),
+          prices,
+        ),
+      };
       try {
         if (typeof window !== 'undefined' && checkIsSpectatorOrProjector()) {
           sessionStorage.setItem('cricket_auction_spectator_fast_cache', JSON.stringify(payload));
@@ -2464,8 +2483,9 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   // RESET TO DEMO DATA
   const resetToDemoData = useCallback(() => {
     clearAuctionStorage();
+    const prices = initialAuctionRules.gradeBasePrices!;
     setTeams(initialTeams);
-    setPlayers(initialPlayers);
+    setPlayers(bundledJcpl4AsPlayers(prices, 'mens'));
     setTransactions([]);
     setRules(initialAuctionRules);
     setTournament(initialTournamentInfo);
@@ -2490,6 +2510,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     setTeams(emptyTeams);
     setPlayers([]);
     setTransactions([]);
+    setRules(initialAuctionRules);
     setCurrentPlayerId(null);
     setCurrentBid(0);
     setCurrentBidderId(null);

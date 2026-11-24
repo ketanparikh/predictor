@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../models/player_stats.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/game_page.dart';
 
 class PlayerStatsScreen extends StatelessWidget {
   final PlayerStats player;
@@ -12,38 +13,34 @@ class PlayerStatsScreen extends StatelessWidget {
     super.key,
     required this.player,
     this.sourceNote =
-        'Source: JCPL 4 registration name with matched career statistics.',
+        'Source: JCPL Seasons 1–3 tournament stats only. Outside tournaments are excluded.',
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(gradient: AppTheme.stadiumGradient),
-        ),
-        title: Text(player.name),
-      ),
+      appBar: GameAppBar(title: player.name),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _PlayerHeader(player: player),
           const SizedBox(height: 16),
-          if (!player.hasProfile)
+          if (!player.hasProfile) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Text(
-                  'No CricHeroes profile found for this name.',
+                  'Registered in JCPL 4. No JCPL Season 1–3 matches found yet.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
               ),
-            )
-          else ...[
-            _HeadlineRow(player: player),
+            ),
             const SizedBox(height: 16),
-            _StatsSection(
+          ],
+          _HeadlineRow(player: player),
+          const SizedBox(height: 16),
+          _StatsSection(
               title: 'Batting',
               rows: [
                 ('Innings', fmtInt(player.batting.innings)),
@@ -98,7 +95,6 @@ class PlayerStatsScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
             ),
-          ],
         ],
       ),
     );

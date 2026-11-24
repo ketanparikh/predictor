@@ -28,12 +28,15 @@ class PlayerStatsService {
     String query,
   ) {
     final q = query.trim().toLowerCase();
+    final allCategories = category == 'All' || category.isEmpty;
     return [
       for (final p in all)
-        if (p.category == category &&
+        if ((allCategories || p.category == category) &&
             (q.isEmpty ||
                 p.name.toLowerCase().contains(q) ||
-                p.cricheroesName.toLowerCase().contains(q)))
+                p.cricheroesName.toLowerCase().contains(q) ||
+                p.skill.toLowerCase().contains(q) ||
+                p.category.toLowerCase().contains(q)))
           p,
     ];
   }

@@ -779,20 +779,20 @@ export const SettingsPage: React.FC = () => {
           <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
             <div className="text-xs font-bold text-rose-400">Database Reset Options</div>
             <p className="text-[11px] text-slate-400">
-              Reload 10 pre-configured demo franchises & 40 players or clear the database.
+              Reload JCPL 4 Mens registrations, or clear the player database.
             </p>
             <div className="flex items-center gap-2 pt-1">
               <button
                 type="button"
                 onClick={() => {
-                  if (window.confirm('Reset everything to official 10-team demo dataset?')) {
+                  if (window.confirm('Reset players to JCPL 4 Mens registrations?')) {
                     resetToDemoData();
                   }
                 }}
                 className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset to Demo Data</span>
+                <span>Reload JCPL 4 Mens</span>
               </button>
 
               <button

@@ -1,6 +1,7 @@
 import bundled from '../data/jcpl4Registrations.json';
-import type { GradeBasePrices, Player } from '../types/auction';
+import type { GradeBasePrices, Player, PlayerGrade } from '../types/auction';
 import type { ParsedPlayerRow } from './excelParser';
+import { calculateRecommendedGrade } from './excelParser';
 import { enrichRowsWithJcplStats } from './jcplStats';
 
 function normalizePhoto(url: string): string {
@@ -25,6 +26,21 @@ export interface Jcpl4Registration {
   cricheroesUrl: string;
   sponsorInterest: string;
   timestamp: string;
+  playerId?: number | null;
+  matches?: number;
+  runs?: number;
+  wickets?: number;
+  average?: number | null;
+  strikeRate?: number | null;
+  highestScore?: string | number;
+  fifties?: number;
+  hundreds?: number;
+  bowlingAverage?: number | null;
+  economyRate?: number | null;
+  bestBowling?: string;
+  catches?: number;
+  stumpings?: number;
+  jcplSeasons?: string[];
 }
 
 function mapCategory(category: string): { gender: string; age: number; ageCategory: string } {
@@ -33,6 +49,20 @@ function mapCategory(category: string): { gender: string; age: number; ageCatego
   if (text.includes('boy')) return { gender: 'Male', age: 13, ageCategory: '15 and Below' };
   if (text.includes('women')) return { gender: 'Female', age: 22, ageCategory: 'Above 15' };
   return { gender: 'Male', age: 28, ageCategory: 'Above 15' };
+}
+
+export function isMensRegistrationCategory(category: string): boolean {
+  const text = String(category || '').toLowerCase();
+  if (text.includes('women') || text.includes('girl') || text.includes('boy')) return false;
+  return text.includes('men');
+}
+
+export function isMensRegistrationRow(row: Pick<ParsedPlayerRow, 'registrationCategory' | 'gender' | 'ageCategory' | 'age'> & { notes?: string }): boolean {
+  if (isMensRegistrationCategory(row.registrationCategory || '')) return true;
+  if (isMensRegistrationCategory(row.notes || '')) return true;
+  const gender = row.gender || 'Male';
+  const ageCategory = row.ageCategory || (row.age <= 15 ? '15 and Below' : 'Above 15');
+  return gender === 'Male' && ageCategory === 'Above 15' && !/\b(women|girl|boys?)\b/i.test(`${row.registrationCategory || ''} ${row.notes || ''}`);
 }
 
 function mapRole(skill: string): ParsedPlayerRow['role'] {
@@ -119,6 +149,7 @@ export function parseJcpl4RegistrationRows(
       stumpings: 0,
       previousPerformance: achievements,
       notes,
+      registrationCategory: category,
       isSponsored,
       sponsorTag: isSponsored ? sponsor : undefined,
       photo,
@@ -130,6 +161,71 @@ export function parseJcpl4RegistrationRows(
   });
 
   return enrichRowsWithJcplStats(rows, prices).rows;
+}
+
+function registrationKey(name: string, place = ''): string {
+  return `${String(name || '').toLowerCase().trim()}|${String(place || '').toLowerCase().replace(/\s+/g, '')}`;
+}
+
+function gradeBasePrice(grade: PlayerGrade, prices: GradeBasePrices): number {
+  if (grade === 'A+') return prices.gradeAPlus || 7000;
+  if (grade === 'A') return prices.gradeA || 5000;
+  if (grade === 'B') return prices.gradeB || 3000;
+  return prices.gradeC || 1000;
+}
+
+function applyBundledCareerStats(
+  rows: ParsedPlayerRow[],
+  records: Jcpl4Registration[],
+  prices: GradeBasePrices,
+): ParsedPlayerRow[] {
+  const byKey = new Map<string, Jcpl4Registration>();
+  const byName = new Map<string, Jcpl4Registration>();
+  for (const record of records) {
+    byKey.set(registrationKey(record.name, `${record.tower || ''}${record.flat || ''}`), record);
+    byName.set(String(record.name || '').toLowerCase().trim(), record);
+  }
+  return rows.map((row) => {
+    const flatNote = String(row.notes || '').match(/flat\s+([a-z0-9 ]+)/i)?.[1] || '';
+    const record =
+      byKey.get(registrationKey(row.name, flatNote)) ||
+      byName.get(String(row.name || '').toLowerCase().trim());
+    const matches = Number(record?.matches || 0);
+    const runs = Number(record?.runs || 0);
+    const wickets = Number(record?.wickets || 0);
+    if (!record || matches + runs + wickets <= 0) return row;
+    const next: ParsedPlayerRow = {
+      ...row,
+      matches,
+      runs,
+      wickets,
+      average: Number(record.average || 0),
+      strikeRate: Number(record.strikeRate || 0),
+      highestScore: Number(String(record.highestScore ?? '').replace(/[^0-9.]/g, '')) || 0,
+      fifties: Number(record.fifties || 0),
+      hundreds: Number(record.hundreds || 0),
+      bowlingAverage: Number(record.bowlingAverage || 0),
+      economyRate: Number(record.economyRate || 0),
+      bestBowling: String(record.bestBowling || row.bestBowling || ''),
+      catches: Number(record.catches || 0),
+      stumpings: Number(record.stumpings || 0),
+      jcplPlayerId: record.playerId || row.jcplPlayerId,
+      jcplSeasons: record.jcplSeasons || row.jcplSeasons,
+      cricheroesProfileUrl:
+        row.cricheroesProfileUrl ||
+        record.cricheroesUrl ||
+        (record.playerId
+          ? `https://cricheroes.com/player-profile/${record.playerId}/player/stats`
+          : undefined),
+    };
+    const rec = calculateRecommendedGrade(next, next.role, next.isCaptain, next.isViceCaptain);
+    return {
+      ...next,
+      grade: rec.grade,
+      gradeReason: rec.reason,
+      basePrice: gradeBasePrice(rec.grade, prices),
+    };
+  });
 }
 
 export function loadBundledJcpl4Registrations(prices: GradeBasePrices): ParsedPlayerRow[] {
@@ -145,7 +241,7 @@ export function loadBundledJcpl4Registrations(prices: GradeBasePrices): ParsedPl
     'Interested in Sponsorship': player.sponsorInterest,
     Timestamp: player.timestamp,
   }));
-  return parseJcpl4RegistrationRows(asRows, prices);
+  return applyBundledCareerStats(parseJcpl4RegistrationRows(asRows, prices), records, prices);
 }
 
 export function parsedRowToPlayer(row: ParsedPlayerRow, index: number, idPrefix = 'jcpl4'): Player {
@@ -155,6 +251,7 @@ export function parsedRowToPlayer(row: ParsedPlayerRow, index: number, idPrefix 
     age: row.age,
     ageCategory: row.ageCategory || (row.age <= 15 ? '15 and Below' : 'Above 15'),
     gender: row.gender || 'Male',
+    category: row.registrationCategory || row.notes?.split(' · ')[0] || undefined,
     experience: row.experience,
     role: row.role,
     battingStyle: row.battingStyle,
@@ -192,8 +289,101 @@ export function parsedRowToPlayer(row: ParsedPlayerRow, index: number, idPrefix 
   };
 }
 
-export function bundledJcpl4AsPlayers(prices: GradeBasePrices): Player[] {
-  return loadBundledJcpl4Registrations(prices).map((row, index) =>
-    parsedRowToPlayer(row, index),
+export function isMensAuctionPlayer(player: Pick<Player, 'category' | 'gender' | 'ageCategory' | 'age' | 'notes'>): boolean {
+  return isMensRegistrationRow({
+    registrationCategory: player.category,
+    gender: player.gender,
+    ageCategory: player.ageCategory,
+    age: player.age,
+    notes: player.notes,
+  });
+}
+
+export function isDemoPlayer(player: Pick<Player, 'id' | 'name' | 'previousPerformance'>): boolean {
+  if (/^ply-\d+$/.test(player.id)) return true;
+  const name = String(player.name || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (name === 'ishant qureshi') return true;
+  return String(player.previousPerformance || '').includes('2025 zonal tournament');
+}
+
+export function shouldReplaceWithMensRoster(players: Player[]): boolean {
+  if (!players.length) return true;
+  if (players.some(isDemoPlayer)) return true;
+  const hasLiveJcplLot = players.some((p) =>
+    !isDemoPlayer(p) && (p.status === 'sold' || p.status === 'in_auction'),
   );
+  if (hasLiveJcplLot) return false;
+  if (players.some((p) => !isMensAuctionPlayer(p))) return true;
+  return false;
+}
+
+export function bundledJcpl4AsPlayers(
+  prices: GradeBasePrices,
+  category: 'mens' | 'all' = 'mens',
+): Player[] {
+  const rows = loadBundledJcpl4Registrations(prices).filter((row) =>
+    category === 'all' ? true : isMensRegistrationRow(row),
+  );
+  return rows.map((row, index) => parsedRowToPlayer(row, index));
+}
+
+function playerNameKey(name: string): string {
+  return String(name || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function careerStatTotal(player: Pick<Player, 'stats'>): number {
+  const stats = player.stats;
+  if (!stats) return 0;
+  return Number(stats.matches || 0) + Number(stats.runs || 0) + Number(stats.wickets || 0);
+}
+
+/** Recalculate A+/A/B/C from current JCPL stats. Captains stay A+. */
+export function regradeAuctionPlayers(players: Player[], prices: GradeBasePrices): Player[] {
+  return players.map((player) => {
+    const rec = calculateRecommendedGrade(
+      player.stats,
+      player.role,
+      player.isCaptain || player.isPreAssignedCaptain,
+      player.isViceCaptain,
+    );
+    const basePrice = gradeBasePrice(rec.grade, prices);
+    if (player.grade === rec.grade && player.basePrice === basePrice) return player;
+    return {
+      ...player,
+      grade: rec.grade,
+      basePrice,
+    };
+  });
+}
+
+/** Keep live auction status, but refresh JCPL Season 1–3 numbers from the bundled stats file. */
+export function mergeBundledCareerStats(
+  players: Player[],
+  prices: GradeBasePrices,
+  category: 'mens' | 'all' = 'mens',
+): Player[] {
+  if (!players.length) return players;
+  const freshByName = new Map(
+    bundledJcpl4AsPlayers(prices, category).map((player) => [playerNameKey(player.name), player]),
+  );
+  return players.map((player) => {
+    const fresh = freshByName.get(playerNameKey(player.name));
+    if (!fresh || careerStatTotal(fresh) <= 0) return player;
+    const sameStats =
+      player.stats?.matches === fresh.stats.matches &&
+      player.stats?.runs === fresh.stats.runs &&
+      player.stats?.wickets === fresh.stats.wickets;
+    if (sameStats && player.jcplPlayerId === fresh.jcplPlayerId) return player;
+    return {
+      ...player,
+      stats: fresh.stats,
+      jcplPlayerId: fresh.jcplPlayerId || player.jcplPlayerId,
+      cricheroesProfileUrl: fresh.cricheroesProfileUrl || player.cricheroesProfileUrl,
+      jcplSeasons: fresh.jcplSeasons || player.jcplSeasons,
+    };
+  });
 }

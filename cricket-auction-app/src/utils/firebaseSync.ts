@@ -105,16 +105,54 @@ export function subscribeAuctionStateFromFirestore(
 }
 
 function excelRosterPlayers() {
-  const rows = (bundledJcpl4 as { players?: Array<{ name?: string; skill?: string; cricheroesUrl?: string }> }).players || [];
+  const rows = ((bundledJcpl4 as { players?: Array<{
+    name?: string;
+    skill?: string;
+    cricheroesUrl?: string;
+    category?: string;
+    playerId?: number | null;
+    matches?: number;
+    runs?: number;
+    wickets?: number;
+    average?: number | null;
+    strikeRate?: number | null;
+    highestScore?: string | number;
+    fifties?: number;
+    hundreds?: number;
+    bowlingAverage?: number | null;
+    economyRate?: number | null;
+    bestBowling?: string;
+    catches?: number;
+    stumpings?: number;
+  }> }).players || [])
+    .filter((row) => {
+      const category = String(row.category || '').toLowerCase();
+      return category.includes('men') && !category.includes('women') && !category.includes('boy') && !category.includes('girl');
+    });
   return rows.map((row, index) => {
     const name = String(row.name || '').trim();
     const hit = findJcplPlayer(name, row.cricheroesUrl);
+    const bundledHasStats = Number(row.matches || 0) + Number(row.runs || 0) + Number(row.wickets || 0) > 0;
     return {
       id: `jcpl4-${index}`,
       name,
-      jcplPlayerId: hit?.playerId || null,
+      jcplPlayerId: row.playerId || hit?.playerId || null,
       jcplSeasons: hit?.seasons.map((s) => `${s.seasonLabel} ${s.category}`) || ['JCPL 4'],
-      stats: hit ? careerToAuctionStats(hit) : {
+      stats: bundledHasStats ? {
+        matches: Number(row.matches || 0),
+        runs: Number(row.runs || 0),
+        average: Number(row.average || 0),
+        strikeRate: Number(row.strikeRate || 0),
+        highestScore: Number(String(row.highestScore ?? '').replace(/[^0-9.]/g, '')) || 0,
+        fifties: Number(row.fifties || 0),
+        hundreds: Number(row.hundreds || 0),
+        wickets: Number(row.wickets || 0),
+        bowlingAverage: Number(row.bowlingAverage || 0),
+        economyRate: Number(row.economyRate || 0),
+        bestBowling: String(row.bestBowling || ''),
+        catches: Number(row.catches || 0),
+        stumpings: Number(row.stumpings || 0),
+      } : hit ? careerToAuctionStats(hit) : {
         matches: 0,
         runs: 0,
         average: 0,

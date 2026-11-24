@@ -6,18 +6,20 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../models/player_stats.dart';
 import '../../services/player_stats_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/game_page.dart';
 import 'player_stats_screen.dart';
 import 'stats_table.dart';
 import 'tournament_stats_screen.dart';
 
 enum StatsCategory {
-  mens('Mens', 'JCPL 4 registered men', Icons.man, AppTheme.electricBlue),
-  womens('Womens', 'JCPL 4 registered women', Icons.woman,
+  all('All', 'JCPL 4 players with JCPL Season 1–3 stats only', Icons.groups, AppTheme.primaryColor),
+  mens('Mens', 'JCPL 4 men · JCPL tournament stats only', Icons.man, AppTheme.electricBlue),
+  womens('Womens', 'JCPL 4 women · JCPL tournament stats only', Icons.woman,
       AppTheme.accentColor),
-  boys('Boys', 'JCPL 4 registered boys', Icons.boy, AppTheme.cricketOrange),
-  girls('Girls', 'JCPL 4 registered girls', Icons.girl,
+  boys('Boys', 'JCPL 4 boys · JCPL tournament stats only', Icons.boy, AppTheme.cricketOrange),
+  girls('Girls', 'JCPL 4 girls · JCPL tournament stats only', Icons.girl,
       AppTheme.secondaryColor),
-  tournament('Tournament', 'Overall tournament records & leaders',
+  tournament('Tournament', 'JCPL season scorecards and leaders',
       Icons.emoji_events, AppTheme.primaryColor);
 
   final String label;
@@ -33,32 +35,48 @@ class StatsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 12),
-          child: Text(
-            'STATS',
-            style: GoogleFonts.barlowCondensed(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1,
-              color: AppTheme.primaryColor,
+    return FutureBuilder<List<PlayerStats>>(
+      future: PlayerStatsService.load(),
+      builder: (context, snapshot) {
+        final players = snapshot.data ?? const <PlayerStats>[];
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 12),
+              child: Text(
+                'STATS',
+                style: GoogleFonts.barlowCondensed(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
             ),
-          ),
-        ),
-        for (final category in StatsCategory.values)
-          _StatsCategoryCard(category: category),
-      ],
+            for (final category in StatsCategory.values)
+              _StatsCategoryCard(
+                category: category,
+                count: category == StatsCategory.tournament
+                    ? null
+                    : PlayerStatsService.inCategory(
+                        players,
+                        category.label,
+                        '',
+                      ).length,
+              ),
+          ],
+        );
+      },
     );
   }
 }
 
 class _StatsCategoryCard extends StatelessWidget {
   final StatsCategory category;
+  final int? count;
 
-  const _StatsCategoryCard({required this.category});
+  const _StatsCategoryCard({required this.category, this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +115,9 @@ class _StatsCategoryCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      category.subtitle,
+                      count == null
+                          ? category.subtitle
+                          : '$count players · ${category.subtitle}',
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey.shade600,
@@ -189,7 +209,7 @@ class _StatsCategoryScreenState extends State<StatsCategoryScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                 child: Text(
-                  '${players.length} player${players.length == 1 ? '' : 's'} · A–Z · JCPL 4 registrations',
+                  '${players.length} player${players.length == 1 ? '' : 's'} · A–Z · JCPL Seasons 1–3 stats only',
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ),
@@ -223,6 +243,10 @@ class _StatsCategoryScreenState extends State<StatsCategoryScreen> {
                                         return StatsTableRow(
                                           player: player,
                                           striped: i.isOdd,
+                                          subtitle: widget.category ==
+                                                  StatsCategory.all
+                                              ? player.category
+                                              : player.skill,
                                           onTap: () =>
                                               Navigator.of(context).push(
                                             MaterialPageRoute(
@@ -250,11 +274,6 @@ class _StatsCategoryScreenState extends State<StatsCategoryScreen> {
   }
 
   PreferredSizeWidget _appBar() {
-    return AppBar(
-      flexibleSpace: Container(
-        decoration: const BoxDecoration(gradient: AppTheme.stadiumGradient),
-      ),
-      title: Text('${widget.category.label} Stats'),
-    );
+    return GameAppBar(title: '${widget.category.label} Stats');
   }
 }

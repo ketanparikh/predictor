@@ -8,6 +8,7 @@ export interface ParsedPlayerRow {
   age: number;
   ageCategory?: string; // e.g. "15 and Below" | "Above 15"
   gender?: string; // e.g. "Male" | "Female"
+  registrationCategory?: string; // e.g. "Men (Age : 15+ years)"
   experience: number;
   role: PlayerRole;
   battingStyle: BattingStyle;

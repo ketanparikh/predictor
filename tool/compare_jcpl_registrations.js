@@ -17,7 +17,11 @@ const ROOT = path.resolve(__dirname, '..');
 const XLSX = require(path.join(ROOT, 'cricket-auction-app/node_modules/xlsx'));
 
 const FILE_S3 = path.join(ROOT, 'assets/JCPL 3 Registration Form (Responses) (4).xlsx');
-const FILE_S4 = path.join(ROOT, 'assets/JCPL 4 Registeration (Responses).xlsx');
+const FILE_S4_CANDIDATES = [
+  path.join(ROOT, 'assets/JCPL 4 Registeration.xlsx'),
+  path.join(ROOT, 'assets/JCPL 4 Registeration (Responses).xlsx'),
+];
+const FILE_S4 = FILE_S4_CANDIDATES.find((file) => fs.existsSync(file));
 
 function normalizeName(name) {
   return String(name || '')

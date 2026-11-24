@@ -379,12 +379,12 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
             <button
               onClick={() => {
                 resetToDemoData();
-                showNotification('Loaded 100 tournament players!');
+                showNotification('Loaded JCPL 4 Mens registrations.');
               }}
               className="px-4 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 font-mono text-xs transition-colors flex items-center gap-1.5"
             >
               <RefreshCw className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Load 100 Sample Players</span>
+              <span>Load JCPL 4 Mens Players</span>
             </button>
           </div>
         </div>

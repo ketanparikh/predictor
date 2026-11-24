@@ -7,6 +7,7 @@ import '../../models/player_stats.dart';
 import '../../models/tournament_stats.dart';
 import '../../services/tournament_stats_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/game_page.dart';
 import 'player_stats_screen.dart';
 import 'stats_table.dart';
 
@@ -16,12 +17,7 @@ class TournamentStatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(gradient: AppTheme.stadiumGradient),
-        ),
-        title: const Text('Tournament Stats'),
-      ),
+      appBar: const GameAppBar(title: 'Tournament Stats'),
       body: FutureBuilder<TournamentCatalog>(
         future: TournamentStatsService.loadCatalog(),
         builder: (context, snapshot) {
@@ -45,7 +41,7 @@ class TournamentStatsScreen extends StatelessWidget {
                   return _NavCard(
                     title: 'JCPL 4 registrations',
                     subtitle:
-                        '${auctionPlayers.length} players from the JCPL 4 Excel form',
+                        '${auctionPlayers.length} JCPL 4 players with Season 1–3 stats only',
                     icon: Icons.gavel,
                     color: AppTheme.cricketOrange,
                     onTap: () => Navigator.of(context).push(
@@ -96,12 +92,7 @@ class TournamentSeasonScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(gradient: AppTheme.stadiumGradient),
-        ),
-        title: Text(season.label),
-      ),
+      appBar: GameAppBar(title: season.label),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -166,11 +157,8 @@ class _TournamentCategoryScreenState extends State<TournamentCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(gradient: AppTheme.stadiumGradient),
-        ),
-        title: Text('${widget.season.label} ${widget.category.label}'),
+      appBar: GameAppBar(
+        title: '${widget.season.label} ${widget.category.label}',
       ),
       body: FutureBuilder<TournamentStats>(
         future: _future,
@@ -813,12 +801,7 @@ class AuctionRosterStatsScreen extends StatelessWidget {
       return '${a['name']}'.toLowerCase().compareTo('${b['name']}'.toLowerCase());
     });
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(gradient: AppTheme.stadiumGradient),
-        ),
-        title: const Text('JCPL 4 registrations'),
-      ),
+      appBar: const GameAppBar(title: 'JCPL 4 registrations'),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: sorted.length,

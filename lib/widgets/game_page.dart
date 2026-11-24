@@ -40,11 +40,7 @@ class GameAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.white),
         tooltip: 'Back',
-        onPressed: () {
-          if (Navigator.of(context).canPop()) {
-            Navigator.of(context).pop();
-          }
-        },
+        onPressed: () => Navigator.of(context).maybePop(),
       ),
       title: Text(
         title,

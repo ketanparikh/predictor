@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Build JCPL 4 stats from the Excel registrations, keeping Excel names
- * and attaching matched career/tournament stats from prior seasons.
+ * and attaching JCPL Season 1–3 tournament stats only (no outside career).
  *
  * Usage: node tool/build_jcpl4_player_stats.js
  */
@@ -11,7 +11,11 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const XLSX = require(path.join(ROOT, 'cricket-auction-app/node_modules/xlsx'));
 
-const FILE_S4 = path.join(ROOT, 'assets/JCPL 4 Registeration (Responses).xlsx');
+const FILE_S4_CANDIDATES = [
+  path.join(ROOT, 'assets/JCPL 4 Registeration.xlsx'),
+  path.join(ROOT, 'assets/JCPL 4 Registeration (Responses).xlsx'),
+];
+const FILE_S4 = FILE_S4_CANDIDATES.find((file) => fs.existsSync(file));
 const FILE_S3_STATS = path.join(ROOT, 'assets/config/jcpl3_player_stats.json');
 const FILE_INDEX = path.join(ROOT, 'cricket-auction-app/src/data/jcplPlayerIndex.json');
 const OUT_STATS = path.join(ROOT, 'assets/config/jcpl4_player_stats.json');
@@ -20,6 +24,8 @@ const OUT_MAP = path.join(ROOT, 'assets/config/jcpl_s4_name_map.json');
 const AUCTION_REGS = path.join(ROOT, 'cricket-auction-app/src/data/jcpl4Registrations.json');
 
 const NAME_ALIASES = {
+  'akshay': 'akshay pore',
+  'aaryan mandar joshi': 'aaryan joshi',
   'hrishikesh baradkar': 'hrishi jade jcpl',
   'medha vivek pawar': 'adv medha pawar jade',
   'pankaj': 'pankaj guglani',
@@ -154,38 +160,223 @@ function findInList(name, url, items, namesOf) {
   const lastMatches = items.filter((item) =>
     namesOf(item).some((n) => {
       const t = tokens(n);
-      return t[t.length - 1] === last && (t[0] === first || t[0]?.[0] === first[0]);
+      return t[t.length - 1] === last && (t[0] === first || (first.length <= 2 && t[0]?.[0] === first[0]));
     }),
   );
   if (lastMatches.length === 1) return lastMatches[0];
   return null;
 }
 
-function careerToPlayerShape(career) {
+function parseOversToBalls(overs) {
+  const match = String(overs || '').trim().match(/^(\d+)(?:\.(\d+))?/);
+  if (!match) return 0;
+  return Number(match[1]) * 6 + Number(match[2] || 0);
+}
+
+function ballsToOvers(balls) {
+  if (!balls) return '';
+  return `${Math.floor(balls / 6)}.${balls % 6}`;
+}
+
+function round2(value) {
+  return Math.round(value * 100) / 100;
+}
+
+function highScoreValue(score) {
+  const value = Number(String(score || '').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(value) ? value : 0;
+}
+
+function betterHighScore(current, next) {
+  const currentValue = highScoreValue(current);
+  const nextValue = highScoreValue(next);
+  if (nextValue > currentValue) return next || '';
+  if (currentValue > nextValue) return current || '';
+  if (String(next || '').includes('*') && !String(current || '').includes('*')) return next || '';
+  return current || next || '';
+}
+
+function betterBestBowling(current, next) {
+  const parse = (text) => {
+    const match = String(text || '').match(/(\d+)\s*\/\s*(\d+)/);
+    return match ? { wickets: Number(match[1]), runs: Number(match[2]) } : null;
+  };
+  const currentBest = parse(current);
+  const nextBest = parse(next);
+  if (!nextBest) return current || '';
+  if (!currentBest) return next || '';
+  if (nextBest.wickets > currentBest.wickets) return next;
+  if (nextBest.wickets === currentBest.wickets && nextBest.runs < currentBest.runs) return next;
+  return current;
+}
+
+function emptyAcc() {
   return {
-    matches: career.matches || 0,
+    matches: 0,
+    batting: {
+      innings: 0, notOut: 0, runs: 0, balls: 0, highScore: '',
+      thirties: 0, fifties: 0, hundreds: 0, fours: 0, sixes: 0, ducks: 0, won: 0, loss: 0,
+    },
+    bowling: {
+      innings: 0, balls: 0, maidens: 0, wickets: 0, runs: 0, best: '',
+      threeWickets: 0, fiveWickets: 0, dots: 0, wides: 0, noBalls: 0, fours: 0, sixes: 0,
+    },
+    fielding: { catches: 0, caughtBehind: 0, runOuts: 0, stumpings: 0, assistedRunOuts: 0 },
+    seasons: [],
+  };
+}
+
+function addSeasonPlayer(acc, player, seasonLabel) {
+  const batting = player.batting || {};
+  const bowling = player.bowling || {};
+  const fielding = player.fielding || {};
+  acc.matches += Number(player.matches || 0);
+  acc.batting.innings += Number(batting.innings || 0);
+  acc.batting.notOut += Number(batting.notOut || 0);
+  acc.batting.runs += Number(batting.runs || 0);
+  acc.batting.balls += Number(batting.balls || 0);
+  acc.batting.highScore = betterHighScore(acc.batting.highScore, batting.highScore);
+  acc.batting.thirties += Number(batting.thirties || 0);
+  acc.batting.fifties += Number(batting.fifties || 0);
+  acc.batting.hundreds += Number(batting.hundreds || 0);
+  acc.batting.fours += Number(batting.fours || 0);
+  acc.batting.sixes += Number(batting.sixes || 0);
+  acc.batting.ducks += Number(batting.ducks || 0);
+  acc.batting.won += Number(batting.won || 0);
+  acc.batting.loss += Number(batting.loss || 0);
+  acc.bowling.innings += Number(bowling.innings || 0);
+  acc.bowling.balls += parseOversToBalls(bowling.overs);
+  acc.bowling.maidens += Number(bowling.maidens || 0);
+  acc.bowling.wickets += Number(bowling.wickets || 0);
+  acc.bowling.runs += Number(bowling.runs || 0);
+  acc.bowling.best = betterBestBowling(acc.bowling.best, bowling.best);
+  acc.bowling.threeWickets += Number(bowling.threeWickets || 0);
+  acc.bowling.fiveWickets += Number(bowling.fiveWickets || 0);
+  acc.bowling.dots += Number(bowling.dots || 0);
+  acc.bowling.wides += Number(bowling.wides || 0);
+  acc.bowling.noBalls += Number(bowling.noBalls || 0);
+  acc.bowling.fours += Number(bowling.fours || 0);
+  acc.bowling.sixes += Number(bowling.sixes || 0);
+  acc.fielding.catches += Number(fielding.catches || 0);
+  acc.fielding.caughtBehind += Number(fielding.caughtBehind || 0);
+  acc.fielding.runOuts += Number(fielding.runOuts || 0);
+  acc.fielding.stumpings += Number(fielding.stumpings || 0);
+  acc.fielding.assistedRunOuts += Number(fielding.assistedRunOuts || 0);
+  if (seasonLabel) acc.seasons.push(seasonLabel);
+}
+
+function finalizeAcc(acc) {
+  const battingOuts = acc.batting.innings - acc.batting.notOut;
+  return {
+    matches: acc.matches,
     batting: {
       ...emptyBatting(),
-      runs: career.runs || 0,
-      highScore: career.highestScore || '',
-      avg: career.average || null,
-      sr: career.strikeRate || null,
-      fifties: career.fifties || 0,
-      hundreds: career.hundreds || 0,
+      innings: acc.batting.innings || null,
+      notOut: acc.batting.notOut || null,
+      runs: acc.batting.runs,
+      highScore: acc.batting.highScore || '',
+      avg: battingOuts > 0 ? round2(acc.batting.runs / battingOuts) : null,
+      sr: acc.batting.balls > 0 ? round2((acc.batting.runs / acc.batting.balls) * 100) : null,
+      thirties: acc.batting.thirties,
+      fifties: acc.batting.fifties,
+      hundreds: acc.batting.hundreds,
+      fours: acc.batting.fours,
+      sixes: acc.batting.sixes,
+      ducks: acc.batting.ducks,
+      won: acc.batting.won,
+      loss: acc.batting.loss,
     },
     bowling: {
       ...emptyBowling(),
-      wickets: career.wickets || 0,
-      best: career.bestBowling || '',
-      economy: career.economyRate || null,
-      avg: career.bowlingAverage || null,
+      innings: acc.bowling.innings || null,
+      overs: ballsToOvers(acc.bowling.balls),
+      maidens: acc.bowling.maidens,
+      wickets: acc.bowling.wickets,
+      runs: acc.bowling.runs,
+      best: acc.bowling.best || '',
+      threeWickets: acc.bowling.threeWickets,
+      fiveWickets: acc.bowling.fiveWickets,
+      economy: acc.bowling.balls > 0 ? round2(acc.bowling.runs / (acc.bowling.balls / 6)) : null,
+      sr: acc.bowling.wickets > 0 ? round2(acc.bowling.balls / acc.bowling.wickets) : null,
+      avg: acc.bowling.wickets > 0 ? round2(acc.bowling.runs / acc.bowling.wickets) : null,
+      wides: acc.bowling.wides,
+      noBalls: acc.bowling.noBalls,
+      dots: acc.bowling.dots,
+      fours: acc.bowling.fours,
+      sixes: acc.bowling.sixes,
     },
     fielding: {
       ...emptyFielding(),
-      catches: career.catches || 0,
-      stumpings: career.stumpings || 0,
+      catches: acc.fielding.catches,
+      caughtBehind: acc.fielding.caughtBehind,
+      runOuts: acc.fielding.runOuts,
+      stumpings: acc.fielding.stumpings,
+      assistedRunOuts: acc.fielding.assistedRunOuts,
     },
   };
+}
+
+function indexSeasonsToShape(seasons) {
+  const acc = emptyAcc();
+  for (const season of seasons || []) {
+    addSeasonPlayer(acc, {
+      matches: season.matches,
+      batting: {
+        runs: season.runs,
+        highScore: season.highestScore,
+        fifties: season.fifties,
+        hundreds: season.hundreds,
+      },
+      bowling: {
+        wickets: season.wickets,
+        best: season.bestBowling,
+      },
+      fielding: {
+        catches: season.catches,
+        stumpings: season.stumpings,
+      },
+    }, `${season.seasonLabel} ${season.category}`);
+  }
+  const shape = finalizeAcc(acc);
+  const withAvg = seasons.find((season) => Number(season.average) > 0);
+  const withSr = seasons.find((season) => Number(season.strikeRate) > 0);
+  const withBowlAvg = seasons.find((season) => Number(season.bowlingAverage) > 0);
+  const withEcon = seasons.find((season) => Number(season.economyRate) > 0);
+  if (shape.batting.avg == null && withAvg) shape.batting.avg = withAvg.average;
+  if (shape.batting.sr == null && withSr) shape.batting.sr = withSr.strikeRate;
+  if (shape.bowling.avg == null && withBowlAvg) shape.bowling.avg = withBowlAvg.bowlingAverage;
+  if (shape.bowling.economy == null && withEcon) shape.bowling.economy = withEcon.economyRate;
+  return { shape, seasons: acc.seasons };
+}
+
+function loadJcplSeasonPlayers() {
+  const files = [
+    ['s1', 'mens', 'assets/config/jcpl_s1_mens.json'],
+    ['s1', 'womens', 'assets/config/jcpl_s1_womens.json'],
+    ['s1', 'boys', 'assets/config/jcpl_s1_boys.json'],
+    ['s2', 'mens', 'assets/config/jcpl_s2_mens.json'],
+    ['s2', 'womens', 'assets/config/jcpl_s2_womens.json'],
+    ['s2', 'boys', 'assets/config/jcpl_s2_boys.json'],
+    ['s3', 'mens', 'assets/config/jcpl_s3_mens.json'],
+    ['s3', 'womens', 'assets/config/jcpl_s3_womens.json'],
+    ['s3', 'boys', 'assets/config/jcpl_s3_boys.json'],
+    ['s3', 'girls', 'assets/config/jcpl_s3_girls.json'],
+  ];
+  const byId = new Map();
+  for (const [seasonId, category, relative] of files) {
+    const filePath = path.join(ROOT, relative);
+    if (!fs.existsSync(filePath)) continue;
+    const payload = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const label = `${payload.name || `Season ${seasonId}`} ${category}`;
+    for (const player of payload.players || []) {
+      const id = Number(player.playerId);
+      if (!id) continue;
+      const list = byId.get(id) || [];
+      list.push({ ...player, _seasonLabel: label });
+      byId.set(id, list);
+    }
+  }
+  return byId;
 }
 
 function writeJson(filePath, data) {
@@ -193,8 +384,8 @@ function writeJson(filePath, data) {
 }
 
 function main() {
-  if (!fs.existsSync(FILE_S4)) {
-    throw new Error(`Missing Excel: ${FILE_S4}`);
+  if (!FILE_S4 || !fs.existsSync(FILE_S4)) {
+    throw new Error('Missing Excel: JCPL 4 Registeration.xlsx');
   }
   const wb = XLSX.readFile(FILE_S4);
   const rawRows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {
@@ -213,6 +404,7 @@ function main() {
 
   const s3Stats = JSON.parse(fs.readFileSync(FILE_S3_STATS, 'utf8')).players || [];
   const indexPlayers = JSON.parse(fs.readFileSync(FILE_INDEX, 'utf8')).players || [];
+  const seasonPlayersById = loadJcplSeasonPlayers();
 
   const registrations = [];
   const players = [];
@@ -236,25 +428,34 @@ function main() {
 
     const s3Hit = findInList(name, cricheroesUrl, s3Stats, (p) => [p.name, p.cricheroesName]);
     const indexHit = findInList(name, cricheroesUrl, indexPlayers, (p) => p.names || []);
-    const statsShape = s3Hit
-      ? {
-          matches: s3Hit.matches ?? 0,
-          batting: { ...emptyBatting(), ...(s3Hit.batting || {}) },
-          bowling: { ...emptyBowling(), ...(s3Hit.bowling || {}) },
-          fielding: { ...emptyFielding(), ...(s3Hit.fielding || {}) },
-        }
-      : indexHit
-        ? careerToPlayerShape(indexHit.career || {})
-        : {
-            matches: 0,
-            batting: emptyBatting(),
-            bowling: emptyBowling(),
-            fielding: emptyFielding(),
-          };
+    const playerId = s3Hit?.playerId || indexHit?.playerId || extractCricHeroesId(cricheroesUrl);
+    const seasonRows = playerId ? (seasonPlayersById.get(Number(playerId)) || []) : [];
+    let statsShape;
+    let jcplSeasons = [];
+    if (seasonRows.length) {
+      const acc = emptyAcc();
+      for (const row of seasonRows) addSeasonPlayer(acc, row, row._seasonLabel);
+      if (acc.batting.fifties === 0 && acc.batting.hundreds === 0 && indexHit?.seasons) {
+        acc.batting.fifties = indexHit.seasons.reduce((sum, season) => sum + Number(season.fifties || 0), 0);
+        acc.batting.hundreds = indexHit.seasons.reduce((sum, season) => sum + Number(season.hundreds || 0), 0);
+      }
+      statsShape = finalizeAcc(acc);
+      jcplSeasons = acc.seasons;
+    } else if (indexHit?.seasons?.length) {
+      const fromIndex = indexSeasonsToShape(indexHit.seasons);
+      statsShape = fromIndex.shape;
+      jcplSeasons = fromIndex.seasons;
+    } else {
+      statsShape = {
+        matches: 0,
+        batting: emptyBatting(),
+        bowling: emptyBowling(),
+        fielding: emptyFielding(),
+      };
+    }
 
-    const playerId = s3Hit?.playerId || indexHit?.playerId || null;
     const cricheroesName = s3Hit?.cricheroesName || s3Hit?.name || (indexHit?.names || [])[0] || '';
-    const matched = !!(s3Hit || indexHit);
+    const matched = seasonRows.length > 0 || !!(indexHit?.seasons || []).length;
     if (matched) counts.matched += 1;
     counts[mapped.label] += 1;
 
@@ -277,6 +478,21 @@ function main() {
       cricheroesUrl,
       sponsorInterest: sponsor,
       timestamp,
+      playerId,
+      matches: statsShape.matches || 0,
+      runs: statsShape.batting.runs || 0,
+      wickets: statsShape.bowling.wickets || 0,
+      average: statsShape.batting.avg ?? null,
+      strikeRate: statsShape.batting.sr ?? null,
+      highestScore: statsShape.batting.highScore || '',
+      fifties: statsShape.batting.fifties || 0,
+      hundreds: statsShape.batting.hundreds || 0,
+      bowlingAverage: statsShape.bowling.avg ?? null,
+      economyRate: statsShape.bowling.economy ?? null,
+      bestBowling: statsShape.bowling.best || '',
+      catches: statsShape.fielding.catches || 0,
+      stumpings: statsShape.fielding.stumpings || 0,
+      jcplSeasons,
     });
 
     players.push({
@@ -307,14 +523,14 @@ function main() {
 
   const generatedAt = new Date().toISOString();
   const statsPayload = {
-    source: 'JCPL 4 Registeration (Responses).xlsx + matched JCPL career stats',
+    source: `${path.basename(FILE_S4)} + JCPL Season 1–3 tournament stats only`,
     generatedAt,
     playerCount: players.length,
     matchedCount: counts.matched,
     players,
   };
   const regsPayload = {
-    source: 'JCPL 4 Registeration (Responses).xlsx',
+    source: path.basename(FILE_S4),
     generatedAt,
     playerCount: registrations.length,
     players: registrations,
@@ -362,7 +578,7 @@ function main() {
       ground: 'Jade City',
       overall: {
         Players: String(list.length),
-        Source: 'JCPL 4 registrations',
+        Source: 'JCPL 4 registrations with Season 1–3 JCPL stats only',
       },
       teams: [],
       matches: [],

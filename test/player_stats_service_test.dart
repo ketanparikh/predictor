@@ -5,12 +5,15 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('loads JCPL3 stats A-Z and finds a player by search', () async {
+  test('loads JCPL4 stats A-Z and finds a player by search', () async {
     final all = await PlayerStatsService.load();
-    expect(all.length, 175);
+    expect(all.length, 171);
+
+    final everyone = PlayerStatsService.inCategory(all, 'All', '');
+    expect(everyone.length, 171);
 
     final mens = PlayerStatsService.inCategory(all, 'Mens', '');
-    expect(mens.length, 104);
+    expect(mens.length, 100);
     for (var i = 1; i < mens.length; i++) {
       expect(
         mens[i - 1].name.toLowerCase().compareTo(mens[i].name.toLowerCase()) <= 0,
@@ -24,17 +27,31 @@ void main() {
     expect(ketan.single.name, 'Ketan Parikh');
     expect(ketan.single.matches, 11);
     expect(ketan.single.bowling.wickets, 7);
+
+    final vivek = PlayerStatsService.inCategory(all, 'Mens', 'vivek vichare');
+    expect(vivek, hasLength(1));
+    expect(vivek.single.matches, 7);
+    expect(vivek.single.batting.runs, 20);
+    expect(vivek.single.bowling.wickets, 7);
+
+    final aayush = PlayerStatsService.inCategory(all, 'Mens', 'aayush asawa');
+    expect(aayush, hasLength(1));
+    expect(aayush.single.matches, 9);
+    expect(aayush.single.batting.runs, 23);
+    expect(aayush.single.bowling.wickets, 5);
   });
 
   test('tournament catalog has seasons and no girls in season 1-2', () async {
     final catalog = await TournamentStatsService.loadCatalog();
     expect(catalog.seasons.map((s) => s.label).toList(),
-        ['Season 1', 'Season 2', 'Season 3']);
+        ['Season 4', 'Season 1', 'Season 2', 'Season 3']);
     expect(catalog.seasons[0].categories.map((c) => c.id).toList(),
-        ['mens', 'womens', 'boys']);
+        ['mens', 'womens', 'boys', 'girls']);
     expect(catalog.seasons[1].categories.map((c) => c.id).toList(),
         ['mens', 'womens', 'boys']);
     expect(catalog.seasons[2].categories.map((c) => c.id).toList(),
+        ['mens', 'womens', 'boys']);
+    expect(catalog.seasons[3].categories.map((c) => c.id).toList(),
         ['mens', 'womens', 'boys', 'girls']);
   });
 

@@ -8,12 +8,12 @@ import {
   calculateRecommendedGrade,
   normalizePhotoUrl,
 } from '../utils/excelParser';
-import { parseCricHeroesHtml } from '../utils/cricheroesParser';
 import { enrichRowsWithJcplStats } from '../utils/jcplStats';
 import {
   isJcpl4RegistrationSheet,
   loadBundledJcpl4Registrations,
   parseJcpl4RegistrationRows,
+  isMensRegistrationRow,
 } from '../utils/jcpl4Registrations';
 import * as XLSX from 'xlsx';
 import { PlayerRole, PlayerGrade } from '../types/auction';
@@ -41,7 +41,6 @@ import {
   Star,
   Tag,
   Hash,
-  Zap,
 } from 'lucide-react';
 
 interface ExcelImportPageProps {
@@ -92,6 +91,10 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
     }),
     [rules.gradeBasePrices],
   );
+  const bundledMensRows = React.useMemo(
+    () => bundledRows.filter(isMensRegistrationRow),
+    [bundledRows],
+  );
 
   const [parsedRows, setParsedRows] = useState<ParsedPlayerRow[]>(() => (
     initialExcelSession?.parsedRows?.length ? initialExcelSession.parsedRows : bundledRows
@@ -100,23 +103,19 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
     new Set(
       initialExcelSession?.selectedIndices?.length
         ? initialExcelSession.selectedIndices
-        : bundledRows.map((row) => row.rawIndex),
+        : bundledMensRows.map((row) => row.rawIndex),
     ),
   );
   const [fileName, setFileName] = useState<string>(
-    initialExcelSession?.fileName || 'JCPL 4 Registeration (Responses).xlsx',
+    initialExcelSession?.fileName || 'JCPL 4 Registeration.xlsx',
   );
-  const [replaceExisting, setReplaceExisting] = useState<boolean>(false);
+  const [replaceExisting, setReplaceExisting] = useState<boolean>(true);
   const [importSuccessMessage, setImportSuccessMessage] = useState<string | null>(null);
 
-  // Stats Fetching state
-  const [isFetchingStats, setIsFetchingStats] = useState(false);
-  const [fetchProgress, setFetchProgress] = useState(0);
-
   // Filter states
-  const [activePreset, setActivePreset] = useState<PresetType>(initialExcelSession?.activePreset || 'all');
-  const [genderFilter, setGenderFilter] = useState<'all' | 'Male' | 'Female'>(initialExcelSession?.genderFilter || 'all');
-  const [ageGroupFilter, setAgeGroupFilter] = useState<'all' | 'Above 15' | '15 and Below'>(initialExcelSession?.ageGroupFilter || 'all');
+  const [activePreset, setActivePreset] = useState<PresetType>(initialExcelSession?.activePreset || 'males_above_15');
+  const [genderFilter, setGenderFilter] = useState<'all' | 'Male' | 'Female'>(initialExcelSession?.genderFilter || 'Male');
+  const [ageGroupFilter, setAgeGroupFilter] = useState<'all' | 'Above 15' | '15 and Below'>(initialExcelSession?.ageGroupFilter || 'Above 15');
   const [roleFilter, setRoleFilter] = useState<'all' | PlayerRole>(initialExcelSession?.roleFilter || 'all');
   const [gradeFilter, setGradeFilter] = useState<GradeFilterType>(initialExcelSession?.gradeFilter || 'all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -159,24 +158,28 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
           const workbook = XLSX.read(buffer, { type: 'array' });
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
           const rawRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: '' });
-          const rows = isJcpl4RegistrationSheet(rawRows)
+          const isJcpl4 = isJcpl4RegistrationSheet(rawRows);
+          const rows = isJcpl4
             ? parseJcpl4RegistrationRows(rawRows, gradeBasePrices)
             : enrichRowsWithJcplStats(parseExcelOrCsv(buffer, gradeBasePrices), gradeBasePrices).rows;
-          const matched = rows.filter((row) => row.jcplMatched).length;
+          const mensRows = isJcpl4 ? rows.filter(isMensRegistrationRow) : rows;
+          const matched = mensRows.filter((row) => row.jcplMatched).length;
           setParsedRows(rows);
           if (matched > 0) {
             setImportSuccessMessage(
-              `Matched JCPL tournament stats for ${matched} of ${rows.length} players.`,
+              isJcpl4
+                ? `Loaded ${mensRows.length} JCPL 4 Mens players. Matched stats for ${matched}.`
+                : `Matched JCPL tournament stats for ${matched} of ${rows.length} players.`,
             );
           }
-          // Select all parsed rows by default initially
-          setSelectedIndices(new Set(rows.map(r => r.rawIndex)));
-          setActivePreset('all');
-          setGenderFilter('all');
-          setAgeGroupFilter('all');
+          setSelectedIndices(new Set(mensRows.map(r => r.rawIndex)));
+          setActivePreset(isJcpl4 ? 'males_above_15' : 'all');
+          setGenderFilter(isJcpl4 ? 'Male' : 'all');
+          setAgeGroupFilter(isJcpl4 ? 'Above 15' : 'all');
           setRoleFilter('all');
           setGradeFilter('all');
           setSearchQuery('');
+          if (isJcpl4) setReplaceExisting(true);
         } catch (err) {
           alert('Failed to parse file. Please ensure it is a valid Excel (.xlsx, .xls) or .csv file.');
         }
@@ -241,10 +244,7 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
     } else if (preset === 'males_above_15') {
       newGender = 'Male';
       newAge = 'Above 15';
-      const matches = parsedRows.filter(r =>
-        (r.gender || 'Male') === 'Male' &&
-        (r.ageCategory || (r.age <= 15 ? '15 and Below' : 'Above 15')) === 'Above 15'
-      );
+      const matches = parsedRows.filter(isMensRegistrationRow);
       setSelectedIndices(new Set(matches.map(r => r.rawIndex)));
     } else if (preset === 'females') {
       newGender = 'Female';
@@ -468,95 +468,6 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
     );
   };
 
-  // Real CricHeroes stats fetch based on account / profile link (Requirement 1)
-  const handleBulkStatsFetch = async () => {
-    if (parsedRows.length === 0) return;
-
-    // Check which rows have a CricHeroes profile link
-    const rowsWithLinks = parsedRows.filter(
-      r => r.cricheroesProfileUrl && r.cricheroesProfileUrl.trim().length > 0
-    );
-
-    if (rowsWithLinks.length === 0) {
-      alert(
-        'No CricHeroes account links found in the imported roster.\n\nPlease ensure your Excel file includes a "CricHeroes Profile" column with valid profile links (e.g. https://chshare.link/... or cricheroes.in/...) before fetching stats.'
-      );
-      return;
-    }
-
-    setIsFetchingStats(true);
-    setFetchProgress(10);
-
-    let successCount = 0;
-    let failCount = 0;
-
-    const updatedRows = [...parsedRows];
-
-    for (let i = 0; i < updatedRows.length; i++) {
-      const r = updatedRows[i];
-      const link = r.cricheroesProfileUrl?.trim();
-
-      if (link && (link.includes('chshare.link') || link.includes('cricheroes.') || link.includes('cricheroes/'))) {
-        try {
-          const resp = await fetch('/api/fetch-cricheroes', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ urlOrId: link }),
-          });
-
-          const data = await resp.json();
-          if (resp.ok && data.success && data.html) {
-            const parsed = parseCricHeroesHtml(data.html);
-            const pStats = parsed.player.stats;
-
-            const rec = calculateRecommendedGrade(pStats, r.role, r.isCaptain, r.isViceCaptain);
-            let newBp = gradeBasePrices.gradeC;
-            if (rec.grade === 'A+') newBp = gradeBasePrices.gradeAPlus || 7000;
-            else if (rec.grade === 'A') newBp = gradeBasePrices.gradeA || 5000;
-            else if (rec.grade === 'B') newBp = gradeBasePrices.gradeB || 3000;
-            else newBp = gradeBasePrices.gradeC || 1000;
-
-            updatedRows[i] = {
-              ...r,
-              matches: pStats.matches || r.matches,
-              runs: pStats.runs || r.runs,
-              average: pStats.average || r.average,
-              strikeRate: pStats.strikeRate || r.strikeRate,
-              highestScore: pStats.highestScore || r.highestScore,
-              fifties: pStats.fifties || r.fifties,
-              hundreds: pStats.hundreds || r.hundreds,
-              wickets: pStats.wickets || r.wickets,
-              bowlingAverage: pStats.bowlingAverage || r.bowlingAverage,
-              economyRate: pStats.economyRate || r.economyRate,
-              bestBowling: pStats.bestBowling || r.bestBowling,
-              catches: pStats.catches || r.catches,
-              stumpings: pStats.stumpings || r.stumpings,
-              photo: r.photo || (parsed.player.photo ? normalizePhotoUrl(parsed.player.photo) : undefined),
-              grade: rec.grade,
-              gradeReason: `CricHeroes Official: ${rec.reason}`,
-              basePrice: newBp,
-            };
-            successCount++;
-          } else {
-            failCount++;
-          }
-        } catch {
-          failCount++;
-        }
-      }
-
-      setFetchProgress(Math.round(((i + 1) / updatedRows.length) * 100));
-    }
-
-    setParsedRows(updatedRows);
-    setIsFetchingStats(false);
-    setFetchProgress(0);
-
-    alert(
-      `CricHeroes Bulk Fetch Finished!\n• Successfully fetched stats for: ${successCount} player(s)\n• Failed or invalid profile links: ${failCount} player(s)`
-    );
-  };
-
   const handleRunAiAnalysis = () => {
     setParsedRows(prev =>
       prev.map(r => {
@@ -647,18 +558,20 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
           <button
             onClick={() => {
               const rows = loadBundledJcpl4Registrations(gradeBasePrices);
-              const matched = rows.filter((r) => r.jcplMatched).length;
+              const mensRows = rows.filter(isMensRegistrationRow);
+              const matched = mensRows.filter((r) => r.jcplMatched).length;
               setParsedRows(rows);
-              setSelectedIndices(new Set(rows.map((r) => r.rawIndex)));
-              setFileName('JCPL 4 Registeration (Responses).xlsx');
-              setActivePreset('all');
-              setGenderFilter('all');
-              setAgeGroupFilter('all');
+              setSelectedIndices(new Set(mensRows.map((r) => r.rawIndex)));
+              setFileName('JCPL 4 Registeration.xlsx');
+              setActivePreset('males_above_15');
+              setGenderFilter('Male');
+              setAgeGroupFilter('Above 15');
               setRoleFilter('all');
               setGradeFilter('all');
               setSearchQuery('');
+              setReplaceExisting(true);
               setImportSuccessMessage(
-                `Loaded ${rows.length} JCPL 4 registrations. Matched JCPL tournament stats for ${matched} players.`,
+                `Loaded ${mensRows.length} JCPL 4 Mens registrations for the Mens auction. Matched stats for ${matched} players.`,
               );
             }}
             className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-all shadow-md flex items-center gap-2 hover:scale-105 cursor-pointer"
@@ -963,7 +876,7 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
               )}
             </div>
 
-            {/* Smart Actions: Auto-Grade from Stats & Bulk CricHeroes Fetch */}
+            {/* Smart Actions: Auto-Grade from Stats & JCPL-only match */}
             <div className="flex items-center gap-2">
               <button
                 onClick={handleAutoGradeFromStats}
@@ -987,16 +900,6 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
               >
                 <Database className="w-3.5 h-3.5 text-sky-400" />
                 <span>Match JCPL Stats ({parsedRows.filter((r) => r.jcplMatched).length})</span>
-              </button>
-
-              <button
-                onClick={handleBulkStatsFetch}
-                disabled={isFetchingStats}
-                title="Fetch bulk tournament statistics from CricHeroes for all rows"
-                className="px-3 py-1.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-300 font-bold text-xs flex items-center gap-1.5 transition-all shadow cursor-pointer disabled:opacity-50"
-              >
-                <Zap className="w-3.5 h-3.5 text-red-400" />
-                <span>{isFetchingStats ? `Fetching (${fetchProgress}%)` : 'Fetch CricHeroes Stats'}</span>
               </button>
             </div>
           </div>

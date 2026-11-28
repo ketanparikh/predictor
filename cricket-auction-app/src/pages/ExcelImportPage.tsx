@@ -17,6 +17,7 @@ import {
 } from '../utils/jcpl4Registrations';
 import * as XLSX from 'xlsx';
 import { PlayerRole, PlayerGrade } from '../types/auction';
+import { isGradeMatch, normalizeGrade } from '../utils/gradeUtils';
 import {
   FileSpreadsheet,
   Upload,
@@ -344,7 +345,7 @@ export const ExcelImportPage: React.FC<ExcelImportPageProps> = ({ onNavigateToPl
           if (!row.isViceCaptain) return false;
         } else if (gradeFilter === 'Sponsored') {
           if (!row.isSponsored && !row.sponsorTag?.trim()) return false;
-        } else if (row.grade !== gradeFilter) {
+        } else if (!isGradeMatch(row.grade, gradeFilter)) {
           return false;
         }
       }

@@ -6,6 +6,10 @@ import { PlayerModal } from '../components/PlayerModal';
 import { DeleteAllPlayersModal } from '../components/DeleteAllPlayersModal';
 import { CricHeroesModal } from '../components/CricHeroesModal';
 import { AutoGradeModal } from '../components/AutoGradeModal';
+import { DirectSellModal } from '../components/DirectSellModal';
+import { EditPlayerGradeModal } from '../components/EditPlayerGradeModal';
+import { BulkEditGradeModal } from '../components/BulkEditGradeModal';
+import { normalizeGrade, isGradeMatch, deduplicatePlayers } from '../utils/gradeUtils';
 import {
   Users,
   Search,
@@ -17,6 +21,7 @@ import {
   Sparkles,
   RotateCcw,
   CheckCircle2,
+  Layers,
 } from 'lucide-react';
 
 interface PlayersPageProps {
@@ -34,6 +39,7 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
     teams,
     addPlayer,
     editPlayer,
+    bulkEditPlayerGrades,
     deletePlayer,
     deleteAllPlayers,
     restoreDeletedPlayers,
@@ -49,6 +55,11 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
 
   const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
   const [playerToEdit, setPlayerToEdit] = useState<Player | null>(null);
+  const [playerToDirectSell, setPlayerToDirectSell] = useState<Player | null>(null);
+
+  const [isEditGradeModalOpen, setIsEditGradeModalOpen] = useState(false);
+  const [playerToEditGrade, setPlayerToEditGrade] = useState<Player | null>(null);
+  const [isBulkEditModalOpen, setIsBulkEditModalOpen] = useState(false);
 
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [isCricHeroesModalOpen, setIsCricHeroesModalOpen] = useState(false);
@@ -61,9 +72,30 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
     setTimeout(() => setNotification(null), 3500);
   };
 
-  // Filtered & Sorted Players
+  const handleOpenEditGrade = (player: Player) => {
+    setPlayerToEditGrade(player);
+    setIsEditGradeModalOpen(true);
+  };
+
+  const handleSaveIndividualGrade = (player: Player, newGrade: PlayerGrade) => {
+    editPlayer({
+      ...player,
+      grade: newGrade,
+      basePrice: 1000,
+    });
+    showNotification(`Grade updated to Grade ${newGrade} for ${player.name}!`);
+  };
+
+  const handleApplyBulkGrade = (playerIds: string[], targetGrade: PlayerGrade) => {
+    const result = bulkEditPlayerGrades(playerIds, targetGrade);
+    showNotification(result.message);
+    return result;
+  };
+
+  // Filtered & Sorted Players (Guaranteed deduplicated with strict exact grade matching)
   const filteredPlayers = useMemo(() => {
-    return players
+    const canonicalList = deduplicatePlayers(players);
+    return canonicalList
       .filter(p => {
         const matchesSearch =
           p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -78,7 +110,8 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
           } else if (gradeFilter === 'sponsored') {
             matchesGrade = Boolean(p.isSponsored || p.sponsorTag?.trim());
           } else {
-            matchesGrade = p.grade === gradeFilter;
+            // Strict exact grade matching
+            matchesGrade = isGradeMatch(p.grade, gradeFilter);
           }
         }
         const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
@@ -94,7 +127,7 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
         if (sortBy === 'sr_desc') return b.stats.strikeRate - a.stats.strikeRate;
         if (sortBy === 'grade') {
           const gradeOrder: Record<PlayerGrade, number> = { 'A+': 0, 'A': 1, 'B': 2, 'C': 3 };
-          return gradeOrder[a.grade] - gradeOrder[b.grade];
+          return gradeOrder[normalizeGrade(a.grade)] - gradeOrder[normalizeGrade(b.grade)];
         }
         return (a.auctionOrder || 0) - (b.auctionOrder || 0);
       });
@@ -215,6 +248,18 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
             >
               <Trash2 className="w-4 h-4 text-rose-400" />
               <span>Delete All Players</span>
+            </button>
+          )}
+
+          {/* Bulk Edit Grade Button */}
+          {players.length > 0 && (
+            <button
+              onClick={() => setIsBulkEditModalOpen(true)}
+              title="Bulk edit grades for selected players with search and atomic commit"
+              className="px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/35 text-purple-200 border border-purple-500/50 text-xs font-black transition-all shadow-md shadow-purple-900/30 flex items-center gap-1.5 active:scale-95 cursor-pointer"
+            >
+              <Layers className="w-4 h-4 text-purple-400" />
+              <span>Bulk Edit Grade</span>
             </button>
           )}
 
@@ -415,15 +460,44 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
               player={player}
               teams={teams}
               onStartAuction={p => onStartAuction(p)}
+              onDirectSell={p => setPlayerToDirectSell(p)}
               onEdit={p => {
                 setPlayerToEdit(p);
                 setIsPlayerModalOpen(true);
               }}
+              onEditGrade={handleOpenEditGrade}
               onDelete={handleDeletePlayer}
             />
           ))}
         </div>
       )}
+
+      {/* Direct Sell Modal */}
+      <DirectSellModal
+        isOpen={!!playerToDirectSell}
+        onClose={() => setPlayerToDirectSell(null)}
+        player={playerToDirectSell}
+        onSuccess={msg => showNotification(msg)}
+      />
+
+      {/* Individual Player Grade Edit Modal */}
+      <EditPlayerGradeModal
+        isOpen={isEditGradeModalOpen}
+        onClose={() => {
+          setIsEditGradeModalOpen(false);
+          setPlayerToEditGrade(null);
+        }}
+        player={playerToEditGrade}
+        onSaveGrade={handleSaveIndividualGrade}
+      />
+
+      {/* Dedicated Bulk Edit Grade Modal */}
+      <BulkEditGradeModal
+        isOpen={isBulkEditModalOpen}
+        onClose={() => setIsBulkEditModalOpen(false)}
+        players={filteredPlayers}
+        onApplyBulkEdit={handleApplyBulkGrade}
+      />
 
       {/* Add / Edit Player Modal */}
       <PlayerModal

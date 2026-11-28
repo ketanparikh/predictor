@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { Team, Player } from '../types/auction';
+import { isGradeMatch, deduplicatePlayers } from '../utils/gradeUtils';
+import { DirectPlayerAddModal } from '../components/DirectPlayerAddModal';
 import {
   Crown,
   Star,
@@ -18,6 +20,7 @@ import {
   X,
   ArrowRight,
   Save,
+  UserPlus,
 } from 'lucide-react';
 
 export const CaptainManagementPage: React.FC = () => {
@@ -38,6 +41,7 @@ export const CaptainManagementPage: React.FC = () => {
   const [costMode, setCostMode] = useState<'zero' | 'custom'>(() => rules.captainCostMode === 'custom' ? 'custom' : 'zero');
   const [captainCost, setCaptainCost] = useState<number>(() => rules.captainCustomCost ?? 0);
   const [teamCostInputs, setTeamCostInputs] = useState<Record<string, number>>({});
+  const [isDirectAddOpen, setIsDirectAddOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   const showToast = (text: string, type: 'success' | 'error' = 'success') => {
@@ -84,13 +88,13 @@ export const CaptainManagementPage: React.FC = () => {
 
   // Filter available players for captain selection modal - allow all players to be viewed and searched
   const eligiblePlayers = useMemo(() => {
-    return players.filter((player) => {
+    return deduplicatePlayers(players).filter((player) => {
       const matchesSearch =
         player.name.toLowerCase().includes(playerSearchQuery.toLowerCase()) ||
         (player.category ? player.category.toLowerCase().includes(playerSearchQuery.toLowerCase()) : false) ||
         (player.role ? player.role.toLowerCase().includes(playerSearchQuery.toLowerCase()) : false);
 
-      const matchesGrade = gradeFilter === 'all' || player.grade === gradeFilter;
+      const matchesGrade = isGradeMatch(player.grade, gradeFilter);
 
       return matchesSearch && matchesGrade;
     });
@@ -195,8 +199,16 @@ export const CaptainManagementPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Metrics */}
-          <div className="flex items-center gap-2 flex-wrap">
+          {/* Quick Metrics & Actions */}
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              onClick={() => setIsDirectAddOpen(true)}
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-black text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span>+ Direct Player Add</span>
+            </button>
+
             <div className="bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2 text-center">
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Teams</span>
               <span className="text-xl font-black text-white">{totalTeams}</span>
@@ -726,6 +738,13 @@ export const CaptainManagementPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Direct Player Add Modal */}
+      <DirectPlayerAddModal
+        isOpen={isDirectAddOpen}
+        onClose={() => setIsDirectAddOpen(false)}
+        onSuccess={(msg) => showToast(msg, 'success')}
+      />
     </div>
   );
 };

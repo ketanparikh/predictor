@@ -1,5 +1,6 @@
 import { Team, Player, AuctionTransaction, AuctionRules, TournamentInfo, AuctionOrderingMode, GradeCategoryMaxBid, SaveLogEntry, SaveSnapshot } from '../types/auction';
 import { initialTeams, initialAuctionRules, initialTournamentInfo } from '../data/demoData';
+import { normalizeGrade, deduplicatePlayers } from './gradeUtils';
 
 const STORAGE_KEYS = {
   TEAMS: 'cricket_auction_teams_v3',
@@ -55,36 +56,33 @@ export function sanitizeAuctionRules(rules?: AuctionRules | null): AuctionRules 
   const source = rules || initialAuctionRules;
   let loadedRules: AuctionRules = {
     ...source,
-    squadRules: { ...(source.squadRules || initialAuctionRules.squadRules) },
+    squadRules: {
+      ...(source.squadRules || initialAuctionRules.squadRules),
+      maxGradeAPlus: 9,
+      maxGradeA: 9,
+      maxGradeB: 9,
+      maxGradeC: 9,
+      maxGradeASpending: 100000,
+      maxGradeBSpending: 100000,
+    },
     gradeBasePrices: {
-      ...(initialAuctionRules.gradeBasePrices || {
-        gradeAPlus: 7000,
-        gradeA: 5000,
-        gradeB: 3000,
-        gradeC: 1000,
-      }),
+      gradeAPlus: 1000,
+      gradeA: 1000,
+      gradeB: 1000,
+      gradeC: 1000,
       ...(source.gradeBasePrices || {}),
     },
   };
 
-  const bases = loadedRules.gradeBasePrices;
-  const hasLegacyBases =
-    !bases ||
-    !bases.gradeAPlus ||
-    bases.gradeA === 5100 ||
-    bases.gradeB === 3100 ||
-    bases.gradeC === 1100;
-  if (hasLegacyBases) {
-    loadedRules = {
-      ...loadedRules,
-      gradeBasePrices: {
-        gradeAPlus: bases?.gradeAPlus && bases.gradeAPlus !== 5100 ? bases.gradeAPlus : 7000,
-        gradeA: bases?.gradeA && bases.gradeA !== 5100 ? bases.gradeA : 5000,
-        gradeB: bases?.gradeB && bases.gradeB !== 3100 ? bases.gradeB : 3000,
-        gradeC: bases?.gradeC && bases.gradeC !== 1100 ? bases.gradeC : 1000,
-      },
-    };
-  }
+  loadedRules = {
+    ...loadedRules,
+    gradeBasePrices: {
+      gradeAPlus: 1000,
+      gradeA: 1000,
+      gradeB: 1000,
+      gradeC: 1000,
+    },
+  };
 
   if (!loadedRules.startingBudget || loadedRules.startingBudget === 50000) {
     loadedRules = {
@@ -200,7 +198,7 @@ export const loadStoredState = (): AppStoredState => {
       localStorage.setItem(STORAGE_KEYS.PLAYERS, JSON.stringify(loadedPlayers));
     }
 
-    loadedPlayers = applyPlayerOverrides(loadedPlayers);
+    loadedPlayers = deduplicatePlayers(applyPlayerOverrides(deduplicatePlayers(loadedPlayers)));
 
     const parsedTeams: Team[] = rawTeams ? JSON.parse(rawTeams) : initialTeams;
     let loadedTeams = sanitizeTeamPurses(parsedTeams, loadedRules.startingBudget || TARGET_PURSE);
@@ -354,10 +352,12 @@ export const applyPlayerOverrides = (
 
   return players.map((p) => {
     const patch = ovr[p.id] || (p.name ? nameMap.get(p.name.trim().toLowerCase()) : undefined);
-    if (!patch) return p;
+    if (!patch) return { ...p, grade: normalizeGrade(p.grade), basePrice: 1000 };
     return {
       ...p,
       ...patch,
+      grade: patch.grade ? normalizeGrade(patch.grade) : normalizeGrade(p.grade),
+      basePrice: 1000,
       stats: patch.stats ? { ...p.stats, ...patch.stats } : p.stats,
     };
   });

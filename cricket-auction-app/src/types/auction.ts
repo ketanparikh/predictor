@@ -148,7 +148,7 @@ export interface GradeCategoryMaxBid {
 export interface SaveLogEntry {
   id: string;
   timestamp: string;
-  type: 'manual' | 'auto' | 'snapshot' | 'player_edit' | 'restart' | 'clear_history';
+  type: 'manual' | 'auto' | 'snapshot' | 'player_edit' | 'bulk_edit' | 'restart' | 'clear_history' | 'bid' | 'sale' | 'unsold' | 'direct_sell';
   status: 'success' | 'failure' | 'error';
   description: string;
   playerName?: string;
@@ -160,6 +160,7 @@ export interface SaveLogEntry {
   date?: string;
   time?: string;
   action?: string;
+  bulkBatchId?: string;
   metadata?: Record<string, any>;
   itemCountSummary?: {
     teams: number;

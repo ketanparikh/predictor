@@ -6,6 +6,7 @@ import { getTeamGradeMetrics } from '../utils/auctionValidation';
 import { EditTeamModal } from '../components/EditTeamModal';
 import { QuickRenameTeamsModal } from '../components/QuickRenameTeamsModal';
 import { AddTeamModal } from '../components/AddTeamModal';
+import { DirectPlayerAddModal } from '../components/DirectPlayerAddModal';
 import {
   Shield,
   Eye,
@@ -19,6 +20,7 @@ import {
   Trash2,
   Star,
   Crown,
+  UserPlus,
 } from 'lucide-react';
 
 export const TeamsPage: React.FC = () => {
@@ -42,6 +44,8 @@ export const TeamsPage: React.FC = () => {
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isQuickRenameOpen, setIsQuickRenameOpen] = useState(false);
+  const [isDirectAddOpen, setIsDirectAddOpen] = useState(false);
+  const [directAddTeamId, setDirectAddTeamId] = useState<string | undefined>(undefined);
   const [notification, setNotification] = useState<string | null>(null);
 
   const showNotification = (msg: string) => {
@@ -92,6 +96,17 @@ export const TeamsPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            onClick={() => {
+              setDirectAddTeamId(undefined);
+              setIsDirectAddOpen(true);
+            }}
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-black text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span>+ Direct Player Add</span>
+          </button>
+
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2 cursor-pointer"
@@ -293,30 +308,26 @@ export const TeamsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Grade-Wise Restrictions (Grade A: max 2, Grade B: max 3, Grade C: max 2) & C+VC Budget */}
+                {/* Squad Capacity & Smart Purse Overview */}
                 {(() => {
                   const m = getTeamGradeMetrics(team, players, rules);
+                  const maxSlots = rules.squadRules?.maxSquadSize || 9;
+                  const openSlots = Math.max(0, maxSlots - squadPlayers.length);
+                  const mandatoryReserve = Math.max(0, openSlots - 1) * 1000;
                   return (
                     <div className="mt-3 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] font-mono space-y-1.5">
                       <div className="flex items-center justify-between text-slate-300">
-                        <span className="font-bold text-slate-400">GRADE RESTRICTIONS:</span>
+                        <span className="font-bold text-slate-400">SQUAD & PURSE:</span>
                         <span className="text-[10px] text-indigo-300">C+VC: ₹{m.combinedCapCost.toLocaleString('en-IN')}/50k</span>
                       </div>
-                      <div className="grid grid-cols-3 gap-1.5 text-center text-[10px]">
-                        <div className={`p-1 rounded ${m.aRemainingSlots === 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-slate-900 text-slate-300 border border-slate-800'}`}>
-                          <div className="font-bold text-amber-400">Grade A (Max 2)</div>
-                          <div className="text-white font-bold">{m.aCount}/2 ({m.aRemainingSlots} left)</div>
-                          <div className="text-[9px] text-amber-300">₹{m.aRemainingBudget.toLocaleString('en-IN')}/30k rem</div>
+                      <div className="grid grid-cols-2 gap-2 text-center text-[10px]">
+                        <div className="p-1.5 rounded bg-slate-900 text-slate-300 border border-slate-800">
+                          <div className="text-slate-400 font-semibold">Available Slots</div>
+                          <div className="text-white font-bold text-xs mt-0.5">{openSlots} slot{openSlots !== 1 ? 's' : ''} left</div>
                         </div>
-                        <div className={`p-1 rounded ${m.bRemainingSlots === 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-slate-900 text-slate-300 border border-slate-800'}`}>
-                          <div className="font-bold text-blue-400">Grade B (Max 3)</div>
-                          <div className="text-white font-bold">{m.bCount}/3 ({m.bRemainingSlots} left)</div>
-                          <div className="text-[9px] text-blue-300">₹{m.bRemainingBudget.toLocaleString('en-IN')}/18k rem</div>
-                        </div>
-                        <div className={`p-1 rounded ${m.cRemainingSlots === 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-slate-900 text-slate-300 border border-slate-800'}`}>
-                          <div className="font-bold text-emerald-400">Grade C (Max 2)</div>
-                          <div className="text-white font-bold">{m.cCount}/2 ({m.cRemainingSlots} left)</div>
-                          <div className="text-[9px] text-emerald-300">Purse reserve</div>
+                        <div className="p-1.5 rounded bg-slate-900 text-slate-300 border border-slate-800">
+                          <div className="text-slate-400 font-semibold">Squad Reserve</div>
+                          <div className="text-emerald-400 font-bold text-xs mt-0.5">₹{mandatoryReserve.toLocaleString('en-IN')} pts</div>
                         </div>
                       </div>
                     </div>
@@ -431,6 +442,17 @@ export const TeamsPage: React.FC = () => {
         onUpdateTeam={updateTeam}
         onResetBudget={resetTeamBudget}
         onRemovePlayerFromSquad={removePlayerFromSquad}
+      />
+
+      {/* Direct Player Add Modal */}
+      <DirectPlayerAddModal
+        isOpen={isDirectAddOpen}
+        onClose={() => {
+          setIsDirectAddOpen(false);
+          setDirectAddTeamId(undefined);
+        }}
+        preselectedTeamId={directAddTeamId}
+        onSuccess={(msg) => showNotification(msg)}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import bundled from '../data/jcpl4Registrations.json';
 import type { GradeBasePrices, Player, PlayerGrade } from '../types/auction';
+import { normalizeGrade } from './gradeUtils';
 import type { ParsedPlayerRow } from './excelParser';
 import { calculateRecommendedGrade } from './excelParser';
 import { enrichRowsWithJcplStats } from './jcplStats';
@@ -257,7 +258,7 @@ export function parsedRowToPlayer(row: ParsedPlayerRow, index: number, idPrefix 
     battingStyle: row.battingStyle,
     bowlingStyle: row.bowlingStyle,
     grade: row.grade,
-    basePrice: row.basePrice,
+    basePrice: 1000,
     description: row.description || row.previousPerformance || row.notes,
     status: 'upcoming',
     auctionOrder: row.auctionOrder !== undefined ? row.auctionOrder : index + 1,
@@ -317,14 +318,203 @@ export function shouldReplaceWithMensRoster(players: Player[]): boolean {
   return false;
 }
 
+export const OFFICIAL_JCPL4_REPORT_PLAYERS: { name: string; grade: PlayerGrade }[] = [
+  // GRADE A+ – 12 PLAYERS
+  { name: 'Akshay', grade: 'A+' },
+  { name: 'Amit Gupta', grade: 'A+' },
+  { name: 'Amol pawar', grade: 'A+' },
+  { name: 'Avinash Gupta', grade: 'A+' },
+  { name: 'Chetan Sharma', grade: 'A+' },
+  { name: 'Dhruv Jhalani', grade: 'A+' },
+  { name: 'Gaurav Kad', grade: 'A+' },
+  { name: 'Gurmeet Singh kalsi', grade: 'A+' },
+  { name: 'Paras Bheda', grade: 'A+' },
+  { name: 'Prasad Wagh', grade: 'A+' },
+  { name: 'Rehet kalsi', grade: 'A+' },
+  { name: 'Tanmay Shahane', grade: 'A+' },
+
+  // GRADE A – 34 PLAYERS
+  { name: 'Aayush Asawa', grade: 'A' },
+  { name: 'Abhishek Mathur', grade: 'A' },
+  { name: 'Aditya Joshi', grade: 'A' },
+  { name: 'Ajit bhalwankar', grade: 'A' },
+  { name: 'Anthony Michael', grade: 'A' },
+  { name: 'Anu Poduval', grade: 'A' },
+  { name: 'Ashish Singh', grade: 'A' },
+  { name: 'Bhushan Patkar', grade: 'A' },
+  { name: 'Dipal Panchal', grade: 'A' },
+  { name: 'Divit khanna', grade: 'A' },
+  { name: 'Gajanan Jadhao', grade: 'A' },
+  { name: 'Ganesh Raghuram', grade: 'A' },
+  { name: 'Hrishikesh Baradkar', grade: 'A' },
+  { name: 'Ketan Parikh', grade: 'A' },
+  { name: 'Kiran Jagtap', grade: 'A' },
+  { name: 'Mahesh A Kulkarni', grade: 'A' },
+  { name: 'Mandar Dehadrai', grade: 'A' },
+  { name: 'Neeraj Varma', grade: 'A' },
+  { name: 'Nikhil Owalekar', grade: 'A' },
+  { name: 'Pankaj', grade: 'A' },
+  { name: 'Prithviraj MohitePatil', grade: 'A' },
+  { name: 'Rahul Agrawal', grade: 'A' },
+  { name: 'Rajeev Chempath', grade: 'A' },
+  { name: 'Sachin Chavan', grade: 'A' },
+  { name: 'Sachin Jain', grade: 'A' },
+  { name: 'Saket Newaskar', grade: 'A' },
+  { name: 'SULTAAN', grade: 'A' },
+  { name: 'Sunny Jaisinghani', grade: 'A' },
+  { name: 'Suraj Desai', grade: 'A' },
+  { name: 'Swapnil Pusalkar', grade: 'A' },
+  { name: 'Ved Prakash Nirbhya', grade: 'A' },
+  { name: 'Vedant Rathi', grade: 'A' },
+  { name: 'Vicky sharma', grade: 'A' },
+  { name: 'Vivek Vichare', grade: 'A' },
+
+  // GRADE B – 34 PLAYERS
+  { name: 'AKSHAY KUMAR SHARMA', grade: 'B' },
+  { name: 'Akshay Wardhane', grade: 'B' },
+  { name: 'Amul Shah', grade: 'B' },
+  { name: 'Ankit Goyal', grade: 'B' },
+  { name: 'Anshuman', grade: 'B' },
+  { name: 'Ashish Ahuja', grade: 'B' },
+  { name: 'Ashish Jain', grade: 'B' },
+  { name: 'Ayush Jain', grade: 'B' },
+  { name: 'Dinesh Mandava', grade: 'B' },
+  { name: 'Harpreet Singh', grade: 'B' },
+  { name: 'Kabir Vaidya', grade: 'B' },
+  { name: 'Kunal Kukreja', grade: 'B' },
+  { name: 'Lakshya Jhalani', grade: 'B' },
+  { name: 'Mukund Dongre', grade: 'B' },
+  { name: 'Naveen Goyal', grade: 'B' },
+  { name: 'Nishant Patil', grade: 'B' },
+  { name: 'Nitin Verma', grade: 'B' },
+  { name: 'Pravin Muley', grade: 'B' },
+  { name: 'Pushkar Ballal', grade: 'B' },
+  { name: 'Rahull raj singh', grade: 'B' },
+  { name: 'Rajat Dua', grade: 'B' },
+  { name: 'Ridhaan Vijay', grade: 'B' },
+  { name: 'Robin Vijay', grade: 'B' },
+  { name: 'Rohit Barve', grade: 'B' },
+  { name: 'Rohit Yadav', grade: 'B' },
+  { name: 'Sachin rajgire', grade: 'B' },
+  { name: 'Sagar Patole', grade: 'B' },
+  { name: 'Sanil nadkarni', grade: 'B' },
+  { name: 'Siddharth Pednekar', grade: 'B' },
+  { name: 'Siddhesh Deshmukh', grade: 'B' },
+  { name: 'Sourabh Gupta', grade: 'B' },
+  { name: 'Varun Kulkarni', grade: 'B' },
+  { name: 'Vikas Goyal', grade: 'B' },
+  { name: 'Vikas Jadhav', grade: 'B' },
+
+  // GRADE C – 25 PLAYERS
+  { name: 'Ankur Priyadarshan', grade: 'C' },
+  { name: 'Anshul Goel', grade: 'C' },
+  { name: 'Arpit Purohit', grade: 'C' },
+  { name: 'Ashish Das', grade: 'C' },
+  { name: 'Bhavya Agrawal', grade: 'C' },
+  { name: 'Chandraprakash (CP) Jain', grade: 'C' },
+  { name: 'Dev', grade: 'C' },
+  { name: 'Gourav Singhal', grade: 'C' },
+  { name: 'Harish Rane', grade: 'C' },
+  { name: 'Harshal Patolia', grade: 'C' },
+  { name: 'Kalpesh Potghante', grade: 'C' },
+  { name: 'Manish Singh', grade: 'C' },
+  { name: 'Manojkumar Gunjal', grade: 'C' },
+  { name: 'Mayur Zope', grade: 'C' },
+  { name: 'Rahul khanna', grade: 'C' },
+  { name: 'Ravindra Waghmare', grade: 'C' },
+  { name: 'Sandeep Kad', grade: 'C' },
+  { name: 'Sharan Wadhwa', grade: 'C' },
+  { name: 'Shreeyansh Nalbilwar', grade: 'C' },
+  { name: 'Shubham V Pawar', grade: 'C' },
+  { name: 'Shyamsunder Mandava', grade: 'C' },
+  { name: 'SUJAL NARAYAN MUDLIAR', grade: 'C' },
+  { name: 'Ujjwal Bhattacharyya', grade: 'C' },
+  { name: 'Vikas Gaikwad', grade: 'C' },
+  { name: 'Vivek Pawar', grade: 'C' },
+];
+
+export const OFFICIAL_JCPL4_REPORT_MAP = new Map<string, PlayerGrade>(
+  OFFICIAL_JCPL4_REPORT_PLAYERS.map((p) => [playerNameKey(p.name), p.grade])
+);
+
+export function getOfficialJcpl4Grade(name: string): PlayerGrade | undefined {
+  return OFFICIAL_JCPL4_REPORT_MAP.get(playerNameKey(name));
+}
+
 export function bundledJcpl4AsPlayers(
   prices: GradeBasePrices,
   category: 'mens' | 'all' = 'mens',
 ): Player[] {
-  const rows = loadBundledJcpl4Registrations(prices).filter((row) =>
-    category === 'all' ? true : isMensRegistrationRow(row),
-  );
-  return rows.map((row, index) => parsedRowToPlayer(row, index));
+  const loadedRows = loadBundledJcpl4Registrations(prices);
+  
+  // Create lookup of loaded rows by normalized player name
+  const rowsByName = new Map<string, ParsedPlayerRow>();
+  for (const row of loadedRows) {
+    const key = playerNameKey(row.name);
+    if (!rowsByName.has(key)) {
+      rowsByName.set(key, row);
+    }
+  }
+
+  // Strictly produce the 105 official players from the official report
+  const officialPlayers: Player[] = OFFICIAL_JCPL4_REPORT_PLAYERS.map((official, index) => {
+    const key = playerNameKey(official.name);
+    const existingRow = rowsByName.get(key);
+
+    if (existingRow) {
+      const p = parsedRowToPlayer({
+        ...existingRow,
+        grade: official.grade,
+        basePrice: 1000,
+      }, index);
+      return {
+        ...p,
+        name: official.name,
+        grade: official.grade,
+        basePrice: 1000,
+      };
+    }
+
+    // Missing from registration forms (5 players): build canonical entry
+    return {
+      id: `jcpl4-${100 + index}`,
+      name: official.name,
+      age: 28,
+      ageCategory: 'Above 15',
+      gender: 'Male',
+      category: 'Men (Age : 15+ years)',
+      experience: 1,
+      role: 'Batsman',
+      battingStyle: 'Right-hand bat',
+      bowlingStyle: 'Right-arm medium',
+      grade: official.grade,
+      basePrice: 1000,
+      description: `Official JCPL 4 Player (${official.grade} Grade)`,
+      status: 'upcoming',
+      auctionOrder: index + 1,
+      isCaptain: false,
+      isViceCaptain: false,
+      isSponsored: false,
+      notes: `JCPL 4 Official Player · Grade ${official.grade}`,
+      stats: {
+        matches: 0,
+        runs: 0,
+        average: 0,
+        strikeRate: 0,
+        highestScore: 0,
+        fifties: 0,
+        hundreds: 0,
+        wickets: 0,
+        bowlingAverage: 0,
+        economyRate: 0,
+        bestBowling: '',
+        catches: 0,
+        stumpings: 0,
+      },
+    };
+  });
+
+  return officialPlayers;
 }
 
 function playerNameKey(name: string): string {
@@ -341,21 +531,30 @@ function careerStatTotal(player: Pick<Player, 'stats'>): number {
   return Number(stats.matches || 0) + Number(stats.runs || 0) + Number(stats.wickets || 0);
 }
 
-/** Recalculate A+/A/B/C from current JCPL stats. Captains stay A+. */
-export function regradeAuctionPlayers(players: Player[], prices: GradeBasePrices): Player[] {
+/** Recalculate A+/A/B/C from current JCPL stats only if player has no grade or forced. Captains stay A+. */
+export function regradeAuctionPlayers(players: Player[], prices: GradeBasePrices, force: boolean = false): Player[] {
   return players.map((player) => {
+    // Standardize all players' base price to 1,000 points
+    const standardBasePrice = 1000;
+    const officialGrade = getOfficialJcpl4Grade(player.name);
+    // If not forced and player already has an assigned grade, preserve their grade!
+    if (!force && player.grade) {
+      return {
+        ...player,
+        grade: normalizeGrade(player.grade),
+        basePrice: standardBasePrice,
+      };
+    }
     const rec = calculateRecommendedGrade(
       player.stats,
       player.role,
       player.isCaptain || player.isPreAssignedCaptain,
       player.isViceCaptain,
     );
-    const basePrice = gradeBasePrice(rec.grade, prices);
-    if (player.grade === rec.grade && player.basePrice === basePrice) return player;
     return {
       ...player,
-      grade: rec.grade,
-      basePrice,
+      grade: officialGrade || rec.grade,
+      basePrice: standardBasePrice,
     };
   });
 }

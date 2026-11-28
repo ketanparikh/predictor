@@ -333,35 +333,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </div>
                     </div>
 
-                    {/* Grade-Wise Restrictions & Leadership Tracker Strip */}
-                    {m && (
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 py-2 px-3 text-[11px] font-mono bg-slate-950/80 border-t border-slate-800/60">
-                        <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
-                          <span className="text-slate-400">Grade A (Max 2):</span>
-                          <span className={m.aRemainingSlots === 0 ? "text-rose-400 font-bold" : "text-amber-400 font-bold"}>
-                            {m.aCount}/2 ({m.aRemainingSlots} left) • ₹{m.aRemainingBudget.toLocaleString('en-IN')}/30k
-                          </span>
+                    {/* Squad Capacity & Smart Purse Overview Strip */}
+                    {m && (() => {
+                      const maxSquad = 9;
+                      const openSlots = Math.max(0, maxSquad - team.squad.length);
+                      const mandatoryReserve = Math.max(0, openSlots - 1) * 1000;
+                      return (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 py-2 px-3 text-[11px] font-mono bg-slate-950/80 border-t border-slate-800/60">
+                          <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
+                            <span className="text-slate-400">Available Slots:</span>
+                            <span className="text-white font-bold">{openSlots} left</span>
+                          </div>
+                          <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
+                            <span className="text-slate-400">Squad Reserve:</span>
+                            <span className="text-emerald-400 font-bold">₹{mandatoryReserve.toLocaleString('en-IN')}</span>
+                          </div>
+                          <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
+                            <span className="text-slate-400">Purse Left:</span>
+                            <span className="text-emerald-400 font-bold">₹{team.remainingBudget.toLocaleString('en-IN')}</span>
+                          </div>
+                          <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
+                            <span className="text-slate-400">C+VC Budget:</span>
+                            <span className={m.combinedCapCost > 50000 ? "text-rose-400 font-black" : "text-indigo-300 font-bold"}>
+                              ₹{m.combinedCapCost.toLocaleString('en-IN')} / 50k
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
-                          <span className="text-slate-400">Grade B (Max 3):</span>
-                          <span className={m.bRemainingSlots === 0 ? "text-rose-400 font-bold" : "text-blue-400 font-bold"}>
-                            {m.bCount}/3 ({m.bRemainingSlots} left) • ₹{m.bRemainingBudget.toLocaleString('en-IN')}/18k
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
-                          <span className="text-slate-400">Grade C (Max 2):</span>
-                          <span className={m.cRemainingSlots === 0 ? "text-rose-400 font-bold" : "text-emerald-400 font-bold"}>
-                            {m.cCount}/2 ({m.cRemainingSlots} left)
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/80">
-                          <span className="text-slate-400">C+VC Budget:</span>
-                          <span className={m.combinedCapCost > 50000 ? "text-rose-400 font-black" : "text-indigo-300 font-bold"}>
-                            ₹{m.combinedCapCost.toLocaleString('en-IN')} / 50k
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                      );
+                    })()}
                   </div>
                 );
               })}

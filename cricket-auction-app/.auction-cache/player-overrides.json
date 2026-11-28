@@ -205,7 +205,10 @@
     "battingStyle": "Right-hand bat",
     "bowlingStyle": "None",
     "isCaptain": false,
-    "isViceCaptain": false
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 30000,
+    "teamId": "team-11"
   },
   "jcpl4-30": {
     "name": "Dipal Panchal",
@@ -231,7 +234,10 @@
     "battingStyle": "Right-hand bat",
     "bowlingStyle": "None",
     "isCaptain": false,
-    "isViceCaptain": false
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 30000,
+    "teamId": "team-8"
   },
   "jcpl4-33": {
     "name": "Ganesh Raghuram",
@@ -310,7 +316,10 @@
     "battingStyle": "Right-hand bat",
     "bowlingStyle": "None",
     "isCaptain": false,
-    "isViceCaptain": false
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 28000,
+    "teamId": "team-7"
   },
   "jcpl4-41": {
     "name": "Ketan Parikh",
@@ -336,7 +345,10 @@
     "battingStyle": "Right-hand bat",
     "bowlingStyle": "Right-arm medium",
     "isCaptain": false,
-    "isViceCaptain": false
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 25000,
+    "teamId": "team-9"
   },
   "jcpl4-42": {
     "name": "Kiran Jagtap",
@@ -389,7 +401,10 @@
     "bowlingStyle": "None",
     "sponsorTag": "Yes",
     "isCaptain": false,
-    "isViceCaptain": false
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 19000,
+    "teamId": "team-5"
   },
   "jcpl4-51": {
     "name": "Neeraj Varma",
@@ -729,7 +744,10 @@
     "battingStyle": "Right-hand bat",
     "bowlingStyle": "None",
     "isCaptain": false,
-    "isViceCaptain": false
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 20000,
+    "teamId": "team-2"
   },
   "jcpl4-95": {
     "name": "Vikas Gaikwad",
@@ -859,7 +877,10 @@
     "battingStyle": "Right-hand bat",
     "bowlingStyle": "None",
     "isCaptain": false,
-    "isViceCaptain": false
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 30000,
+    "teamId": "team-12"
   },
   "jcpl4-58": {
     "name": "Prithviraj MohitePatil",
@@ -964,5 +985,35 @@
     "bowlingStyle": "None",
     "isCaptain": false,
     "isViceCaptain": false
+  },
+  "jcpl4-54": {
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 18000,
+    "teamId": "team-1"
+  },
+  "jcpl4-94": {
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 29000,
+    "teamId": "team-3"
+  },
+  "jcpl4-14": {
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 22000,
+    "teamId": "team-4"
+  },
+  "jcpl4-72": {
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 11000,
+    "teamId": "team-6"
+  },
+  "jcpl4-20": {
+    "isViceCaptain": true,
+    "isPreAssignedViceCaptain": true,
+    "soldPrice": 19000,
+    "teamId": "team-10"
   }
 }

@@ -2,13 +2,16 @@ import React from 'react';
 import { Player, Team } from '../types/auction';
 import { GradeBadge } from './GradeBadge';
 import { RoleBadge } from './RoleBadge';
-import { Gavel, Edit2, Trash2, ShieldCheck, User, Crown, Star, Tag } from 'lucide-react';
+import { Gavel, Edit2, Trash2, ShieldCheck, User, Crown, Star, Tag, CheckCircle2 } from 'lucide-react';
+import { normalizeGrade } from '../utils/gradeUtils';
 
 interface PlayerCardProps {
   player: Player;
   teams: Team[];
   onStartAuction?: (player: Player) => void;
+  onDirectSell?: (player: Player) => void;
   onEdit?: (player: Player) => void;
+  onEditGrade?: (player: Player) => void;
   onDelete?: (player: Player) => void;
 }
 
@@ -16,7 +19,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   player,
   teams,
   onStartAuction,
+  onDirectSell,
   onEdit,
+  onEditGrade,
   onDelete,
 }) => {
   const soldTeam = player.teamId ? teams.find(t => t.id === player.teamId) : null;
@@ -39,7 +44,18 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       <div className="p-4 pb-3">
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="flex flex-wrap items-center gap-1.5">
-            <GradeBadge grade={player.grade} size="sm" />
+            {onEditGrade ? (
+              <button
+                type="button"
+                onClick={() => onEditGrade(player)}
+                title={`Click to edit grade (Current: Grade ${player.grade})`}
+                className="cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+              >
+                <GradeBadge grade={player.grade} size="sm" />
+              </button>
+            ) : (
+              <GradeBadge grade={player.grade} size="sm" />
+            )}
             <RoleBadge role={player.role} size="sm" />
             {player.isCaptain && (
               <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold flex items-center gap-0.5 border border-amber-500/30">
@@ -64,7 +80,16 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5">
-
+            {onEditGrade && (
+              <button
+                onClick={() => onEditGrade(player)}
+                title="Edit Player Grade"
+                className="px-2 py-1 rounded-lg border border-amber-500/40 bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 hover:border-amber-400 text-[11px] font-black flex items-center gap-1 transition-all shadow-sm"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                <span>Grade</span>
+              </button>
+            )}
 
             {onEdit && (
               <button
@@ -189,17 +214,28 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
               <span className="truncate max-w-[110px]">{soldTeam.name}</span>
             </div>
           ) : player.status === 'unsold' ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <span className="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono">
                 UNSOLD
               </span>
               {onStartAuction && (
                 <button
                   onClick={() => onStartAuction(player)}
-                  className="px-2.5 py-1 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-colors flex items-center gap-1 shadow"
+                  className="px-2 py-1 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-colors flex items-center gap-1 shadow cursor-pointer"
+                  title="Put player back on auction block"
                 >
                   <Gavel className="w-3 h-3" />
                   Re-Bid
+                </button>
+              )}
+              {onDirectSell && (
+                <button
+                  onClick={() => onDirectSell(player)}
+                  className="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors flex items-center gap-1 shadow cursor-pointer"
+                  title="Directly sell to a team without bidding"
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  Direct
                 </button>
               )}
             </div>
@@ -209,15 +245,28 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
               LIVE NOW
             </span>
           ) : (
-            onStartAuction && (
-              <button
-                onClick={() => onStartAuction(player)}
-                className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md shadow-sky-600/20"
-              >
-                <Gavel className="w-3.5 h-3.5" />
-                Auction
-              </button>
-            )
+            <div className="flex items-center gap-1.5">
+              {onStartAuction && (
+                <button
+                  onClick={() => onStartAuction(player)}
+                  className="px-2.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition-all flex items-center gap-1 shadow-md shadow-sky-600/20 cursor-pointer"
+                  title="Start live auction for this player"
+                >
+                  <Gavel className="w-3.5 h-3.5" />
+                  Auction
+                </button>
+              )}
+              {onDirectSell && (
+                <button
+                  onClick={() => onDirectSell(player)}
+                  className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-all flex items-center gap-1 shadow-md shadow-emerald-600/20 cursor-pointer"
+                  title="Directly sell to a franchise"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Direct
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>

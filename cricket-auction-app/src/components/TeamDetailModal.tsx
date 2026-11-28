@@ -3,7 +3,7 @@ import { useAuction } from '../context/AuctionContext';
 import { Team, Player } from '../types/auction';
 import { GradeBadge } from './GradeBadge';
 import { RoleBadge } from './RoleBadge';
-import { getTeamGradeMetrics } from '../utils/auctionValidation';
+import { getTeamGradeMetrics, isCaptainOrViceCaptain } from '../utils/auctionValidation';
 import { X, Shield, Users, DollarSign, Trash2, Edit2, Check, RefreshCw, UserMinus } from 'lucide-react';
 
 interface TeamDetailModalProps {
@@ -35,14 +35,15 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
 
   if (!isOpen || !team) return null;
 
-  const squadPlayers = allPlayers.filter(p =>
-    (team.squad.includes(p.id) && (p.status === 'sold' || p.isCaptain || p.isViceCaptain)) ||
-    (p.teamId === team.id && p.status === 'sold') ||
-    p.id === team.captainPlayerId ||
-    p.id === team.viceCaptainPlayerId ||
-    p.captainOfTeamId === team.id ||
-    p.viceCaptainOfTeamId === team.id
-  );
+  const squadPlayers = allPlayers.filter(p => {
+    if (isCaptainOrViceCaptain(p, team)) return true;
+    return Boolean(
+      team.squad &&
+      team.squad.includes(p.id) &&
+      p.status === 'sold' &&
+      p.teamId === team.id
+    );
+  });
   const captainPlayer = allPlayers.find(p =>
     (team.captainPlayerId && p.id === team.captainPlayerId) ||
     p.captainOfTeamId === team.id ||
@@ -283,58 +284,53 @@ export const TeamDetailModal: React.FC<TeamDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Grade Restrictions & Budget Limits Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs font-mono">
-            {/* Grade A Restrictions */}
-            <div className={`p-2.5 rounded-lg border ${gradeMetrics.aRemainingSlots === 0 ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-900 border-slate-800'}`}>
-              <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Grade A (Max 2 Players)</div>
-              <div className="font-black text-white mt-1 text-sm">{gradeMetrics.aCount} / 2 used</div>
-              <div className={`text-[10px] ${gradeMetrics.aRemainingSlots === 0 ? 'text-rose-400 font-bold' : 'text-slate-400'}`}>
-                {gradeMetrics.aRemainingSlots} slot{gradeMetrics.aRemainingSlots !== 1 ? 's' : ''} remaining
-              </div>
-              <div className="text-[10px] text-amber-300 font-semibold mt-1.5 border-t border-slate-800/80 pt-1">
-                Budget: ₹{gradeMetrics.aSpent.toLocaleString('en-IN')} / 30k (₹{gradeMetrics.aRemainingBudget.toLocaleString('en-IN')} rem)
-              </div>
-            </div>
+          {/* Squad Capacity & Smart Purse Overview */}
+          {(() => {
+            const maxSquad = rules.squadRules?.maxSquadSize || 9;
+            const remainingSlots = Math.max(0, maxSquad - squadPlayers.length);
+            const mandatoryReserve = Math.max(0, remainingSlots - 1) * 1000;
+            return (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs font-mono">
+                {/* Squad Slots */}
+                <div className="p-2.5 rounded-lg border bg-slate-900 border-slate-800">
+                  <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Squad Slots</div>
+                  <div className="font-black text-white mt-1 text-sm">{squadPlayers.length} / {maxSquad} used</div>
+                  <div className="text-[10px] text-slate-400 mt-1">
+                    {remainingSlots} slot{remainingSlots !== 1 ? 's' : ''} remaining
+                  </div>
+                </div>
 
-            {/* Grade B Restrictions */}
-            <div className={`p-2.5 rounded-lg border ${gradeMetrics.bRemainingSlots === 0 ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-900 border-slate-800'}`}>
-              <div className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Grade B (Max 3 Players)</div>
-              <div className="font-black text-white mt-1 text-sm">{gradeMetrics.bCount} / 3 used</div>
-              <div className={`text-[10px] ${gradeMetrics.bRemainingSlots === 0 ? 'text-rose-400 font-bold' : 'text-slate-400'}`}>
-                {gradeMetrics.bRemainingSlots} slot{gradeMetrics.bRemainingSlots !== 1 ? 's' : ''} remaining
-              </div>
-              <div className="text-[10px] text-blue-300 font-semibold mt-1.5 border-t border-slate-800/80 pt-1">
-                Budget: ₹{gradeMetrics.bSpent.toLocaleString('en-IN')} / 18k (₹{gradeMetrics.bRemainingBudget.toLocaleString('en-IN')} rem)
-              </div>
-            </div>
+                {/* Remaining Purse */}
+                <div className="p-2.5 rounded-lg border bg-slate-900 border-slate-800">
+                  <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Remaining Purse</div>
+                  <div className="font-black text-emerald-400 mt-1 text-sm">₹{team.remainingBudget.toLocaleString('en-IN')} pts</div>
+                  <div className="text-[10px] text-slate-400 mt-1">
+                    Total Spent: ₹{team.totalSpent.toLocaleString('en-IN')}
+                  </div>
+                </div>
 
-            {/* Grade C Restrictions */}
-            <div className={`p-2.5 rounded-lg border ${gradeMetrics.cRemainingSlots === 0 ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-900 border-slate-800'}`}>
-              <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Grade C (Max 2 Players)</div>
-              <div className="font-black text-white mt-1 text-sm">{gradeMetrics.cCount} / 2 used</div>
-              <div className={`text-[10px] ${gradeMetrics.cRemainingSlots === 0 ? 'text-rose-400 font-bold' : 'text-slate-400'}`}>
-                {gradeMetrics.cRemainingSlots} slot{gradeMetrics.cRemainingSlots !== 1 ? 's' : ''} remaining
-              </div>
-              <div className="text-[10px] text-emerald-300 font-semibold mt-1.5 border-t border-slate-800/80 pt-1">
-                Spent: ₹{gradeMetrics.cSpent.toLocaleString('en-IN')} pts (Purse reserve)
-              </div>
-            </div>
+                {/* Smart Squad Reserve */}
+                <div className="p-2.5 rounded-lg border bg-slate-900 border-slate-800">
+                  <div className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">Squad Reserve</div>
+                  <div className="font-black text-white mt-1 text-sm">₹{mandatoryReserve.toLocaleString('en-IN')} pts</div>
+                  <div className="text-[10px] text-slate-400 mt-1">
+                    ₹1,000 / remaining slot
+                  </div>
+                </div>
 
-            {/* Leadership C+VC Combined */}
-            <div className={`p-2.5 rounded-lg border ${gradeMetrics.combinedCapCost > 50000 ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-900 border-slate-800'}`}>
-              <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Leadership (Max ₹50k)</div>
-              <div className={`font-black mt-1 text-sm ${gradeMetrics.combinedCapCost > 50000 ? 'text-rose-400' : 'text-indigo-300'}`}>
-                ₹{gradeMetrics.combinedCapCost.toLocaleString('en-IN')} / 50k
+                {/* Leadership C+VC Combined */}
+                <div className={`p-2.5 rounded-lg border ${gradeMetrics.combinedCapCost > 50000 ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-900 border-slate-800'}`}>
+                  <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Leadership (Max ₹50k)</div>
+                  <div className={`font-black mt-1 text-sm ${gradeMetrics.combinedCapCost > 50000 ? 'text-rose-400' : 'text-indigo-300'}`}>
+                    ₹{gradeMetrics.combinedCapCost.toLocaleString('en-IN')} / 50k
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-1">
+                    C: ₹{gradeMetrics.captainCost.toLocaleString('en-IN')} | VC: ₹{gradeMetrics.viceCaptainCost.toLocaleString('en-IN')}
+                  </div>
+                </div>
               </div>
-              <div className="text-[10px] text-slate-400">
-                ₹{gradeMetrics.remainingCapBudget.toLocaleString('en-IN')} budget remaining
-              </div>
-              <div className="text-[10px] text-slate-400 font-semibold mt-1.5 border-t border-slate-800/80 pt-1">
-                C: ₹{gradeMetrics.captainCost.toLocaleString('en-IN')} | VC: ₹{gradeMetrics.viceCaptainCost.toLocaleString('en-IN')}
-              </div>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* Squad Roster Table */}
           <div>

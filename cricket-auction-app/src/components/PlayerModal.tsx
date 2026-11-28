@@ -33,7 +33,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
   const [battingStyle, setBattingStyle] = useState<BattingStyle>('Right-hand bat');
   const [bowlingStyle, setBowlingStyle] = useState<BowlingStyle>('None');
   const [grade, setGrade] = useState<PlayerGrade>('B');
-  const [basePrice, setBasePrice] = useState(gradeBasePrices.gradeB);
+  const [basePrice, setBasePrice] = useState(1000);
   const [photo, setPhoto] = useState('');
   const [previousPerformance, setPreviousPerformance] = useState('');
   const [notes, setNotes] = useState('');
@@ -73,7 +73,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
       setBattingStyle(playerToEdit.battingStyle || 'Right-hand bat');
       setBowlingStyle(playerToEdit.bowlingStyle || 'None');
       setGrade(playerToEdit.grade || 'B');
-      setBasePrice(playerToEdit.basePrice || 3000);
+      setBasePrice(playerToEdit.basePrice || 1000);
       setPhoto(playerToEdit.photo || '');
       setPreviousPerformance(playerToEdit.previousPerformance || '');
       setNotes(playerToEdit.notes || '');
@@ -108,7 +108,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
       setBattingStyle('Right-hand bat');
       setBowlingStyle('None');
       setGrade('B');
-      setBasePrice(gradeBasePrices.gradeB || 3000);
+      setBasePrice(1000);
       setPhoto('');
       setPreviousPerformance('');
       setNotes('');
@@ -512,28 +512,14 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 onChange={e => {
                   const newGrade = e.target.value as PlayerGrade;
                   setGrade(newGrade);
-                  if (newGrade !== 'A' && isViceCaptain) {
-                    setIsViceCaptain(false); // Vice Captain has to be an A grade player
-                  }
-                  if (newGrade !== 'A+' && isCaptain) {
-                    setIsCaptain(false);
-                  }
-                  const newPrice =
-                    newGrade === 'A+'
-                      ? gradeBasePrices.gradeAPlus || 7000
-                      : newGrade === 'A'
-                      ? gradeBasePrices.gradeA || 5000
-                      : newGrade === 'B'
-                      ? gradeBasePrices.gradeB || 3000
-                      : gradeBasePrices.gradeC || 1000;
-                  setBasePrice(newPrice);
+                  setBasePrice(1000);
                 }}
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500 font-bold"
               >
-                <option value="A+">👑 Grade A+ (Marquee / Captain - {gradeBasePrices.gradeAPlus || 7000} pts)</option>
-                <option value="A">⭐ Grade A (Elite - {gradeBasePrices.gradeA} pts)</option>
-                <option value="B">⚡ Grade B (Core - {gradeBasePrices.gradeB} pts)</option>
-                <option value="C">🌱 Grade C (Emerging - {gradeBasePrices.gradeC} pts)</option>
+                <option value="A+">👑 Grade A+ (Marquee Tier - 1,000 pts base)</option>
+                <option value="A">⭐ Grade A (Elite Tier - 1,000 pts base)</option>
+                <option value="B">⚡ Grade B (Core Tier - 1,000 pts base)</option>
+                <option value="C">🌱 Grade C (Emerging Tier - 1,000 pts base)</option>
               </select>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { AuctionOrderingMode, Player } from '../types/auction';
+import { isGradeMatch, deduplicatePlayers, normalizeGrade } from '../utils/gradeUtils';
 import {
   ListOrdered,
   ArrowUpDown,
@@ -55,12 +56,12 @@ export const AuctionOrderPage: React.FC<AuctionOrderPageProps> = ({ onStartAucti
       'C': 4,
     };
 
-    let baseList = [...players];
+    let baseList = deduplicatePlayers(players);
 
     if (auctionOrderMode === 'grade') {
       baseList.sort((a, b) => {
-        const wA = gradeWeight[a.grade || 'B'] ?? 99;
-        const wB = gradeWeight[b.grade || 'B'] ?? 99;
+        const wA = gradeWeight[normalizeGrade(a.grade)] ?? 99;
+        const wB = gradeWeight[normalizeGrade(b.grade)] ?? 99;
         if (wA !== wB) return wA - wB;
         const lotA = a.lotNumber || a.auctionOrder || 0;
         const lotB = b.lotNumber || b.auctionOrder || 0;
@@ -103,7 +104,7 @@ export const AuctionOrderPage: React.FC<AuctionOrderPageProps> = ({ onStartAucti
           ? p.status === 'sold'
           : p.status === 'unsold';
 
-      const matchesGrade = gradeFilter === 'all' || p.grade === gradeFilter;
+      const matchesGrade = isGradeMatch(p.grade, gradeFilter);
 
       return matchesSearch && matchesStatus && matchesGrade;
     });

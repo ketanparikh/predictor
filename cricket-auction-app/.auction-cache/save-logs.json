@@ -1,5 +1,173 @@
 [
   {
+    "id": "log-1795869820480-ibt5",
+    "timestamp": "2026-11-28T12:43:40.480Z",
+    "type": "manual",
+    "status": "success",
+    "description": "Manual checkpoint triggered by organizer",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869685758-7vz9",
+    "timestamp": "2026-11-28T12:41:25.758Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Divit khanna to Team Tanmay (30,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869677045-qsrd",
+    "timestamp": "2026-11-28T12:41:17.045Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Bhushan Patkar to Team Gaurav (30,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869668186-bvsn",
+    "timestamp": "2026-11-28T12:41:08.186Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Ashish Singh to Team Gurmeet (19,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869654976-8scg",
+    "timestamp": "2026-11-28T12:40:54.976Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Ketan Parikh to Team Prasad (25,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869645478-166s",
+    "timestamp": "2026-11-28T12:40:45.478Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Dipal Panchal to Team Avinash (30,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869624549-10l4",
+    "timestamp": "2026-11-28T12:40:24.549Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Vicky sharma to Team Chetan (Reassigned from Team Chetan) (29,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869608382-t1cc",
+    "timestamp": "2026-11-28T12:40:08.382Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Hrishikesh Baradkar to Team Amit (28,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869585255-4qn7",
+    "timestamp": "2026-11-28T12:39:45.255Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Sachin Jain to Team Dhurv (11,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869570693-frcz",
+    "timestamp": "2026-11-28T12:39:30.693Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Mahesh A Kulkarni to Team Akshay (19,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869525024-bng2",
+    "timestamp": "2026-11-28T12:38:45.024Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Anthony Michael to Team Paras (22,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869509179-qvpa",
+    "timestamp": "2026-11-28T12:38:29.179Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Vicky sharma to Team Chetan (28,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869485868-5s3i",
+    "timestamp": "2026-11-28T12:38:05.868Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Vedant Rathi to Team Rehet (20,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
+    "id": "log-1795869467719-48ul",
+    "timestamp": "2026-11-28T12:37:47.719Z",
+    "type": "auto",
+    "status": "success",
+    "description": "Allocated Vice-Captain: Pankaj to Team Amol (18,000 pts)",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
     "id": "log-1795449633996-felh",
     "timestamp": "2026-11-23T16:00:33.996Z",
     "type": "manual",

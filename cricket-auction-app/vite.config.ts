@@ -228,10 +228,19 @@ function auctionSyncPlugin(): Plugin {
                 fs.writeFileSync(overridesFilePath, JSON.stringify(playerOverrides, null, 2), 'utf8');
               } catch {}
 
-              // Also apply overrides to globalAuctionState.players if present
+              // Also apply overrides to globalAuctionState.players if present (matching by ID and canonical name)
               if (globalAuctionState && Array.isArray(globalAuctionState.players)) {
+                const nameMap = new Map();
+                Object.values(playerOverrides).forEach((patch: any) => {
+                  if (patch && patch.name) {
+                    const k = String(patch.name).toLowerCase().replace(/[^a-z0-9]/g, '');
+                    nameMap.set(k, patch);
+                  }
+                });
+
                 globalAuctionState.players = globalAuctionState.players.map((p: any) => {
-                  const ovr = playerOverrides[p.id];
+                  const nameKey = String(p.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                  const ovr = playerOverrides[p.id] || nameMap.get(nameKey);
                   return ovr ? { ...p, ...ovr } : p;
                 });
                 try {
@@ -296,69 +305,84 @@ function auctionSyncPlugin(): Plugin {
                 let reversedCount = 0;
                 let returnedCount = 0;
 
-                // 1. Reset sold auction players (preserving captains & vice-captains)
-                if (Array.isArray(globalAuctionState.players)) {
-                  globalAuctionState.players = globalAuctionState.players.map((p: any) => {
-                    if (p.isCaptain || p.isViceCaptain) {
-                      return p; // Preserved
-                    }
-                    if (p.status === 'sold' || p.status === 'unsold' || p.teamId) {
-                      returnedCount++;
+                if (Array.isArray(meta.teams) && Array.isArray(meta.players)) {
+                  // Direct atomic state from restartAuction client
+                  globalAuctionState.teams = meta.teams;
+                  globalAuctionState.players = meta.players;
+                  globalAuctionState.transactions = [];
+                } else {
+                  // Server-side calculation fallback
+                  const isLeadershipInServer = (player: any) => {
+                    return (globalAuctionState.teams || []).some((t: any) => {
+                      if (t.captainPlayerId === player.id || t.viceCaptainPlayerId === player.id) return true;
+                      if (player.captainOfTeamId === t.id || player.viceCaptainOfTeamId === t.id) return true;
+                      if ((player.isCaptain || player.isPreAssignedCaptain) && (player.teamId === t.id || (t.squad && t.squad.includes(player.id)))) return true;
+                      if ((player.isViceCaptain || player.isPreAssignedViceCaptain) && (player.teamId === t.id || (t.squad && t.squad.includes(player.id)))) return true;
+                      if (t.captain && player.name && player.name.trim().toLowerCase() === t.captain.trim().toLowerCase()) return true;
+                      if (t.viceCaptain && player.name && player.name.trim().toLowerCase() === t.viceCaptain.trim().toLowerCase()) return true;
+                      return false;
+                    });
+                  };
+
+                  // 1. Reset sold auction players (preserving captains & vice-captains)
+                  if (Array.isArray(globalAuctionState.players)) {
+                    globalAuctionState.players = globalAuctionState.players.map((p: any) => {
+                      if (isLeadershipInServer(p)) {
+                        return {
+                          ...p,
+                          status: 'sold',
+                          soldPrice: p.soldPrice !== null && p.soldPrice !== undefined ? p.soldPrice : 0,
+                        };
+                      }
+                      if (p.status === 'sold' || p.status === 'unsold' || p.teamId) {
+                        returnedCount++;
+                      }
                       return {
                         ...p,
                         status: 'upcoming',
+                        basePrice: 1000,
                         soldPrice: null,
                         teamId: null,
                         soldToTeamId: undefined,
                       };
-                    }
-                    return {
-                      ...p,
-                      soldPrice: null,
-                      teamId: null,
-                    };
-                  });
-                }
+                    });
+                  }
 
-                // 2. Clear auction transaction history
-                if (Array.isArray(globalAuctionState.transactions)) {
-                  reversedCount = globalAuctionState.transactions.length;
-                  globalAuctionState.transactions = [];
-                }
+                  // 2. Clear auction transaction history
+                  if (Array.isArray(globalAuctionState.transactions)) {
+                    reversedCount = globalAuctionState.transactions.length;
+                    globalAuctionState.transactions = [];
+                  }
 
-                // 3. Reset team squads keeping Captain & Vice-Captain, restoring starting purse
-                const startBudget = globalAuctionState.rules?.startingBudget || 100000;
-                const playerMap = new Map((globalAuctionState.players || []).map((p: any) => [p.id, p]));
-                if (Array.isArray(globalAuctionState.teams)) {
-                  globalAuctionState.teams = globalAuctionState.teams.map((t: any) => {
-                    const preservedSquad = (t.squad || []).filter((item: any) => {
-                      const pId = typeof item === 'string' ? item : item?.id;
-                      const p = playerMap.get(pId) || (typeof item === 'object' ? item : null);
-                      return p && (p.isCaptain || p.isViceCaptain || pId === t.captainPlayerId || pId === t.viceCaptainPlayerId);
-                    }).map((item: any) => typeof item === 'string' ? item : item?.id);
+                  // 3. Reset team squads keeping Captain & Vice-Captain, restoring starting purse
+                  const startBudget = globalAuctionState.rules?.startingBudget || 100000;
+                  const playerMap = new Map((globalAuctionState.players || []).map((p: any) => [p.id, p]));
+                  if (Array.isArray(globalAuctionState.teams)) {
+                    globalAuctionState.teams = globalAuctionState.teams.map((t: any) => {
+                      const capPlayer: any = t.captainPlayerId ? playerMap.get(t.captainPlayerId) : (globalAuctionState.players || []).find((p: any) => t.captain && p.name && p.name.trim().toLowerCase() === t.captain.trim().toLowerCase());
+                      const vcPlayer: any = t.viceCaptainPlayerId ? playerMap.get(t.viceCaptainPlayerId) : (globalAuctionState.players || []).find((p: any) => t.viceCaptain && p.name && p.name.trim().toLowerCase() === t.viceCaptain.trim().toLowerCase());
 
-                    // Ensure captain and vice-captain are in squad
-                    if (t.captainPlayerId && !preservedSquad.includes(t.captainPlayerId)) {
-                      preservedSquad.push(t.captainPlayerId);
-                    }
-                    if (t.viceCaptainPlayerId && !preservedSquad.includes(t.viceCaptainPlayerId)) {
-                      preservedSquad.push(t.viceCaptainPlayerId);
-                    }
+                      const preservedSquad: string[] = [];
+                      if (capPlayer && !preservedSquad.includes(capPlayer.id)) preservedSquad.push(capPlayer.id);
+                      if (vcPlayer && !preservedSquad.includes(vcPlayer.id)) preservedSquad.push(vcPlayer.id);
 
-                    const capPlayer: any = t.captainPlayerId ? playerMap.get(t.captainPlayerId) : null;
-                    const vcPlayer: any = t.viceCaptainPlayerId ? playerMap.get(t.viceCaptainPlayerId) : null;
-                    const capCost = Number(capPlayer?.soldPrice || capPlayer?.basePrice || 0);
-                    const vcCost = Number(vcPlayer?.soldPrice || vcPlayer?.basePrice || 0);
-                    const leadershipCost = capCost + vcCost;
+                      const capCost = Number(capPlayer?.soldPrice || 0);
+                      const vcCost = Number(vcPlayer?.soldPrice || 0);
+                      const leadershipCost = capCost + vcCost;
 
-                    return {
-                      ...t,
-                      startingBudget: startBudget,
-                      totalSpent: leadershipCost,
-                      remainingBudget: Math.max(0, startBudget - leadershipCost),
-                      squad: preservedSquad,
-                    };
-                  });
+                      return {
+                        ...t,
+                        captain: capPlayer ? capPlayer.name : t.captain,
+                        captainPlayerId: capPlayer ? capPlayer.id : t.captainPlayerId,
+                        viceCaptain: vcPlayer ? vcPlayer.name : t.viceCaptain,
+                        viceCaptainPlayerId: vcPlayer ? vcPlayer.id : t.viceCaptainPlayerId,
+                        startingBudget: startBudget,
+                        totalSpent: leadershipCost,
+                        remainingBudget: Math.max(0, startBudget - leadershipCost),
+                        squad: preservedSquad,
+                      };
+                    });
+                  }
                 }
 
                 // 4. Reset live bidding state

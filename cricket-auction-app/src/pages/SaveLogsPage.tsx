@@ -60,7 +60,12 @@ export const SaveLogsPage: React.FC = () => {
       }
       // 2. Action / Type filter
       if (actionFilter !== 'all') {
-        if (actionFilter === 'player_edit' && log.type !== 'player_edit') return false;
+        if (actionFilter === 'player_edit' && log.type !== 'player_edit' && log.type !== 'bulk_edit') return false;
+        if (actionFilter === 'bulk_edit' && log.type !== 'bulk_edit') return false;
+        if (actionFilter === 'bid' && log.type !== 'bid') return false;
+        if (actionFilter === 'sale' && log.type !== 'sale') return false;
+        if (actionFilter === 'direct_sell' && log.type !== 'direct_sell') return false;
+        if (actionFilter === 'unsold' && log.type !== 'unsold') return false;
         if (actionFilter === 'restart' && log.type !== 'restart') return false;
         if (actionFilter === 'clear_history' && log.type !== 'clear_history') return false;
         if (actionFilter === 'manual' && log.type !== 'manual') return false;
@@ -378,7 +383,12 @@ export const SaveLogsPage: React.FC = () => {
                 className="w-full pl-8 pr-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-semibold"
               >
                 <option value="all">All Action Types</option>
-                <option value="player_edit">Player Edits & Grades</option>
+                <option value="player_edit">Player & Grade Edits</option>
+                <option value="bulk_edit">Bulk Grade Edits</option>
+                <option value="bid">Bids Placed</option>
+                <option value="sale">Auction Sales</option>
+                <option value="direct_sell">Direct Sells</option>
+                <option value="unsold">Unsold Players</option>
                 <option value="restart">Auction Restarted</option>
                 <option value="clear_history">History Cleared</option>
                 <option value="manual">Manual Saves</option>
@@ -442,7 +452,9 @@ export const SaveLogsPage: React.FC = () => {
                         <td className="py-2.5 px-3 whitespace-nowrap">
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              log.type === 'player_edit'
+                              log.type === 'bulk_edit'
+                                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
+                                : log.type === 'player_edit'
                                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                                 : log.type === 'restart'
                                 ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
@@ -453,16 +465,23 @@ export const SaveLogsPage: React.FC = () => {
                                 : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                             }`}
                           >
-                            {log.action || (log.type === 'player_edit' ? 'Player Edited' : log.type.toUpperCase())}
+                            {log.action || (log.type === 'bulk_edit' ? 'Bulk Grade Edit' : log.type === 'player_edit' ? 'Player Edited' : log.type.toUpperCase())}
                           </span>
                         </td>
                         <td className="py-2.5 px-3 whitespace-nowrap">
                           {log.playerName ? (
                             <div>
                               <div className="font-bold text-white text-xs">{log.playerName}</div>
-                              {log.playerId && (
-                                <div className="text-[10px] font-mono text-slate-500">ID: {log.playerId}</div>
-                              )}
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                {log.playerId && (
+                                  <span className="text-[10px] font-mono text-slate-500">ID: {log.playerId}</span>
+                                )}
+                                {log.bulkBatchId && (
+                                  <span className="text-[9px] font-mono px-1 py-0.5 rounded bg-purple-950/70 text-purple-400 border border-purple-800">
+                                    {log.bulkBatchId}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           ) : (
                             <span className="text-slate-400 text-xs italic">System / Tournament</span>

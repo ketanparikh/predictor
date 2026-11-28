@@ -4,6 +4,7 @@ import { AuctionTransaction } from '../types/auction';
 import { GradeBadge } from '../components/GradeBadge';
 import { RoleBadge } from '../components/RoleBadge';
 import { BidHistoryModal } from '../components/BidHistoryModal';
+import { isGradeMatch } from '../utils/gradeUtils';
 import {
   History,
   RotateCcw,
@@ -32,7 +33,7 @@ export const AuctionHistoryPage: React.FC = () => {
       const matchesSearch = tx.playerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.teamName.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesTeam = selectedTeamFilter === 'all' || tx.teamId === selectedTeamFilter;
-      const matchesGrade = selectedGradeFilter === 'all' || tx.playerGrade === selectedGradeFilter;
+      const matchesGrade = isGradeMatch(tx.playerGrade, selectedGradeFilter);
 
       return matchesSearch && matchesTeam && matchesGrade;
     });

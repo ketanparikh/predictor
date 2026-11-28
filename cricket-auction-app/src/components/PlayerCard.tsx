@@ -8,6 +8,7 @@ import { normalizeGrade } from '../utils/gradeUtils';
 interface PlayerCardProps {
   player: Player;
   teams: Team[];
+  currentPlayerId?: string | null;
   onStartAuction?: (player: Player) => void;
   onDirectSell?: (player: Player) => void;
   onEdit?: (player: Player) => void;
@@ -18,6 +19,7 @@ interface PlayerCardProps {
 export const PlayerCard: React.FC<PlayerCardProps> = ({
   player,
   teams,
+  currentPlayerId,
   onStartAuction,
   onDirectSell,
   onEdit,
@@ -25,10 +27,12 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   onDelete,
 }) => {
   const soldTeam = player.teamId ? teams.find(t => t.id === player.teamId) : null;
+  const isLiveNow = (player.status === 'in_auction') && (!currentPlayerId || player.id === currentPlayerId);
+  const isOtherPlayerLive = Boolean(currentPlayerId && currentPlayerId !== player.id);
 
   return (
     <div className={`relative flex flex-col justify-between rounded-xl border transition-all duration-200 overflow-hidden ${
-      player.status === 'in_auction'
+      isLiveNow
         ? 'border-amber-500/80 bg-slate-900/90 shadow-[0_0_20px_rgba(245,158,11,0.3)] ring-1 ring-amber-400'
         : player.isCaptain
         ? 'border-amber-500/50 bg-slate-900/85 shadow-[0_0_15px_rgba(245,158,11,0.15)] ring-1 ring-amber-500/30'
@@ -239,8 +243,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
                 </button>
               )}
             </div>
-          ) : player.status === 'in_auction' ? (
-            <span className="px-2.5 py-1 rounded bg-amber-500 text-slate-950 text-xs font-bold animate-pulse flex items-center gap-1">
+          ) : isLiveNow ? (
+            <span className="px-2.5 py-1 rounded bg-amber-500 text-slate-950 text-xs font-bold animate-pulse flex items-center gap-1 shadow-md shadow-amber-500/20">
               <Gavel className="w-3.5 h-3.5" />
               LIVE NOW
             </span>
@@ -249,8 +253,17 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
               {onStartAuction && (
                 <button
                   onClick={() => onStartAuction(player)}
-                  className="px-2.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition-all flex items-center gap-1 shadow-md shadow-sky-600/20 cursor-pointer"
-                  title="Start live auction for this player"
+                  disabled={isOtherPlayerLive}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
+                    isOtherPlayerLive
+                      ? 'bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed opacity-60'
+                      : 'bg-sky-600 hover:bg-sky-500 text-white shadow-md shadow-sky-600/20 cursor-pointer'
+                  }`}
+                  title={
+                    isOtherPlayerLive
+                      ? 'Another player is currently active in live auction'
+                      : 'Start live auction for this player'
+                  }
                 >
                   <Gavel className="w-3.5 h-3.5" />
                   Auction

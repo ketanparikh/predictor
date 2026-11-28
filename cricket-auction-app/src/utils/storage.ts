@@ -1,4 +1,4 @@
-import { Team, Player, AuctionTransaction, AuctionRules, TournamentInfo, AuctionOrderingMode, GradeCategoryMaxBid, SaveLogEntry, SaveSnapshot } from '../types/auction';
+import { Team, Player, AuctionTransaction, AuctionRules, TournamentInfo, AuctionOrderingMode, GradeCategoryMaxBid, SaveLogEntry, SaveSnapshot, ActiveAuctionSession, PlayerStatus } from '../types/auction';
 import { initialTeams, initialAuctionRules, initialTournamentInfo } from '../data/demoData';
 import { normalizeGrade, deduplicatePlayers } from './gradeUtils';
 
@@ -17,6 +17,7 @@ const STORAGE_KEYS = {
   SAVE_LOGS: 'cricket_auction_save_logs_v3',
   SAVE_SNAPSHOTS: 'cricket_auction_save_snapshots_v3',
   PLAYER_OVERRIDES: 'cricket_auction_player_overrides_v3',
+  ACTIVE_AUCTION_SESSION: 'cricket_auction_active_session_v3',
   LAST_SAVED: 'cricket_auction_last_saved_v3',
 };
 
@@ -45,6 +46,7 @@ export interface AppStoredState {
   bidHistory: Array<{ id: string; teamId: string; teamName: string; amount: number; timestamp: string }>;
   auctionOrderMode?: AuctionOrderingMode;
   customAuctionOrderIds?: string[];
+  activeAuctionSession?: ActiveAuctionSession | null;
   lastSaved?: string;
 }
 
@@ -137,13 +139,63 @@ export function sanitizeTeamPurses(teams: Team[], purse = TARGET_PURSE): Team[] 
   });
 }
 
+/**
+ * Enforces the strict rule that at most ONE player in the entire database can have status 'in_auction'.
+ * Any stale or duplicate 'in_auction' flags on other players are immediately sanitized.
+ */
+export function sanitizeSingleActiveAuctionPlayer(
+  players: Player[],
+  currentPlayerId: string | null
+): { sanitizedPlayers: Player[]; sanitizedCurrentPlayerId: string | null } {
+  const activeId = currentPlayerId || null;
+  const activePlayer = activeId ? (players || []).find(p => p.id === activeId) : null;
+
+  // Active lot is valid only if player exists and is not already sold/assigned to a team
+  const isTargetValid = !!activePlayer && activePlayer.status !== 'sold' && !activePlayer.teamId;
+  const resolvedCurrentPlayerId = isTargetValid ? activeId : null;
+
+  let hasAssignedActive = false;
+  const sanitizedPlayers = (players || []).map(p => {
+    // If this player is the resolved active player
+    if (resolvedCurrentPlayerId && p.id === resolvedCurrentPlayerId) {
+      hasAssignedActive = true;
+      return { ...p, status: 'in_auction' as const };
+    }
+
+    // Every other player with 'in_auction' is strictly sanitized to upcoming or sold!
+    if (p.status === 'in_auction') {
+      return {
+        ...p,
+        status: (p.teamId ? 'sold' : 'upcoming') as PlayerStatus,
+      };
+    }
+
+    return p;
+  });
+
+  return {
+    sanitizedPlayers,
+    sanitizedCurrentPlayerId: hasAssignedActive ? resolvedCurrentPlayerId : null,
+  };
+}
+
 export function sanitizeAuctionState(state: AppStoredState): AppStoredState {
   const rules = sanitizeAuctionRules(state.rules);
   const teams = sanitizeTeamPurses(
     state.teams?.length ? state.teams : initialTeams,
     rules.startingBudget || TARGET_PURSE,
   );
-  return { ...state, rules, teams };
+  const { sanitizedPlayers, sanitizedCurrentPlayerId } = sanitizeSingleActiveAuctionPlayer(
+    state.players || [],
+    state.currentPlayerId || null
+  );
+  return {
+    ...state,
+    rules,
+    teams,
+    players: sanitizedPlayers,
+    currentPlayerId: sanitizedCurrentPlayerId,
+  };
 }
 
 export const loadStoredState = (): AppStoredState => {
@@ -234,20 +286,28 @@ export const loadStoredState = (): AppStoredState => {
 
     const rawOrderMode = localStorage.getItem(STORAGE_KEYS.AUCTION_ORDER_MODE);
     const rawCustomOrderIds = localStorage.getItem(STORAGE_KEYS.CUSTOM_ORDER_IDS);
+    const rawActiveSession = localStorage.getItem(STORAGE_KEYS.ACTIVE_AUCTION_SESSION);
     const rawLastSaved = localStorage.getItem(STORAGE_KEYS.LAST_SAVED);
+
+    const parsedCurrentPlayerId = rawCurrentPlayerId ? JSON.parse(rawCurrentPlayerId) : null;
+    const { sanitizedPlayers, sanitizedCurrentPlayerId } = sanitizeSingleActiveAuctionPlayer(
+      loadedPlayers,
+      parsedCurrentPlayerId
+    );
 
     return {
       teams: loadedTeams,
-      players: loadedPlayers,
+      players: sanitizedPlayers,
       transactions: rawTransactions ? JSON.parse(rawTransactions) : [],
       rules: loadedRules,
       tournament: rawTournament ? JSON.parse(rawTournament) : initialTournamentInfo,
-      currentPlayerId: rawCurrentPlayerId ? JSON.parse(rawCurrentPlayerId) : null,
+      currentPlayerId: sanitizedCurrentPlayerId,
       currentBid: rawCurrentBid ? Number(rawCurrentBid) : 0,
       currentBidderId: rawCurrentBidderId ? JSON.parse(rawCurrentBidderId) : null,
       bidHistory: rawBidHistory ? JSON.parse(rawBidHistory) : [],
       auctionOrderMode: (rawOrderMode as AuctionOrderingMode) || 'default',
       customAuctionOrderIds: rawCustomOrderIds ? JSON.parse(rawCustomOrderIds) : undefined,
+      activeAuctionSession: rawActiveSession ? JSON.parse(rawActiveSession) : null,
       lastSaved: rawLastSaved || new Date().toISOString(),
     };
   } catch (err) {
@@ -271,16 +331,31 @@ export const loadStoredState = (): AppStoredState => {
 export const saveStoredState = (state: Partial<AppStoredState>) => {
   try {
     if (state.teams !== undefined) localStorage.setItem(STORAGE_KEYS.TEAMS, JSON.stringify(state.teams));
-    if (state.players !== undefined) localStorage.setItem(STORAGE_KEYS.PLAYERS, JSON.stringify(state.players));
+    if (state.players !== undefined || state.currentPlayerId !== undefined) {
+      const activeId = state.currentPlayerId !== undefined ? state.currentPlayerId : null;
+      const targetPlayers = state.players !== undefined ? state.players : [];
+      const { sanitizedPlayers, sanitizedCurrentPlayerId } = sanitizeSingleActiveAuctionPlayer(
+        targetPlayers,
+        activeId
+      );
+      localStorage.setItem(STORAGE_KEYS.PLAYERS, JSON.stringify(sanitizedPlayers));
+      localStorage.setItem(STORAGE_KEYS.CURRENT_PLAYER_ID, JSON.stringify(sanitizedCurrentPlayerId));
+    }
     if (state.transactions !== undefined) localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(state.transactions));
     if (state.rules !== undefined) localStorage.setItem(STORAGE_KEYS.RULES, JSON.stringify(state.rules));
     if (state.tournament !== undefined) localStorage.setItem(STORAGE_KEYS.TOURNAMENT, JSON.stringify(state.tournament));
-    if (state.currentPlayerId !== undefined) localStorage.setItem(STORAGE_KEYS.CURRENT_PLAYER_ID, JSON.stringify(state.currentPlayerId));
     if (state.currentBid !== undefined) localStorage.setItem(STORAGE_KEYS.CURRENT_BID, String(state.currentBid));
     if (state.currentBidderId !== undefined) localStorage.setItem(STORAGE_KEYS.CURRENT_BIDDER_ID, JSON.stringify(state.currentBidderId));
     if (state.bidHistory !== undefined) localStorage.setItem(STORAGE_KEYS.BID_HISTORY, JSON.stringify(state.bidHistory));
     if (state.auctionOrderMode !== undefined) localStorage.setItem(STORAGE_KEYS.AUCTION_ORDER_MODE, state.auctionOrderMode);
     if (state.customAuctionOrderIds !== undefined) localStorage.setItem(STORAGE_KEYS.CUSTOM_ORDER_IDS, JSON.stringify(state.customAuctionOrderIds));
+    if (state.activeAuctionSession !== undefined) {
+      if (state.activeAuctionSession) {
+        localStorage.setItem(STORAGE_KEYS.ACTIVE_AUCTION_SESSION, JSON.stringify(state.activeAuctionSession));
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.ACTIVE_AUCTION_SESSION);
+      }
+    }
     const now = new Date().toISOString();
     localStorage.setItem(STORAGE_KEYS.LAST_SAVED, now);
   } catch (err) {

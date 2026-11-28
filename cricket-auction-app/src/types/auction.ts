@@ -218,6 +218,15 @@ export interface TournamentInfo {
   spectatorPin?: string;
 }
 
+export interface ActiveAuctionSession {
+  sessionId: string;
+  playerId: string;
+  status: 'active' | 'paused' | 'concluded';
+  currentBid: number;
+  highestBidderTeamId: string | null;
+  startedAt: string;
+}
+
 export type ActiveNavTab = 
   | 'dashboard' 
   | 'live_auction' 

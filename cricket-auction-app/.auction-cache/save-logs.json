@@ -1,5 +1,17 @@
 [
   {
+    "id": "log-1795871902421-qhgh",
+    "timestamp": "2026-11-28T13:18:22.421Z",
+    "type": "manual",
+    "status": "success",
+    "description": "Manual checkpoint triggered by organizer",
+    "itemCountSummary": {
+      "teams": 12,
+      "players": 105,
+      "transactions": 0
+    }
+  },
+  {
     "id": "log-1795869820480-ibt5",
     "timestamp": "2026-11-28T12:43:40.480Z",
     "type": "manual",

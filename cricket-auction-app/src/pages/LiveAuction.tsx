@@ -96,6 +96,7 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
     markPlayerUnsold,
     skipOrNextPlayer,
     startAuctionForPlayer,
+    cancelCurrentAuction,
     undoLastResult,
     lastActionResult,
     rules,
@@ -814,6 +815,22 @@ export const LiveAuction: React.FC<LiveAuctionProps> = ({ onOpenProjector }) => 
                   >
                     <XCircle className="w-5 h-5" />
                     <span>MARK UNSOLD</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const res = cancelCurrentAuction('Auctioneer Cancel');
+                      if (res.success) {
+                        setSuccessMessage(res.message);
+                        setTimeout(() => setSuccessMessage(null), 3500);
+                      }
+                    }}
+                    title="Cancel this auction lot and return the player to the upcoming queue"
+                    className="py-2.5 px-3 rounded-xl font-bold text-xs uppercase transition-all bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700/80 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer col-span-1 sm:col-span-2"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Cancel Lot (Return to Queue)</span>
                   </button>
                 </div>
               </div>

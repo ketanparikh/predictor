@@ -12,7 +12,8 @@ import {
   AuctionOrderingMode,
   GradeCategoryMaxBid,
   SaveLogEntry,
-  SaveSnapshot
+  SaveSnapshot,
+  ActiveAuctionSession
 } from '../types/auction';
 import { initialTeams, initialAuctionRules, initialTournamentInfo } from '../data/demoData';
 import {
@@ -30,6 +31,7 @@ import {
   saveAllPlayerOverrides,
   applyPlayerOverrides,
   sanitizeAuctionState,
+  sanitizeSingleActiveAuctionPlayer,
 } from '../utils/storage';
 import {
   loadAuctionStateFromFirestore,
@@ -63,6 +65,7 @@ interface AuctionContextType {
   rules: AuctionRules;
   tournament: TournamentInfo;
   currentPlayer: Player | null;
+  currentPlayerId: string | null;
   currentBid: number;
   currentBidder: Team | null;
   bidHistory: BidRecord[];
@@ -108,7 +111,9 @@ interface AuctionContextType {
   restoreFromSnapshot: (snapshotId: string) => { success: boolean; message: string };
 
   // Auction Actions
-  startAuctionForPlayer: (playerId: string) => void;
+  startAuctionForPlayer: (playerId: string) => { success: boolean; message: string; alreadyActive?: boolean };
+  cancelCurrentAuction: (modifiedBy?: string) => { success: boolean; message: string };
+  activeAuctionSession?: ActiveAuctionSession | null;
   placeBid: (teamId: string, incrementOrAmount?: number, isAbsoluteAmount?: boolean) => { success: boolean; message?: string };
   undoLastBid: () => void;
   markPlayerSold: () => { success: boolean; message?: string };
@@ -226,6 +231,8 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [currentBidderId, setCurrentBidderId] = useState<string | null>(null);
   const [bidHistory, setBidHistory] = useState<BidRecord[]>([]);
   const [lastActionResult, setLastActionResult] = useState<LastAuctionResult | null>(null);
+  const [activeAuctionSession, setActiveAuctionSession] = useState<ActiveAuctionSession | null>(null);
+  const isStartingAuctionRef = useRef(false);
 
   // Mock Auction Mode state
   const [isMockAuction, setIsMockAuction] = useState<boolean>(false);
@@ -271,8 +278,14 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     const isSpectator = isSpectatorOrProjectorView();
 
     const applyStored = (stored: AppStoredState) => {
+      // Strictly sanitize single active player invariant: COUNT(players WHERE status === 'in_auction') <= 1
+      const { sanitizedPlayers, sanitizedCurrentPlayerId } = sanitizeSingleActiveAuctionPlayer(
+        stored.players || [],
+        stored.currentPlayerId ?? null
+      );
+
       setTeams(stored.teams?.length ? stored.teams : initialTeams);
-      setPlayers(stored.players);
+      setPlayers(sanitizedPlayers);
       setTransactions(stored.transactions || []);
       const normalizedRules: AuctionRules = {
         ...(stored.rules || initialAuctionRules),
@@ -288,10 +301,18 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       };
       setRules(normalizedRules);
       setTournament(stored.tournament || initialTournamentInfo);
-      setCurrentPlayerId(stored.currentPlayerId ?? null);
+      setCurrentPlayerId(sanitizedCurrentPlayerId);
       setCurrentBid(stored.currentBid ?? 0);
       setCurrentBidderId(stored.currentBidderId ?? null);
       setBidHistory((stored.bidHistory as unknown as BidRecord[]) || []);
+      setActiveAuctionSession(stored.activeAuctionSession || (sanitizedCurrentPlayerId ? {
+        sessionId: `session-restored-${Date.now()}`,
+        playerId: sanitizedCurrentPlayerId,
+        status: 'active',
+        currentBid: stored.currentBid ?? 1000,
+        highestBidderTeamId: stored.currentBidderId ?? null,
+        startedAt: new Date().toISOString(),
+      } : null));
       setAuctionOrderMode(stored.auctionOrderMode || 'default');
       if (stored.customAuctionOrderIds) setCustomAuctionOrderIds(stored.customAuctionOrderIds);
       setTimerSeconds(stored.rules?.timerDuration || 15);
@@ -312,7 +333,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       );
       // Ensure overrides are applied to the final roster so admin edits never revert
       const finalPlayers = applyPlayerOverrides(players, loadPlayerOverrides());
-      return { ...sanitized, players: deduplicatePlayers(finalPlayers), teams: sanitized.teams };
+      const { sanitizedPlayers, sanitizedCurrentPlayerId } = sanitizeSingleActiveAuctionPlayer(
+        deduplicatePlayers(finalPlayers),
+        sanitized.currentPlayerId ?? null
+      );
+      return {
+        ...sanitized,
+        players: sanitizedPlayers,
+        currentPlayerId: sanitizedCurrentPlayerId,
+        teams: sanitized.teams,
+      };
     };
 
     if (isSpectator) {
@@ -547,7 +577,11 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       } catch {}
       const overrides = loadPlayerOverrides();
       const updatedPlayers = deduplicatePlayers(applyPlayerOverrides(payload.players, overrides));
-      setPlayers(updatedPlayers);
+      const { sanitizedPlayers, sanitizedCurrentPlayerId } = sanitizeSingleActiveAuctionPlayer(
+        updatedPlayers,
+        payload.currentPlayerId ?? null
+      );
+      setPlayers(sanitizedPlayers);
 
       const alignedTeams = payload.teams.map(t => {
         const cap = updatedPlayers.find(p => p.id === t.captainPlayerId || (p.captainOfTeamId === t.id) || ((p.teamId === t.id || t.squad.includes(p.id)) && p.isCaptain));
@@ -585,10 +619,18 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       };
       setRules(normalizedIncomingRules);
       setTournament(payload.tournament || initialTournamentInfo);
-      setCurrentPlayerId(payload.currentPlayerId ?? null);
+      setCurrentPlayerId(sanitizedCurrentPlayerId);
       setCurrentBid(payload.currentBid ?? 0);
       setCurrentBidderId(payload.currentBidderId ?? null);
       setBidHistory(payload.bidHistory as unknown as BidRecord[] || []);
+      setActiveAuctionSession(payload.activeAuctionSession || (sanitizedCurrentPlayerId ? {
+        sessionId: `session-incoming-${Date.now()}`,
+        playerId: sanitizedCurrentPlayerId,
+        status: 'active',
+        currentBid: payload.currentBid ?? 1000,
+        highestBidderTeamId: payload.currentBidderId ?? null,
+        startedAt: new Date().toISOString(),
+      } : null));
       setAuctionOrderMode(payload.auctionOrderMode || 'default');
       if (payload.customAuctionOrderIds) {
         setCustomAuctionOrderIds(payload.customAuctionOrderIds);
@@ -1606,22 +1648,187 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
   }, [teams, players, rules, transactions, tournament, currentPlayerId, currentBid, currentBidderId, bidHistory, auctionOrderMode, customAuctionOrderIds, broadcastState, pushStateToServer, logAndPersistSave]);
 
-  // START AUCTION FOR A PLAYER
-  const startAuctionForPlayer = useCallback((playerId: string) => {
-    const ply = players.find(p => p.id === playerId);
-    if (!ply) return;
+  // START AUCTION FOR A PLAYER (Strict Single Active Player Enforcement)
+  const startAuctionForPlayer = useCallback((playerId: string): { success: boolean; message: string; alreadyActive?: boolean } => {
+    // 0. Rapid click / re-entrancy lock
+    if (isStartingAuctionRef.current) {
+      return { success: false, message: 'Auction start already in progress...' };
+    }
 
-    // Reset current auction round
-    setCurrentPlayerId(playerId);
-    setCurrentBid(ply.basePrice);
+    // 1. Double-click check: if already active for this exact player, return success without duplicating
+    if (currentPlayerId === playerId) {
+      return { success: true, message: 'This player is already on the auction block.', alreadyActive: true };
+    }
+
+    // 2. Active auction conflict check: prevent starting another player while an auction is currently active
+    if (currentPlayerId && currentPlayerId !== playerId) {
+      const activePlayer = players.find(p => p.id === currentPlayerId);
+      if (activePlayer && (activePlayer.status === 'in_auction' || currentBidderId !== null || bidHistory.length > 0)) {
+        return {
+          success: false,
+          message: `Active Auction in Progress! "${activePlayer.name}" is currently on the auction block. Please sell, mark unsold, or cancel the active lot before starting another player.`,
+        };
+      }
+    }
+
+    const targetPlayer = players.find(p => p.id === playerId);
+    if (!targetPlayer) {
+      return { success: false, message: 'Player not found in database.' };
+    }
+
+    if (targetPlayer.status === 'sold' || targetPlayer.teamId) {
+      return { success: false, message: `${targetPlayer.name} is already sold and cannot be auctioned.` };
+    }
+
+    if (targetPlayer.isCaptain || targetPlayer.isPreAssignedCaptain) {
+      return { success: false, message: `${targetPlayer.name} is assigned as a team Captain and cannot be auctioned in regular bidding.` };
+    }
+
+    try {
+      isStartingAuctionRef.current = true;
+      const initialPrice = targetPlayer.basePrice || 1000;
+      const sessionId = `session-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+      // 3. ATOMIC STATE TRANSITION: Enforce strictly ONE active player
+      // Only the targeted player gets status: 'in_auction'. Every other player is guaranteed reset!
+      const updatedPlayers = players.map(p => {
+        if (p.id === playerId) {
+          return { ...p, status: 'in_auction' as const };
+        }
+        if (p.status === 'in_auction') {
+          return { ...p, status: (p.teamId ? 'sold' : 'upcoming') as PlayerStatus };
+        }
+        return p;
+      });
+
+      // 4. Update bidding & session states
+      setCurrentPlayerId(playerId);
+      setCurrentBid(initialPrice);
+      setCurrentBidderId(null);
+      setBidHistory([]);
+      setIsTimerRunning(false);
+      setTimerSeconds(rules.timerDuration || 15);
+      setPlayers(updatedPlayers);
+
+      // 5. Build authoritative session object
+      const activeSession: ActiveAuctionSession = {
+        sessionId,
+        playerId,
+        status: 'active',
+        currentBid: initialPrice,
+        highestBidderTeamId: null,
+        startedAt: new Date().toISOString(),
+      };
+      setActiveAuctionSession(activeSession);
+
+      // 6. Persist to storage & server disk cache atomically
+      const stateToSave: Partial<AppStoredState> = {
+        players: updatedPlayers,
+        currentPlayerId: playerId,
+        currentBid: initialPrice,
+        currentBidderId: null,
+        bidHistory: [],
+        activeAuctionSession: activeSession,
+      };
+      saveStoredState(stateToSave);
+
+      // 7. Audit log entry
+      const now = new Date();
+      const logEntry: SaveLogEntry = {
+        id: `start-auction-${playerId}-${Date.now()}`,
+        timestamp: now.toISOString(),
+        date: now.toLocaleDateString('en-IN'),
+        time: now.toLocaleTimeString('en-IN'),
+        type: 'player_edit',
+        status: 'success',
+        action: 'Auction Started',
+        fieldChanged: 'Auction Status',
+        previousValue: `Upcoming (Lot #${targetPlayer.auctionOrder || '-'})`,
+        newValue: `LIVE NOW (Lot #${targetPlayer.auctionOrder || '-'})`,
+        modifiedBy: 'Auctioneer',
+        playerId,
+        playerName: targetPlayer.name,
+        description: `Started active bidding session for ${targetPlayer.name} (Base Price: ₹${initialPrice.toLocaleString('en-IN')} pts, Session: ${sessionId})`,
+      };
+      appendSaveLog(logEntry);
+      setSaveLogs(prev => [logEntry, ...prev.filter(l => l.id !== logEntry.id)].slice(0, 500));
+
+      return {
+        success: true,
+        message: `Auction started for ${targetPlayer.name}!`,
+      };
+    } finally {
+      setTimeout(() => {
+        isStartingAuctionRef.current = false;
+      }, 300);
+    }
+  }, [players, currentPlayerId, currentBidderId, bidHistory, rules.timerDuration]);
+
+  // CANCEL CURRENT AUCTION LOT (Return player to upcoming queue safely)
+  const cancelCurrentAuction = useCallback((modifiedBy: string = 'Auctioneer'): { success: boolean; message: string } => {
+    if (!currentPlayerId) {
+      return { success: false, message: 'No auction is currently active to cancel.' };
+    }
+
+    const ply = players.find(p => p.id === currentPlayerId);
+    const plyName = ply ? ply.name : 'Unknown Player';
+
+    // 1. Reset all players from in_auction back to upcoming (or sold if teamId exists)
+    const updatedPlayers = players.map(p => {
+      if (p.status === 'in_auction' || p.id === currentPlayerId) {
+        return {
+          ...p,
+          status: (p.teamId ? 'sold' : 'upcoming') as PlayerStatus,
+        };
+      }
+      return p;
+    });
+
+    // 2. Clear auction state
+    setIsTimerRunning(false);
+    setCurrentPlayerId(null);
+    setCurrentBid(0);
     setCurrentBidderId(null);
     setBidHistory([]);
-    setIsTimerRunning(false);
-    setTimerSeconds(rules.timerDuration);
+    setActiveAuctionSession(null);
+    setPlayers(updatedPlayers);
 
-    // Update player status to in_auction
-    setPlayers(prev => prev.map(p => p.id === playerId ? { ...p, status: 'in_auction' } : p));
-  }, [players, rules.timerDuration]);
+    // 3. Persist atomically
+    saveStoredState({
+      players: updatedPlayers,
+      currentPlayerId: null,
+      currentBid: 0,
+      currentBidderId: null,
+      bidHistory: [],
+      activeAuctionSession: null,
+    });
+
+    // 4. Audit Log
+    const now = new Date();
+    const logEntry: SaveLogEntry = {
+      id: `cancel-auction-${currentPlayerId}-${Date.now()}`,
+      timestamp: now.toISOString(),
+      date: now.toLocaleDateString('en-IN'),
+      time: now.toLocaleTimeString('en-IN'),
+      type: 'player_edit',
+      status: 'success',
+      action: 'Auction Cancelled',
+      fieldChanged: 'Auction Status',
+      previousValue: 'LIVE NOW',
+      newValue: 'Upcoming',
+      modifiedBy,
+      playerId: currentPlayerId,
+      playerName: plyName,
+      description: `Cancelled active auction lot for ${plyName}. Player returned to upcoming queue.`,
+    };
+    appendSaveLog(logEntry);
+    setSaveLogs(prev => [logEntry, ...prev.filter(l => l.id !== logEntry.id)].slice(0, 500));
+
+    return {
+      success: true,
+      message: `Auction for "${plyName}" cancelled. Player returned to upcoming list.`,
+    };
+  }, [currentPlayerId, players]);
 
   // PLACE BID
   const placeBid = useCallback((
@@ -1809,7 +2016,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     });
     setTeams(updatedTeams);
 
-    // 2. Update Player Status
+    // 2. Update Player Status (strictly clear all in_auction flags)
     const updatedPlayers = players.map(p => {
       if (p.id === currentPlayer.id) {
         return {
@@ -1817,6 +2024,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           status: 'sold' as const,
           teamId: winningTeam.id,
           soldPrice: finalPrice,
+        };
+      }
+      if (p.status === 'in_auction') {
+        return {
+          ...p,
+          status: (p.teamId ? 'sold' : 'upcoming') as PlayerStatus,
         };
       }
       return p;
@@ -1849,7 +2062,9 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       currentBid: 0,
       currentBidderId: null,
       bidHistory: [],
+      activeAuctionSession: null,
     });
+    setActiveAuctionSession(null);
 
     // Record detailed audit log
     const now = new Date();
@@ -2238,9 +2453,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           soldPrice: null,
         };
       }
+      if (p.status === 'in_auction') {
+        return {
+          ...p,
+          status: (p.teamId ? 'sold' : 'upcoming') as PlayerStatus,
+        };
+      }
       return p;
     });
     setPlayers(updatedPlayers);
+    setActiveAuctionSession(null);
 
     // Save unsold state immediately
     saveStoredState({
@@ -2249,6 +2471,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       currentBid: 0,
       currentBidderId: null,
       bidHistory: [],
+      activeAuctionSession: null,
     });
 
     // Record audit log
@@ -2311,7 +2534,17 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       }
     }
 
-    // 3. Revert player status to 'in_auction'
+    // 3. Revert player status to 'in_auction', and ensure any other player is not in_auction
+    const restoredSession: ActiveAuctionSession = {
+      sessionId: `session-undo-${Date.now()}`,
+      playerId: player.id,
+      status: 'active',
+      currentBid: savedBid,
+      highestBidderTeamId: savedBidder,
+      startedAt: new Date().toISOString(),
+    };
+    setActiveAuctionSession(restoredSession);
+
     setPlayers(prev => prev.map(p => {
       if (p.id === player.id) {
         return {
@@ -2319,6 +2552,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
           status: 'in_auction',
           teamId: null,
           soldPrice: null,
+        };
+      }
+      if (p.status === 'in_auction') {
+        return {
+          ...p,
+          status: (p.teamId ? 'sold' : 'upcoming') as PlayerStatus,
         };
       }
       return p;
@@ -2343,11 +2582,21 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // SKIP / NEXT UPCOMING PLAYER
   const skipOrNextPlayer = useCallback(() => {
-    const ordered = getOrderedUpcomingPlayers();
-    if (ordered.length > 0) {
-      startAuctionForPlayer(ordered[0].id);
+    // If bids were placed on current active player, do not skip silently
+    if (currentPlayerId && currentBidderId !== null) {
+      return { success: false, message: 'Bids have been placed on this lot! Please conclude the auction (Sell or Mark Unsold).' };
     }
-  }, [getOrderedUpcomingPlayers, startAuctionForPlayer]);
+    const ordered = getOrderedUpcomingPlayers();
+    const nextCandidate = ordered.find(p => p.id !== currentPlayerId);
+    if (!nextCandidate) {
+      return { success: false, message: 'No more upcoming players in queue.' };
+    }
+    // Safely clear previous unbid lot if any
+    if (currentPlayerId) {
+      cancelCurrentAuction('Admin Skip');
+    }
+    return startAuctionForPlayer(nextCandidate.id);
+  }, [currentPlayerId, currentBidderId, getOrderedUpcomingPlayers, cancelCurrentAuction, startAuctionForPlayer]);
 
   // RE-AUCTION AN UNSOLD PLAYER
   const reAuctionPlayer = useCallback((playerId: string) => {
@@ -3321,6 +3570,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         rules,
         tournament,
         currentPlayer,
+        currentPlayerId,
         currentBid,
         currentBidder,
         bidHistory,
@@ -3331,6 +3581,8 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
         resetTimer,
         setCustomTimerDuration,
         startAuctionForPlayer,
+        cancelCurrentAuction,
+        activeAuctionSession,
         placeBid,
         undoLastBid,
         markPlayerSold,

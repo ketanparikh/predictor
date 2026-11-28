@@ -101,7 +101,11 @@ const AppContent: React.FC = () => {
   }, []);
 
   const handleStartAuction = (player: Player) => {
-    startAuctionForPlayer(player.id);
+    const result = startAuctionForPlayer(player.id);
+    if (!result.success) {
+      alert(`⚠️ ${result.message}`);
+      return;
+    }
     setCurrentTab('live_auction');
   };
 

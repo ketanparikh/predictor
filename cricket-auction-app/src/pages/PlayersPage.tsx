@@ -37,6 +37,8 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
   const {
     players,
     teams,
+    currentPlayerId,
+    startAuctionForPlayer,
     addPlayer,
     editPlayer,
     bulkEditPlayerGrades,
@@ -70,6 +72,15 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
   const showNotification = (msg: string) => {
     setNotification(msg);
     setTimeout(() => setNotification(null), 3500);
+  };
+
+  const handleStartAuction = (player: Player) => {
+    const result = startAuctionForPlayer(player.id);
+    if (!result.success) {
+      showNotification(`⚠️ ${result.message}`);
+      return;
+    }
+    onStartAuction(player);
   };
 
   const handleOpenEditGrade = (player: Player) => {
@@ -459,7 +470,8 @@ export const PlayersPage: React.FC<PlayersPageProps> = ({
               key={player.id}
               player={player}
               teams={teams}
-              onStartAuction={p => onStartAuction(p)}
+              currentPlayerId={currentPlayerId}
+              onStartAuction={handleStartAuction}
               onDirectSell={p => setPlayerToDirectSell(p)}
               onEdit={p => {
                 setPlayerToEdit(p);
